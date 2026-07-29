@@ -71,22 +71,16 @@ applied in bulk yet:
   mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
   run it since it was added.
 
-- **Should the source be OpenParlData instead?** Partly measured; see README
-  step 6. Its model is *not* chamber-shaped: a **body** is the level of
-  parliament (the Federal Assembly is one body, `CHE`), the **chambers are
-  groups**, and a seat is a `memberships` row pointing at one — reached by
-  walking person → memberships → group. A cantonal legislature carries the same
-  `council_legislative` type as a federal seat, so match on the chamber's
-  *name*, not the type.
-
-  P14527 is real and near parity with P1307 (3,025 vs 3,043 National
-  Councillors, though broader overall at 4,277 vs 3,719), so size decides
-  nothing — what matters is how many seat holders carry P14527 and *not*
-  P1307. Still undecided is whether the chambers' memberships carry
-  `date_start`; the one seat row reached so far was cantonal and undated, and a
-  membership with no start yields no P580 and no period overlap. Until
-  `scripts/verify_openparldata.py` section **B** answers that, do not rewrite
-  `parliament.py` around the new backend.
+**OpenParlData is settled — enrich, do not replace** (README step 6). Its
+chambers are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name
+equality because `Präsidium des Nationalrates` and `Büro NR` are not the
+chamber. The seat is modelled there — 4,398 + 1,220 `council_legislative`
+memberships — but **not one of the 5,618 carries a date**, so it cannot source
+P39's P580/P582/P2937 and `MemberCouncil` stays the source of tenure. P14527
+adds nobody either: 0 National Councillors carry it without P1307. What it *is*
+good for is enrichment — 3,685/3,686 federal members carry a `wikidata_id` and
+87.3% a party Q-ID, which would fill the deliberately-empty `parties` /
+`parl_groups` maps. Do not rewrite `parliament.py` around the backend.
 
 Two facts from the same census shape the diff's behaviour:
 

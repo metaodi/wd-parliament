@@ -34,11 +34,12 @@ enables a class of check wd-squads cannot make.
 The **`Verify assumptions`** workflow was dispatched against live parlament.ch
 on 2026-07-29 ([run 30477629765](https://github.com/metaodi/wd-parliament/actions/runs/30477629765)).
 It settled steps 0, 1 and 3, and turned up one failure mode nobody had
-predicted — step 0b, which is now the one that would do damage. A second
-dispatch ([run 30481671076](https://github.com/metaodi/wd-parliament/actions/runs/30481671076))
-confirmed the source read is fixed and produced the first measurements for
-step 6. Steps 4 and 5 remain untouched, and 0c is the one to answer before any
-bulk apply. Work through what is left before applying any QuickStatements.
+predicted — step 0b, which is now the one that would do damage. Later
+dispatches confirmed the source read is fixed and settled step 6
+([run 30484825052](https://github.com/metaodi/wd-parliament/actions/runs/30484825052)).
+
+**Steps 4 and 5 remain untouched, and 0c is the one to answer before any bulk
+apply.** Work through what is left before applying any QuickStatements.
 
 ### 0. ✅ The source read — *fixed: the council filter*
 
@@ -279,80 +280,77 @@ would report but not explain.
 Before any bulk apply, paste a single line into QuickStatements and confirm the
 statement lands with its qualifiers and reference intact.
 
-### 6. 🔶 Should the source be OpenParlData instead? — *measured, partly*
+### 6. ✅ Should the source be OpenParlData instead? — *settled: enrich, do not replace*
 
 `swissparlpy` 1.0.0 ships a second backend, `openparldata`, reading
 [api.openparldata.ch](https://api.openparldata.ch), and Wikidata has an
 *OpenParlData ID* property, [P14527](https://www.wikidata.org/wiki/Property:P14527).
-Either could replace the P1307 ↔ `PersonNumber` join the rest of this document
-is built on. `scripts/verify_openparldata.py` measures whether they should.
+Either could have replaced the P1307 ↔ `PersonNumber` join. Measured by
+`scripts/verify_openparldata.py`, neither should.
 
-**The data model** (established by the 2026-07-29 run, and *not* what the first
-version of the probe assumed):
+**The data model.** A **body** is the *level* of parliament, not a chamber —
+the Federal Assembly is one body, `CHE`. The **National Council and Council of
+States are groups** (ids 1663 and 1664), and a seat is a `memberships` row
+pointing at one. There is no chamber-shaped table. Note a cantonal legislature
+carries exactly the same `council_legislative` membership type as a federal
+seat, so the chamber's **name** is what distinguishes them — matched by
+equality, since a substring match picks up `Präsidium des Nationalrates` and
+`Büro NR`.
 
-- a **body** is the *level* of parliament, not a chamber — the Federal Assembly
-  is one body (`CHE` / "Schweiz") covering both councils;
-- the **National Council and Council of States are groups**, and a person's
-  seat is a `memberships` row pointing at one;
-- so a tenure is reached by walking person → memberships → group. There is no
-  chamber-shaped table to read.
+**The seat is modelled, and it is undated.** That is the finding that decides
+this:
 
-Note a cantonal legislature carries exactly the same `council_legislative`
-membership type as a federal seat, so the chamber's **name** is what
-distinguishes them, not the type.
+| group | memberships | with `date_start` | with `date_end` |
+| --- | ---: | ---: | ---: |
+| Nationalrat (1663) | 4,398 | **0** | **0** |
+| Ständerat (1664) | 1,220 | **0** | **0** |
 
-**What is measured.** P14527 is real and close to parity with P1307:
+Every one is `type_harmonized: council_legislative` and names its chamber, so
+the seat is exactly where it should be — but not one of the 5,618 carries a
+date. This tool reconciles P39 with P580/P582 and P2937, all of which come from
+a tenure with a start and an end, so **OpenParlData cannot source P39**.
+`MemberCouncil.DateJoining`/`DateLeaving` remain the only source of a tenure.
+
+**P14527 adds nobody.** It exists and is close to P1307 in size, but the
+overlap is what matters:
 
 | | items | of them National Councillors |
 | --- | ---: | ---: |
-| P1307 Swiss parliament ID | 3,719 | **3,043** |
-| P14527 OpenParlData ID | 4,277 | **3,025** |
+| P1307 Swiss parliament ID | 3,719 | 3,043 |
+| P14527 OpenParlData ID | 4,277 | 3,025 |
+| reachable by **either** | | **3,043** |
+| P14527 **without** P1307 | | **0** |
 
-P14527 is *broader overall* and 18 short among seat holders — near enough that
-size alone decides nothing. The number that matters is how many seat holders
-carry P14527 and **not** P1307, since two identifiers on the same people are
-worth no more than one; `marginal_gain_query` measures exactly that.
+The union is exactly P1307's own count. Every National Councillor carrying
+P14527 already carries P1307, so a second join path would match nobody — not
+worth the code. Keep the P1307 join.
 
-`persons` also carries `wikidata_id` and `party_harmonized_wikidata_id`. Across
-all 26,574 people in the API — every Swiss parliament at every level — those sit
-at 16.2% and 65.6%. The party figure is the interesting one:
-`config/parliament.yaml` ships `parties:` and `parl_groups:` **empty on
-purpose**, because a wrong qualifier Q-ID is worse than none, and a
-source-supplied one removes that hand-maintained map.
+**What OpenParlData *is* worth: enrichment.** Across the 3,686 federal members:
 
-**What is still open, and it is the decisive one.** Do the chambers'
-memberships carry `date_start` / `date_end`? This tool reconciles P39 with
-P580/P582 and P2937, all of which come from a seat tenure with a start and an
-end. The only seat membership the first run reached was *cantonal* — the probe
-sampled the wrong Andrey, a Fribourg cantonal member rather than the National
-Councillor — and it read:
+- **3,685 carry a `wikidata_id`** — essentially complete;
+- **3,219 (87.3%) carry a `party_harmonized_wikidata_id`.**
 
-```
-type='council_legislative', group_name_de='Grosser Rat des Kantons Freiburg',
-start=None, end=None
-```
+That second figure is the useful one. `config/parliament.yaml` ships `parties:`
+and `parl_groups:` **empty on purpose**, because a wrong qualifier Q-ID is
+worse than none, and this would supply them from the source instead of a
+hand-maintained map. Before using `wikidata_id` for matching, though, settle
+the provenance question: `is_mechanical` gates on `QID_FROM_IDENTIFIER`,
+meaning *Wikidata* asserted the identifier that established the match, and a
+Q-ID a third party asserts about Wikidata is a different class of claim.
 
-Undated. If the federal groups are the same, OpenParlData cannot source P39
-however good its other fields are, because a membership with no start yields no
-P580 and no period overlap. The reworked probe queries the chambers' groups
-directly, so it measures the federal case rather than inferring from one
-cantonal row.
+**Two loose ends**, neither blocking:
 
-**Recommendation, pending section B.** Add OpenParlData as a **second join path
-and an enrichment source**; do not replace the OData read. `MemberCouncil` is a
-seat-tenure table with `DateJoining`/`DateLeaving` on one row, the P1307 join is
-confirmed, and both of that path's failure modes are now fixed and tested — the
-cost is paid. If section B comes back fully dated, replacement becomes a real
-option and the tenure dates would also settle step 0c independently.
+- `bodies` returns **0 rows** despite being listed as a table.
+- Walking Gerhard Andrey (person 21709) gives 47 memberships and **none** is
+  his National Council seat, though the NR group holds 4,398 such rows. So
+  person → memberships and group → memberships disagree about the seat. Worth
+  raising upstream; irrelevant to the decision, since the seat is undated
+  either way.
 
-Two cautions when reading the output. The backend logs unknown query parameters
-and sends them anyway rather than rejecting them — `limit` is one, which is why
-the first run pulled all 26,574 person records — and its warning does not
-interpolate the table name, printing a literal `'{table}'`. And `wikidata_id`
-is a different class of claim from P1307: `is_mechanical` gates on *Wikidata*
-having asserted the identifier that established the match, so a Q-ID a third
-party asserts about Wikidata needs its own decision rather than inheriting that
-gate.
+A caution when reading the probe's output: the backend logs unknown query
+parameters and sends them anyway rather than rejecting them (`limit` is one,
+which is why an early run paged through all 26,574 person records), and the
+warning does not interpolate the table name, printing a literal `'{table}'`.
 
 ```bash
 uv run python scripts/verify_openparldata.py
