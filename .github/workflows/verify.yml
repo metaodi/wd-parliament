@@ -1,0 +1,109 @@
+name: Verify assumptions
+
+# A read-only diagnostic, not a build. It answers the two questions under
+# "Open verification steps" in the README that need live network access:
+#
+#   1. does Wikidata's P1307 really hold MemberCouncil.PersonNumber?
+#   2. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
+#      the items they claim to?
+#
+# Deliberately NOT what "Update parliament TODO" does: nothing is generated,
+# nothing is committed, and nothing is published. Run this before merging that
+# workflow's output anywhere.
+
+on:
+  workflow_dispatch:
+    inputs:
+      last_name:
+        description: "Surname to look up on parlament.ch"
+        required: false
+        default: "Parmelin"
+      expect_person_number:
+        description: "The P1307 value Wikidata holds for that person"
+        required: false
+        default: "1108"
+
+# Read-only on purpose. This workflow must never write to the repository.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          python-version: "3.11"
+          enable-cache: true
+
+      # Both checks run even when the first one fails: one dispatch should
+      # answer both questions, not stop at the first bad news.
+      - name: Probe P1307 against MemberCouncil.PersonNumber
+        id: p1307
+        continue-on-error: true
+        env:
+          # Via env rather than inline ${{ }}, so a surname can never be
+          # interpolated into the shell.
+          LAST_NAME: ${{ inputs.last_name }}
+          EXPECT: ${{ inputs.expect_person_number }}
+        run: |
+          set +e
+          uv run python scripts/verify_p1307.py \
+            --config config/parliament.yaml \
+            --last-name "$LAST_NAME" \
+            --expect "$EXPECT" 2>&1 | tee p1307.txt
+          status=${PIPESTATUS[0]}
+          {
+            echo "## 1. P1307 == MemberCouncil.PersonNumber"
+            echo
+            echo '```'
+            cat p1307.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Verify the configured Q-IDs
+        id: qids
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python -m wd_parliament \
+            --config config/parliament.yaml --verify-config 2>&1 | tee qids.txt
+          status=${PIPESTATUS[0]}
+          {
+            echo "## 2. Configured Q-IDs"
+            echo
+            echo '```'
+            cat qids.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Summarise and set the job result
+        run: |
+          p1307="${{ steps.p1307.outcome }}"
+          qids="${{ steps.qids.outcome }}"
+          {
+            echo "## Result"
+            echo
+            echo "| Check | Outcome |"
+            echo "| --- | --- |"
+            echo "| P1307 == PersonNumber | \`$p1307\` |"
+            echo "| Configured Q-IDs | \`$qids\` |"
+            echo
+            if [ "$p1307" = "success" ] && [ "$qids" = "success" ]; then
+              echo "Both checks passed. The identifier join is verified and every"
+              echo "configured Q-ID resolves — read the labels above to confirm they"
+              echo "name what you meant, then the remaining steps are"
+              echo "\`--validate-periods\` and a hand-applied QuickStatement."
+            else
+              echo "At least one check failed — see the detail above. Do not run"
+              echo "\"Update parliament TODO\" or apply any QuickStatements until"
+              echo "both are green."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$p1307" = "success" ] && [ "$qids" = "success" ]

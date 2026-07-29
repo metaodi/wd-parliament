@@ -183,6 +183,11 @@ no run has happened yet.
 ## GitHub Actions
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
+- `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
+  `scripts/verify_p1307.py` and `--verify-config`, writes both to the run
+  summary, and writes nothing to the repo. Keep it read-only: it is the
+  diagnostic you run *before* trusting `update.yml`'s output. Note
+  `workflow_dispatch` requires the file to be on the default branch.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion
