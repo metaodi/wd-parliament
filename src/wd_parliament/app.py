@@ -110,8 +110,8 @@ def process(
         log.info("[%s] %s: %d members", body.council, body.label, len(chamber_members))
 
         result = BodyResult(body=body)
-        _fill_counts(result, chamber_members, people, body.position_qid)
         try:
+            _fill_counts(result, chamber_members, people, body.position_qid)
             result.suggestions = compute_suggestions(
                 body, chamber_members, people, periods, config
             )

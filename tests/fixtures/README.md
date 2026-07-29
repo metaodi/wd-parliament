@@ -1,0 +1,51 @@
+# Test fixtures
+
+## Provenance — please read
+
+`membercouncil.json` and `periods.json` were **hand-built against the OData
+schema, not captured from the live service.** The environment this project was
+scaffolded in had no network route to `ws.parlament.ch` (the egress policy
+refused the CONNECT), so a real response could not be saved.
+
+The field names, types and keys are exact: they were read from the
+`$metadata` document that ships inside `swissparlpy` 1.0.0
+(`tests/fixtures/metadata.xml` in that package), so the shape these fixtures
+present to `parliament.member_from_row` / `period_from_row` is the shape the
+real service presents. The legislative-period dates follow the real pattern
+(a Swiss legislature opens on the first Monday of December after the October
+election and runs four years). The **people are invented** — the names,
+`PersonNumber`s and dates do not describe any real member of the Federal
+Assembly, and must not be read as though they did.
+
+This is fine for what the tests actually do: every test here exercises pure
+logic — interval arithmetic, matching rules, suggestion generation, command
+rendering — none of which depends on the data being historically true.
+
+### Still to do
+
+Replace both files with real captures once the service is reachable:
+
+```bash
+uv run python - <<'EOF'
+import json, swissparlpy as spp
+rows = [dict(r) for r in spp.get_data("MemberCouncil", Language="DE", Active=True)]
+json.dump(rows[:40], open("tests/fixtures/membercouncil.json", "w"),
+          indent=2, ensure_ascii=False, default=str)
+periods = [dict(r) for r in spp.get_data("LegislativePeriod", Language="DE")]
+json.dump(periods, open("tests/fixtures/periods.json", "w"),
+          indent=2, ensure_ascii=False, default=str)
+EOF
+```
+
+Keep the coverage the current fixtures were built for — both chambers, a
+mid-period joiner, a departure, a single-day tenure, a member with no
+`DateJoining`, a member with no `DateOfBirth`, a row with no `PersonNumber`,
+and a duplicate row in a second language — and the tests will keep passing
+against the real data.
+
+## Files
+
+| File | What it holds |
+| --- | --- |
+| `membercouncil.json` | 12 `MemberCouncil` rows: 10 distinct people across both chambers, one duplicated in French, one with a null `PersonNumber`. |
+| `periods.json` | 10 `LegislativePeriod` rows: the 44th–52nd legislatures, plus the 52nd repeated in French. The 52nd has no `EndDate` — it is the running one. |

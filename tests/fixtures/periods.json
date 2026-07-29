@@ -1,0 +1,102 @@
+[
+  {
+    "ID": 5044,
+    "Language": "DE",
+    "LegislativePeriodNumber": 44,
+    "LegislativePeriodName": "44. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP44",
+    "StartDate": "1991-11-25T00:00:00",
+    "EndDate": "1995-12-03T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5045,
+    "Language": "DE",
+    "LegislativePeriodNumber": 45,
+    "LegislativePeriodName": "45. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP45",
+    "StartDate": "1995-12-04T00:00:00",
+    "EndDate": "1999-12-05T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5046,
+    "Language": "DE",
+    "LegislativePeriodNumber": 46,
+    "LegislativePeriodName": "46. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP46",
+    "StartDate": "1999-12-06T00:00:00",
+    "EndDate": "2003-11-30T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5047,
+    "Language": "DE",
+    "LegislativePeriodNumber": 47,
+    "LegislativePeriodName": "47. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP47",
+    "StartDate": "2003-12-01T00:00:00",
+    "EndDate": "2007-12-02T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5048,
+    "Language": "DE",
+    "LegislativePeriodNumber": 48,
+    "LegislativePeriodName": "48. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP48",
+    "StartDate": "2007-12-03T00:00:00",
+    "EndDate": "2011-12-04T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5049,
+    "Language": "DE",
+    "LegislativePeriodNumber": 49,
+    "LegislativePeriodName": "49. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP49",
+    "StartDate": "2011-12-05T00:00:00",
+    "EndDate": "2015-11-29T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5050,
+    "Language": "DE",
+    "LegislativePeriodNumber": 50,
+    "LegislativePeriodName": "50. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP50",
+    "StartDate": "2015-11-30T00:00:00",
+    "EndDate": "2019-12-01T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5051,
+    "Language": "DE",
+    "LegislativePeriodNumber": 51,
+    "LegislativePeriodName": "51. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP51",
+    "StartDate": "2019-12-02T00:00:00",
+    "EndDate": "2023-12-03T00:00:00",
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5052,
+    "Language": "DE",
+    "LegislativePeriodNumber": 52,
+    "LegislativePeriodName": "52. Legislaturperiode",
+    "LegislativePeriodAbbreviation": "LP52",
+    "StartDate": "2023-12-04T00:00:00",
+    "EndDate": null,
+    "Modified": "2024-01-15T09:12:00"
+  },
+  {
+    "ID": 5052,
+    "Language": "FR",
+    "LegislativePeriodNumber": 52,
+    "LegislativePeriodName": "52e legislature",
+    "LegislativePeriodAbbreviation": "LP52",
+    "StartDate": "2023-12-04T00:00:00",
+    "EndDate": null,
+    "Modified": "2024-01-15T09:12:00"
+  }
+]
