@@ -408,6 +408,28 @@ def test_one_statement_is_never_matched_to_two_periods(periods):
     assert len(memberships) == 1
 
 
+def test_several_same_seat_statements_are_flagged_as_ambiguous(periods):
+    """A member who left and returned, under the tenure model."""
+    member = make_member(date_joining=date(2019, 12, 2))
+    first = make_statement(start=date(2015, 11, 30), end=date(2019, 12, 1), sid="A")
+    second = make_statement(start=date(2019, 12, 2), sid="B")
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([first, second])}, periods, make_config(MODEL_TENURE)
+    )
+    assert suggestions
+    assert all(s.payload.get("ambiguous_statement") for s in suggestions)
+
+
+def test_a_single_statement_is_not_flagged_as_ambiguous(periods):
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2))
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods, make_config(MODEL_TENURE)
+    )
+    assert suggestions
+    assert not any(s.payload.get("ambiguous_statement") for s in suggestions)
+
+
 # --- match_statement --------------------------------------------------------
 def test_match_statement_prefers_the_open_one_in_tenure_model(periods):
     from wd_parliament.diff import ExpectedStatement

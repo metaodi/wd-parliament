@@ -92,8 +92,9 @@ def is_mechanical(suggestion: Suggestion, statement_model: str = MODEL_PERIOD) -
     - a target Q-ID is known;
     - the kind adds information rather than contradicting an existing value;
     - the payload carries everything the command needs;
-    - under the ``period`` model, a qualifier-only addition also carries the
-      P2937 term identifying which of several same-seat statements is meant.
+    - a qualifier-only addition targets a member with exactly one P39
+      statement for the seat, or (under the ``period`` model) carries the P2937
+      term identifying which of several same-seat statements is meant.
     """
     if suggestion.qid_source != QID_FROM_IDENTIFIER:
         return False
@@ -122,10 +123,15 @@ def is_mechanical(suggestion: Suggestion, statement_model: str = MODEL_PERIOD) -
     ):
         return False
 
-    if statement_model == MODEL_PERIOD and suggestion.kind in _QUALIFIER_ONLY_KINDS:
-        # Without a term qualifier the command could land on the wrong one of
-        # several P39 statements for the same seat.
-        if not payload.get("terms"):
+    if suggestion.kind in _QUALIFIER_ONLY_KINDS:
+        # The member already holds several P39 statements for this seat (they
+        # left and returned), so property + main value does not identify one.
+        if payload.get("ambiguous_statement"):
+            return False
+        # Under the period model every multi-term member has several
+        # same-seat statements by construction, so the term qualifier is the
+        # only thing that can pin the command down.
+        if statement_model == MODEL_PERIOD and not payload.get("terms"):
             return False
     return True
 
