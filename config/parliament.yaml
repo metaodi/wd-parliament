@@ -58,14 +58,21 @@ biography_url: "https://www.parlament.ch/{language}/biografie/wd/{person_number}
 # ---------------------------------------------------------------------------
 # Chambers
 # ---------------------------------------------------------------------------
-# `council` matches MemberCouncil.CouncilAbbreviation ("N" / "S"), and
-# `position` is the P39 value for a seat in that chamber.
+# `council` matches MemberCouncil.CouncilAbbreviation, and `position` is the
+# P39 value for a seat in that chamber.
+#
+# These are the *German* abbreviations, because the service is queried with
+# Language=DE. Read off the live service on 2026-07-29, where the distinct
+# values are '', 'BR' (Bundesrat), 'NR' and 'SR'. They were "N" / "S" until
+# then — taken from the OData docs, matching nothing, which is what made the
+# first run fetch zero members. Do not change them without re-running
+# `scripts/verify_source.py`, which prints the values the service actually has.
 bodies:
-  - council: N
+  - council: NR
     label: Swiss National Council
     position: Q18510612    # member of the Swiss National Council
     council_number: 1      # MemberCouncil.Council, the numeric code
-  - council: S
+  - council: SR
     label: Swiss Council of States
     position: Q18510613    # member of the Swiss Council of States
     council_number: 2

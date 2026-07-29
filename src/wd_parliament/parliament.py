@@ -26,6 +26,20 @@ VOTING_TABLE = "Voting"
 
 DEFAULT_LANGUAGE = "DE"
 
+# SQL Server's ``datetime`` minimum. The OData service is backed by one and
+# sends this value for "no date" rather than a null — every sitting member's
+# ``DateLeaving`` arrives as 1753-01-01 (confirmed against the live service on
+# 2026-07-29). Read literally it means "this member left in 1753", which is
+# not a harmless wrong number: ``diff`` would raise ADD_END_DATE for the whole
+# chamber and ADD_END_DATE *is* mechanical, so it would reach QuickStatements
+# as a P582 backfill. It also reverses every tenure interval, which
+# ``period_overlap`` correctly refuses, silently costing every P2937 term.
+#
+# Compared with ``<=`` rather than ``==`` because a smaller value cannot be a
+# real date either: SQL Server cannot represent one, so anything at or below
+# the floor is the absence of a date however it was encoded.
+NULL_DATE = date(1753, 1, 1)
+
 
 def _as_date(value: Any) -> Optional[date]:
     """Coerce an OData ``Edm.DateTime`` (or an ISO string) to a ``date``.
@@ -33,24 +47,32 @@ def _as_date(value: Any) -> Optional[date]:
     ``swissparlpy`` hands back ``datetime`` objects, but the JSON fixtures the
     tests use carry ISO strings, so both are accepted. Anything unparseable
     becomes ``None`` rather than raising: a single malformed date must not cost
-    us the whole member.
+    us the whole member. So does the :data:`NULL_DATE` sentinel, which is how
+    the service spells an absent date.
     """
     if value is None or value == "":
         return None
     if isinstance(value, datetime):
-        return value.date()
+        return _unless_null(value.date())
     if isinstance(value, date):
-        return value
+        return _unless_null(value)
     text = str(value).strip()
     if not text:
         return None
     # Tolerate "2023-12-04T00:00:00", "2023-12-04 00:00:00" and "2023-12-04".
     text = text.replace(" ", "T").split("T")[0]
     try:
-        return date.fromisoformat(text)
+        return _unless_null(date.fromisoformat(text))
     except ValueError:
         log.debug("Could not parse date %r", value)
         return None
+
+
+def _unless_null(value: date) -> Optional[date]:
+    """``None`` for the service's null-date sentinel, otherwise ``value``."""
+    if value <= NULL_DATE:
+        return None
+    return value
 
 
 def _as_int(value: Any) -> Optional[int]:
@@ -124,11 +146,15 @@ def members_from_rows(
 ) -> List[Member]:
     """Map and filter ``MemberCouncil`` rows. Pure — the tests' entry point.
 
-    ``councils`` filters on ``CouncilAbbreviation`` ("N" / "S"); ``None`` keeps
-    every chamber. Members are de-duplicated on ``(person_number, council)``,
-    keeping the row with the latest ``DateJoining`` — the OData service returns
-    one row per person *per language*, and a caller that forgets the language
-    filter would otherwise see each member several times over.
+    ``councils`` filters on ``CouncilAbbreviation`` ("NR" / "SR" — the German
+    abbreviations, since the service is queried with ``Language=DE``);
+    ``None`` keeps every chamber. Members are de-duplicated on
+    ``(person_number, council)``, keeping the row with the latest
+    ``DateJoining``: the service returns several rows per person — one per
+    language, and sometimes more than one within a language — so a caller that
+    forgets the language filter would otherwise see each member several times
+    over, under French abbreviations ("CN" for the National Council) that the
+    filter does not want.
     """
     wanted = {c.strip().upper() for c in councils} if councils else None
     best: Dict[tuple, Member] = {}
@@ -222,7 +248,7 @@ class ParliamentClient:
         active_only: bool = True,
         table: str = MEMBER_TABLE,
     ) -> List[Member]:
-        """Current members of the given chambers ("N", "S"), as dataclasses.
+        """Current members of the given chambers ("NR", "SR"), as dataclasses.
 
         The ``Active`` filter is pushed down to OData so the service returns
         the ~246 sitting members rather than every member since 1848.

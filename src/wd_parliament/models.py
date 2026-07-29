@@ -89,7 +89,7 @@ STATEMENT_MODELS = (MODEL_TENURE, MODEL_PERIOD)
 class Body:
     """One chamber of the Federal Assembly, as configured."""
 
-    council: str  # MemberCouncil.CouncilAbbreviation, "N" or "S"
+    council: str  # MemberCouncil.CouncilAbbreviation, "NR" or "SR"
     label: str
     position_qid: str  # the P39 value for a seat in this chamber
     council_number: Optional[int] = None  # MemberCouncil.Council, the numeric code
@@ -112,7 +112,7 @@ class Member:
     first_name: str = ""
     last_name: str = ""
     active: bool = True
-    council: str = ""  # CouncilAbbreviation, "N" / "S"
+    council: str = ""  # CouncilAbbreviation, "NR" / "SR"
     council_name: str = ""
     council_number: Optional[int] = None
     canton_abbreviation: Optional[str] = None  # -> P768, via the canton map

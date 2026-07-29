@@ -31,11 +31,13 @@ enables a class of check wd-squads cannot make.
 
 ## ⚠️ Open verification steps
 
-**The first live run failed** — see step 0, which is the blocking one.
-Step 2 has since been settled against live Wikidata; step 1 has not. Work
-through these in order before applying any QuickStatements.
+The **`Verify assumptions`** workflow was dispatched against live parlament.ch
+on 2026-07-29 ([run 30477629765](https://github.com/metaodi/wd-parliament/actions/runs/30477629765)).
+It settled steps 0, 1 and 3, and turned up one failure mode nobody had
+predicted — step 0b, which is now the one that would do damage. Steps 4 and 5
+remain untouched. Work through what is left before applying any QuickStatements.
 
-### 0. ⛔ The source read is broken — fix this before anything else
+### 0. ✅ The source read — *fixed: the council filter*
 
 The first live run (2026-07-29, commit `897b2c2`) fetched **zero sitting
 members** from parlament.ch, and did so silently: no exception, no error
@@ -49,7 +51,24 @@ no leaving date, so `is_mechanical` rejected all of them, and
 `suggestions.qs` correctly reads `0 of 2234 suggestions are mechanical`. The
 safety rule did its job. The report did not.
 
-Two changes now stop that failure recurring:
+The probe attributed it exactly:
+
+```
+rows returned by OData:            254
+rows with Active true:             254
+mapped to Member (any council):    254
+after the council filter ['N', 'S']:  0
+
+distinct CouncilAbbreviation values:  '', 'BR', 'NR', 'SR'
+```
+
+So the `Active` boolean was never the problem — the read works, and the config
+was asking for a chamber code the service does not use. `config/parliament.yaml`
+now filters on **`NR` / `SR`**, the German abbreviations, which is consistent
+with the pipeline querying `Language=DE`. (`BR` is the Federal Council and the
+blank is a row with no chamber; neither is in scope.)
+
+Two changes made after the failed run stop it recurring silently:
 
 - `app.process` raises when the member fetch comes back empty, so the Action
   fails before committing anything;
@@ -57,51 +76,86 @@ Two changes now stop that failure recurring:
   members, because "parlament.ch does not list this person" is not a claim you
   can make when parlament.ch has told you nothing.
 
-Neither *fixes* the read. To find out which filter is at fault:
-
-```bash
-uv run python scripts/verify_source.py
-```
-
-It walks the pipeline's own narrowing — every row, then `Active`, then the
-configured `CouncilAbbreviation` values — printing the count after each stage
-plus the distinct values actually present. Whichever stage drops to zero is the
-answer. The two likeliest causes:
-
-- **the council filter.** `config/parliament.yaml` filters on
-  `council: N` / `council: S`, taken from the OData docs. If the real
-  `CouncilAbbreviation` values are `NR`/`SR`, `members_from_rows` discards
-  every row and the probe says so by name.
-- **the `Active` boolean.** `parliament.get_members` pushes `Active=True` down
-  to OData; if pyodata renders that as `True` rather than OData v2's `true`,
-  the service can match nothing and return an empty set without erroring.
-
 The stale artifacts from that run are still committed on `main` and should be
-regenerated (or reverted) once the read works.
+regenerated once a full run succeeds.
 
-### 1. Confirm the P1307 assumption — *strong evidence, not verified directly*
+### 0b. ✅ Null dates arrive as 1753-01-01 — *fixed, and it was the dangerous one*
 
-The whole join strategy assumes Wikidata's
-[P1307](https://www.wikidata.org/wiki/Property:P1307) "Swiss parliament ID"
-holds `MemberCouncil.PersonNumber`.
+The same probe output showed every sitting member carrying
 
-What is confirmed: Guy Parmelin is
-[Q121160](https://www.wikidata.org/wiki/Q121160) with **P1307 = 1108**, and his
-parlament.ch biography is at `parlament.ch/en/biografie/guy-parmelin/`**`1108`**.
-P1307's own documentation gives the URL pattern
-`parlament.ch/[lang]/biografie/[name-slug]/[PersonNumber]`, i.e. the property
-value *is* the `PersonNumber`.
-
-What is **not** confirmed: nobody has fetched Parmelin's `MemberCouncil` row and
-read `PersonNumber` back. Do that first:
-
-```bash
-uv run python scripts/verify_source.py
+```
+DateJoining=2026-01-01, DateLeaving=1753-01-01
 ```
 
-It searches **both** `MemberCouncil` and `MemberCouncilHistory` — Parmelin left
-the National Council in 2015, and which table holds a former member is itself
-something the probe establishes — then reports one of three verdicts:
+`1753-01-01` is SQL Server's `datetime` minimum. The OData service is backed by
+one and sends it for "no date" instead of a null. Read literally it says the
+member left in 1753, and that is **not** a harmlessly wrong number:
+
+- `diff` raises `ADD_END_DATE` for every sitting member whose Wikidata P39 is
+  open — which is the normal case — because the expected end is no longer
+  `None`;
+- `ADD_END_DATE` **is** in `MECHANICAL_KINDS`, it is not statement-ambiguous
+  for the 97.2% of members with a single P39 for the seat, and P1307-matched
+  members carry the right provenance. So it passes every gate in
+  `is_mechanical` and renders as `P582|+1753-01-01T00:00:00Z/11`.
+
+The P1307 rule that contained the step-0 failure does **not** contain this one:
+these suggestions are exactly the kind it is designed to let through. It would
+have been the first run to write wrong data rather than merely report it.
+
+Second effect, silent rather than destructive: a tenure running from 2026 to
+1753 is a reversed interval, which `period_overlap.intervals_overlap` correctly
+refuses — so every sitting member would be assigned **no legislative periods**
+and lose their P2937 qualifiers.
+
+`parliament.NULL_DATE` now maps the sentinel (and anything at or below it) to
+`None` at the mapping boundary, so nothing downstream ever sees it. The
+fixtures were rewritten to carry the sentinel the way the service does, since
+their previous `"DateLeaving": null` is the fiction that hid this.
+
+### 0c. ⚠️ Still open: is `DateJoining` a tenure start or a year segment?
+
+Parmelin's sitting row gives `DateJoining = 2026-01-01` — the current year, not
+his 2016 start. His `MemberCouncilHistory` rows tell the same story: `BR`
+segments broken at 2016–2018, 2019, 2020, 2021, 2022–2024, 2025. If sitting
+`NR` / `SR` rows are segmented the same way, then `DateJoining` is the start of
+a reporting period and **not** when the member took office — and
+`ADD_MEMBERSHIP` and `ADD_START_DATE`, both mechanical, would write it to
+Wikidata as P580.
+
+His National Council history rows *do* carry real term dates (2003-12-01,
+2007-12-03, 2011-12-05, 2015-11-30), so this may well be specific to Federal
+Councillors. It is not yet known either way, because the probe only fetched
+Parmelin, who now sits in neither chamber.
+
+`scripts/verify_source.py` grew a section **A2** that answers it: it prints the
+`DateJoining` spread per chamber and warns when every start is a 1 January.
+Dispatch `Verify assumptions` again and read that section before letting any
+`ADD_MEMBERSHIP` or `ADD_START_DATE` reach QuickStatements.
+
+### 1. ✅ The P1307 assumption — *CONFIRMED*
+
+The join strategy assumes Wikidata's
+[P1307](https://www.wikidata.org/wiki/Property:P1307) "Swiss parliament ID"
+holds `MemberCouncil.PersonNumber`. Read off the live service:
+
+```
+PersonNumber=1108, PersonIdCode=2621, FirstName='Guy', LastName='Parmelin'
+```
+
+against Wikidata's P1307 = 1108 for [Q121160](https://www.wikidata.org/wiki/Q121160).
+It is `PersonNumber`, and the `PersonIdCode` alternative the scaffold could not
+rule out is ruled out. `resolve.match_by_identifier` is comparing the right
+fields; nothing to change.
+
+Two incidental findings from the same probe: a former member appears in
+**both** `MemberCouncil` and `MemberCouncilHistory`, and the rows come back in
+several languages at once (`NR`/`CN` for the National Council, `BR`/`CF` for
+the Federal Council) — which is why `get_members` pushes `Language=DE` down and
+why the chamber codes in the config are the German ones.
+
+The probe stays in the repo as a regression check. It reports one of three
+verdicts, and only `CONFIRMED` exits 0:
 
 | Verdict | Meaning |
 | --- | --- |
@@ -109,20 +163,9 @@ something the probe establishes — then reports one of three verdicts:
 | `CONTRADICTED` | Either `PersonIdCode` matches instead (the message says so, and which code to switch), or neither does. |
 | `INCONCLUSIVE` | The person was not found, or the service could not be read at all. The two are reported differently — an unreachable service is a connectivity problem, not a finding. |
 
-Only `CONFIRMED` exits 0. There is also a **`Verify assumptions`** workflow
-(`workflow_dispatch` only) that runs this probe and `--verify-config` together
-and writes both results to the run summary; see below.
-
-If `PersonNumber` is not 1108, check `PersonIdCode`. If neither matches, the
-join strategy falls back to name+birth date and this design needs revisiting —
-say so rather than proceeding.
-
-Corroborating but not conclusive: the step-2 census found **3,043** items
-carrying both P1307 and a National Council P39, which is the right order of
-magnitude for "every National Councillor with an identifier" and confirms
-P1307 is genuinely the Swiss parliamentarian identifier. It does not
-distinguish `PersonNumber` from `PersonIdCode`, which is why the check above
-still has to be run.
+```bash
+uv run python scripts/verify_source.py
+```
 
 ### 2. Statement model — ✅ **settled: `tenure`**
 
@@ -186,13 +229,17 @@ Two consequences worth knowing before a first run:
   main value, which cannot tell those apart, so `is_mechanical` refuses
   qualifier-only commands for them. They stay in the report for a human.
 
-### 3. Verify the configured Q-IDs
+### 3. ✅ The configured Q-IDs — *all resolve*
 
 The position items are confirmed
 ([Q18510612](https://www.wikidata.org/wiki/Q18510612) National Council,
 [Q18510613](https://www.wikidata.org/wiki/Q18510613) Council of States). The
 **26 canton Q-IDs were assembled without live access** and only ZH, BE, LU, AG,
-VD and GE were checked against their item pages. One command checks them all:
+VD and GE had been checked against their item pages. The 2026-07-29 run checked
+all 28: every one resolves, and every canton ID came back labelled
+`Kanton <name>` with *instance of* `Kanton der Schweiz`. Nothing transposed.
+
+Re-run it after any config change:
 
 ```bash
 uv run python -m wd_parliament --verify-config
@@ -209,7 +256,7 @@ Note that while `terms` is empty, no `ADD_TERM` suggestions are made, and under
 either** — without the P2937 term a command cannot say which of several
 same-seat statements it means. That is deliberately fail-safe.
 
-### 4. Validate the period join
+### 4. ⬜ Validate the period join — *not started*
 
 ```bash
 uv run python -m wd_parliament --validate-periods 12345 23456
@@ -220,7 +267,11 @@ actually voted against the members the interval overlap assigned to that
 period. They should agree modulo absences; anyone who **voted but was not
 assigned** means the interval logic is wrong.
 
-### 5. Try one or two QuickStatements by hand
+Worth doing after step 0c, not before: if `DateJoining` turns out to be a
+reporting-year start, the period assignment is wrong for a reason this check
+would report but not explain.
+
+### 5. ⬜ Try one or two QuickStatements by hand — *not started*
 
 Before any bulk apply, paste a single line into QuickStatements and confirm the
 statement lands with its qualifiers and reference intact.

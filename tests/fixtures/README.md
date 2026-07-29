@@ -17,6 +17,26 @@ election and runs four years). The **people are invented** — the names,
 `PersonNumber`s and dates do not describe any real member of the Federal
 Assembly, and must not be read as though they did.
 
+### Two encodings corrected on 2026-07-29
+
+The `Verify assumptions` workflow reached the live service for the first time,
+and the fixtures were wrong about two things in a way that mattered. Both are
+now as the service really sends them — **do not "tidy" either back**:
+
+- **`CouncilAbbreviation` is `NR` / `SR`**, not `N` / `S`. The service's
+  distinct values under `Language=DE` are `''`, `BR`, `NR`, `SR`. French rows
+  carry `CN` instead, which is what the one French row here now shows and why
+  the pipeline pushes `Language=DE` down.
+- **"No date" is `1753-01-01T00:00:00`, never a null.** SQL Server's `datetime`
+  minimum, sent for every sitting member's `DateLeaving`. The old fixtures used
+  `null`, which is exactly why nothing caught that `diff` would raise a
+  mechanical `ADD_END_DATE` — a P582 of 1753 — for the whole chamber. See
+  `parliament.NULL_DATE`.
+
+`PersonNumber` is also confirmed to be what P1307 holds (Parmelin: 1108, with
+`PersonIdCode` 2621 as the near-miss), so the join key these fixtures exercise
+is the right one.
+
 This is fine for what the tests actually do: every test here exercises pure
 logic — interval arithmetic, matching rules, suggestion generation, command
 rendering — none of which depends on the data being historically true.
@@ -40,12 +60,12 @@ EOF
 Keep the coverage the current fixtures were built for — both chambers, a
 mid-period joiner, a departure, a single-day tenure, a member with no
 `DateJoining`, a member with no `DateOfBirth`, a row with no `PersonNumber`,
-and a duplicate row in a second language — and the tests will keep passing
-against the real data.
+a duplicate row in a second language, and a person repeated *within* one
+language — and the tests will keep passing against the real data.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `membercouncil.json` | 12 `MemberCouncil` rows: 10 distinct people across both chambers, one duplicated in French, one with a null `PersonNumber`. |
+| `membercouncil.json` | 13 `MemberCouncil` rows: 10 distinct people across both chambers, one repeated in German (an older mandate row) and once in French, one with a null `PersonNumber`. |
 | `periods.json` | 10 `LegislativePeriod` rows: the 44th–52nd legislatures, plus the 52nd repeated in French. The 52nd has no `EndDate` — it is the running one. |

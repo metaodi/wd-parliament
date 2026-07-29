@@ -13,6 +13,7 @@ import pytest
 from wd_parliament.app import process
 from wd_parliament.config import Config
 from wd_parliament.models import (
+    KIND_ADD_END_DATE,
     KIND_ADD_MEMBERSHIP,
     KIND_NO_WIKIDATA_ITEM,
     MODEL_TENURE,
@@ -25,8 +26,8 @@ from wd_parliament.parliament import members_from_rows, periods_from_rows
 from wd_parliament.quickstatements import render_file
 from wd_parliament.report import write_reports
 
-NATIONAL = Body(council="N", label="Swiss National Council", position_qid="Q18510612")
-STATES = Body(council="S", label="Swiss Council of States", position_qid="Q18510613")
+NATIONAL = Body(council="NR", label="Swiss National Council", position_qid="Q18510612")
+STATES = Body(council="SR", label="Swiss Council of States", position_qid="Q18510613")
 
 
 class FakeParliament:
@@ -80,7 +81,7 @@ def pipeline(member_rows, period_rows, config):
 
 def test_every_chamber_gets_a_result(pipeline):
     results = pipeline()
-    assert [r.body.council for r in results] == ["N", "S"]
+    assert [r.body.council for r in results] == ["NR", "SR"]
 
 
 def test_only_sitting_members_are_processed(pipeline):
@@ -148,9 +149,9 @@ def test_members_are_routed_to_the_right_chamber(pipeline):
         "Q1104": WikidataPerson(qid="Q1104", label="Daniel Egger", parliament_id="1104")
     }
     results = pipeline(people)
-    states = next(r for r in results if r.body.council == "S")
+    states = next(r for r in results if r.body.council == "SR")
     assert any(s.person_qid == "Q1104" for s in states.suggestions)
-    national = next(r for r in results if r.body.council == "N")
+    national = next(r for r in results if r.body.council == "NR")
     assert not any(s.person_qid == "Q1104" for s in national.suggestions)
 
 
@@ -178,6 +179,39 @@ def test_a_broken_source_read_fails_the_run_instead_of_reporting(
     }
     with pytest.raises(RuntimeError, match="no sitting members"):
         process(config, FakeParliament([], period_rows), FakeWikidata(people))
+
+
+def test_a_sitting_member_is_never_given_an_end_date(pipeline, config):
+    """The null-date sentinel, from the top.
+
+    parlament.ch spells "still sitting" as ``DateLeaving = 1753-01-01``. Taken
+    literally that is a leaving date, so every sitting member with an open P39
+    would draw an ADD_END_DATE — and ADD_END_DATE is mechanical, so a P582 of
+    1753-01-01 would be written to Wikidata for most of the chamber.
+    """
+    people = {
+        f"Q{n}": WikidataPerson(
+            qid=f"Q{n}",
+            label=f"Member {n}",
+            parliament_id=str(n),
+            statements=[
+                PositionStatement(
+                    person_qid=f"Q{n}",
+                    statement_id=f"S{n}",
+                    position_qid="Q18510612",
+                    start=date(2015, 11, 30),
+                )
+            ],
+        )
+        for n in (1101, 1102, 1103, 1108)
+    }
+    results = pipeline(people)
+    all_suggestions = [s for r in results for s in r.suggestions]
+
+    assert not any(s.kind == KIND_ADD_END_DATE for s in all_suggestions)
+    qs = render_file(all_suggestions, date(2026, 7, 29), config.statement_model)
+    assert "P582" not in qs
+    assert "1753" not in qs
 
 
 def test_a_limit_caps_each_chamber(member_rows, period_rows, config):
@@ -227,8 +261,8 @@ def test_a_full_run_writes_every_artifact(tmp_path, pipeline, config):
     )
 
     assert (reports / "README.md").exists()
-    assert (reports / "N-swiss-national-council.md").exists()
-    assert (reports / "S-swiss-council-of-states.md").exists()
+    assert (reports / "NR-swiss-national-council.md").exists()
+    assert (reports / "SR-swiss-council-of-states.md").exists()
     assert (docs / "index.html").exists()
     json.loads((docs / "data.json").read_text(encoding="utf-8"))
 

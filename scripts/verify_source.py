@@ -1,6 +1,6 @@
 """Check that the parlament.ch source can actually be read as the tool assumes.
 
-Two probes, both needing live network:
+Three probes, all needing live network:
 
 **A. Can we fetch the sitting members at all?** The first real run
 (2026-07-29) read **zero** members and, because every Wikidata seat holder then
@@ -9,13 +9,21 @@ left" suggestions. Nothing reached QuickStatements — the P1307 safety rule hel
 — but the report was wrong and said so with total confidence. This probe walks
 the same filters the pipeline uses, one at a time, and prints how many rows
 survive each, so a silent zero can be attributed to the filter that caused it.
+Run on 2026-07-29 it named the council filter: the config asked for "N"/"S",
+the service says "NR"/"SR".
+
+**A2. Are the dates on those rows believable?** Arriving is not the same as
+being right. This one reports the ``DateJoining`` spread per chamber and
+flags the two shapes that would poison mechanical edits — starts that are all
+1 January (per-year segments rather than tenures) and any sitting member
+carrying a leaving date (the null-date sentinel leaking through).
 
 **B. Does P1307 hold ``MemberCouncil.PersonNumber``?** Verification step 1 from
-the README. Wikidata says Guy Parmelin ([[Q121160]]) has P1307 = 1108 and his
-biography lives at ``/biografie/guy-parmelin/1108``; what nobody has done is
-read ``PersonNumber`` back off his row. Both ``MemberCouncil`` and
-``MemberCouncilHistory`` are searched, since which table holds a former member
-is itself unestablished.
+the README, **CONFIRMED** on 2026-07-29: Guy Parmelin's row reads
+``PersonNumber=1108, PersonIdCode=2621`` against Wikidata's P1307 = 1108, so it
+is ``PersonNumber`` and not ``PersonIdCode``. Kept as a regression probe. Both
+``MemberCouncil`` and ``MemberCouncilHistory`` are searched — the run showed a
+former member appears in both.
 
 Run it locally::
 
@@ -182,6 +190,84 @@ def diagnose_member_fetch(
     return False, lines
 
 
+def describe_tenure_dates(
+    raw: Sequence[Dict[str, Any]],
+    councils: Sequence[str],
+    sample: int = 3,
+) -> List[str]:
+    """What the surviving rows say about ``DateJoining``. Pure.
+
+    Probe A establishes that members *arrive*; this says whether their dates
+    can be believed. Two things it is looking for:
+
+    **A shared 1 January start.** Guy Parmelin's sitting row gives
+    ``DateJoining = 2026-01-01`` — the current year, not his 2016 start — which
+    is what a per-year mandate segment looks like rather than a tenure start.
+    If that holds for the National Council too, then P580 is the start of the
+    reporting year for everyone, and ``ADD_MEMBERSHIP`` / ``ADD_START_DATE``
+    (both mechanical) would write it to Wikidata as the date they took office.
+
+    **Members with no start at all.** ``period_overlap`` deliberately assigns
+    such a member no periods, so a large count here silently costs the P2937
+    qualifiers for those people.
+    """
+    lines: List[str] = []
+    members = members_from_rows(raw, councils=councils, active_only=True)
+    if not members:
+        return ["(no members survived the filter — nothing to say about dates)"]
+
+    by_council: Dict[str, List[Any]] = {}
+    for member in members:
+        by_council.setdefault(member.council, []).append(member)
+
+    undated = 0
+    for council in sorted(by_council):
+        group = by_council[council]
+        starts = [m.date_joining for m in group if m.date_joining]
+        undated += len(group) - len(starts)
+        lines.append(f"{council}: {len(group)} sitting member(s)")
+        for member in group[:sample]:
+            lines.append(
+                f"    {member.person_number} {member.sort_name}: "
+                f"joined {member.date_joining}, left {member.date_leaving}"
+            )
+        distinct = sorted({d for d in starts})
+        lines.append(f"    distinct DateJoining values: {len(distinct)}")
+        if distinct:
+            lines.append(
+                f"    earliest {distinct[0]}, latest {distinct[-1]}"
+            )
+        # The signal that these are reporting-year segments, not tenures.
+        if distinct and all(d.month == 1 and d.day == 1 for d in distinct):
+            lines.append(
+                "    -> WARNING: every start is a 1 January. These look like "
+                "per-year mandate segments, not tenure starts. P580 emitted "
+                "from them would be wrong; check MemberCouncilHistory for the "
+                "real start before trusting ADD_MEMBERSHIP or ADD_START_DATE."
+            )
+
+    if undated:
+        lines.append("")
+        lines.append(
+            f"-> {undated} sitting member(s) have no DateJoining, so they are "
+            "assigned no legislative periods and get no P2937 qualifiers."
+        )
+
+    # The sentinel must never survive as a date; see parliament.NULL_DATE.
+    left = [m for m in members if m.date_leaving is not None]
+    lines.append("")
+    if left:
+        lines.append(
+            f"-> WARNING: {len(left)} member(s) are Active yet carry a leaving "
+            f"date (e.g. {left[0].person_number} left {left[0].date_leaving}). "
+            "If that date is 1753-01-01 the null-date sentinel is leaking "
+            "through parliament._as_date again."
+        )
+    else:
+        lines.append("-> OK: no sitting member carries a leaving date.")
+    return lines
+
+
 def fetch(
     client: ParliamentClient, table: str, last_name: str
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
@@ -236,6 +322,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         members_ok, lines = diagnose_member_fetch(raw, config.councils)
         for line in lines:
             print("  " + line if line else "")
+
+        if members_ok:
+            print()
+            print("-" * 70)
+            print("A2. Are the tenure dates believable?")
+            print("-" * 70)
+            for line in describe_tenure_dates(raw, config.councils):
+                print("  " + line if line else "")
 
     # --- B. does P1307 hold PersonNumber? -----------------------------------
     print()

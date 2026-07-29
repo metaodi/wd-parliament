@@ -25,19 +25,29 @@ make here:
    *disagrees* (`FIX_START_DATE`, `REVIEW_ENDED`, `REVIEW_PARTY`), not merely
    that one is missing. That is also what justifies emitting QuickStatements.
 
-## ⚠️ Unresolved at scaffold time — read before touching QuickStatements
+## ⚠️ What the live service actually returns — read before touching QuickStatements
 
-See **Open verification steps** in the README. The blocking one:
+See **Open verification steps** in the README. The `Verify assumptions`
+workflow ran against live parlament.ch on 2026-07-29 and settled most of these.
 
-- **The parlament.ch read is broken.** The first live run (2026-07-29) fetched
-  **zero** sitting members, silently, and published 2,234 wrong "this member has
-  left" suggestions — every Wikidata seat holder, flagged by the diff's second
-  pass because the member list was empty. Nothing reached QuickStatements
-  (`is_mechanical` rejected all of them), which is the safety rule earning its
-  keep. `app.process` now raises on an empty fetch and
-  `diff.compute_suggestions` skips the reverse walk without members, but
-  **neither fixes the read**: run `scripts/verify_source.py` to find whether
-  the `Active` boolean or the `CouncilAbbreviation` filter is at fault.
+Two facts about the source, both learned the hard way, both now enforced in
+`parliament.py`. **Do not "simplify" either away:**
+
+- **`CouncilAbbreviation` is `NR` / `SR`** (German, because the service is
+  queried with `Language=DE`; the distinct values are `''`, `BR`, `NR`, `SR`,
+  and French rows say `CN`). The config asked for `N` / `S` — from the OData
+  docs, matching nothing — which is why the first live run fetched **zero**
+  sitting members and published 2,234 wrong "this member has left" suggestions.
+  Nothing reached QuickStatements; `is_mechanical` rejected all of them, the
+  safety rule earning its keep.
+- **"No date" is `1753-01-01`, not a null** — SQL Server's `datetime` minimum,
+  on every sitting member's `DateLeaving`. `parliament.NULL_DATE` maps it (and
+  anything below) to `None` at the mapping boundary. Left unmapped it reads as
+  "left in 1753", which makes `diff` raise `ADD_END_DATE` for the whole
+  chamber — and that kind **is** mechanical, so it would have reached
+  QuickStatements as a P582 backfill. It also reverses every tenure interval,
+  costing every P2937 qualifier silently. The P1307 provenance rule does not
+  catch this class of error; only the mapping does.
 
 - **`statement_model` is settled: `tenure`.** Censused against live Wikidata
   (2026-07-29): of 3,043 items with both P1307 and a National Council P39,
@@ -46,11 +56,20 @@ See **Open verification steps** in the README. The blocking one:
   **contradicts** WikiProject "every politician"'s documented per-term
   convention — the data wins, since duplicates are what the tool must avoid.
   Do not flip it back without re-running the census query in the README.
-- **P1307 == `PersonNumber`** is still unverified directly. Strongly supported
-  (Q121160 / P1307 = 1108 matches Parmelin's biography URL; the property's URL
-  pattern is built from `PersonNumber`; the census found 3,043 National
-  Councillors carrying it) but nobody has read `PersonNumber` off an actual
-  `MemberCouncil` row, and none of that distinguishes it from `PersonIdCode`.
+- **P1307 == `PersonNumber`: confirmed.** Parmelin's row reads
+  `PersonNumber=1108, PersonIdCode=2621` against Wikidata's P1307 = 1108, so it
+  is `PersonNumber` and not `PersonIdCode`. `resolve.match_by_identifier` is
+  comparing the right fields.
+
+Still open, and the reason `ADD_MEMBERSHIP` / `ADD_START_DATE` should not be
+applied in bulk yet:
+
+- **Is `DateJoining` a tenure start or a reporting-year segment?** Parmelin's
+  sitting row says `2026-01-01`, not his 2016 start, and his history rows are
+  broken up by year. If sitting `NR` / `SR` rows are segmented the same way,
+  P580 emitted from `DateJoining` is wrong — and both kinds that emit it are
+  mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
+  run it since it was added.
 
 Two facts from the same census shape the diff's behaviour:
 

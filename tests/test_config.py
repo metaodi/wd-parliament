@@ -31,7 +31,7 @@ def test_minimal_config(tmp_path):
 
 def test_the_shipped_config_loads():
     cfg = load_config("config/parliament.yaml")
-    assert [b.council for b in cfg.bodies] == ["N", "S"]
+    assert [b.council for b in cfg.bodies] == ["NR", "SR"]
     assert cfg.position_qids == ["Q18510612", "Q18510613"]
     assert len(cfg.cantons) == 26
     assert cfg.canton_qid("ZH") == "Q11943"
