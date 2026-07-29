@@ -46,11 +46,25 @@ Near parity, so the useful number is not which is bigger but how many seat
 holders carry P14527 and *not* P1307 — that is exactly what a second join path
 would add.
 
-A caution when reading the output: this backend logs unknown query parameters
-as a warning and sends them anyway rather than rejecting them (and the warning
-itself does not interpolate the table name — it prints a literal ``'{table}'``).
-``limit`` is one of those: it is not honoured, which is why the first run pulled
-all 26,574 person records. Scope queries by group instead of trying to cap them.
+Three things about querying it, from the API's own OpenAPI document:
+
+- **``search_mode`` defaults to ``partial``** — case-insensitive ILIKE
+  substring matching. That is why a surname alone returned the wrong Andrey.
+  Every lookup here passes ``search_mode=exact`` instead (see :data:`EXACT`).
+- **filters are ordinary query parameters**, so ``body_key=CHE`` and
+  ``group_id=1663`` narrow server-side. Prefer that to fetching a table and
+  sieving it here — the first run pulled all 26,574 person records to measure a
+  federal number.
+- **``limit`` is the page size, not a cap on the result.** It is honoured, but
+  swissparlpy's response iterator follows ``next_page`` to exhaustion, so
+  iterating a query returns everything that matches regardless. ``len()`` on
+  the response is ``meta.total_records`` off the first page, which
+  :func:`count_only` uses to count without paging.
+
+Note also that the backend logs *unrecognised* parameters as a warning and
+sends them anyway rather than rejecting them, and the warning does not
+interpolate the table name — it prints a literal ``'{table}'``. So a typo in a
+filter is easy to miss; check the counts look plausible.
 
 Run it locally::
 
@@ -482,15 +496,71 @@ def _count(bindings: Sequence[dict], name: str) -> int:
         return 0
 
 
+def compare_counts(total: int, non_null: int, field: str) -> Tuple[str, str]:
+    """Server-side confirmation that ``field`` is populated. Pure.
+
+    ``exclude_null`` makes the API do the filtering, so this does not depend on
+    the probe having picked the right column name in Python — the mistake that
+    made an earlier run report every seat membership as undated. Only called
+    once ``field`` is known to exist on the rows: handing ``exclude_null`` a
+    column that is not there would leave the total unchanged and read as "all
+    populated", which is the same false-confirmation in a new costume.
+    """
+    if total == 0:
+        return INCONCLUSIVE, "No rows at all, so there is nothing to confirm."
+    if non_null == total:
+        return (
+            CONFIRMED,
+            f"The API reports {non_null} of {total} rows with a non-null "
+            f"{field}, agreeing with the client-side count.",
+        )
+    if non_null == 0:
+        return (
+            CONTRADICTED,
+            f"The API reports 0 of {total} rows with a non-null {field}.",
+        )
+    return (
+        CONTRADICTED,
+        f"The API reports {non_null} of {total} rows with a non-null {field}, "
+        f"so {total - non_null} carry none.",
+    )
+
+
+# The API's own search modes (see its OpenAPI description). ``partial`` is the
+# default and is ILIKE substring matching — which is why a surname alone found
+# the wrong Andrey. ``exact`` is a case-insensitive whole-value match, and it is
+# what every lookup here wants. ``metadata`` scope keeps the query off the
+# full-text document indexes.
+EXACT = {"search_mode": "exact", "search_scope": "metadata"}
+
+
 def fetch(
     client: Any, table: str, **params: Any
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    """Rows from one OpenParlData table, plus the error if it could not be read."""
+    """Rows from one OpenParlData table, plus the error if it could not be read.
+
+    Note this **iterates**, and the response iterator follows ``next_page`` to
+    exhaustion — so ``limit`` bounds the page size, not the number of rows you
+    get back. Use :func:`count_only` when a total is all that is wanted.
+    """
     try:
         return [dict(r) for r in client.get_data(table, **params)], None
     except Exception as exc:  # an unreadable table is a finding, not a crash
         print(f"  ! {table}: {exc}")
         return [], f"{table}: {exc}"
+
+
+def count_only(client: Any, table: str, **params: Any) -> Optional[int]:
+    """``meta.total_records`` for a query, without paging through it.
+
+    ``len()`` on the response is the server's total, read off the first page,
+    so this costs one request however many rows match.
+    """
+    try:
+        return len(client.get_data(table, **params))
+    except Exception as exc:
+        print(f"  ! {table} (count): {exc}")
+        return None
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -505,10 +575,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--last-name",
         default="Andrey",
         help=(
-            "Surname of that member. Matched together with --first-name: the "
-            "backend searches partially, so a surname alone found the wrong "
-            "Andrey on 2026-07-29 (a Fribourg cantonal member)."
+            "Surname of that member. Looked up together with --first-name under "
+            "search_mode=exact: the API's default 'partial' mode is ILIKE "
+            "substring matching, so a surname alone found the wrong Andrey on "
+            "2026-07-29 (a Fribourg cantonal member)."
         ),
+    )
+    parser.add_argument(
+        "--body-key",
+        default="CHE",
+        help="The body whose members to measure. CHE is the Federal Assembly.",
     )
     args = parser.parse_args(argv)
 
@@ -531,13 +607,25 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 1
 
     # The body is the *level*, not a chamber; reported for orientation only.
-    bodies, _ = fetch(client, "bodies")
+    # An earlier run read 0 rows here, which was blamed on the API. It is more
+    # likely swissparlpy's defaults: it always sends search="" with
+    # search_scope="all", so scope is pinned to metadata explicitly.
+    bodies, _ = fetch(client, "bodies", search_scope="metadata")
     print(f"bodies: {len(bodies)} row(s)")
     for row in bodies[:5]:
-        print(f"  {_describe(row)}")
+        seats = row.get("legislative_seats")
+        suffix = f", legislative_seats={seats!r}" if seats is not None else ""
+        print(f"  {_describe(row)}{suffix}")
     print()
 
-    groups, _ = fetch(client, "groups")
+    # Ask the API for the chambers by name rather than pulling all ~8,800
+    # groups and sieving them here. chamber_of still checks what comes back:
+    # the server narrows, it does not get to decide.
+    groups: List[Dict[str, Any]] = []
+    for spellings in CHAMBER_NAMES.values():
+        found, _ = fetch(client, "groups", search=spellings[0], **EXACT)
+        groups.extend(found)
+    print(f"exact-name search returned {len(groups)} group(s)")
     chambers, group_lines = find_chamber_groups(groups)
     for line in group_lines:
         print("  " + line if line else "")
@@ -548,14 +636,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("B. Do the chambers' memberships carry dates?")
     print("=" * 70)
     seat_verdict, seat_detail = INCONCLUSIVE, "No chamber group was found."
-    members: List[Dict[str, Any]] = []
     for council, group in chambers.items():
-        print(f"--- {council} (group {group.get('id')}) ---")
-        rows, _ = fetch(client, "memberships", group_id=group.get("id"))
-        members.extend(rows)
+        group_id = group.get("id")
+        print(f"--- {council} (group {group_id}) ---")
+        rows, _ = fetch(client, "memberships", group_id=group_id)
         verdict, detail, lines = classify_seat_memberships(rows)
         for line in lines:
             print("  " + line if line else "")
+
+        # Independent confirmation: let the API do the null-filtering with
+        # exclude_null, so the answer does not rest on this script having
+        # guessed the column name. Only meaningful once the column is known to
+        # exist, which classify_seat_memberships establishes.
+        begin_field = _present(rows, BEGIN_FIELDS)
+        if begin_field:
+            total = count_only(client, "memberships", group_id=group_id)
+            non_null = count_only(
+                client, "memberships", group_id=group_id, exclude_null=begin_field
+            )
+            if total is not None and non_null is not None:
+                server_verdict, server_detail = compare_counts(
+                    total, non_null, begin_field
+                )
+                print(f"  server-side check: {server_verdict}: {server_detail}")
+
         print(f"  => {verdict}: {detail}")
         print()
         # The National Council is the population the census in D measures.
@@ -568,10 +672,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("=" * 70)
     print("C. Person walk and wikidata_id coverage")
     print("=" * 70)
-    print(f"Sampling '{args.first_name} {args.last_name}'\n")
-    sample, _ = fetch(
-        client, "persons", firstname=args.first_name, lastname=args.last_name
-    )
+    full_name = f"{args.first_name} {args.last_name}"
+    print(f"Sampling '{full_name}' (search_mode=exact)\n")
+    sample, _ = fetch(client, "persons", search=full_name, **EXACT)
     for row in sample[:3]:
         print(f"  {row.get('id')} {row.get('fullname')!r} "
               f"body_key={row.get('body_key')!r} wikidata_id={row.get('wikidata_id')!r}")
@@ -594,21 +697,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 "named differently — check the near misses in A."
             )
     else:
-        print(f"  ! nobody matched '{args.first_name} {args.last_name}'")
+        print(f"  ! nobody matched '{full_name}' exactly")
     print()
 
-    # Scope the coverage count to the people who actually hold a seat, rather
-    # than to every person in the API at every level of government.
-    seat_person_ids = {
-        r.get("person_id") for r in members if r.get("person_id") is not None
-    }
-    people: List[Dict[str, Any]] = []
-    if seat_person_ids:
-        everyone, _ = fetch(client, "persons")
-        people = [r for r in everyone if r.get("id") in seat_person_ids]
-        print(f"  scoped to the {len(people)} federal member(s) found in B")
-    else:
-        print("  (no seat memberships in B, so there is nobody to scope to)")
+    # Scope server-side with body_key rather than pulling every person in the
+    # API and sieving here: the first run fetched all 26,574 people at every
+    # level of Swiss government to measure a federal number.
+    people, _ = fetch(client, "persons", body_key=args.body_key)
+    print(f"  persons with body_key={args.body_key!r}: {len(people)}")
+    sitting = [r for r in people if r.get("active") in (True, "true", "True", 1)]
+    if sitting:
+        print(f"  of which active: {len(sitting)}")
     _, people_lines = summarise_wikidata_ids(people)
     for line in people_lines:
         print("  " + line if line else "")
@@ -646,7 +745,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("=" * 70)
     print(f"A. Chambers located as groups : {', '.join(sorted(chambers)) or 'NONE'}")
     print(f"B. Seat tenure with dates     : {seat_verdict}")
-    print(f"C. wikidata_id on members     : "
+    print(f"C. wikidata_id on body {args.body_key:<6}: "
           f"{sum(1 for r in people if _text(r.get('wikidata_id')).strip())}"
           f"/{len(people)}")
     print(f"D. {OPENPARLDATA_ID} as a join key   : {id_verdict}")

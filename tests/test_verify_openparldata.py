@@ -26,9 +26,11 @@ from verify_openparldata import (  # noqa: E402
     INCONCLUSIVE,
     chamber_candidates,
     chamber_of,
+    EXACT,
     classify_seat_memberships,
-    date_columns,
+    compare_counts,
     compare_identifier_coverage,
+    date_columns,
     coverage_query,
     find_chamber_groups,
     marginal_gain_query,
@@ -277,6 +279,37 @@ def test_a_larger_property_makes_switching_defensible():
     verdict, detail = compare_identifier_coverage(3043, 3100, 120)
     assert verdict == CONFIRMED
     assert "defensible on size" in detail
+
+
+# --- the server-side cross-check --------------------------------------------
+def test_the_server_agreeing_confirms():
+    """exclude_null makes the API filter, so this does not rest on the probe
+    having guessed the column name — the mistake that cost the last answer."""
+    verdict, detail = compare_counts(4398, 4398, "begin_date")
+    assert verdict == CONFIRMED
+    assert "agreeing with the client-side count" in detail
+
+
+def test_the_server_reporting_none_contradicts():
+    verdict, detail = compare_counts(4398, 0, "begin_date")
+    assert verdict == CONTRADICTED
+    assert "0 of 4398" in detail
+
+
+def test_a_partial_server_count_names_the_shortfall():
+    verdict, detail = compare_counts(4398, 4000, "begin_date")
+    assert verdict == CONTRADICTED
+    assert "398 carry none" in detail
+
+
+def test_no_rows_confirms_nothing():
+    verdict, _ = compare_counts(0, 0, "begin_date")
+    assert verdict == INCONCLUSIVE
+
+
+def test_lookups_ask_the_api_for_an_exact_match():
+    """The API's default is ILIKE substring, which found the wrong Andrey."""
+    assert EXACT == {"search_mode": "exact", "search_scope": "metadata"}
 
 
 # --- the census queries themselves ------------------------------------------
