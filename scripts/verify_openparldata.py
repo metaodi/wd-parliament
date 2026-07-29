@@ -114,29 +114,65 @@ def _text(value: Any) -> str:
     return "" if value is None else str(value)
 
 
-def _names_of(row: Dict[str, Any]) -> str:
-    """Every name-ish field on a row, lowercased and run together. Pure."""
-    return " ".join(
-        _text(value).lower()
+def _normalise(value: Any) -> str:
+    """Lowercased, whitespace-collapsed, for comparing a name to a name. Pure."""
+    return " ".join(_text(value).lower().split())
+
+
+def _name_values(row: Dict[str, Any]) -> List[str]:
+    """Each name-ish field on a row, normalised, one per field. Pure.
+
+    One string *per field* rather than one run-together haystack: matching has
+    to be able to ask whether a name **equals** a chamber's, and concatenating
+    the fields first makes that impossible.
+    """
+    return [
+        _normalise(value)
         for field, value in row.items()
-        if field.startswith("name") or field.startswith("title")
-    )
+        if (field.startswith("name") or field.startswith("title")) and value
+    ]
 
 
 def chamber_of(row: Dict[str, Any]) -> Optional[str]:
     """"NR", "SR" or ``None`` for a group (or membership) row. Pure.
 
-    Matches on the chamber's own name rather than on a type or a body, because
-    the run of 2026-07-29 showed a cantonal legislature carrying exactly the
-    same ``council_legislative`` type as a federal seat would.
+    Requires a name to **equal** the chamber's, not merely contain it. The
+    2026-07-29 run showed why: a substring match picks up "Präsidium des
+    Nationalrates" — a committee of eight — and reports it as the chamber, so
+    section B measured a presidium and called the answer CONTRADICTED. "Büro
+    NR", "Kommission für Verkehr des Nationalrates" and the parliamentary
+    groups are all the same trap.
+
+    The cost of being strict is a chamber named with a suffix would be missed,
+    which is why :func:`chamber_candidates` reports the near misses rather than
+    letting them pass silently.
     """
-    haystack = _names_of(row)
-    for council, markers in CHAMBER_NAMES.items():
-        if any(marker in haystack for marker in markers):
-            # "Büro NR" and the like are committees *of* the council, named
-            # after it; the chamber's own group is not qualified that way.
+    names = _name_values(row)
+    for council, spellings in CHAMBER_NAMES.items():
+        if any(name in spellings for name in names):
             return council
     return None
+
+
+def chamber_candidates(
+    rows: Sequence[Dict[str, Any]],
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Rows whose name *mentions* a chamber without being it. Pure.
+
+    Reporting-only. These are the rows :func:`chamber_of` deliberately rejects,
+    surfaced so that a chamber named "Nationalrat 52. Legislatur" would be
+    visible as a near miss instead of vanishing.
+    """
+    out: Dict[str, List[Dict[str, Any]]] = {"NR": [], "SR": []}
+    for row in rows:
+        if chamber_of(row) is not None:
+            continue
+        names = _name_values(row)
+        for council, spellings in CHAMBER_NAMES.items():
+            if any(s in name for name in names for s in spellings):
+                out[council].append(row)
+                break
+    return out
 
 
 def find_chamber_groups(
@@ -144,9 +180,10 @@ def find_chamber_groups(
 ) -> Tuple[Dict[str, Dict[str, Any]], List[str]]:
     """The National Council and Council of States among ``groups``. Pure.
 
-    Returns ``{"NR": row, "SR": row}`` for whichever were found. Missing either
-    is a real answer: it would mean the seat cannot be located in this API, and
-    the rest of the evaluation is moot.
+    Returns ``{"NR": row, "SR": row}`` for whichever were found by an exact
+    name match. Missing either is a real answer — but a loud one: the near
+    misses are printed so that "not found" can be told apart from "found under
+    a name this function did not expect".
     """
     lines: List[str] = []
     if not rows:
@@ -161,19 +198,19 @@ def find_chamber_groups(
         if council and council not in found:
             found[council] = row
 
+    near = chamber_candidates(rows)
     lines.append(f"{len(rows)} group(s) read, {len(found)} chamber(s) identified")
     lines.append("")
     for council in ("NR", "SR"):
         if council in found:
             lines.append(f"  {council}: {_describe(found[council])}")
         else:
-            lines.append(f"  {council}: NOT FOUND")
-
-    if not found:
-        lines.append("")
-        lines.append("  Sample of what is there instead:")
-        for row in rows[:8]:
-            lines.append(f"    {_describe(row)}")
+            lines.append(
+                f"  {council}: NOT FOUND by exact name "
+                f"({len(near[council])} group(s) mention it)"
+            )
+        for row in near[council][:5]:
+            lines.append(f"        near miss: {_describe(row)}")
     return found, lines
 
 
@@ -485,10 +522,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
               f"body_key={row.get('body_key')!r} wikidata_id={row.get('wikidata_id')!r}")
     if sample:
         walked, _ = fetch(client, "memberships", person_id=sample[0].get("id"))
-        print(f"  {len(walked)} membership(s) for that person:")
-        for row in walked[:12]:
+        seats = [r for r in walked if chamber_of(r)]
+        dated = [r for r in walked if _text(r.get("date_start")).strip()]
+        print(f"  {len(walked)} membership(s), {len(dated)} with a date_start, "
+              f"{len(seats)} naming a chamber outright")
+        # The chamber rows first: they are the ones that would source P39.
+        for row in (seats + [r for r in walked if r not in seats])[:12]:
             marker = f"  <- {chamber_of(row)}" if chamber_of(row) else ""
             print(f"    {_describe_membership(row)}{marker}")
+        if not seats:
+            print(
+                "  -> None of this person's memberships is the chamber itself. "
+                "Either the seat is not modelled as a membership, or it is "
+                "named differently — check the near misses in A."
+            )
     else:
         print(f"  ! nobody matched '{args.first_name} {args.last_name}'")
     print()

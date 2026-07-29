@@ -24,6 +24,7 @@ from verify_openparldata import (  # noqa: E402
     CONFIRMED,
     CONTRADICTED,
     INCONCLUSIVE,
+    chamber_candidates,
     chamber_of,
     classify_seat_memberships,
     compare_identifier_coverage,
@@ -76,6 +77,50 @@ def test_a_chamber_is_recognised_by_name_in_any_language(name, expected):
     assert chamber_of({"name_de": name}) == expected
 
 
+@pytest.mark.parametrize(
+    "name",
+    [
+        "Präsidium des Nationalrates",
+        "Büro NR",
+        "Kommission für Verkehr des Nationalrates",
+        "Präsidium des Ständerates",
+        "Sekretariat Nationalrat",
+    ],
+)
+def test_a_committee_of_the_chamber_is_not_the_chamber(name):
+    """The 2026-07-29 trap: a substring match made a presidium of eight the
+    National Council, so section B measured a committee and answered anyway."""
+    assert chamber_of({"name_de": name}) is None
+
+
+def test_names_are_compared_per_field_not_run_together():
+    """Concatenating the name fields first would make an exact match impossible."""
+    row = {"name_de": "Nationalrat", "name_fr": "Conseil national"}
+    assert chamber_of(row) == "NR"
+
+
+def test_a_chamber_name_is_matched_regardless_of_spacing_or_case():
+    assert chamber_of({"name_de": "  NATIONALRAT  "}) == "NR"
+
+
+def test_near_misses_are_reported_rather_than_matched():
+    """So a chamber named unexpectedly is visible instead of silently missed."""
+    rows = [group(1, "Präsidium des Nationalrates"), group(2, "Nationalrat"),
+            group(3, "Kantonsrat Zug")]
+    near = chamber_candidates(rows)
+    assert [r["id"] for r in near["NR"]] == [1]  # 2 is an exact match, not a near miss
+    assert near["SR"] == []
+
+
+def test_a_missing_chamber_names_its_near_misses():
+    found, lines = find_chamber_groups([group(1, "Präsidium des Nationalrates")])
+    assert found == {}
+    blob = "\n".join(lines)
+    assert "NR: NOT FOUND by exact name (1 group(s) mention it)" in blob
+    assert "near miss" in blob
+    assert "Präsidium des Nationalrates" in blob
+
+
 def test_both_chambers_are_found_among_cantonal_groups():
     rows = [group(1), group(2, "Nationalrat"), group(3, "Ständerat"), group(4)]
     found, lines = find_chamber_groups(rows)
@@ -89,12 +134,12 @@ def test_a_missing_chamber_is_named_rather_than_omitted():
     assert any("SR: NOT FOUND" in ln for ln in lines)
 
 
-def test_no_chambers_at_all_shows_what_was_there_instead():
+def test_no_chambers_and_no_near_misses_says_so_plainly():
     found, lines = find_chamber_groups([group(1), group(2, "Kantonsrat Zug")])
     assert found == {}
     blob = "\n".join(lines)
-    assert "Sample of what is there instead" in blob
-    assert "Kantonsrat Zug" in blob
+    assert "NR: NOT FOUND by exact name (0 group(s) mention it)" in blob
+    assert "SR: NOT FOUND by exact name (0 group(s) mention it)" in blob
 
 
 def test_an_empty_groups_table_is_not_reported_as_a_finding():
