@@ -1,0 +1,54 @@
+name: Update parliament TODO
+
+on:
+  # Run every Monday at 06:00 UTC.
+  schedule:
+    - cron: "0 6 * * 1"
+  # Allow manual runs from the Actions tab.
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Only process the first N members per chamber (leave empty for all)"
+        required: false
+        default: ""
+
+# Needed so the workflow can commit the generated reports back to the repo.
+permissions:
+  contents: write
+
+concurrency:
+  group: wd-parliament-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          python-version: "3.11"
+          enable-cache: true
+
+      - name: Generate parliament TODO
+        run: |
+          uv run python -m wd_parliament \
+            --config config/parliament.yaml \
+            --reports-dir reports \
+            --docs-dir docs \
+            ${{ github.event.inputs.limit && format('--limit {0}', github.event.inputs.limit) || '' }}
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports docs
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: update parliament TODO ($(date -u +%Y-%m-%d))"
+            git push
+          fi

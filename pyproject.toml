@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wd-parliament"
+version = "0.1.0"
+description = "Compare the current members of the Swiss Federal Assembly (parlament.ch) with position held (P39) statements on Wikidata and generate a TODO list of suggested Wikidata edits."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Stefan Oderbolz" }]
+dependencies = [
+    "swissparlpy>=1.0",
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "Jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+wd-parliament = "wd_parliament.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
