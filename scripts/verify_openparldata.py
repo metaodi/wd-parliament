@@ -546,6 +546,69 @@ def compare_counts(total: int, non_null: int, field: str) -> Tuple[str, str]:
 EXACT = {"search_mode": "exact", "search_scope": "metadata"}
 
 
+# Combinations worth trying against the ``search`` parameter, which returns
+# nothing under swissparlpy's defaults. The backend always sends ``search=""``
+# with ``lang="en"``, ``lang_format="flat"`` and ``search_scope="all"``, and any
+# of those could be the reason.
+#
+# Two notes on the parameters themselves. The language one is
+# ``search_language`` — ``search_lang`` is **not** a parameter, and this backend
+# forwards unrecognised names with only a warning, so a near-miss spelling is
+# silently dropped rather than rejected. And ``%`` is only meaningful in
+# ``partial`` mode, where the match is ILIKE and ``%`` is the wildcard; under
+# ``exact`` it is a literal per cent sign and matches nothing.
+SEARCH_VARIANTS: Tuple[Tuple[str, Dict[str, Any]], ...] = (
+    ("swissparlpy defaults", {}),
+    ("search=%", {"search": "%"}),
+    ("search_language=de", {"search_language": "de"}),
+    ("search=% + search_language=de", {"search": "%", "search_language": "de"}),
+    ("search=% + scope=metadata", {"search": "%", "search_scope": "metadata"}),
+    ("lang=de", {"lang": "de"}),
+    ("search=% + lang=de", {"search": "%", "lang": "de"}),
+)
+
+# The same, for looking a chamber up by name rather than listing a table.
+NAMED_VARIANTS: Tuple[Tuple[str, Dict[str, Any]], ...] = (
+    ("exact", {"search_mode": "exact"}),
+    ("exact + search_language=de", {"search_mode": "exact", "search_language": "de"}),
+    ("exact + lang=de", {"search_mode": "exact", "lang": "de"}),
+    ("partial + search_language=de", {"search_mode": "partial", "search_language": "de"}),
+    ("partial + lang=de", {"search_mode": "partial", "lang": "de"}),
+)
+
+
+def summarise_variants(
+    results: Sequence[Tuple[str, Optional[int]]], expected_at_least: int = 1
+) -> Tuple[List[str], Optional[str]]:
+    """Which parameter combinations returned rows. Pure.
+
+    Returns the lines to print and the label of the first combination that
+    worked, or ``None`` when every one came back empty. ``None`` is a real
+    answer — it says the ``search`` parameter is unusable here, not that the
+    data is missing, and the field-filter path is unaffected either way.
+    """
+    lines: List[str] = []
+    winner: Optional[str] = None
+    for label, count in results:
+        if count is None:
+            lines.append(f"  {label:<32} ERROR")
+            continue
+        mark = "" if count >= expected_at_least else "  (empty)"
+        lines.append(f"  {label:<32} {count} row(s){mark}")
+        if winner is None and count >= expected_at_least:
+            winner = label
+    lines.append("")
+    if winner is None:
+        lines.append(
+            "  -> Every combination came back empty. The 'search' parameter is "
+            "not usable through this backend; narrow with field filters "
+            "instead. Nothing below depends on it."
+        )
+    else:
+        lines.append(f"  -> First combination that returns rows: {winner}")
+    return lines, winner
+
+
 def fetch(
     client: Any, table: str, **params: Any
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
@@ -617,6 +680,33 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"  ! could not list tables: {exc}")
         print("\nThe API could not be read at all — connectivity, not a finding.")
         return 1
+
+    # --- E. which query parameters actually work? ----------------------------
+    # An experiment, deliberately separate from the measurement: A-D narrow with
+    # field filters, which work, so nothing here can regress them. Replacing a
+    # working mechanism with an untested one is what made run 6 worse than 5.
+    print()
+    print("-" * 70)
+    print("E. Does the 'search' parameter work with different parameters?")
+    print("-" * 70)
+    print("listing a table (bodies returns 0 under the defaults):")
+    body_results = [
+        (label, count_only(client, "bodies", **params))
+        for label, params in SEARCH_VARIANTS
+    ]
+    body_lines, _ = summarise_variants(body_results)
+    for line in body_lines:
+        print(line)
+    print()
+    print("looking a chamber up by name (search='Nationalrat'):")
+    named_results = [
+        (label, count_only(client, "groups", search="Nationalrat", **params))
+        for label, params in NAMED_VARIANTS
+    ]
+    named_lines, _ = summarise_variants(named_results)
+    for line in named_lines:
+        print(line)
+    print()
 
     # The body is the *level*, not a chamber; reported for orientation only.
     # An earlier run read 0 rows here, which was blamed on the API. It is more

@@ -34,6 +34,7 @@ from verify_openparldata import (  # noqa: E402
     coverage_query,
     find_chamber_groups,
     marginal_gain_query,
+    summarise_variants,
     summarise_wikidata_ids,
 )
 
@@ -310,6 +311,37 @@ def test_no_rows_confirms_nothing():
 def test_lookups_ask_the_api_for_an_exact_match():
     """The API's default is ILIKE substring, which found the wrong Andrey."""
     assert EXACT == {"search_mode": "exact", "search_scope": "metadata"}
+
+
+# --- E. which query parameters work -----------------------------------------
+def test_the_first_working_combination_is_named():
+    lines, winner = summarise_variants(
+        [("defaults", 0), ("search=%", 12), ("search=% + lang=de", 12)]
+    )
+    assert winner == "search=%"
+    blob = "\n".join(lines)
+    assert "defaults                         0 row(s)  (empty)" in blob
+    assert "First combination that returns rows: search=%" in blob
+
+
+def test_all_empty_says_the_parameter_is_unusable():
+    """A "no" here must not read as "the data is missing"."""
+    lines, winner = summarise_variants([("defaults", 0), ("search=%", 0)])
+    assert winner is None
+    assert any("not usable through this backend" in ln for ln in lines)
+    assert any("Nothing below depends on it" in ln for ln in lines)
+
+
+def test_an_erroring_combination_is_distinguished_from_an_empty_one():
+    lines, winner = summarise_variants([("defaults", None), ("search=%", 3)])
+    assert winner == "search=%"
+    assert any("ERROR" in ln for ln in lines)
+
+
+def test_a_threshold_can_be_required():
+    """One stray row is not proof a lookup worked."""
+    _, winner = summarise_variants([("a", 1), ("b", 40)], expected_at_least=10)
+    assert winner == "b"
 
 
 # --- the census queries themselves ------------------------------------------
