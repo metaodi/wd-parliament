@@ -48,12 +48,16 @@ would add.
 
 Three things about querying it, from the API's own OpenAPI document:
 
-- **the ``search`` parameter does not work through this backend.** Its
-  ``search_mode`` defaults to ``partial`` (ILIKE substring, which is why a
-  surname alone returned the wrong Andrey), and ``exact`` exists — but both
-  returned **zero** rows for a German name or group, because swissparlpy
-  hard-codes ``lang='en'`` with ``lang_format='flat'`` and the searchable
-  columns are then the English ones. See :data:`EXACT`.
+- **``lang='de'`` is load-bearing.** swissparlpy hard-codes ``lang='en'``
+  with ``lang_format='flat'``, and the English columns are null, so a table
+  can read as completely empty: ``bodies`` returns 0 rows under the defaults
+  and **1,405** with ``lang='de'``. Neither ``search='%'`` nor
+  ``search_language='de'`` makes any difference — measured, not assumed.
+- **``search`` works, but ``exact`` is case-sensitive** in practice, despite
+  the documentation calling it a case-insensitive exact match.
+  ``search='Nationalrat'`` returns exactly 1 group; the lowercase
+  ``search='nationalrat'`` returns 0. Its default mode is ``partial`` (ILIKE
+  substring), which is why a surname alone returned the wrong Andrey.
 - **field filters are ordinary query parameters and do work**, so
   ``firstname=``, ``lastname=``, ``body_key=CHE`` and ``group_id=1663``
   narrow server-side. Prefer that to fetching a table and sieving it here —
@@ -533,16 +537,16 @@ def compare_counts(total: int, non_null: int, field: str) -> Tuple[str, str]:
 # default and is ILIKE substring matching — which is why a surname alone found
 # the wrong Andrey — and ``exact`` is a case-insensitive whole-value match.
 #
-# **But the ``search`` parameter is not usable through this backend.** Tried on
-# 2026-07-29: ``search='Gerhard Andrey'`` and ``search='nationalrat'`` with
-# ``search_mode=exact`` both returned **zero** rows, where the same lookups by
-# *field filter* return the right ones. swissparlpy hard-codes ``lang='en'``
-# with ``lang_format='flat'``, so the flattened searchable columns are the
-# English ones and a German name matches nothing in them.
+# ``exact`` **does** work, but it is **case-sensitive in practice** despite the
+# documentation calling it a case-insensitive exact match. Measured on
+# 2026-07-29: ``search='Nationalrat'`` with ``search_mode=exact`` returns
+# exactly 1 group, while the lowercase ``search='nationalrat'`` returned 0 —
+# which is what made an earlier run conclude, wrongly, that ``search`` was
+# unusable. :data:`CHAMBER_NAMES` holds normalised lowercase spellings for
+# comparing rows here, so they must not be passed to the API as-is.
 #
-# Kept as a named constant so the finding is recorded rather than rediscovered.
-# Use field filters — ``firstname=``, ``lastname=``, ``body_key=``,
-# ``group_id=`` — which are ordinary query parameters and do work.
+# Field filters (``firstname=``, ``lastname=``, ``body_key=``, ``group_id=``)
+# stay the mechanism A-D use: they need no casing care and are already proven.
 EXACT = {"search_mode": "exact", "search_scope": "metadata"}
 
 
@@ -712,15 +716,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # An earlier run read 0 rows here, which was blamed on the API. It is more
     # likely swissparlpy's defaults: it always sends search="" with
     # search_scope="all", so scope is pinned to metadata explicitly.
-    bodies, _ = fetch(client, "bodies", indexed=True)
+    # lang="de" is load-bearing: swissparlpy hard-codes lang="en" with
+    # lang_format="flat", and the English columns are null, so the table reads
+    # as empty. This is why `bodies` looked broken for four runs.
+    bodies, _ = fetch(client, "bodies", lang="de")
     print(f"bodies: {len(bodies)} row(s)")
     for row in bodies[:5]:
         seats = row.get("legislative_seats")
         suffix = f", legislative_seats={seats!r}" if seats is not None else ""
         print(f"  {_describe(row)}{suffix}")
     if not bodies:
-        print("  (still empty; unexplained — the table is listed but returns "
-              "nothing. Not load-bearing: the chambers are groups.)")
+        print("  (empty even with lang=de, which is unexpected — that is what "
+              "fixed it on 2026-07-29.)")
     print()
 
     # Narrow by body_key, which is a field filter and does work, then match the

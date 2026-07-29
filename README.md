@@ -300,15 +300,16 @@ equality — a substring match picks up `Präsidium des Nationalrates` and
 **The seat tenure is there, and it is dated.** The columns are `begin_date` /
 `end_date`:
 
-| group | memberships | with `begin_date` | with `end_date` |
-| --- | ---: | ---: | ---: |
-| Nationalrat (1663) | 4,398 | **4,398** | 4,198 |
-| Ständerat (1664) | 1,220 | **1,220** | — |
+| group | memberships | with `begin_date` | with `end_date` | open |
+| --- | ---: | ---: | ---: | ---: |
+| Nationalrat (1663) | 4,398 | **4,398** | 4,198 | **200** |
+| Ständerat (1664) | 1,220 | **1,220** | 1,174 | **46** |
 
 Every seat membership carries a start. The dates are real per-term spans going
 back to 1853 — `2019-12-02 → 2023-12-03` is the 51st legislature exactly,
-`2003-12-01 → 2007-12-02` the 47th. And 4,398 − 4,198 = **200 open-ended NR
-memberships**, precisely the size of the National Council.
+`2003-12-01 → 2007-12-02` the 47th. And the open-ended rows come to **200 for
+the National Council and 46 for the Council of States** — both chambers' exact
+sizes, which is a strong sign the data is current as well as correct.
 
 Two things confirm this rather than one. The probe counts the populated column
 itself, *and* asks the API to do the same filtering with `exclude_null`:
@@ -368,15 +369,20 @@ membership is. Any rewrite must read the seat by group.
 
 **How to query it**, learned the hard way and worth following:
 
-- **Narrow with field filters, not `search`.** `body_key=CHE`, `firstname=`,
-  `lastname=` and `group_id=` are ordinary query parameters and work.
-  The `search` parameter does **not** work through this backend in either mode:
-  `search='nationalrat'` and `search='Gerhard Andrey'` with
-  `search_mode=exact` both returned **zero** rows, because swissparlpy
-  hard-codes `lang='en'` with `lang_format='flat'` and the searchable columns
-  are then the English ones. Note the default mode is `partial` — ILIKE
-  substring — which is why `lastname=Andrey` alone matched *Pascal* Andrey, a
-  Fribourg cantonal member, and made one run measure the wrong person.
+- **`lang='de'` is load-bearing.** swissparlpy hard-codes `lang='en'` with
+  `lang_format='flat'`, and the English columns are null — so a table can read
+  as *completely empty*. `bodies` returns 0 rows under the defaults and
+  **1,405** with `lang='de'`. Neither `search='%'` nor `search_language='de'`
+  changes anything; this was measured across seven combinations, not guessed.
+- **`search` works, but `exact` is case-sensitive** in practice, despite the
+  documentation calling it a case-insensitive exact match:
+  `search='Nationalrat'` returns exactly 1 group, `search='nationalrat'`
+  returns 0. Its default mode is `partial` — ILIKE substring — which is why
+  `lastname=Andrey` alone matched *Pascal* Andrey, a Fribourg cantonal member,
+  and made one run measure the wrong person.
+- **Field filters need no such care** and are what this probe narrows with:
+  `body_key=CHE` cuts 8,817 groups to 1,041, and `firstname=`/`lastname=`
+  together find the right person.
 - **`limit` is the page size, not a cap.** swissparlpy's response iterator
   follows `next_page` to exhaustion, so iterating returns everything that
   matches regardless. `len()` on a response is `meta.total_records` off the
@@ -386,9 +392,8 @@ membership is. Any rewrite must read the seat by group.
   `'{table}'`. A mistyped filter is easy to miss; check the counts look
   plausible.
 
-Still unexplained: `bodies` returns **0 rows** despite being a listed table,
-with or without `search_scope=metadata` and `indexed=true`. Not load-bearing —
-the chambers are groups.
+`bodies` returning 0 rows was **not** an API bug — it was the `lang='en'`
+default, as above. With `lang='de'` it returns 1,405.
 
 ```bash
 uv run python scripts/verify_openparldata.py
