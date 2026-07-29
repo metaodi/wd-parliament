@@ -48,13 +48,16 @@ would add.
 
 Three things about querying it, from the API's own OpenAPI document:
 
-- **``search_mode`` defaults to ``partial``** — case-insensitive ILIKE
-  substring matching. That is why a surname alone returned the wrong Andrey.
-  Every lookup here passes ``search_mode=exact`` instead (see :data:`EXACT`).
-- **filters are ordinary query parameters**, so ``body_key=CHE`` and
-  ``group_id=1663`` narrow server-side. Prefer that to fetching a table and
-  sieving it here — the first run pulled all 26,574 person records to measure a
-  federal number.
+- **the ``search`` parameter does not work through this backend.** Its
+  ``search_mode`` defaults to ``partial`` (ILIKE substring, which is why a
+  surname alone returned the wrong Andrey), and ``exact`` exists — but both
+  returned **zero** rows for a German name or group, because swissparlpy
+  hard-codes ``lang='en'`` with ``lang_format='flat'`` and the searchable
+  columns are then the English ones. See :data:`EXACT`.
+- **field filters are ordinary query parameters and do work**, so
+  ``firstname=``, ``lastname=``, ``body_key=CHE`` and ``group_id=1663``
+  narrow server-side. Prefer that to fetching a table and sieving it here —
+  the first run pulled all 26,574 person records to measure a federal number.
 - **``limit`` is the page size, not a cap on the result.** It is honoured, but
   swissparlpy's response iterator follows ``next_page`` to exhaustion, so
   iterating a query returns everything that matches regardless. ``len()`` on
@@ -528,9 +531,18 @@ def compare_counts(total: int, non_null: int, field: str) -> Tuple[str, str]:
 
 # The API's own search modes (see its OpenAPI description). ``partial`` is the
 # default and is ILIKE substring matching — which is why a surname alone found
-# the wrong Andrey. ``exact`` is a case-insensitive whole-value match, and it is
-# what every lookup here wants. ``metadata`` scope keeps the query off the
-# full-text document indexes.
+# the wrong Andrey — and ``exact`` is a case-insensitive whole-value match.
+#
+# **But the ``search`` parameter is not usable through this backend.** Tried on
+# 2026-07-29: ``search='Gerhard Andrey'`` and ``search='nationalrat'`` with
+# ``search_mode=exact`` both returned **zero** rows, where the same lookups by
+# *field filter* return the right ones. swissparlpy hard-codes ``lang='en'``
+# with ``lang_format='flat'``, so the flattened searchable columns are the
+# English ones and a German name matches nothing in them.
+#
+# Kept as a named constant so the finding is recorded rather than rediscovered.
+# Use field filters — ``firstname=``, ``lastname=``, ``body_key=``,
+# ``group_id=`` — which are ordinary query parameters and do work.
 EXACT = {"search_mode": "exact", "search_scope": "metadata"}
 
 
@@ -610,22 +622,25 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # An earlier run read 0 rows here, which was blamed on the API. It is more
     # likely swissparlpy's defaults: it always sends search="" with
     # search_scope="all", so scope is pinned to metadata explicitly.
-    bodies, _ = fetch(client, "bodies", search_scope="metadata")
+    bodies, _ = fetch(client, "bodies", indexed=True)
     print(f"bodies: {len(bodies)} row(s)")
     for row in bodies[:5]:
         seats = row.get("legislative_seats")
         suffix = f", legislative_seats={seats!r}" if seats is not None else ""
         print(f"  {_describe(row)}{suffix}")
+    if not bodies:
+        print("  (still empty; unexplained — the table is listed but returns "
+              "nothing. Not load-bearing: the chambers are groups.)")
     print()
 
-    # Ask the API for the chambers by name rather than pulling all ~8,800
-    # groups and sieving them here. chamber_of still checks what comes back:
-    # the server narrows, it does not get to decide.
-    groups: List[Dict[str, Any]] = []
-    for spellings in CHAMBER_NAMES.values():
-        found, _ = fetch(client, "groups", search=spellings[0], **EXACT)
-        groups.extend(found)
-    print(f"exact-name search returned {len(groups)} group(s)")
+    # Narrow by body_key, which is a field filter and does work, then match the
+    # chamber by name here. The `search` parameter returns nothing through this
+    # backend (see EXACT), so the narrowing has to come from a filter.
+    groups, _ = fetch(client, "groups", body_key=args.body_key)
+    if not groups:
+        print(f"  (no groups for body_key={args.body_key!r}; falling back to all)")
+        groups, _ = fetch(client, "groups")
+    print(f"groups searched: {len(groups)}")
     chambers, group_lines = find_chamber_groups(groups)
     for line in group_lines:
         print("  " + line if line else "")
@@ -636,10 +651,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("B. Do the chambers' memberships carry dates?")
     print("=" * 70)
     seat_verdict, seat_detail = INCONCLUSIVE, "No chamber group was found."
+    seat_person_ids: set = set()
     for council, group in chambers.items():
         group_id = group.get("id")
         print(f"--- {council} (group {group_id}) ---")
         rows, _ = fetch(client, "memberships", group_id=group_id)
+        seat_person_ids.update(
+            r.get("person_id") for r in rows if r.get("person_id") is not None
+        )
         verdict, detail, lines = classify_seat_memberships(rows)
         for line in lines:
             print("  " + line if line else "")
@@ -673,8 +692,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("C. Person walk and wikidata_id coverage")
     print("=" * 70)
     full_name = f"{args.first_name} {args.last_name}"
-    print(f"Sampling '{full_name}' (search_mode=exact)\n")
-    sample, _ = fetch(client, "persons", search=full_name, **EXACT)
+    print(f"Sampling '{full_name}' by field filter\n")
+    sample, _ = fetch(
+        client,
+        "persons",
+        firstname=args.first_name,
+        lastname=args.last_name,
+        body_key=args.body_key,
+    )
     for row in sample[:3]:
         print(f"  {row.get('id')} {row.get('fullname')!r} "
               f"body_key={row.get('body_key')!r} wikidata_id={row.get('wikidata_id')!r}")
@@ -697,17 +722,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 "named differently — check the near misses in A."
             )
     else:
-        print(f"  ! nobody matched '{full_name}' exactly")
+        print(f"  ! nobody matched firstname={args.first_name!r} "
+              f"lastname={args.last_name!r}")
     print()
 
-    # Scope server-side with body_key rather than pulling every person in the
-    # API and sieving here: the first run fetched all 26,574 people at every
-    # level of Swiss government to measure a federal number.
-    people, _ = fetch(client, "persons", body_key=args.body_key)
-    print(f"  persons with body_key={args.body_key!r}: {len(people)}")
-    sitting = [r for r in people if r.get("active") in (True, "true", "True", 1)]
+    # Narrow with body_key — one request instead of the 26,574 rows an early
+    # run pulled — then keep the people who actually hold a seat. That, not
+    # everyone attached to the Federal Assembly, is the population this tool
+    # reconciles: body_key also carries Federal Councillors and staff.
+    federal, _ = fetch(client, "persons", body_key=args.body_key)
+    print(f"  persons with body_key={args.body_key!r}: {len(federal)}")
+    sitting = [r for r in federal if r.get("active") in (True, "true", "True", 1)]
     if sitting:
         print(f"  of which active: {len(sitting)}")
+    people = [r for r in federal if r.get("id") in seat_person_ids] or federal
+    if seat_person_ids:
+        print(f"  holding a seat membership from B: {len(people)}")
     _, people_lines = summarise_wikidata_ids(people)
     for line in people_lines:
         print("  " + line if line else "")
