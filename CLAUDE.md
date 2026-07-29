@@ -68,18 +68,22 @@ applied in bulk yet:
   sitting row says `2026-01-01`, not his 2016 start, and his history rows are
   broken up by year. If sitting `NR` / `SR` rows are segmented the same way,
   P580 emitted from `DateJoining` is wrong — and both kinds that emit it are
-  mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
-  run it since it was added.
+  mechanical. `scripts/verify_source.py` section **A2** shows the shape;
+  `scripts/compare_tenure_dates.py` answers it, by comparing `DateJoining`
+  against OpenParlData's per-term `begin_date` joined through Wikidata
+  (`PersonNumber` →P1307→ Q-ID ←`wikidata_id`). Both run in `verify.yml`
+  without gating it.
 
 **OpenParlData is a live option, not a dead end** (README step 6). Its chambers
 are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality
 because `Präsidium des Nationalrates` and `Büro NR` are not the chamber. The
 seat is a `memberships` row pointing at one, and **all 5,618 carry a
-`begin_date`** — real per-term spans back to 1853, with 200 open-ended NR rows
-matching the chamber's size exactly. So it *can* source P39 including P2937,
+`begin_date`** — real per-term spans back to 1853, with 200 open-ended NR and
+46 open-ended SR rows, both chambers' sizes exactly. So it *can* source P39 including P2937,
 and it reaches far enough back for the historic-members extension. Whether to
-switch turns on comparing its dates against `MemberCouncil.DateJoining`, which
-nobody has done; that comparison also answers step 0c.
+switch turns on comparing its dates against `MemberCouncil.DateJoining` —
+`scripts/compare_tenure_dates.py` does that, and the same comparison answers
+step 0c.
 
 Three things about it that cost a wrong answer each, and are now guarded:
 
@@ -245,13 +249,15 @@ no run has happened yet.
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
-  `scripts/verify_source.py`, `--verify-config` and
-  `scripts/verify_openparldata.py`, writes all three to the run summary, and
-  writes nothing to the repo. Keep it read-only: it is the diagnostic you run
-  *before* trusting `update.yml`'s output. The OpenParlData step is an
-  evaluation and is deliberately excluded from the job's pass/fail — do not
-  wire its outcome into the gate. Note `workflow_dispatch` requires the file to
-  be on the default branch.
+  `scripts/verify_source.py`, `--verify-config`,
+  `scripts/verify_openparldata.py` and `scripts/compare_tenure_dates.py`,
+  writes all four to the run summary, and writes nothing to the repo. Keep it
+  read-only: it is the diagnostic you run *before* trusting `update.yml`'s
+  output. The last two report without gating and are deliberately excluded
+  from the job's pass/fail — do not wire their outcomes into the gate; the
+  gate says whether the pipeline may run, and those two answer whether a
+  *bulk apply* is safe. The file must be on the default branch to appear in
+  the dispatch UI, though a dispatch then runs the selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion

@@ -10,10 +10,16 @@ name: Verify assumptions
 #   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
 #      the items they claim to?
 #
-# It also runs one *evaluation* rather than a check: whether swissparlpy's
-# OpenParlData backend could source this tool's data, and whether P14527 is a
-# better join key than P1307. That one reports and never gates — a "no" there
-# is an answer about a design option, not a broken pipeline.
+# It also runs two things that report without gating:
+#
+#   * whether swissparlpy's OpenParlData backend could source this tool's
+#     data, and whether P14527 is a better join key than P1307 — a "no" there
+#     is an answer about a design option, not a broken pipeline;
+#   * README step 0c, comparing MemberCouncil.DateJoining against
+#     OpenParlData's per-term begin_date. A disagreement blocks a *bulk
+#     apply* of ADD_MEMBERSHIP / ADD_START_DATE, since both are mechanical,
+#     but it does not stop reports being generated — which is what this
+#     job's pass/fail decides. Read it before applying QuickStatements.
 #
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
@@ -116,6 +122,25 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # README step 0c: does MemberCouncil.DateJoining agree with OpenParlData's
+      # per-term begin_date? Both kinds that emit P580 are mechanical, so a
+      # disagreement blocks a bulk apply — but not the generation of reports,
+      # which is what this job's pass/fail is about. Reports, does not gate.
+      - name: Compare the tenure start dates (step 0c)
+        id: tenure
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python scripts/compare_tenure_dates.py \
+            --config config/parliament.yaml 2>&1 | tee tenure.txt
+          {
+            echo "## 4. Tenure start dates — README step 0c"
+            echo
+            echo '```'
+            cat tenure.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -128,6 +153,7 @@ jobs:
             echo "| parlament.ch source + P1307 join | \`$source_step\` |"
             echo "| Configured Q-IDs | \`$qids\` |"
             echo "| OpenParlData evaluation | \`${{ steps.openparldata.outcome }}\` (does not gate) |"
+            echo "| Tenure start dates (0c) | \`${{ steps.tenure.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both checks passed: the members are readable, the identifier"

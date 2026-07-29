@@ -133,10 +133,31 @@ His National Council history rows *do* carry real term dates (2003-12-01,
 Councillors. It is not yet known either way, because the probe only fetched
 Parmelin, who now sits in neither chamber.
 
-`scripts/verify_source.py` grew a section **A2** that answers it: it prints the
-`DateJoining` spread per chamber and warns when every start is a 1 January.
-Dispatch `Verify assumptions` again and read that section before letting any
-`ADD_MEMBERSHIP` or `ADD_START_DATE` reach QuickStatements.
+Two things now measure it, and the second is the one that can actually answer
+it:
+
+- `scripts/verify_source.py` section **A2** prints the `DateJoining` spread per
+  chamber and warns when every start is a 1 January. It can see the *shape* of
+  the problem but not the right answer, having only the one source.
+- `scripts/compare_tenure_dates.py` compares `DateJoining` against
+  OpenParlData's per-term `begin_date` for the same member, joining the two
+  through Wikidata — `PersonNumber` →P1307→ Q-ID ←`wikidata_id`— since there is
+  no shared key. Both ends of that join are confirmed (steps 1 and 6). A member
+  who cannot be joined is counted and skipped, never guessed at.
+
+```bash
+uv run python scripts/compare_tenure_dates.py
+```
+
+It reports `CONFIRMED` when the two agree (so P580 from `DateJoining` is right),
+and `CONTRADICTED` when they do not — saying specifically whether the
+disagreements are all `DateJoining` on a 1 January against a real date, which is
+the failure this step predicts. Fewer than ten joinable members is
+`INCONCLUSIVE`: that is a finding about the join, not about the dates.
+
+Both run in `Verify assumptions`, reporting without gating the job — a
+disagreement blocks a **bulk apply**, not the generation of reports. Read it
+before letting any `ADD_MEMBERSHIP` or `ADD_START_DATE` reach QuickStatements.
 
 ### 1. ✅ The P1307 assumption — *CONFIRMED*
 
