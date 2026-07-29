@@ -82,15 +82,15 @@ def expected_statements(
     """What Wikidata should hold for ``member``, under ``statement_model``."""
     covered = assign_periods(member, periods)
     if statement_model == MODEL_PERIOD:
-        return [
-            ExpectedStatement(
-                start=clip_to_period(member, period)[0],
-                end=clip_to_period(member, period)[1],
-                period=period,
-                periods=[period],
+        statements = []
+        for period in covered:
+            start, end = clip_to_period(member, period)
+            statements.append(
+                ExpectedStatement(
+                    start=start, end=end, period=period, periods=[period]
+                )
             )
-            for period in covered
-        ]
+        return statements
     return [
         ExpectedStatement(
             start=member.date_joining,
