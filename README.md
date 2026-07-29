@@ -276,6 +276,69 @@ would report but not explain.
 Before any bulk apply, paste a single line into QuickStatements and confirm the
 statement lands with its qualifiers and reference intact.
 
+### 6. ⬜ Open question: should the source be OpenParlData instead? — *unmeasured*
+
+`swissparlpy` 1.0.0 ships a second backend, `openparldata`, reading
+[api.openparldata.ch](https://api.openparldata.ch), and Wikidata is said to
+have an *OpenParlData ID* property (P14527). Either could replace the P1307 ↔
+`PersonNumber` join that the rest of this document is built on, so it is worth
+settling rather than leaving as folklore.
+
+What the package's own documentation supports, without any network access:
+
+- **Federal coverage exists.** Its examples query Karin Keller-Sutter and
+  Gerhard Andrey, whose memberships include `Büro NR` and `CHE_`-prefixed
+  identifiers. Not just cantonal parliaments.
+- **`persons` carries `wikidata_id` and `party_harmonized_wikidata_id`.** The
+  second is directly useful today: `config/parliament.yaml` ships `parties:`
+  and `parl_groups:` **empty on purpose**, because a wrong qualifier Q-ID is
+  worse than none. A source-supplied party Q-ID removes that hand-maintained
+  map.
+- **The multilingual shape is better** — `party_de` / `party_fr` as columns,
+  rather than OData's row-per-language duplication.
+
+And what argues against a straight swap:
+
+- **Every membership in the documentation is a *sub-body*** — `interest_group`,
+  `committee_ad_hoc`, `committee`. None is the council seat itself. This tool
+  reconciles P39 "member of the National Council" with P580/P582 and P2937,
+  which needs a seat tenure with a date range; `MemberCouncil` is exactly that
+  shape. If `memberships` models only committees, the backend cannot source
+  P39 however good its other fields are.
+- **A join is worth what the Wikidata side carries.** P1307 is confirmed and
+  was censused at 3,043 items holding it *and* a National Council P39. A newer
+  property will likely sit well below that, and the tool's highest-priority
+  suggestion is already "Add Swiss parliament ID" — i.e. it exists partly to
+  improve P1307 coverage.
+- **`wikidata_id` is a different class of claim.** `is_mechanical` gates on
+  `QID_FROM_IDENTIFIER`, meaning *Wikidata* asserted the identifier that
+  established the match. A Q-ID a third party asserts about Wikidata may be
+  fine to trust, but that is a decision to take deliberately, not one to
+  inherit by reusing the existing gate.
+- The backend is documented as **"still under development"**, and passes
+  unknown query parameters through with a `log.warning` rather than rejecting
+  them — the same silent-mismatch class that cost the first run every member.
+
+None of that is measured. `scripts/verify_openparldata.py` measures it:
+
+```bash
+uv run python scripts/verify_openparldata.py
+```
+
+It lists `bodies` and names the federal one, counts `wikidata_id` coverage
+across the sitting members, samples one member's `memberships` to see whether
+the **seat** appears with a `date_start`, and censuses P14527 against P1307 over
+the same population in a single SPARQL query. Section **C** is the one that
+decides replacement-versus-enrichment. It is wired into the `Verify
+assumptions` workflow as an evaluation that **never gates the job** — a "no"
+here is an answer about a design option, not a broken pipeline.
+
+Current recommendation, pending those numbers: **add OpenParlData as a second
+join path and an enrichment source; do not replace the OData read.** The P1307
+join is confirmed and its two failure modes are now fixed and tested, so that
+path's cost is already paid, while OpenParlData plausibly buys a higher hit
+rate, the party and group Q-IDs, and an independent read on step 0c.
+
 ---
 
 ## What it checks

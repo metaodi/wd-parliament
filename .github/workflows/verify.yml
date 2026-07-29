@@ -10,6 +10,11 @@ name: Verify assumptions
 #   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
 #      the items they claim to?
 #
+# It also runs one *evaluation* rather than a check: whether swissparlpy's
+# OpenParlData backend could source this tool's data, and whether P14527 is a
+# better join key than P1307. That one reports and never gates — a "no" there
+# is an answer about a design option, not a broken pipeline.
+#
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
 # that workflow's output.
@@ -25,6 +30,10 @@ on:
         description: "The P1307 value Wikidata holds for that person"
         required: false
         default: "1108"
+      openparldata_sample_name:
+        description: "A sitting National Councillor, to sample OpenParlData memberships"
+        required: false
+        default: "Andrey"
 
 # Read-only on purpose. This workflow must never write to the repository.
 permissions:
@@ -86,6 +95,27 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
 
+      # An evaluation, not a check. Its outcome is deliberately absent from
+      # the job result below: whether OpenParlData suits this tool is a design
+      # question, and a "no" must not turn the diagnostic red.
+      - name: Evaluate the OpenParlData backend and P14527
+        id: openparldata
+        continue-on-error: true
+        env:
+          SAMPLE_NAME: ${{ inputs.openparldata_sample_name }}
+        run: |
+          set +e
+          uv run python scripts/verify_openparldata.py \
+            --config config/parliament.yaml \
+            --last-name "$SAMPLE_NAME" 2>&1 | tee openparldata.txt
+          {
+            echo "## 3. OpenParlData backend (evaluation only)"
+            echo
+            echo '```'
+            cat openparldata.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -97,6 +127,7 @@ jobs:
             echo "| --- | --- |"
             echo "| parlament.ch source + P1307 join | \`$source_step\` |"
             echo "| Configured Q-IDs | \`$qids\` |"
+            echo "| OpenParlData evaluation | \`${{ steps.openparldata.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both checks passed: the members are readable, the identifier"

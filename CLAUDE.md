@@ -71,6 +71,17 @@ applied in bulk yet:
   mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
   run it since it was added.
 
+- **Should the source be OpenParlData instead?** `swissparlpy` ships an
+  `openparldata` backend, and Wikidata reportedly has an OpenParlData ID
+  property (P14527). Its `persons` records carry `wikidata_id` and
+  `party_harmonized_wikidata_id`, which would fill the deliberately-empty
+  `parties` / `parl_groups` maps. But every membership in its documentation is
+  a *sub-body* (committee, interest group, `Büro NR`), never the council seat —
+  and a seat tenure with dates is the whole input to `expected_statements`.
+  `scripts/verify_openparldata.py` settles it; **section C is the decisive
+  one**. Until it has run, do not rewrite `parliament.py` around the new
+  backend. See README step 6 for the full argument.
+
 Two facts from the same census shape the diff's behaviour:
 
 - **89.4% of items carry no P2937 at all**, so populating `terms:` in the
@@ -211,10 +222,13 @@ no run has happened yet.
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
-  `scripts/verify_source.py` and `--verify-config`, writes both to the run
-  summary, and writes nothing to the repo. Keep it read-only: it is the
-  diagnostic you run *before* trusting `update.yml`'s output. Note
-  `workflow_dispatch` requires the file to be on the default branch.
+  `scripts/verify_source.py`, `--verify-config` and
+  `scripts/verify_openparldata.py`, writes all three to the run summary, and
+  writes nothing to the repo. Keep it read-only: it is the diagnostic you run
+  *before* trusting `update.yml`'s output. The OpenParlData step is an
+  evaluation and is deliberately excluded from the job's pass/fail — do not
+  wire its outcome into the gate. Note `workflow_dispatch` requires the file to
+  be on the default branch.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion
