@@ -306,19 +306,33 @@ def test_an_unmapped_party_is_skipped(periods):
 
 
 # --- the reverse walk -------------------------------------------------------
-def test_wikidata_still_lists_a_departed_member(periods):
-    """Somebody Wikidata thinks is sitting, whom parlament.ch does not list."""
-    ghost = WikidataPerson(
-        qid="Q99",
-        label="Ghost Member",
+def _ghost(qid="Q99", label="Ghost Member", end=None):
+    return WikidataPerson(
+        qid=qid,
+        label=label,
         statements=[
             PositionStatement(
-                person_qid="Q99", statement_id="S9", position_qid=POSITION,
-                start=date(2015, 11, 30),
+                person_qid=qid, statement_id="S9", position_qid=POSITION,
+                start=date(2015, 11, 30), end=end,
             )
         ],
     )
-    suggestions = compute_suggestions(BODY, [], {"Q99": ghost}, periods, make_config(MODEL_TENURE))
+
+
+def _sitting_member_and_person():
+    """A satisfied member, so the reverse walk has a member list to work from."""
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    return member, person([statement])
+
+
+def test_wikidata_still_lists_a_departed_member(periods):
+    """Somebody Wikidata thinks is sitting, whom parlament.ch does not list."""
+    member, seated = _sitting_member_and_person()
+    people = {"Q7": seated, "Q99": _ghost()}
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
     assert kinds(suggestions) == [KIND_ADD_END_DATE]
     assert suggestions[0].person_qid == "Q99"
     # No leaving date is known for someone outside the current-members set, so
@@ -327,16 +341,23 @@ def test_wikidata_still_lists_a_departed_member(periods):
 
 
 def test_a_closed_statement_is_not_flagged_in_the_reverse_walk(periods):
-    departed = WikidataPerson(
-        qid="Q99",
-        statements=[
-            PositionStatement(
-                person_qid="Q99", statement_id="S9", position_qid=POSITION,
-                start=date(2015, 11, 30), end=date(2019, 12, 1),
-            )
-        ],
-    )
-    assert compute_suggestions(BODY, [], {"Q99": departed}, periods, make_config(MODEL_TENURE)) == []
+    member, seated = _sitting_member_and_person()
+    people = {"Q7": seated, "Q99": _ghost(end=date(2019, 12, 1))}
+    assert compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    ) == []
+
+
+def test_an_empty_member_list_suppresses_the_reverse_walk(periods):
+    """The 2026-07-29 failure: a broken source read flagged 2,234 people.
+
+    'parlament.ch does not list this person' is only a claim we can make once
+    parlament.ch has told us who it does list.
+    """
+    people = {f"Q{n}": _ghost(qid=f"Q{n}") for n in range(90, 99)}
+    assert compute_suggestions(
+        BODY, [], people, periods, make_config(MODEL_TENURE)
+    ) == []
 
 
 def test_a_sitting_member_is_not_flagged_in_the_reverse_walk(periods):
@@ -349,6 +370,8 @@ def test_a_sitting_member_is_not_flagged_in_the_reverse_walk(periods):
 
 
 def test_statements_for_another_position_are_ignored(periods):
+    """An open Council of States seat must not surface in the National Council."""
+    member, seated = _sitting_member_and_person()
     other = WikidataPerson(
         qid="Q99",
         statements=[
@@ -358,7 +381,9 @@ def test_statements_for_another_position_are_ignored(periods):
             )
         ],
     )
-    assert compute_suggestions(BODY, [], {"Q99": other}, periods, make_config(MODEL_TENURE)) == []
+    assert compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": other}, periods, make_config(MODEL_TENURE)
+    ) == []
 
 
 # --- the period statement model ---------------------------------------------

@@ -233,6 +233,16 @@ def compute_suggestions(
         suggestions.extend(_member_suggestions(body, member, person, periods, config))
 
     # 2) Wikidata -> parlament.ch: people Wikidata still lists as sitting.
+    #
+    # This pass asserts "parlament.ch does not list this person", which is only
+    # a claim we are entitled to make if parlament.ch told us who it *does*
+    # list. Given an empty member list the pass would flag every seat holder on
+    # Wikidata — 2,234 of them in the run of 2026-07-29 — so it is skipped
+    # rather than run against nothing.
+    if not members:
+        suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
+        return suggestions
+
     active_qids = {m.qid for m in members if m.qid and m.active}
     for qid, person in sorted(people.items()):
         if qid in active_qids:

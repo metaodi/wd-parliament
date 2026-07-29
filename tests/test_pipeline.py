@@ -154,6 +154,32 @@ def test_members_are_routed_to_the_right_chamber(pipeline):
     assert not any(s.person_qid == "Q1104" for s in national.suggestions)
 
 
+def test_a_broken_source_read_fails_the_run_instead_of_reporting(
+    period_rows, config
+):
+    """The 2026-07-29 failure, from the top.
+
+    parlament.ch returned nothing and the run still produced 2,234 confident
+    'this member has left' suggestions and committed them. A run that read no
+    members is a broken read, and it must stop before anything is written.
+    """
+    people = {
+        f"Q{n}": WikidataPerson(
+            qid=f"Q{n}",
+            label=f"Seat holder {n}",
+            statements=[
+                PositionStatement(
+                    person_qid=f"Q{n}", statement_id=f"S{n}",
+                    position_qid="Q18510612", start=date(1900, 1, 1),
+                )
+            ],
+        )
+        for n in range(10)
+    }
+    with pytest.raises(RuntimeError, match="no sitting members"):
+        process(config, FakeParliament([], period_rows), FakeWikidata(people))
+
+
 def test_a_limit_caps_each_chamber(member_rows, period_rows, config):
     results = process(
         config, FakeParliament(member_rows, period_rows), FakeWikidata(), limit=2

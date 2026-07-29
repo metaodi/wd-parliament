@@ -31,11 +31,53 @@ enables a class of check wd-squads cannot make.
 
 ## ⚠️ Open verification steps
 
-**This project has been scaffolded but never run end to end against live
-data.** The environment it was built in could reach neither `ws.parlament.ch`
-nor `query.wikidata.org` — both were refused by the network egress policy.
-Step 2 below has since been settled by running its query against live Wikidata;
-step 1 has not. Work through the rest before applying any QuickStatements.
+**The first live run failed** — see step 0, which is the blocking one.
+Step 2 has since been settled against live Wikidata; step 1 has not. Work
+through these in order before applying any QuickStatements.
+
+### 0. ⛔ The source read is broken — fix this before anything else
+
+The first live run (2026-07-29, commit `897b2c2`) fetched **zero sitting
+members** from parlament.ch, and did so silently: no exception, no error
+recorded. With the member list empty, every Wikidata seat holder fell through
+the diff's second pass and was reported as having left, so the run published
+**2,234 confident and wrong** "this member has left" suggestions across the two
+chambers.
+
+Nothing reached QuickStatements — those suggestions carry no `qid_source` and
+no leaving date, so `is_mechanical` rejected all of them, and
+`suggestions.qs` correctly reads `0 of 2234 suggestions are mechanical`. The
+safety rule did its job. The report did not.
+
+Two changes now stop that failure recurring:
+
+- `app.process` raises when the member fetch comes back empty, so the Action
+  fails before committing anything;
+- `diff.compute_suggestions` skips the reverse walk entirely when there are no
+  members, because "parlament.ch does not list this person" is not a claim you
+  can make when parlament.ch has told you nothing.
+
+Neither *fixes* the read. To find out which filter is at fault:
+
+```bash
+uv run python scripts/verify_source.py
+```
+
+It walks the pipeline's own narrowing — every row, then `Active`, then the
+configured `CouncilAbbreviation` values — printing the count after each stage
+plus the distinct values actually present. Whichever stage drops to zero is the
+answer. The two likeliest causes:
+
+- **the council filter.** `config/parliament.yaml` filters on
+  `council: N` / `council: S`, taken from the OData docs. If the real
+  `CouncilAbbreviation` values are `NR`/`SR`, `members_from_rows` discards
+  every row and the probe says so by name.
+- **the `Active` boolean.** `parliament.get_members` pushes `Active=True` down
+  to OData; if pyodata renders that as `True` rather than OData v2's `true`,
+  the service can match nothing and return an empty set without erroring.
+
+The stale artifacts from that run are still committed on `main` and should be
+regenerated (or reverted) once the read works.
 
 ### 1. Confirm the P1307 assumption — *strong evidence, not verified directly*
 
@@ -54,7 +96,7 @@ What is **not** confirmed: nobody has fetched Parmelin's `MemberCouncil` row and
 read `PersonNumber` back. Do that first:
 
 ```bash
-uv run python scripts/verify_p1307.py
+uv run python scripts/verify_source.py
 ```
 
 It searches **both** `MemberCouncil` and `MemberCouncilHistory` — Parmelin left
@@ -361,7 +403,7 @@ how to replace them with real captures.
 ## Running on GitHub Actions
 
 - [`Verify assumptions`](.github/workflows/verify.yml) — **`workflow_dispatch`
-  only**, `contents: read`. Runs `scripts/verify_p1307.py` and
+  only**, `contents: read`. Runs `scripts/verify_source.py` and
   `--verify-config` and writes both results to the run summary. Generates
   nothing, commits nothing, publishes nothing. Run this **before** the update
   workflow. Both checks run even if the first fails, so one dispatch answers

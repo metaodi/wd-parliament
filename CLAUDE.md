@@ -27,9 +27,17 @@ make here:
 
 ## ⚠️ Unresolved at scaffold time — read before touching QuickStatements
 
-The project has **never been run end to end against live data**; the
-environment it was built in could reach neither `ws.parlament.ch` nor
-`query.wikidata.org`. See **Open verification steps** in the README.
+See **Open verification steps** in the README. The blocking one:
+
+- **The parlament.ch read is broken.** The first live run (2026-07-29) fetched
+  **zero** sitting members, silently, and published 2,234 wrong "this member has
+  left" suggestions — every Wikidata seat holder, flagged by the diff's second
+  pass because the member list was empty. Nothing reached QuickStatements
+  (`is_mechanical` rejected all of them), which is the safety rule earning its
+  keep. `app.process` now raises on an empty fetch and
+  `diff.compute_suggestions` skips the reverse walk without members, but
+  **neither fixes the read**: run `scripts/verify_source.py` to find whether
+  the `Active` boolean or the `CouncilAbbreviation` filter is at fault.
 
 - **`statement_model` is settled: `tenure`.** Censused against live Wikidata
   (2026-07-29): of 3,043 items with both P1307 and a National Council P39,
@@ -184,7 +192,7 @@ no run has happened yet.
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
-  `scripts/verify_p1307.py` and `--verify-config`, writes both to the run
+  `scripts/verify_source.py` and `--verify-config`, writes both to the run
   summary, and writes nothing to the repo. Keep it read-only: it is the
   diagnostic you run *before* trusting `update.yml`'s output. Note
   `workflow_dispatch` requires the file to be on the default branch.
