@@ -28,10 +28,12 @@ use them.
 **B. Do the chambers' memberships carry dates?** The decisive question. This
 tool reconciles P39 "member of the National Council" with P580/P582 and P2937
 term qualifiers, all of which come from a seat tenure with a start and an end.
-The first run found a *cantonal* seat membership (``council_legislative``,
-"Grosser Rat des Kantons Freiburg") whose ``date_start`` and ``date_end`` were
-both null. Whether the federal ones are populated is what decides
-replacement-versus-enrichment.
+
+The column names are resolved from the rows rather than assumed, and a column
+that is **absent** is reported as INCONCLUSIVE rather than as empty. Those two
+look identical through ``row.get()`` and mean opposite things: an earlier run
+read ``date_start`` — which is what ``speeches`` calls it — and so reported all
+5,618 seat memberships as undated when the field is ``begin_date``.
 
 **C. Do the federal person records carry ``wikidata_id``?** A populated one is
 the Q-ID itself. The first run measured 16.2% across all 26,574 people in the
@@ -226,14 +228,45 @@ def _describe(row: Dict[str, Any]) -> str:
     return ", ".join(parts)
 
 
+# What a membership might call its tenure bounds, most likely first. The live
+# API uses ``begin_date`` / ``end_date``; ``date_start`` / ``date_end`` are what
+# ``speeches`` uses, and assuming those here made the probe read a column that
+# does not exist and report 5,618 seats as undated.
+BEGIN_FIELDS = ("begin_date", "date_start", "start_date", "date_begin", "valid_from")
+END_FIELDS = ("end_date", "date_end", "finish_date", "date_finish", "valid_to")
+
+
+def _present(rows: Sequence[Dict[str, Any]], candidates: Sequence[str]) -> Optional[str]:
+    """The first candidate that exists as a column on these rows. Pure."""
+    keys = {key for row in rows for key in row}
+    for candidate in candidates:
+        if candidate in keys:
+            return candidate
+    return None
+
+
+def date_columns(rows: Sequence[Dict[str, Any]]) -> List[str]:
+    """Every date-ish column actually present, for reporting. Pure."""
+    keys = {key for row in rows for key in row}
+    return sorted(k for k in keys if "date" in k.lower() or "_at" in k.lower())
+
+
 def classify_seat_memberships(
     rows: Sequence[Dict[str, Any]],
 ) -> Tuple[str, str, List[str]]:
     """Do these seat memberships carry usable dates? Pure.
 
-    The question the evaluation turns on. A membership without a ``date_start``
-    yields no P580 and no period overlap, so it cannot source P39 however
-    correctly it identifies the seat.
+    The question the evaluation turns on: a membership without a start yields
+    no P580 and no period overlap, so it cannot source P39 however correctly it
+    identifies the seat.
+
+    The column names are **resolved from the rows**, never assumed. Reading a
+    field that does not exist returns ``None`` for every row, which is
+    indistinguishable from a populated column full of nulls unless the two are
+    told apart deliberately — and they mean opposite things. That mistake made
+    an earlier run report all 5,618 seat memberships as undated because it
+    looked for ``date_start`` when the API calls it ``begin_date``. A missing
+    column is therefore INCONCLUSIVE, never CONTRADICTED.
     """
     lines: List[str] = []
     if not rows:
@@ -244,26 +277,42 @@ def classify_seat_memberships(
             lines,
         )
 
+    begin_field = _present(rows, BEGIN_FIELDS)
+    end_field = _present(rows, END_FIELDS)
     kinds = sorted({_text(r.get("type_harmonized")) or "(none)" for r in rows})
-    dated = [r for r in rows if _text(r.get("date_start")).strip()]
-    ended = [r for r in rows if _text(r.get("date_end")).strip()]
 
     lines.append(f"memberships:            {len(rows)}")
-    lines.append(f"with a date_start:      {len(dated)}")
-    lines.append(f"with a date_end:        {len(ended)}")
     lines.append(f"type_harmonized values: {', '.join(kinds)}")
+    lines.append(f"date-ish columns:       {', '.join(date_columns(rows)) or '(none)'}")
+    lines.append(f"read as start / end:    {begin_field} / {end_field}")
+
+    if begin_field is None:
+        lines.append("")
+        lines.append(f"  all columns: {', '.join(sorted(rows[0]))}")
+        return (
+            INCONCLUSIVE,
+            "None of the expected start columns exists on these rows, so "
+            "nothing was tested — this says nothing about whether the seat is "
+            f"dated. Add the real column to BEGIN_FIELDS (candidates tried: "
+            f"{', '.join(BEGIN_FIELDS)}) and re-run.",
+            lines,
+        )
+
+    dated = [r for r in rows if _text(r.get(begin_field)).strip()]
+    ended = [r for r in rows if end_field and _text(r.get(end_field)).strip()]
+    lines.append(f"with a start:           {len(dated)}")
+    lines.append(f"with an end:            {len(ended)}")
     lines.append("")
     for row in rows[:8]:
-        lines.append(f"  {_describe_membership(row)}")
+        lines.append(f"  {_describe_membership(row, begin_field, end_field)}")
 
     if not dated:
         return (
             CONTRADICTED,
-            "No membership carries a date_start. Without a start there is no "
-            "P580 and no period overlap, so this cannot source P39 — "
-            "MemberCouncil's DateJoining/DateLeaving remain the only source of "
-            "a tenure. The wikidata_id and party Q-IDs may still be worth "
-            "having as enrichment.",
+            f"The column {begin_field!r} exists but is empty on all "
+            f"{len(rows)} memberships. Without a start there is no P580 and no "
+            "period overlap, so this cannot source P39 — MemberCouncil's "
+            "DateJoining/DateLeaving remain the only source of a tenure.",
             lines,
         )
 
@@ -272,28 +321,34 @@ def classify_seat_memberships(
         return (
             CONFIRMED,
             f"{len(dated)} of {len(rows)} memberships ({share:.1f}%) carry a "
-            "date_start, so the seat tenure is here but incomplete. Usable as "
-            "a cross-check on MemberCouncil.DateJoining; risky as the only "
+            f"{begin_field}, so the seat tenure is here but incomplete. Usable "
+            "as a cross-check on MemberCouncil.DateJoining; risky as the only "
             "source, since the members with no date would silently lose P580 "
             "and every P2937 term.",
             lines,
         )
     return (
         CONFIRMED,
-        f"All {len(rows)} memberships carry a date_start. This backend can "
+        f"All {len(rows)} memberships carry a {begin_field}. This backend can "
         "source P39. Compare the dates against MemberCouncil.DateJoining "
         "before switching — that disagreement is README step 0c.",
         lines,
     )
 
 
-def _describe_membership(row: Dict[str, Any]) -> str:
+def _describe_membership(
+    row: Dict[str, Any],
+    begin_field: Optional[str] = None,
+    end_field: Optional[str] = None,
+) -> str:
     parts = [f"type={row.get('type_harmonized')!r}"]
     for field in ("group_name_de", "person_name", "fullname", "role_name_de"):
         if row.get(field):
             parts.append(f"{field}={row[field]!r}")
-    parts.append(f"start={row.get('date_start')!r}")
-    parts.append(f"end={row.get('date_end')!r}")
+    begin_field = begin_field or _present([row], BEGIN_FIELDS)
+    end_field = end_field or _present([row], END_FIELDS)
+    parts.append(f"{begin_field or 'start'}={row.get(begin_field)!r}")
+    parts.append(f"{end_field or 'end'}={row.get(end_field)!r}")
     return ", ".join(parts)
 
 
@@ -523,9 +578,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if sample:
         walked, _ = fetch(client, "memberships", person_id=sample[0].get("id"))
         seats = [r for r in walked if chamber_of(r)]
-        dated = [r for r in walked if _text(r.get("date_start")).strip()]
-        print(f"  {len(walked)} membership(s), {len(dated)} with a date_start, "
-              f"{len(seats)} naming a chamber outright")
+        begin_field = _present(walked, BEGIN_FIELDS)
+        dated = [r for r in walked if begin_field and _text(r.get(begin_field)).strip()]
+        print(f"  {len(walked)} membership(s), {len(dated)} with a "
+              f"{begin_field or 'start'}, {len(seats)} naming a chamber outright")
+        print(f"  date-ish columns: {', '.join(date_columns(walked)) or '(none)'}")
         # The chamber rows first: they are the ones that would source P39.
         for row in (seats + [r for r in walked if r not in seats])[:12]:
             marker = f"  <- {chamber_of(row)}" if chamber_of(row) else ""

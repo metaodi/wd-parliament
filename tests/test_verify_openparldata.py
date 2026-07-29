@@ -27,6 +27,7 @@ from verify_openparldata import (  # noqa: E402
     chamber_candidates,
     chamber_of,
     classify_seat_memberships,
+    date_columns,
     compare_identifier_coverage,
     coverage_query,
     find_chamber_groups,
@@ -41,12 +42,13 @@ def group(id=1, name="Grosser Rat des Kantons Freiburg"):
 
 def membership(kind="council_legislative", name="Nationalrat", start=None, end=None,
                person_id=1):
+    """One membership as the live API shapes it: begin_date / end_date."""
     return {
         "type_harmonized": kind,
         "group_name_de": name,
         "person_id": person_id,
-        "date_start": start,
-        "date_end": end,
+        "begin_date": start,
+        "end_date": end,
     }
 
 
@@ -149,12 +151,49 @@ def test_an_empty_groups_table_is_not_reported_as_a_finding():
 
 
 # --- B. do the seat memberships carry dates? --------------------------------
-def test_undated_memberships_rule_out_a_replacement():
-    """What the first run found for a cantonal seat: type right, dates null."""
+def test_a_populated_column_that_is_empty_rules_out_a_replacement():
     rows = [membership(start=None), membership(start=None, person_id=2)]
     verdict, detail, _ = classify_seat_memberships(rows)
     assert verdict == CONTRADICTED
+    assert "exists but is empty" in detail
     assert "cannot source P39" in detail
+
+
+def test_an_absent_column_is_inconclusive_not_a_refutation():
+    """The 2026-07-29 defect, and the worst of the three.
+
+    Reading a column that does not exist gives None for every row, which is
+    indistinguishable from a populated column full of nulls through .get() —
+    and they mean opposite things. Looking for 'date_start' when the API calls
+    it 'begin_date' reported all 5,618 seat memberships as undated.
+    """
+    rows = [
+        {"type_harmonized": "council_legislative", "group_name_de": "Nationalrat"},
+        {"type_harmonized": "council_legislative", "group_name_de": "Nationalrat"},
+    ]
+    verdict, detail, lines = classify_seat_memberships(rows)
+    assert verdict == INCONCLUSIVE
+    assert "says nothing about whether the seat is" in detail
+    assert "begin_date" in detail  # names the candidates it tried
+    assert any("all columns:" in ln for ln in lines)
+
+
+def test_the_column_actually_read_is_reported():
+    """So a silent misread cannot happen again without being visible."""
+    _, _, lines = classify_seat_memberships([membership(start="2019-12-02")])
+    assert any("read as start / end:    begin_date / end_date" in ln for ln in lines)
+
+
+def test_a_legacy_date_start_column_is_still_understood():
+    """The preference list falls back rather than failing on a variant."""
+    rows = [{"type_harmonized": "x", "date_start": "2019-12-02", "date_end": None}]
+    verdict, _, lines = classify_seat_memberships(rows)
+    assert verdict == CONFIRMED
+    assert any("read as start / end:    date_start / date_end" in ln for ln in lines)
+
+
+def test_date_columns_lists_what_is_actually_there():
+    assert date_columns([membership(start="2019-12-02")]) == ["begin_date", "end_date"]
 
 
 def test_fully_dated_memberships_confirm():
@@ -164,7 +203,7 @@ def test_fully_dated_memberships_confirm():
     ]
     verdict, detail, _ = classify_seat_memberships(rows)
     assert verdict == CONFIRMED
-    assert "All 2 memberships carry a date_start" in detail
+    assert "All 2 memberships carry a begin_date" in detail
 
 
 def test_partly_dated_memberships_confirm_but_warn():
@@ -180,8 +219,8 @@ def test_the_counts_are_reported_separately_for_start_and_end():
     rows = [membership(start="2019-12-02", end=None), membership(start="2023-12-04")]
     _, _, lines = classify_seat_memberships(rows)
     blob = "\n".join(lines)
-    assert "with a date_start:      2" in blob
-    assert "with a date_end:        0" in blob
+    assert "with a start:           2" in blob
+    assert "with an end:            0" in blob
 
 
 def test_no_memberships_is_inconclusive_not_a_refutation():
