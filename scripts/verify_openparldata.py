@@ -3,36 +3,52 @@
 `swissparlpy` 1.0.0 ships a second backend, ``openparldata``, reading
 https://api.openparldata.ch. Its ``persons`` records carry two fields this tool
 currently has no source for — ``wikidata_id`` and
-``party_harmonized_wikidata_id`` — and Wikidata is said to have an *OpenParlData
-ID* property (P14527) that could serve as a join key alongside P1307.
+``party_harmonized_wikidata_id`` — and Wikidata has an *OpenParlData ID*
+property, P14527, that could serve as a join key alongside P1307.
 
-Whether that is an improvement turns on questions nobody has answered against
-the live API. This probe answers them in one dispatch. It **asserts nothing and
-changes nothing**: unlike ``verify_source.py``, a "no" here is a finding about a
-design option, not a broken pipeline, so the script exits 0 whenever it managed
-to read anything at all.
+This probe **asserts nothing and changes nothing**: unlike ``verify_source.py``,
+a "no" here is a finding about a design option, not a broken pipeline, so it
+exits 0 whenever the API answered at all.
 
-**A. Is the Federal Assembly in there?** The backend's own documentation
-examples are cantonal (a Luzern ``body_key``), but two federal people appear in
-it (Keller-Sutter, and Gerhard Andrey with a ``Büro NR`` membership), so the
-coverage is presumed but unmeasured. This lists ``bodies`` and names the
-federal one.
+The data model, established by the 2026-07-29 run and corrected from what the
+first version of this script assumed:
 
-**B. Do the person records carry ``wikidata_id``?** A populated one would beat
-any identifier join, since it *is* the Q-ID. The question is coverage.
+- a **body** is the *level* of parliament, not a chamber — the Federal Assembly
+  is one body (``CHE`` / "Schweiz"), covering both councils;
+- the **National Council and Council of States are groups**, and a person's
+  seat is a row in ``memberships`` pointing at one of them;
+- so the tenure this tool needs is reached by walking person → memberships →
+  group, not by reading a chamber-shaped table.
 
-**C. Does ``memberships`` model the seat itself?** The decisive question. This
+What the probe therefore asks:
+
+**A. Which groups are the two chambers?** Named, with their ids, so B and C can
+use them.
+
+**B. Do the chambers' memberships carry dates?** The decisive question. This
 tool reconciles P39 "member of the National Council" with P580/P582 and P2937
-term qualifiers, so it needs a membership row *for the council seat* carrying a
-date range. OData's ``MemberCouncil`` is exactly that. Every membership shown
-in swissparlpy's documentation is a sub-body — an interest group, an ad-hoc
-committee, ``Büro NR`` — and if that is all there is, this backend cannot
-replace the OData read however good its other fields are.
+term qualifiers, all of which come from a seat tenure with a start and an end.
+The first run found a *cantonal* seat membership (``council_legislative``,
+"Grosser Rat des Kantons Freiburg") whose ``date_start`` and ``date_end`` were
+both null. Whether the federal ones are populated is what decides
+replacement-versus-enrichment.
 
-**D. How does P14527's coverage compare with P1307's?** A join is worth only
-what the Wikidata side carries. P1307 was censused at 3,043 items holding both
-it and a National Council P39; a newer property is unlikely to match that. This
-counts both, the same way, and says which to join on.
+**C. Do the federal person records carry ``wikidata_id``?** A populated one is
+the Q-ID itself. The first run measured 16.2% across all 26,574 people in the
+API, but that is every Swiss parliament at every level; the federal subset is
+the number that matters here.
+
+**D. How does P14527 compare with P1307?** Measured 2026-07-29: P1307 on 3,719
+items of which 3,043 are National Councillors, P14527 on 4,277 of which 3,025.
+Near parity, so the useful number is not which is bigger but how many seat
+holders carry P14527 and *not* P1307 — that is exactly what a second join path
+would add.
+
+A caution when reading the output: this backend logs unknown query parameters
+as a warning and sends them anyway rather than rejecting them (and the warning
+itself does not interpolate the table name — it prints a literal ``'{table}'``).
+``limit`` is one of those: it is not honoured, which is why the first run pulled
+all 26,574 person records. Scope queries by group instead of trying to cap them.
 
 Run it locally::
 
@@ -68,83 +84,179 @@ NATIONAL_COUNCIL = "Q18510612"
 SWISS_PARLIAMENT_ID = "P1307"
 OPENPARLDATA_ID = "P14527"
 
-# How a federal body announces itself. Matched case-insensitively against the
-# body's key and its names; deliberately several spellings, because which one
-# the API uses is part of what this probe is establishing.
-FEDERAL_MARKERS = (
-    "nationalrat",
-    "ständerat",
-    "standerat",
-    "bundesversammlung",
-    "conseil national",
-    "conseil des états",
-    "conseil des etats",
-    "assemblée fédérale",
-    "assemblee federale",
-    "federal assembly",
-)
+# How each chamber names itself, in the languages the API carries. Matched
+# case-insensitively against every ``name*`` / ``title*`` field on a group, so
+# a group is recognised whichever language happens to be populated.
+CHAMBER_NAMES = {
+    "NR": (
+        "nationalrat",
+        "conseil national",
+        "consiglio nazionale",
+        "national council",
+    ),
+    "SR": (
+        "ständerat",
+        "standerat",
+        "conseil des états",
+        "conseil des etats",
+        "consiglio degli stati",
+        "council of states",
+    ),
+}
 
-# Body keys that would denote Switzerland as a whole rather than a canton.
-FEDERAL_KEYS = ("ch", "che", "bund")
+# A cantonal legislature also calls itself a council, so the chamber names
+# above are what distinguish the federal groups — not the membership type.
+# Kept only to report what types exist alongside them.
+SEAT_TYPES = ("council_legislative", "parliament", "legislature")
 
 
 def _text(value: Any) -> str:
     return "" if value is None else str(value)
 
 
-def _looks_federal(row: Dict[str, Any]) -> bool:
-    """Does this ``bodies`` row describe the Federal Assembly? Pure."""
-    key = _text(row.get("body_key")).strip().lower()
-    if key in FEDERAL_KEYS:
-        return True
-    haystack = " ".join(
-        _text(row.get(field)).lower()
-        for field in row
-        if field.startswith("name") or field.startswith("title") or field == "key"
+def _names_of(row: Dict[str, Any]) -> str:
+    """Every name-ish field on a row, lowercased and run together. Pure."""
+    return " ".join(
+        _text(value).lower()
+        for field, value in row.items()
+        if field.startswith("name") or field.startswith("title")
     )
-    return any(marker in haystack for marker in FEDERAL_MARKERS)
 
 
-def find_federal_bodies(
+def chamber_of(row: Dict[str, Any]) -> Optional[str]:
+    """"NR", "SR" or ``None`` for a group (or membership) row. Pure.
+
+    Matches on the chamber's own name rather than on a type or a body, because
+    the run of 2026-07-29 showed a cantonal legislature carrying exactly the
+    same ``council_legislative`` type as a federal seat would.
+    """
+    haystack = _names_of(row)
+    for council, markers in CHAMBER_NAMES.items():
+        if any(marker in haystack for marker in markers):
+            # "Büro NR" and the like are committees *of* the council, named
+            # after it; the chamber's own group is not qualified that way.
+            return council
+    return None
+
+
+def find_chamber_groups(
     rows: Sequence[Dict[str, Any]],
-) -> Tuple[List[Dict[str, Any]], List[str]]:
-    """The federal entries in ``bodies``, plus what to print. Pure.
+) -> Tuple[Dict[str, Dict[str, Any]], List[str]]:
+    """The National Council and Council of States among ``groups``. Pure.
 
-    Returns every row that names a federal chamber. An empty list is a real
-    answer — it means the API is cantonal only and the rest of this evaluation
-    is moot.
+    Returns ``{"NR": row, "SR": row}`` for whichever were found. Missing either
+    is a real answer: it would mean the seat cannot be located in this API, and
+    the rest of the evaluation is moot.
     """
     lines: List[str] = []
     if not rows:
-        return [], ["The 'bodies' table is empty or could not be read."]
+        return {}, [
+            "The 'groups' table came back empty. Without it the chambers "
+            "cannot be located, so B and C below say nothing."
+        ]
 
-    federal = [r for r in rows if _looks_federal(r)]
-    lines.append(f"{len(rows)} body/bodies in total, {len(federal)} of them federal")
+    found: Dict[str, Dict[str, Any]] = {}
+    for row in rows:
+        council = chamber_of(row)
+        if council and council not in found:
+            found[council] = row
+
+    lines.append(f"{len(rows)} group(s) read, {len(found)} chamber(s) identified")
     lines.append("")
-    for row in federal:
-        lines.append(f"  {_describe_body(row)}")
-    if not federal:
-        lines.append(
-            "  -> No body names a federal chamber. Sample of what is there:"
-        )
-        for row in rows[:8]:
-            lines.append(f"     {_describe_body(row)}")
+    for council in ("NR", "SR"):
+        if council in found:
+            lines.append(f"  {council}: {_describe(found[council])}")
+        else:
+            lines.append(f"  {council}: NOT FOUND")
+
+    if not found:
         lines.append("")
-        lines.append(
-            "  -> CONTRADICTED: this API appears to be cantonal only, so it "
-            "cannot source the National Council or Council of States. Nothing "
-            "below will be meaningful."
-        )
-    return federal, lines
+        lines.append("  Sample of what is there instead:")
+        for row in rows[:8]:
+            lines.append(f"    {_describe(row)}")
+    return found, lines
 
 
-def _describe_body(row: Dict[str, Any]) -> str:
-    """One body as a single line, tolerant of unknown field names."""
-    parts = [f"id={row.get('id')}", f"key={row.get('body_key')!r}"]
+def _describe(row: Dict[str, Any]) -> str:
+    """One row as a single line, tolerant of unknown field names."""
+    parts = [f"id={row.get('id')}"]
+    if row.get("body_key") is not None:
+        parts.append(f"body_key={row.get('body_key')!r}")
     for field in ("name_de", "name", "name_fr", "title_de", "title"):
         if row.get(field):
             parts.append(f"{field}={row[field]!r}")
             break
+    return ", ".join(parts)
+
+
+def classify_seat_memberships(
+    rows: Sequence[Dict[str, Any]],
+) -> Tuple[str, str, List[str]]:
+    """Do these seat memberships carry usable dates? Pure.
+
+    The question the evaluation turns on. A membership without a ``date_start``
+    yields no P580 and no period overlap, so it cannot source P39 however
+    correctly it identifies the seat.
+    """
+    lines: List[str] = []
+    if not rows:
+        return (
+            INCONCLUSIVE,
+            "No memberships came back, so nothing was tested. Check the group "
+            "id before concluding anything.",
+            lines,
+        )
+
+    kinds = sorted({_text(r.get("type_harmonized")) or "(none)" for r in rows})
+    dated = [r for r in rows if _text(r.get("date_start")).strip()]
+    ended = [r for r in rows if _text(r.get("date_end")).strip()]
+
+    lines.append(f"memberships:            {len(rows)}")
+    lines.append(f"with a date_start:      {len(dated)}")
+    lines.append(f"with a date_end:        {len(ended)}")
+    lines.append(f"type_harmonized values: {', '.join(kinds)}")
+    lines.append("")
+    for row in rows[:8]:
+        lines.append(f"  {_describe_membership(row)}")
+
+    if not dated:
+        return (
+            CONTRADICTED,
+            "No membership carries a date_start. Without a start there is no "
+            "P580 and no period overlap, so this cannot source P39 — "
+            "MemberCouncil's DateJoining/DateLeaving remain the only source of "
+            "a tenure. The wikidata_id and party Q-IDs may still be worth "
+            "having as enrichment.",
+            lines,
+        )
+
+    share = 100.0 * len(dated) / len(rows)
+    if len(dated) < len(rows):
+        return (
+            CONFIRMED,
+            f"{len(dated)} of {len(rows)} memberships ({share:.1f}%) carry a "
+            "date_start, so the seat tenure is here but incomplete. Usable as "
+            "a cross-check on MemberCouncil.DateJoining; risky as the only "
+            "source, since the members with no date would silently lose P580 "
+            "and every P2937 term.",
+            lines,
+        )
+    return (
+        CONFIRMED,
+        f"All {len(rows)} memberships carry a date_start. This backend can "
+        "source P39. Compare the dates against MemberCouncil.DateJoining "
+        "before switching — that disagreement is README step 0c.",
+        lines,
+    )
+
+
+def _describe_membership(row: Dict[str, Any]) -> str:
+    parts = [f"type={row.get('type_harmonized')!r}"]
+    for field in ("group_name_de", "person_name", "fullname", "role_name_de"):
+        if row.get(field):
+            parts.append(f"{field}={row[field]!r}")
+    parts.append(f"start={row.get('date_start')!r}")
+    parts.append(f"end={row.get('date_end')!r}")
     return ", ".join(parts)
 
 
@@ -163,12 +275,12 @@ def summarise_wikidata_ids(rows: Sequence[Dict[str, Any]]) -> Tuple[int, List[st
         return 0, ["No person records to inspect."]
 
     with_qid = [r for r in rows if _text(r.get("wikidata_id")).strip()]
-    lines.append(f"person records inspected:      {len(rows)}")
-    lines.append(f"carrying a wikidata_id:        {len(with_qid)}")
-    lines.append(f"coverage:                      {100.0 * len(with_qid) / len(rows):.1f}%")
-
     parties = [r for r in rows if _text(r.get("party_harmonized_wikidata_id")).strip()]
-    lines.append(f"carrying a party Q-ID:         {len(parties)}")
+    lines.append(f"person records inspected:  {len(rows)}")
+    lines.append(f"carrying a wikidata_id:    {len(with_qid)} "
+                 f"({100.0 * len(with_qid) / len(rows):.1f}%)")
+    lines.append(f"carrying a party Q-ID:     {len(parties)} "
+                 f"({100.0 * len(parties) / len(rows):.1f}%)")
     lines.append("")
     for row in with_qid[:5]:
         lines.append(
@@ -177,144 +289,52 @@ def summarise_wikidata_ids(rows: Sequence[Dict[str, Any]]) -> Tuple[int, List[st
         )
     if not with_qid:
         lines.append(
-            "  -> wikidata_id is present in the schema but populated for nobody "
-            "here, so it cannot drive matching. The party Q-IDs may still be "
-            "worth having: config/parliament.yaml ships 'parties' empty because "
-            "a wrong qualifier Q-ID is worse than none."
+            "  -> wikidata_id is in the schema but populated for nobody here, "
+            "so it cannot drive matching. The party Q-IDs may still be worth "
+            "having: config/parliament.yaml ships 'parties' empty because a "
+            "wrong qualifier Q-ID is worse than none."
         )
     return len(with_qid), lines
 
 
-# Types and names that would mark a membership as the *council seat* rather
-# than a committee, interest group or party affiliation within it.
-_SEAT_TYPES = ("parliament", "council", "seat", "mandate", "legislature")
-_SEAT_NAMES = FEDERAL_MARKERS
-
-
-def _looks_like_a_seat(row: Dict[str, Any]) -> bool:
-    """Is this membership the council seat itself? Pure.
-
-    Deliberately generous: a false positive here is visible in the printed
-    rows, whereas a false negative would wrongly rule the backend out.
-    """
-    kind = _text(row.get("type_harmonized")).lower()
-    if any(marker in kind for marker in _SEAT_TYPES):
-        return True
-    names = " ".join(
-        _text(value).lower()
-        for field, value in row.items()
-        if field.startswith("group_name") or field.startswith("body_name")
-    )
-    # "Büro NR" is a committee of the council, not the seat — require the
-    # chamber's own name, which those committee rows do not carry.
-    return any(marker in names for marker in _SEAT_NAMES)
-
-
-def classify_seat_memberships(
-    rows: Sequence[Dict[str, Any]],
-) -> Tuple[str, str, List[str]]:
-    """Does ``memberships`` carry the council seat, with dates? Pure.
-
-    This is the question the whole evaluation turns on. The tool emits P39
-    "member of the National Council" with P580/P582 and P2937 qualifiers, all
-    of which come from a seat tenure with a start and an end. If memberships
-    only model sub-bodies, the backend cannot replace ``MemberCouncil``.
-    """
-    lines: List[str] = []
-    if not rows:
-        return (
-            INCONCLUSIVE,
-            "No memberships came back for the sampled person, so nothing was "
-            "tested. Try another member before concluding anything.",
-            lines,
-        )
-
-    kinds = sorted({_text(r.get("type_harmonized")) or "(none)" for r in rows})
-    lines.append(f"{len(rows)} membership(s), type_harmonized values: {', '.join(kinds)}")
-    lines.append("")
-
-    seats = [r for r in rows if _looks_like_a_seat(r)]
-    for row in (seats or rows)[:10]:
-        lines.append(f"  {_describe_membership(row)}")
-
-    if not seats:
-        return (
-            CONTRADICTED,
-            "None of these memberships is the council seat — they are "
-            "committees, interest groups and the like. OData's MemberCouncil "
-            "gives the seat with DateJoining/DateLeaving directly, so the "
-            "OpenParlData backend cannot replace it as the source of P39. It "
-            "may still be worth adding for wikidata_id and the party Q-IDs.",
-            lines,
-        )
-
-    dated = [r for r in seats if _text(r.get("date_start")).strip()]
-    if not dated:
-        return (
-            CONTRADICTED,
-            f"{len(seats)} membership(s) look like the seat, but none carries a "
-            "date_start. Without a start there is no P580 and no period "
-            "overlap, so this cannot source P39 either.",
-            lines,
-        )
-
-    return (
-        CONFIRMED,
-        f"{len(dated)} seat membership(s) with a date_start. This backend can "
-        "source P39 — compare the dates against MemberCouncil.DateJoining "
-        "before switching, since that is the open question in README step 0c.",
-        lines,
-    )
-
-
-def _describe_membership(row: Dict[str, Any]) -> str:
-    parts = [f"type={row.get('type_harmonized')!r}"]
-    for field in ("group_name_de", "body_name_de", "group_name", "role_name_de"):
-        if row.get(field):
-            parts.append(f"{field}={row[field]!r}")
-    parts.append(f"start={row.get('date_start')!r}")
-    parts.append(f"end={row.get('date_end')!r}")
-    return ", ".join(parts)
-
-
 def compare_identifier_coverage(
-    p1307_seat: int, p14527_seat: int, p14527_total: int
+    p1307_seat: int, p14527_seat: int, only_new: int
 ) -> Tuple[str, str]:
-    """Which identifier to join on, given how many items carry each. Pure.
+    """Which identifier to join on. Pure.
 
     ``*_seat`` counts items holding the property *and* a National Council P39 —
-    the population this tool actually reconciles. A property with more items
-    overall but fewer among seat holders is worth less here.
+    the population this tool reconciles. ``only_new`` is the count holding
+    P14527 but **not** P1307, which is the only number that says what a second
+    join path would actually add: two properties of identical size that sit on
+    the same people are worth no more than one.
     """
-    if p14527_total == 0:
-        return (
-            CONTRADICTED,
-            f"No item carries {OPENPARLDATA_ID}. Either the property does not "
-            "exist or nothing uses it yet; either way it cannot be a join key. "
-            f"Keep {SWISS_PARLIAMENT_ID}.",
-        )
     if p14527_seat == 0:
         return (
             CONTRADICTED,
-            f"{p14527_total} item(s) carry {OPENPARLDATA_ID}, but none of them "
-            "also holds a National Council seat, so it joins nothing in this "
-            f"tool's population. Keep {SWISS_PARLIAMENT_ID}.",
+            f"No National Councillor carries {OPENPARLDATA_ID}, so it joins "
+            f"nothing in this tool's population. Keep {SWISS_PARLIAMENT_ID}.",
         )
-    if p14527_seat < p1307_seat:
+    if only_new == 0:
         return (
             CONTRADICTED,
             f"{OPENPARLDATA_ID} reaches {p14527_seat} seat holders against "
-            f"{SWISS_PARLIAMENT_ID}'s {p1307_seat}. Switching would lower the "
-            "hit rate. Worth adding as a *second* join path — it costs nothing "
-            "and can only match people the first pass missed — but not as a "
-            "replacement.",
+            f"{SWISS_PARLIAMENT_ID}'s {p1307_seat}, but every one of them "
+            f"already carries {SWISS_PARLIAMENT_ID}. A second join path would "
+            "match nobody new — not worth the code.",
         )
+    verdict = CONFIRMED if p14527_seat >= p1307_seat else CONTRADICTED
+    replacement = (
+        "Switching outright is defensible on size"
+        if p14527_seat >= p1307_seat
+        else f"Switching would lose {p1307_seat - p14527_seat} seat holder(s)"
+    )
     return (
-        CONFIRMED,
+        verdict,
         f"{OPENPARLDATA_ID} reaches {p14527_seat} seat holders against "
-        f"{SWISS_PARLIAMENT_ID}'s {p1307_seat}, so it is at least as good. "
-        "Switching is defensible; running both is still better, since the two "
-        "sets are unlikely to be identical.",
+        f"{SWISS_PARLIAMENT_ID}'s {p1307_seat}, and {only_new} of them carry "
+        f"no {SWISS_PARLIAMENT_ID} at all. {replacement}, but running both is "
+        f"strictly better: it is the {only_new} that a second pass adds, at "
+        "the cost of one more SPARQL query.",
     )
 
 
@@ -340,6 +360,27 @@ WHERE {{
 """
 
 
+def marginal_gain_query(position_qid: str = NATIONAL_COUNCIL) -> str:
+    """Seat holders carrying P14527 but not P1307 — what a second pass adds."""
+    return f"""
+SELECT
+  (COUNT(DISTINCT ?person) AS ?either)
+  (COUNT(DISTINCT ?only_new) AS ?only_new)
+WHERE {{
+  ?person p:P39 ?statement .
+  ?statement ps:P39 wd:{position_qid} .
+  {{ ?person wdt:{SWISS_PARLIAMENT_ID} ?old }}
+  UNION
+  {{ ?person wdt:{OPENPARLDATA_ID} ?new }}
+  OPTIONAL {{
+    ?person wdt:{OPENPARLDATA_ID} ?n .
+    FILTER NOT EXISTS {{ ?person wdt:{SWISS_PARLIAMENT_ID} ?o }}
+    BIND(?person AS ?only_new)
+  }}
+}}
+"""
+
+
 def _count(bindings: Sequence[dict], name: str) -> int:
     if not bindings:
         return 0
@@ -349,7 +390,9 @@ def _count(bindings: Sequence[dict], name: str) -> int:
         return 0
 
 
-def fetch(client: Any, table: str, **params: Any) -> Tuple[List[Dict[str, Any]], Optional[str]]:
+def fetch(
+    client: Any, table: str, **params: Any
+) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     """Rows from one OpenParlData table, plus the error if it could not be read."""
     try:
         return [dict(r) for r in client.get_data(table, **params)], None
@@ -362,15 +405,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-c", "--config", default="config/parliament.yaml")
     parser.add_argument(
-        "--last-name",
-        default="Andrey",
-        help="A sitting National Councillor, used to sample memberships.",
+        "--first-name",
+        default="Gerhard",
+        help="Given name of a sitting National Councillor, for the person walk.",
     )
     parser.add_argument(
-        "--limit",
-        type=int,
-        default=200,
-        help="How many person records to sample for wikidata_id coverage.",
+        "--last-name",
+        default="Andrey",
+        help=(
+            "Surname of that member. Matched together with --first-name: the "
+            "backend searches partially, so a surname alone found the wrong "
+            "Andrey on 2026-07-29 (a Fribourg cantonal member)."
+        ),
     )
     args = parser.parse_args(argv)
 
@@ -381,9 +427,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     client = spp.SwissParlClient(session=http.session, backend="openparldata")
 
-    # --- A. is the Federal Assembly in there? -------------------------------
+    # --- A. which groups are the chambers? ----------------------------------
     print("=" * 70)
-    print("A. Bodies: is the Federal Assembly covered?")
+    print("A. Groups: which are the National Council and Council of States?")
     print("=" * 70)
     try:
         print(f"tables: {', '.join(sorted(client.get_tables()))}")
@@ -391,49 +437,77 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"  ! could not list tables: {exc}")
         print("\nThe API could not be read at all — connectivity, not a finding.")
         return 1
+
+    # The body is the *level*, not a chamber; reported for orientation only.
+    bodies, _ = fetch(client, "bodies")
+    print(f"bodies: {len(bodies)} row(s)")
+    for row in bodies[:5]:
+        print(f"  {_describe(row)}")
     print()
 
-    bodies, _ = fetch(client, "bodies")
-    federal, body_lines = find_federal_bodies(bodies)
-    for line in body_lines:
+    groups, _ = fetch(client, "groups")
+    chambers, group_lines = find_chamber_groups(groups)
+    for line in group_lines:
         print("  " + line if line else "")
 
-    # --- B. do person records carry a Q-ID? ---------------------------------
+    # --- B. do the chambers' memberships carry dates? -----------------------
     print()
     print("=" * 70)
-    print("B. Do person records carry wikidata_id?")
+    print("B. Do the chambers' memberships carry dates?")
     print("=" * 70)
-    people: List[Dict[str, Any]] = []
-    if federal:
-        for body in federal:
-            rows, _ = fetch(client, "persons", body_id=body.get("id"), limit=args.limit)
-            people.extend(rows)
+    seat_verdict, seat_detail = INCONCLUSIVE, "No chamber group was found."
+    members: List[Dict[str, Any]] = []
+    for council, group in chambers.items():
+        print(f"--- {council} (group {group.get('id')}) ---")
+        rows, _ = fetch(client, "memberships", group_id=group.get("id"))
+        members.extend(rows)
+        verdict, detail, lines = classify_seat_memberships(rows)
+        for line in lines:
+            print("  " + line if line else "")
+        print(f"  => {verdict}: {detail}")
+        print()
+        # The National Council is the population the census in D measures.
+        if council == "NR":
+            seat_verdict, seat_detail = verdict, detail
+    if not chambers:
+        print("  (skipped: no chamber group to query)")
+
+    # --- C. the person walk, and wikidata_id coverage -----------------------
+    print("=" * 70)
+    print("C. Person walk and wikidata_id coverage")
+    print("=" * 70)
+    print(f"Sampling '{args.first_name} {args.last_name}'\n")
+    sample, _ = fetch(
+        client, "persons", firstname=args.first_name, lastname=args.last_name
+    )
+    for row in sample[:3]:
+        print(f"  {row.get('id')} {row.get('fullname')!r} "
+              f"body_key={row.get('body_key')!r} wikidata_id={row.get('wikidata_id')!r}")
+    if sample:
+        walked, _ = fetch(client, "memberships", person_id=sample[0].get("id"))
+        print(f"  {len(walked)} membership(s) for that person:")
+        for row in walked[:12]:
+            marker = f"  <- {chamber_of(row)}" if chamber_of(row) else ""
+            print(f"    {_describe_membership(row)}{marker}")
     else:
-        print("  (no federal body found; sampling persons unfiltered)")
-        people, _ = fetch(client, "persons", limit=args.limit)
+        print(f"  ! nobody matched '{args.first_name} {args.last_name}'")
+    print()
+
+    # Scope the coverage count to the people who actually hold a seat, rather
+    # than to every person in the API at every level of government.
+    seat_person_ids = {
+        r.get("person_id") for r in members if r.get("person_id") is not None
+    }
+    people: List[Dict[str, Any]] = []
+    if seat_person_ids:
+        everyone, _ = fetch(client, "persons")
+        people = [r for r in everyone if r.get("id") in seat_person_ids]
+        print(f"  scoped to the {len(people)} federal member(s) found in B")
+    else:
+        print("  (no seat memberships in B, so there is nobody to scope to)")
     _, people_lines = summarise_wikidata_ids(people)
     for line in people_lines:
         print("  " + line if line else "")
-
-    # --- C. does memberships model the seat? --------------------------------
-    print()
-    print("=" * 70)
-    print("C. Does 'memberships' carry the council seat, with dates?")
-    print("=" * 70)
-    print(f"Sampling memberships for '{args.last_name}'\n")
-    sample, _ = fetch(client, "persons", lastname=args.last_name)
-    memberships: List[Dict[str, Any]] = []
-    if sample:
-        person_id = sample[0].get("id")
-        print(f"  {sample[0].get('fullname')!r} (id={person_id})")
-        memberships, _ = fetch(client, "memberships", person_id=person_id)
-    else:
-        print(f"  ! no person matched '{args.last_name}'")
-    seat_verdict, seat_detail, seat_lines = classify_seat_memberships(memberships)
-    for line in seat_lines:
-        print("  " + line if line else "")
-    print()
-    print(f"{seat_verdict}: {seat_detail}")
 
     # --- D. how does P14527 compare with P1307? -----------------------------
     print()
@@ -445,14 +519,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     try:
         old = wikidata.run_query(coverage_query(SWISS_PARLIAMENT_ID))
         new = wikidata.run_query(coverage_query(OPENPARLDATA_ID))
-        p1307_total, p1307_seat = _count(old, "total"), _count(old, "seated")
-        p14527_total, p14527_seat = _count(new, "total"), _count(new, "seated")
-        print(f"  {SWISS_PARLIAMENT_ID}:  {p1307_total} item(s), "
+        overlap = wikidata.run_query(marginal_gain_query())
+        p1307_seat = _count(old, "seated")
+        p14527_seat = _count(new, "seated")
+        only_new = _count(overlap, "only_new")
+        print(f"  {SWISS_PARLIAMENT_ID}:  {_count(old, 'total')} item(s), "
               f"{p1307_seat} of them National Councillors")
-        print(f"  {OPENPARLDATA_ID}: {p14527_total} item(s), "
+        print(f"  {OPENPARLDATA_ID}: {_count(new, 'total')} item(s), "
               f"{p14527_seat} of them National Councillors")
+        print(f"  reachable by either:  {_count(overlap, 'either')}")
+        print(f"  {OPENPARLDATA_ID} only:      {only_new}")
         id_verdict, id_detail = compare_identifier_coverage(
-            p1307_seat, p14527_seat, p14527_total
+            p1307_seat, p14527_seat, only_new
         )
     except Exception as exc:
         print(f"  ! WDQS: {exc}")
@@ -462,17 +540,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # --- what it all means --------------------------------------------------
     print()
     print("=" * 70)
-    print(f"A. Federal Assembly covered  : {'YES' if federal else 'NO'}")
-    print(f"B. wikidata_id on persons    : "
+    print(f"A. Chambers located as groups : {', '.join(sorted(chambers)) or 'NONE'}")
+    print(f"B. Seat tenure with dates     : {seat_verdict}")
+    print(f"C. wikidata_id on members     : "
           f"{sum(1 for r in people if _text(r.get('wikidata_id')).strip())}"
           f"/{len(people)}")
-    print(f"C. Seat membership with dates: {seat_verdict}")
-    print(f"D. {OPENPARLDATA_ID} as a join key  : {id_verdict}")
+    print(f"D. {OPENPARLDATA_ID} as a join key   : {id_verdict}")
     print("=" * 70)
     print(
-        "This probe evaluates an option; it does not gate anything. Section C "
-        "is the one that decides whether OpenParlData can replace the OData "
-        "read, rather than merely enrich it."
+        "This probe evaluates an option; it does not gate anything. B is the "
+        "one that decides whether OpenParlData can replace the OData read, "
+        "rather than merely enrich it."
     )
     # Exit 0 whenever the API answered: a "no" here is an answer, not a fault.
     return 0

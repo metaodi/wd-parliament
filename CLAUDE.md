@@ -71,16 +71,22 @@ applied in bulk yet:
   mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
   run it since it was added.
 
-- **Should the source be OpenParlData instead?** `swissparlpy` ships an
-  `openparldata` backend, and Wikidata reportedly has an OpenParlData ID
-  property (P14527). Its `persons` records carry `wikidata_id` and
-  `party_harmonized_wikidata_id`, which would fill the deliberately-empty
-  `parties` / `parl_groups` maps. But every membership in its documentation is
-  a *sub-body* (committee, interest group, `Büro NR`), never the council seat —
-  and a seat tenure with dates is the whole input to `expected_statements`.
-  `scripts/verify_openparldata.py` settles it; **section C is the decisive
-  one**. Until it has run, do not rewrite `parliament.py` around the new
-  backend. See README step 6 for the full argument.
+- **Should the source be OpenParlData instead?** Partly measured; see README
+  step 6. Its model is *not* chamber-shaped: a **body** is the level of
+  parliament (the Federal Assembly is one body, `CHE`), the **chambers are
+  groups**, and a seat is a `memberships` row pointing at one — reached by
+  walking person → memberships → group. A cantonal legislature carries the same
+  `council_legislative` type as a federal seat, so match on the chamber's
+  *name*, not the type.
+
+  P14527 is real and near parity with P1307 (3,025 vs 3,043 National
+  Councillors, though broader overall at 4,277 vs 3,719), so size decides
+  nothing — what matters is how many seat holders carry P14527 and *not*
+  P1307. Still undecided is whether the chambers' memberships carry
+  `date_start`; the one seat row reached so far was cantonal and undated, and a
+  membership with no start yields no P580 and no period overlap. Until
+  `scripts/verify_openparldata.py` section **B** answers that, do not rewrite
+  `parliament.py` around the new backend.
 
 Two facts from the same census shape the diff's behaviour:
 
