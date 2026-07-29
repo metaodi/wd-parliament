@@ -1,0 +1,53 @@
+name: Deploy dashboard to GitHub Pages
+
+on:
+  # Redeploy whenever the dashboard sources change on the default branch.
+  push:
+    branches: ["main"]
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+  # Redeploy after the scheduled update commits a refreshed dashboard.
+  # The update job pushes with GITHUB_TOKEN, which does not trigger `push`
+  # events, so we chain off its completion instead.
+  workflow_run:
+    workflows: ["Update parliament TODO"]
+    types:
+      - completed
+  # Allow manual runs from the Actions tab.
+  workflow_dispatch:
+
+# Grant the token the permissions needed to deploy to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, without cancelling in-progress ones.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # For workflow_run triggers, only deploy when the update succeeded.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
