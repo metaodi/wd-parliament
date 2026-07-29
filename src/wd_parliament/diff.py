@@ -233,6 +233,16 @@ def compute_suggestions(
         suggestions.extend(_member_suggestions(body, member, person, periods, config))
 
     # 2) Wikidata -> parlament.ch: people Wikidata still lists as sitting.
+    #
+    # This pass asserts "parlament.ch does not list this person", which is only
+    # a claim we are entitled to make if parlament.ch told us who it *does*
+    # list. Given an empty member list the pass would flag every seat holder on
+    # Wikidata — 2,234 of them in the run of 2026-07-29 — so it is skipped
+    # rather than run against nothing.
+    if not members:
+        suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
+        return suggestions
+
     active_qids = {m.qid for m in members if m.qid and m.active}
     for qid, person in sorted(people.items()):
         if qid in active_qids:
@@ -298,6 +308,13 @@ def _member_suggestions(
     statements = person.statements_for(body.position_qid)
     expected = expected_statements(member, periods, config.statement_model)
     used: set = set()
+    # A member who left and returned has several P39 statements for the same
+    # seat. QuickStatements matches an existing statement by property + main
+    # value, which then no longer identifies one of them, so a qualifier-only
+    # command could land on the wrong statement. ~2.8% of National Council
+    # items are in this position, so it is worth flagging rather than assuming
+    # away; ``quickstatements.is_mechanical`` refuses those commands.
+    ambiguous = len(statements) > 1
 
     district_qid = config.canton_qid(member.canton_abbreviation)
     group_qid = config.parl_group_qid(member.parl_group_abbreviation)
@@ -340,6 +357,7 @@ def _member_suggestions(
                 group_qid,
                 biography,
                 verify,
+                ambiguous,
             )
         )
 
@@ -357,8 +375,14 @@ def _statement_suggestions(
     group_qid: Optional[str],
     biography: str,
     verify: str,
+    ambiguous: bool = False,
 ) -> List[Suggestion]:
-    """Checks against one existing P39 statement."""
+    """Checks against one existing P39 statement.
+
+    ``ambiguous`` marks a member holding several P39 statements for this seat;
+    it is stamped onto every payload below so the QuickStatements renderer can
+    refuse commands that could not say which statement they mean.
+    """
     out: List[Suggestion] = []
 
     # Closed on Wikidata, still sitting per parlament.ch.
@@ -488,6 +512,10 @@ def _statement_suggestions(
                 },
             )
         )
+
+    if ambiguous:
+        for suggestion in out:
+            suggestion.payload["ambiguous_statement"] = True
     return out
 
 

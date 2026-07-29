@@ -97,6 +97,21 @@ def process(
         len(periods),
     )
 
+    # A run that read no members is not a run with nothing to say — it is a
+    # broken read of the source, and it must not be allowed to look like the
+    # former. With the member list empty every Wikidata seat holder falls
+    # through to the diff's second pass and is reported as having left, which
+    # produces thousands of confident, wrong suggestions. Fail loudly instead,
+    # so the Action stops before committing anything.
+    if not members:
+        raise RuntimeError(
+            "parlament.ch returned no sitting members for "
+            f"{', '.join(config.councils)}. Expected roughly 246. Either the "
+            "OData filters (Language/Active) or the CouncilAbbreviation values "
+            "this config filters on are wrong — run "
+            "'python scripts/verify_source.py' to see which."
+        )
+
     people = wikidata.get_position_holders(config.position_qids, config.language)
     resolve_members(
         members, people.values(), wikidata, config.position_qids, config.language

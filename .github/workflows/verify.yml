@@ -1,0 +1,112 @@
+name: Verify assumptions
+
+# A read-only diagnostic, not a build. It answers the questions under "Open
+# verification steps" in the README that need live network access:
+#
+#   1. can the sitting members be read from parlament.ch at all, and if not,
+#      which filter empties the list? (The run of 2026-07-29 read zero members
+#      and published 2,234 wrong suggestions off the back of it.)
+#   2. does Wikidata's P1307 really hold MemberCouncil.PersonNumber?
+#   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
+#      the items they claim to?
+#
+# Deliberately NOT what "Update parliament TODO" does: nothing is generated,
+# nothing is committed, and nothing is published. Run this before trusting
+# that workflow's output.
+
+on:
+  workflow_dispatch:
+    inputs:
+      last_name:
+        description: "Surname to look up on parlament.ch"
+        required: false
+        default: "Parmelin"
+      expect_person_number:
+        description: "The P1307 value Wikidata holds for that person"
+        required: false
+        default: "1108"
+
+# Read-only on purpose. This workflow must never write to the repository.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          python-version: "3.11"
+          enable-cache: true
+
+      # Both checks run even when the first one fails: one dispatch should
+      # answer both questions, not stop at the first bad news.
+      - name: Probe the parlament.ch source and the P1307 join
+        id: source
+        continue-on-error: true
+        env:
+          # Via env rather than inline ${{ }}, so a surname can never be
+          # interpolated into the shell.
+          LAST_NAME: ${{ inputs.last_name }}
+          EXPECT: ${{ inputs.expect_person_number }}
+        run: |
+          set +e
+          uv run python scripts/verify_source.py \
+            --config config/parliament.yaml \
+            --last-name "$LAST_NAME" \
+            --expect "$EXPECT" 2>&1 | tee source.txt
+          status=${PIPESTATUS[0]}
+          {
+            echo "## 1. parlament.ch source and the P1307 join"
+            echo
+            echo '```'
+            cat source.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Verify the configured Q-IDs
+        id: qids
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python -m wd_parliament \
+            --config config/parliament.yaml --verify-config 2>&1 | tee qids.txt
+          status=${PIPESTATUS[0]}
+          {
+            echo "## 2. Configured Q-IDs"
+            echo
+            echo '```'
+            cat qids.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Summarise and set the job result
+        run: |
+          source_step="${{ steps.source.outcome }}"
+          qids="${{ steps.qids.outcome }}"
+          {
+            echo "## Result"
+            echo
+            echo "| Check | Outcome |"
+            echo "| --- | --- |"
+            echo "| parlament.ch source + P1307 join | \`$source_step\` |"
+            echo "| Configured Q-IDs | \`$qids\` |"
+            echo
+            if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
+              echo "Both checks passed: the members are readable, the identifier"
+              echo "join is verified, and every configured Q-ID resolves — read the"
+              echo "labels above to confirm they name what you meant. The remaining"
+              echo "steps are \`--validate-periods\` and a hand-applied QuickStatement."
+            else
+              echo "At least one check failed — see the detail above. Do not run"
+              echo "\"Update parliament TODO\" or apply any QuickStatements until"
+              echo "both are green."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$source_step" = "success" ] && [ "$qids" = "success" ]

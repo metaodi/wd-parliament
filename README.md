@@ -31,11 +31,53 @@ enables a class of check wd-squads cannot make.
 
 ## ⚠️ Open verification steps
 
-**This project has been scaffolded but never run against live data.** The
-environment it was built in could reach neither `ws.parlament.ch` nor
-`query.wikidata.org` — both were refused by the network egress policy — so two
-questions that the design depends on are settled only by documentary evidence,
-not by observation. Work through these before applying any QuickStatements.
+**The first live run failed** — see step 0, which is the blocking one.
+Step 2 has since been settled against live Wikidata; step 1 has not. Work
+through these in order before applying any QuickStatements.
+
+### 0. ⛔ The source read is broken — fix this before anything else
+
+The first live run (2026-07-29, commit `897b2c2`) fetched **zero sitting
+members** from parlament.ch, and did so silently: no exception, no error
+recorded. With the member list empty, every Wikidata seat holder fell through
+the diff's second pass and was reported as having left, so the run published
+**2,234 confident and wrong** "this member has left" suggestions across the two
+chambers.
+
+Nothing reached QuickStatements — those suggestions carry no `qid_source` and
+no leaving date, so `is_mechanical` rejected all of them, and
+`suggestions.qs` correctly reads `0 of 2234 suggestions are mechanical`. The
+safety rule did its job. The report did not.
+
+Two changes now stop that failure recurring:
+
+- `app.process` raises when the member fetch comes back empty, so the Action
+  fails before committing anything;
+- `diff.compute_suggestions` skips the reverse walk entirely when there are no
+  members, because "parlament.ch does not list this person" is not a claim you
+  can make when parlament.ch has told you nothing.
+
+Neither *fixes* the read. To find out which filter is at fault:
+
+```bash
+uv run python scripts/verify_source.py
+```
+
+It walks the pipeline's own narrowing — every row, then `Active`, then the
+configured `CouncilAbbreviation` values — printing the count after each stage
+plus the distinct values actually present. Whichever stage drops to zero is the
+answer. The two likeliest causes:
+
+- **the council filter.** `config/parliament.yaml` filters on
+  `council: N` / `council: S`, taken from the OData docs. If the real
+  `CouncilAbbreviation` values are `NR`/`SR`, `members_from_rows` discards
+  every row and the probe says so by name.
+- **the `Active` boolean.** `parliament.get_members` pushes `Active=True` down
+  to OData; if pyodata renders that as `True` rather than OData v2's `true`,
+  the service can match nothing and return an empty set without erroring.
+
+The stale artifacts from that run are still committed on `main` and should be
+regenerated (or reverted) once the read works.
 
 ### 1. Confirm the P1307 assumption — *strong evidence, not verified directly*
 
@@ -53,38 +95,96 @@ value *is* the `PersonNumber`.
 What is **not** confirmed: nobody has fetched Parmelin's `MemberCouncil` row and
 read `PersonNumber` back. Do that first:
 
-```python
-import swissparlpy as spp
-row = next(iter(spp.get_data("MemberCouncil", Language="DE", LastName="Parmelin")))
-print(row["PersonNumber"], row["PersonIdCode"])   # expect PersonNumber == 1108
+```bash
+uv run python scripts/verify_source.py
 ```
+
+It searches **both** `MemberCouncil` and `MemberCouncilHistory` — Parmelin left
+the National Council in 2015, and which table holds a former member is itself
+something the probe establishes — then reports one of three verdicts:
+
+| Verdict | Meaning |
+| --- | --- |
+| `CONFIRMED` | `PersonNumber == P1307`. The join is sound; nothing to change. |
+| `CONTRADICTED` | Either `PersonIdCode` matches instead (the message says so, and which code to switch), or neither does. |
+| `INCONCLUSIVE` | The person was not found, or the service could not be read at all. The two are reported differently — an unreachable service is a connectivity problem, not a finding. |
+
+Only `CONFIRMED` exits 0. There is also a **`Verify assumptions`** workflow
+(`workflow_dispatch` only) that runs this probe and `--verify-config` together
+and writes both results to the run summary; see below.
 
 If `PersonNumber` is not 1108, check `PersonIdCode`. If neither matches, the
 join strategy falls back to name+birth date and this design needs revisiting —
 say so rather than proceeding.
 
-### 2. Settle the statement model — *defaulted from documentation, not sampled*
+Corroborating but not conclusive: the step-2 census found **3,043** items
+carrying both P1307 and a National Council P39, which is the right order of
+magnitude for "every National Councillor with an identifier" and confirms
+P1307 is genuinely the Swiss parliamentarian identifier. It does not
+distinguish `PersonNumber` from `PersonIdCode`, which is why the check above
+still has to be run.
+
+### 2. Statement model — ✅ **settled: `tenure`**
 
 Does Wikidata model these as **one P39 per tenure** (P580/P582 spanning it,
 P2937 repeated per period) or **one P39 per legislative period** (each with its
 own P2937 and dates)? Getting this backwards means emitting hundreds of
 duplicate statements — the worst failure available to this tool.
 
-`config/parliament.yaml` ships `statement_model: period`, because Wikidata's
-[WikiProject every politician](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician)
-maintains **per-term** data pages for Switzerland (National Council
-[49th](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/Switzerland/data/National_Council/49th)–[52nd](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/Switzerland/data/National_Council/52nd),
-Council of States 51st–52nd) and its queries select P39 statements by their
-P2937 qualifier. Its
-[P39 model](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/P39_model)
-also says a repeated mandate gets a new statement rather than repeated
-qualifiers.
+Censused against live Wikidata on 2026-07-29. Of the **3,043** items carrying
+both P1307 and a National Council P39:
 
-That is the project's *documented* convention. **It is not the same as sampling
-what is actually on the items.** Do that: pick 5–10 well-maintained sitting
-members, look at their P39 statements, and follow the dominant existing
-pattern. Then set `statement_model` accordingly — flipping it needs no code
-change.
+| | |
+| --- | ---: |
+| exactly one P39 statement for the seat | **2,959 (97.2%)** |
+| one statement carrying ≥2 P2937 terms → **tenure** | **156** |
+| one statement per term (`statements == terms` > 1) → *period* | 6 |
+| two or more statements for the seat | 84 (2.8%) |
+| carrying **no** P2937 at all | 2,719 (89.4%) |
+
+A per-period model would give every multi-term member several statements, and
+almost nobody has them. `config/parliament.yaml` therefore ships
+`statement_model: tenure`.
+
+Note this contradicts what
+[WikiProject every politician](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician)'s
+documentation implies (per-term data pages, and a
+[P39 model](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/P39_model)
+saying a repeated mandate gets its own statement). The documented convention
+and the actual data disagree; the data wins, because that is what the tool has
+to avoid duplicating.
+
+Re-run the census before ever flipping this back:
+
+```sparql
+SELECT ?statements ?terms (COUNT(*) AS ?people) WHERE {
+  {
+    SELECT ?person
+           (COUNT(DISTINCT ?statement) AS ?statements)
+           (COUNT(DISTINCT ?term) AS ?terms)
+    WHERE {
+      ?person wdt:P1307 ?pid ;
+              p:P39 ?statement .
+      ?statement ps:P39 wd:Q18510612 .
+      OPTIONAL { ?statement pq:P2937 ?term . }
+    }
+    GROUP BY ?person
+  }
+}
+GROUP BY ?statements ?terms
+ORDER BY DESC(?people)
+```
+
+Two consequences worth knowing before a first run:
+
+- **P2937 is missing from ~89% of items.** Populating the `terms:` map will
+  make `ADD_TERM` fire for most of the chamber, and `ADD_TERM` is mechanical
+  under the P1307 rule — so `suggestions.qs` would become a bulk P2937 backfill.
+  Legitimate, but decide deliberately.
+- **2.8% of members hold several P39 statements for the same seat** (they left
+  and returned). QuickStatements matches an existing statement by property +
+  main value, which cannot tell those apart, so `is_mechanical` refuses
+  qualifier-only commands for them. They stay in the report for a human.
 
 ### 3. Verify the configured Q-IDs
 
@@ -302,6 +402,12 @@ how to replace them with real captures.
 
 ## Running on GitHub Actions
 
+- [`Verify assumptions`](.github/workflows/verify.yml) — **`workflow_dispatch`
+  only**, `contents: read`. Runs `scripts/verify_source.py` and
+  `--verify-config` and writes both results to the run summary. Generates
+  nothing, commits nothing, publishes nothing. Run this **before** the update
+  workflow. Both checks run even if the first fails, so one dispatch answers
+  both questions.
 - [`Update parliament TODO`](.github/workflows/update.yml) — weekly (Mon 06:00
   UTC) and on demand; regenerates the reports and commits them back
   (`contents: write`).
@@ -313,6 +419,12 @@ how to replace them with real captures.
 
 To publish the dashboard: push to GitHub, then in **Settings → Pages** set the
 source to **GitHub Actions**.
+
+> **`workflow_dispatch` needs the workflow file on the default branch.** A
+> workflow that only exists on a feature branch shows no "Run workflow" button.
+> `Verify assumptions` therefore has to be merged to `main` before it can be
+> dispatched — which is why it is a small, self-contained branch rather than
+> part of the scaffold.
 
 `reports/*.md`, `docs/index.html`, `docs/data.json` and `docs/suggestions.qs`
 are **build artifacts** — generated by a run and by the weekly Action, committed

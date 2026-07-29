@@ -27,18 +27,39 @@ make here:
 
 ## ⚠️ Unresolved at scaffold time — read before touching QuickStatements
 
-The project has **never been run against live data**; the environment it was
-built in could reach neither `ws.parlament.ch` nor `query.wikidata.org`. Two
-design assumptions rest on documentary evidence rather than observation, and
-both are written up under **Open verification steps** in the README:
+See **Open verification steps** in the README. The blocking one:
 
-- **P1307 == `PersonNumber`** is strongly supported (Q121160 / P1307 = 1108
-  matches Parmelin's biography URL, and the property's URL pattern is built
-  from `PersonNumber`) but has not been checked against an actual
-  `MemberCouncil` row.
-- **`statement_model`** defaults to `period` on the strength of WikiProject
-  "every politician"'s per-term data pages and P39 model, **not** by sampling
-  live items. Getting it backwards emits hundreds of duplicate statements.
+- **The parlament.ch read is broken.** The first live run (2026-07-29) fetched
+  **zero** sitting members, silently, and published 2,234 wrong "this member has
+  left" suggestions — every Wikidata seat holder, flagged by the diff's second
+  pass because the member list was empty. Nothing reached QuickStatements
+  (`is_mechanical` rejected all of them), which is the safety rule earning its
+  keep. `app.process` now raises on an empty fetch and
+  `diff.compute_suggestions` skips the reverse walk without members, but
+  **neither fixes the read**: run `scripts/verify_source.py` to find whether
+  the `Active` boolean or the `CouncilAbbreviation` filter is at fault.
+
+- **`statement_model` is settled: `tenure`.** Censused against live Wikidata
+  (2026-07-29): of 3,043 items with both P1307 and a National Council P39,
+  97.2% have exactly one statement for the seat; 156 have one statement with
+  ≥2 P2937 terms (tenure) against 6 with one statement per term (period). This
+  **contradicts** WikiProject "every politician"'s documented per-term
+  convention — the data wins, since duplicates are what the tool must avoid.
+  Do not flip it back without re-running the census query in the README.
+- **P1307 == `PersonNumber`** is still unverified directly. Strongly supported
+  (Q121160 / P1307 = 1108 matches Parmelin's biography URL; the property's URL
+  pattern is built from `PersonNumber`; the census found 3,043 National
+  Councillors carrying it) but nobody has read `PersonNumber` off an actual
+  `MemberCouncil` row, and none of that distinguishes it from `PersonIdCode`.
+
+Two facts from the same census shape the diff's behaviour:
+
+- **89.4% of items carry no P2937 at all**, so populating `terms:` in the
+  config turns `ADD_TERM` into a bulk backfill across most of the chamber.
+- **2.8% of members hold several P39 statements for one seat** (left and
+  returned). `diff` stamps `payload["ambiguous_statement"]` on those, and
+  `quickstatements.is_mechanical` refuses qualifier-only commands for them,
+  because QuickStatements matches on property + main value alone.
 
 Do not remove the warnings in the README, `config/parliament.yaml` or
 `tests/fixtures/README.md` until the corresponding step has actually been
@@ -170,6 +191,11 @@ no run has happened yet.
 ## GitHub Actions
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
+- `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
+  `scripts/verify_source.py` and `--verify-config`, writes both to the run
+  summary, and writes nothing to the repo. Keep it read-only: it is the
+  diagnostic you run *before* trusting `update.yml`'s output. Note
+  `workflow_dispatch` requires the file to be on the default branch.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion
