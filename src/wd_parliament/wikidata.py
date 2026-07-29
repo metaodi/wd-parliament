@@ -278,6 +278,48 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
         )
         return people
 
+    @staticmethod
+    def label_query(qids: Sequence[str], language: str = "de") -> str:
+        """Labels, descriptions and instance-of for a set of items."""
+        return f"""
+SELECT ?item ?itemLabel ?itemDescription ?instanceLabel WHERE {{
+  VALUES ?item {{ {_values_clause(qids)} }}
+  OPTIONAL {{ ?item wdt:P31 ?instance . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,fr,it,en". }}
+}}
+""".strip()
+
+    def describe_qids(
+        self, qids: Sequence[str], language: str = "de"
+    ) -> Dict[str, Dict[str, object]]:
+        """Look up what each Q-ID actually is, for ``--verify-config``.
+
+        The config's canton, party, group and term maps are hand-maintained
+        Q-IDs, and a wrong one would be attached as a qualifier to real
+        statements. This turns "are these right?" into one query whose output a
+        human can scan.
+        """
+        out: Dict[str, Dict[str, object]] = {}
+        unique = list(dict.fromkeys(q for q in qids if q))
+        for batch in _chunks(unique, 100):
+            for row in self.run_query(self.label_query(batch, language)):
+                qid = qid_from_uri(row.get("item", {}).get("value", ""))
+                if not qid:
+                    continue
+                entry = out.setdefault(qid, {"label": None, "description": None, "instance_of": []})
+                entry["label"] = _literal(row.get("itemLabel")) or entry["label"]
+                entry["description"] = (
+                    _literal(row.get("itemDescription")) or entry["description"]
+                )
+                instance = _literal(row.get("instanceLabel"))
+                instances = entry["instance_of"]
+                assert isinstance(instances, list)
+                if instance and instance not in instances:
+                    instances.append(instance)
+        for qid in unique:
+            out.setdefault(qid, {"label": None, "description": None, "instance_of": []})
+        return out
+
     def search_people(
         self,
         names: Sequence[str],

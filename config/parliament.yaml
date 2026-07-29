@@ -1,0 +1,153 @@
+# wd-parliament configuration
+#
+# Everything that is *data* lives here rather than in code: the P39 position
+# items, the 26 canton Q-IDs, the party and parliamentary-group mappings, and
+# the legislative-term items used for P2937. A value left blank is treated as
+# "not known yet" and simply produces no suggestion that would need it — the
+# tool skips unknown values rather than guessing at them.
+
+# Content language requested from the parlament.ch OData service, and the
+# preferred label language for Wikidata.
+language: de
+
+# A descriptive User-Agent is REQUIRED by the Wikimedia APIs. Keep a contact
+# URL / e-mail so operators can reach you if the bot misbehaves.
+# See https://meta.wikimedia.org/wiki/User-Agent_policy
+user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
+
+# Seconds to wait between HTTP requests, to stay polite to the APIs.
+request_delay: 1.0
+
+# ---------------------------------------------------------------------------
+# Statement model  --  READ THIS BEFORE APPLYING ANY QUICKSTATEMENTS
+# ---------------------------------------------------------------------------
+# How Wikidata models a seat in the Federal Assembly. Getting this backwards
+# means emitting hundreds of duplicate statements, so it is configuration
+# rather than a decision baked into the code.
+#
+#   period  -- one P39 statement per legislative period, each carrying its own
+#              P2937 parliamentary term and its own dates clipped to that
+#              period.
+#   tenure  -- one P39 statement per continuous tenure, with P580/P582 spanning
+#              the whole tenure and P2937 repeated once per period covered.
+#
+# Default: "period". Wikidata's WikiProject "every politician" maintains
+# per-term data pages for Switzerland (National Council 49th-52nd, Council of
+# States 51st-52nd) and its queries select P39 statements by their P2937
+# qualifier, which points at the per-period model.
+#
+# NOTE: this default was settled from the WikiProject's documentation, NOT by
+# sampling live items — see README, "Open verification steps". Sample 5-10
+# well-maintained sitting members and confirm the dominant pattern before
+# applying QuickStatements in bulk.
+statement_model: period
+
+# Group the reports by "canton" or by "group" (parliamentary group).
+group_by: canton
+
+# Whether to write docs/suggestions.qs at all. Set to false to keep the tool
+# report-only while the statement model is still being confirmed.
+quickstatements: true
+
+# The reference URL (S854) put on every emitted QuickStatement, and the link
+# shown next to each member in the reports. {language} and {person_number} are
+# substituted; person_number is MemberCouncil.PersonNumber, i.e. the P1307 value.
+biography_url: "https://www.parlament.ch/{language}/biografie/wd/{person_number}"
+
+# ---------------------------------------------------------------------------
+# Chambers
+# ---------------------------------------------------------------------------
+# `council` matches MemberCouncil.CouncilAbbreviation ("N" / "S"), and
+# `position` is the P39 value for a seat in that chamber.
+bodies:
+  - council: N
+    label: Swiss National Council
+    position: Q18510612    # member of the Swiss National Council
+    council_number: 1      # MemberCouncil.Council, the numeric code
+  - council: S
+    label: Swiss Council of States
+    position: Q18510613    # member of the Swiss Council of States
+    council_number: 2
+
+# ---------------------------------------------------------------------------
+# Cantons  ->  P768 electoral district (qualifier)
+# ---------------------------------------------------------------------------
+# Keyed by MemberCouncil.CantonAbbreviation. For National Council seats the
+# electoral district is the canton itself.
+#
+# VERIFY THESE BEFORE THE FIRST QUICKSTATEMENTS RUN. They were assembled
+# without live access to Wikidata; only ZH, BE, LU, AG, VD and GE were
+# confirmed against the item pages directly. `wd-parliament --verify-config`
+# (see README) checks every Q-ID here against Wikidata in one command.
+cantons:
+  ZH: Q11943    # canton of Zürich
+  BE: Q11911    # canton of Bern
+  LU: Q12121    # canton of Lucerne
+  UR: Q12404    # canton of Uri
+  SZ: Q12433    # canton of Schwyz
+  OW: Q12573    # canton of Obwalden
+  NW: Q12592    # canton of Nidwalden
+  GL: Q11922    # canton of Glarus
+  ZG: Q11933    # canton of Zug
+  FR: Q12640    # canton of Fribourg
+  SO: Q11929    # canton of Solothurn
+  BS: Q12172    # canton of Basel-Stadt
+  BL: Q12146    # canton of Basel-Landschaft
+  SH: Q12697    # canton of Schaffhausen
+  AR: Q12079    # canton of Appenzell Ausserrhoden
+  AI: Q12094    # canton of Appenzell Innerrhoden
+  SG: Q12746    # canton of St. Gallen
+  GR: Q11925    # canton of Graubünden
+  AG: Q11972    # canton of Aargau
+  TG: Q12713    # canton of Thurgau
+  TI: Q12724    # canton of Ticino
+  VD: Q12771    # canton of Vaud
+  VS: Q834      # canton of Valais
+  NE: Q12738    # canton of Neuchâtel
+  GE: Q11917    # canton of Geneva
+  JU: Q12755    # canton of Jura
+
+# ---------------------------------------------------------------------------
+# Parliamentary groups  ->  P4100 parliamentary group (qualifier)
+# ---------------------------------------------------------------------------
+# Keyed by MemberCouncil.ParlGroupAbbreviation. Left empty deliberately: the
+# abbreviations change from legislature to legislature, and a wrong Q-ID here
+# would be attached as a qualifier to real statements. Fill in the groups of
+# the current legislature and the tool starts suggesting P4100; until then it
+# makes no P4100 suggestion at all.
+parl_groups: {}
+  # V:   Q...   # Fraktion der Schweizerischen Volkspartei
+  # S:   Q...   # Sozialdemokratische Fraktion
+  # RL:  Q...   # FDP-Liberale Fraktion
+  # M-E: Q...   # Die Mitte-Fraktion. Die Mitte. EVP.
+  # G:   Q...   # Grüne Fraktion
+  # GL:  Q...   # Grünliberale Fraktion
+
+# ---------------------------------------------------------------------------
+# Parties  ->  P102 member of political party (separate statement)
+# ---------------------------------------------------------------------------
+# Keyed by MemberCouncil.PartyAbbreviation. Also left empty on purpose:
+# parlament.ch often records a *cantonal section* where Wikidata records the
+# national party, so this check is noisy by nature. It is only ever reported
+# for a human (REVIEW_PARTY), never emitted as QuickStatements, but an unmapped
+# party produces no suggestion at all, which is the safer default.
+parties: {}
+  # SVP: Q...
+  # SP:  Q...
+  # FDP: Q...
+
+# ---------------------------------------------------------------------------
+# Legislative terms  ->  P2937 parliamentary term (qualifier)
+# ---------------------------------------------------------------------------
+# Keyed by LegislativePeriodNumber (from the LegislativePeriod table), mapped
+# to the Wikidata item for that legislature.
+#
+# Empty until filled in. Consequences while empty:
+#   - no ADD_TERM suggestions are made;
+#   - under statement_model: period, NO qualifier-only QuickStatements are
+#     emitted either, because without the term qualifier a command cannot say
+#     which of several same-seat statements it means (see
+#     quickstatements.is_mechanical). This is deliberately fail-safe.
+terms: {}
+  # 51: Q...   # 51st legislature of the Swiss Federal Assembly
+  # 52: Q...
