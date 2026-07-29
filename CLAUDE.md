@@ -71,16 +71,31 @@ applied in bulk yet:
   mechanical. `scripts/verify_source.py` section **A2** answers it; nobody has
   run it since it was added.
 
-**OpenParlData is settled — enrich, do not replace** (README step 6). Its
-chambers are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name
-equality because `Präsidium des Nationalrates` and `Büro NR` are not the
-chamber. The seat is modelled there — 4,398 + 1,220 `council_legislative`
-memberships — but **not one of the 5,618 carries a date**, so it cannot source
-P39's P580/P582/P2937 and `MemberCouncil` stays the source of tenure. P14527
-adds nobody either: 0 National Councillors carry it without P1307. What it *is*
-good for is enrichment — 3,685/3,686 federal members carry a `wikidata_id` and
-87.3% a party Q-ID, which would fill the deliberately-empty `parties` /
-`parl_groups` maps. Do not rewrite `parliament.py` around the backend.
+**OpenParlData is a live option, not a dead end** (README step 6). Its chambers
+are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality
+because `Präsidium des Nationalrates` and `Büro NR` are not the chamber. The
+seat is a `memberships` row pointing at one, and **all 5,618 carry a
+`begin_date`** — real per-term spans back to 1853, with 200 open-ended NR rows
+matching the chamber's size exactly. So it *can* source P39 including P2937,
+and it reaches far enough back for the historic-members extension. Whether to
+switch turns on comparing its dates against `MemberCouncil.DateJoining`, which
+nobody has done; that comparison also answers step 0c.
+
+Three things about it that cost a wrong answer each, and are now guarded:
+
+- the columns are **`begin_date` / `end_date`**, not `date_start` / `date_end`
+  (that is `speeches`). `classify_seat_memberships` resolves the column from
+  the rows and returns INCONCLUSIVE — never CONTRADICTED — when it is absent,
+  because "no such column" and "column full of nulls" are indistinguishable
+  through `.get()` and mean opposite things;
+- the seat is reachable from the **group**, not the person: walking a member
+  returns committees and interest groups but not their own council seat;
+- P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
+  P1307 join stays whatever happens to the source.
+
+For enrichment it is unambiguously good: 3,685/3,686 federal members carry a
+`wikidata_id` and 87.3% a party Q-ID, which would fill the deliberately-empty
+`parties` / `parl_groups` maps.
 
 Two facts from the same census shape the diff's behaviour:
 
