@@ -90,6 +90,12 @@ Three things about it that cost a wrong answer each, and are now guarded:
   through `.get()` and mean opposite things;
 - the seat is reachable from the **group**, not the person: walking a member
   returns committees and interest groups but not their own council seat;
+- **narrow with field filters** (`body_key=CHE`, `group_id=`, `lastname=`),
+  never with `search`: that parameter returns zero rows through this backend
+  in either mode, because swissparlpy hard-codes `lang='en'` and the
+  searchable columns are then the English ones. `limit` is a page size, not
+  a cap — the response iterator pages to exhaustion; `len()` is
+  `meta.total_records`;
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
   P1307 join stays whatever happens to the source.
 

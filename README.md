@@ -35,8 +35,8 @@ The **`Verify assumptions`** workflow was dispatched against live parlament.ch
 on 2026-07-29 ([run 30477629765](https://github.com/metaodi/wd-parliament/actions/runs/30477629765)).
 It settled steps 0, 1 and 3, and turned up one failure mode nobody had
 predicted — step 0b, which is now the one that would do damage. Later
-dispatches confirmed the source read is fixed and measured step 6
-([run 30485588987](https://github.com/metaodi/wd-parliament/actions/runs/30485588987)).
+dispatches confirmed the source read is fixed and settled step 6
+([run 30494063489](https://github.com/metaodi/wd-parliament/actions/runs/30494063489)).
 
 **Steps 4 and 5 remain untouched, and 0c is the one to answer before any bulk
 apply** — step 6 now offers a second way to answer it. Work through what is
@@ -308,8 +308,19 @@ equality — a substring match picks up `Präsidium des Nationalrates` and
 Every seat membership carries a start. The dates are real per-term spans going
 back to 1853 — `2019-12-02 → 2023-12-03` is the 51st legislature exactly,
 `2003-12-01 → 2007-12-02` the 47th. And 4,398 − 4,198 = **200 open-ended NR
-memberships**, precisely the size of the National Council, which is an
-independent check that the data is both correct and current.
+memberships**, precisely the size of the National Council.
+
+Two things confirm this rather than one. The probe counts the populated column
+itself, *and* asks the API to do the same filtering with `exclude_null`:
+
+```
+with a start:      4398
+server-side check: CONFIRMED: The API reports 4398 of 4398 rows with a
+                   non-null begin_date, agreeing with the client-side count.
+```
+
+The second does not depend on the probe having picked the right column name in
+Python, which is exactly how an earlier run got this backwards.
 
 So **OpenParlData can source P39**, including P580, P582 and — since the rows
 are per-term — the P2937 qualifier. That is more than `MemberCouncil` offers
@@ -355,11 +366,29 @@ Council seat**, though group 1663 holds 4,398 such rows. So
 `memberships?person_id=` and `memberships?group_id=` disagree about what a
 membership is. Any rewrite must read the seat by group.
 
-Also note: `bodies` returns **0 rows** despite being a listed table, and the
-backend logs unknown query parameters and sends them anyway rather than
-rejecting them (`limit` is one, which is why an early run paged through all
-26,574 person records) — its warning does not even interpolate the table name,
-printing a literal `'{table}'`.
+**How to query it**, learned the hard way and worth following:
+
+- **Narrow with field filters, not `search`.** `body_key=CHE`, `firstname=`,
+  `lastname=` and `group_id=` are ordinary query parameters and work.
+  The `search` parameter does **not** work through this backend in either mode:
+  `search='nationalrat'` and `search='Gerhard Andrey'` with
+  `search_mode=exact` both returned **zero** rows, because swissparlpy
+  hard-codes `lang='en'` with `lang_format='flat'` and the searchable columns
+  are then the English ones. Note the default mode is `partial` — ILIKE
+  substring — which is why `lastname=Andrey` alone matched *Pascal* Andrey, a
+  Fribourg cantonal member, and made one run measure the wrong person.
+- **`limit` is the page size, not a cap.** swissparlpy's response iterator
+  follows `next_page` to exhaustion, so iterating returns everything that
+  matches regardless. `len()` on a response is `meta.total_records` off the
+  first page, so a count costs one request.
+- Unrecognised parameters are **logged and sent anyway** rather than rejected,
+  and the warning does not interpolate the table name — it prints a literal
+  `'{table}'`. A mistyped filter is easy to miss; check the counts look
+  plausible.
+
+Still unexplained: `bodies` returns **0 rows** despite being a listed table,
+with or without `search_scope=metadata` and `indexed=true`. Not load-bearing —
+the chambers are groups.
 
 ```bash
 uv run python scripts/verify_openparldata.py
