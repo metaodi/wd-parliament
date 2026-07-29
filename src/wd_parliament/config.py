@@ -38,6 +38,10 @@ class Config:
     cantons: Dict[str, str] = field(default_factory=dict)  # "ZH" -> "Q11943"
     parties: Dict[str, str] = field(default_factory=dict)  # "SVP" -> "Q..."
     parl_groups: Dict[str, str] = field(default_factory=dict)  # "V" -> "Q..."
+    # LegislativePeriodNumber -> the Q-ID of that legislature's Wikidata item,
+    # i.e. the value a P2937 qualifier takes. Periods missing from this map
+    # simply produce no P2937 suggestion; see ``diff._term_qids``.
+    terms: Dict[int, str] = field(default_factory=dict)  # 52 -> "Q..."
     # Emitting QuickStatements is opt-out: the file is always written, but this
     # lets an operator turn it off entirely while the statement model is still
     # being confirmed against live Wikidata.
@@ -97,6 +101,25 @@ def _as_qid_map(raw: Optional[dict], what: str) -> Dict[str, str]:
     return out
 
 
+def _as_term_map(raw: Optional[dict]) -> Dict[int, str]:
+    """Normalise the ``LegislativePeriodNumber -> Q-ID`` map for P2937."""
+    out: Dict[int, str] = {}
+    for key, value in (raw or {}).items():
+        if value is None or str(value).strip() == "":
+            continue
+        try:
+            number = int(str(key).strip())
+        except ValueError:
+            raise ValueError(
+                f"terms: '{key}' is not a legislative period number."
+            ) from None
+        qid = str(value).strip()
+        if not qid.startswith("Q") or not qid[1:].isdigit():
+            raise ValueError(f"terms: '{key}' maps to '{qid}', which is not a Q-ID.")
+        out[number] = qid
+    return out
+
+
 def load_config(path: str | Path) -> Config:
     """Read a YAML config file into a :class:`Config`."""
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
@@ -146,6 +169,7 @@ def load_config(path: str | Path) -> Config:
         cantons=_as_qid_map(data.get("cantons"), "cantons"),
         parties=_as_qid_map(data.get("parties"), "parties"),
         parl_groups=_as_qid_map(data.get("parl_groups"), "parl_groups"),
+        terms=_as_term_map(data.get("terms")),
         quickstatements=bool(data.get("quickstatements", True)),
     )
 
