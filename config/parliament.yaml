@@ -31,16 +31,17 @@ request_delay: 1.0
 #   tenure  -- one P39 statement per continuous tenure, with P580/P582 spanning
 #              the whole tenure and P2937 repeated once per period covered.
 #
-# Default: "period". Wikidata's WikiProject "every politician" maintains
-# per-term data pages for Switzerland (National Council 49th-52nd, Council of
-# States 51st-52nd) and its queries select P39 statements by their P2937
-# qualifier, which points at the per-period model.
+# Set to "tenure" from a census of what is actually on Wikidata (2026-07-29):
+# of the 3,043 items carrying both P1307 and a National Council P39,
 #
-# NOTE: this default was settled from the WikiProject's documentation, NOT by
-# sampling live items — see README, "Open verification steps". Sample 5-10
-# well-maintained sitting members and confirm the dominant pattern before
-# applying QuickStatements in bulk.
-statement_model: period
+#   - 2,959 (97.2%) have exactly ONE P39 statement for the seat;
+#   -   156 have one statement carrying two or more P2937 terms  -> tenure;
+#   -     6 have one statement per term (statements == terms)    -> period.
+#
+# A per-period model would give a multi-term member several statements; almost
+# nobody has them. Do not flip this back without re-running that census — the
+# query is in the README.
+statement_model: tenure
 
 # Group the reports by "canton" or by "group" (parliamentary group).
 group_by: canton
@@ -142,12 +143,16 @@ parties: {}
 # Keyed by LegislativePeriodNumber (from the LegislativePeriod table), mapped
 # to the Wikidata item for that legislature.
 #
-# Empty until filled in. Consequences while empty:
-#   - no ADD_TERM suggestions are made;
-#   - under statement_model: period, NO qualifier-only QuickStatements are
-#     emitted either, because without the term qualifier a command cannot say
-#     which of several same-seat statements it means (see
-#     quickstatements.is_mechanical). This is deliberately fail-safe.
+# Empty until filled in, which means no ADD_TERM suggestions are made at all.
+#
+# BEFORE FILLING THIS IN, know the volume you are unlocking. The same census
+# that settled statement_model found that only 324 of 3,043 National Council
+# items (10.6%) carry ANY P2937 qualifier. So a populated terms map will make
+# ADD_TERM fire for roughly nine sitting members in ten, and — since ADD_TERM
+# is mechanical under the P1307 rule — put a comparable number of lines in
+# docs/suggestions.qs. Those edits are legitimate (the qualifier really is
+# missing), but adding P2937 to most of a chamber is a bulk edit, not a
+# clean-up. Consider whether that is what you want to run.
 terms: {}
   # 51: Q...   # 51st legislature of the Swiss Federal Assembly
   # 52: Q...

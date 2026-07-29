@@ -136,6 +136,32 @@ def test_qualifier_only_commands_need_a_term_under_the_period_model(kind, payloa
     assert is_mechanical(with_term, MODEL_PERIOD) is True
 
 
+@pytest.mark.parametrize(
+    "kind,payload",
+    [
+        (KIND_ADD_START_DATE, {"start": date(2019, 12, 2)}),
+        (KIND_ADD_END_DATE, {"end": date(2023, 12, 3)}),
+        (KIND_ADD_TERM, {"terms": ["Q51"]}),
+        (KIND_ADD_QUALIFIER, {"district": "Q11943"}),
+    ],
+)
+def test_several_same_seat_statements_block_qualifier_only_commands(kind, payload):
+    """A member who left and returned: property + value names two statements."""
+    ambiguous = make_suggestion(kind=kind, ambiguous_statement=True, **payload)
+    assert is_mechanical(ambiguous, MODEL_TENURE) is False
+    assert is_mechanical(ambiguous, MODEL_PERIOD) is False
+    # The same suggestion is fine when the member holds only one.
+    assert is_mechanical(make_suggestion(kind=kind, **payload), MODEL_TENURE) is True
+
+
+def test_ambiguity_does_not_block_creating_a_new_statement():
+    """ADD_MEMBERSHIP creates a statement, so it names nothing existing."""
+    s = make_suggestion(
+        kind=KIND_ADD_MEMBERSHIP, start=date(2019, 12, 2), ambiguous_statement=True
+    )
+    assert is_mechanical(s, MODEL_TENURE) is True
+
+
 def test_add_membership_does_not_need_a_term_under_the_period_model():
     """Creating a statement is unambiguous; only qualifier-adds are not."""
     s = make_suggestion(kind=KIND_ADD_MEMBERSHIP, start=date(2019, 12, 2))

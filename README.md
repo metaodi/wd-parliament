@@ -31,11 +31,11 @@ enables a class of check wd-squads cannot make.
 
 ## ⚠️ Open verification steps
 
-**This project has been scaffolded but never run against live data.** The
-environment it was built in could reach neither `ws.parlament.ch` nor
-`query.wikidata.org` — both were refused by the network egress policy — so two
-questions that the design depends on are settled only by documentary evidence,
-not by observation. Work through these before applying any QuickStatements.
+**This project has been scaffolded but never run end to end against live
+data.** The environment it was built in could reach neither `ws.parlament.ch`
+nor `query.wikidata.org` — both were refused by the network egress policy.
+Step 2 below has since been settled by running its query against live Wikidata;
+step 1 has not. Work through the rest before applying any QuickStatements.
 
 ### 1. Confirm the P1307 assumption — *strong evidence, not verified directly*
 
@@ -63,28 +63,74 @@ If `PersonNumber` is not 1108, check `PersonIdCode`. If neither matches, the
 join strategy falls back to name+birth date and this design needs revisiting —
 say so rather than proceeding.
 
-### 2. Settle the statement model — *defaulted from documentation, not sampled*
+Corroborating but not conclusive: the step-2 census found **3,043** items
+carrying both P1307 and a National Council P39, which is the right order of
+magnitude for "every National Councillor with an identifier" and confirms
+P1307 is genuinely the Swiss parliamentarian identifier. It does not
+distinguish `PersonNumber` from `PersonIdCode`, which is why the check above
+still has to be run.
+
+### 2. Statement model — ✅ **settled: `tenure`**
 
 Does Wikidata model these as **one P39 per tenure** (P580/P582 spanning it,
 P2937 repeated per period) or **one P39 per legislative period** (each with its
 own P2937 and dates)? Getting this backwards means emitting hundreds of
 duplicate statements — the worst failure available to this tool.
 
-`config/parliament.yaml` ships `statement_model: period`, because Wikidata's
-[WikiProject every politician](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician)
-maintains **per-term** data pages for Switzerland (National Council
-[49th](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/Switzerland/data/National_Council/49th)–[52nd](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/Switzerland/data/National_Council/52nd),
-Council of States 51st–52nd) and its queries select P39 statements by their
-P2937 qualifier. Its
-[P39 model](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/P39_model)
-also says a repeated mandate gets a new statement rather than repeated
-qualifiers.
+Censused against live Wikidata on 2026-07-29. Of the **3,043** items carrying
+both P1307 and a National Council P39:
 
-That is the project's *documented* convention. **It is not the same as sampling
-what is actually on the items.** Do that: pick 5–10 well-maintained sitting
-members, look at their P39 statements, and follow the dominant existing
-pattern. Then set `statement_model` accordingly — flipping it needs no code
-change.
+| | |
+| --- | ---: |
+| exactly one P39 statement for the seat | **2,959 (97.2%)** |
+| one statement carrying ≥2 P2937 terms → **tenure** | **156** |
+| one statement per term (`statements == terms` > 1) → *period* | 6 |
+| two or more statements for the seat | 84 (2.8%) |
+| carrying **no** P2937 at all | 2,719 (89.4%) |
+
+A per-period model would give every multi-term member several statements, and
+almost nobody has them. `config/parliament.yaml` therefore ships
+`statement_model: tenure`.
+
+Note this contradicts what
+[WikiProject every politician](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician)'s
+documentation implies (per-term data pages, and a
+[P39 model](https://www.wikidata.org/wiki/Wikidata:WikiProject_every_politician/P39_model)
+saying a repeated mandate gets its own statement). The documented convention
+and the actual data disagree; the data wins, because that is what the tool has
+to avoid duplicating.
+
+Re-run the census before ever flipping this back:
+
+```sparql
+SELECT ?statements ?terms (COUNT(*) AS ?people) WHERE {
+  {
+    SELECT ?person
+           (COUNT(DISTINCT ?statement) AS ?statements)
+           (COUNT(DISTINCT ?term) AS ?terms)
+    WHERE {
+      ?person wdt:P1307 ?pid ;
+              p:P39 ?statement .
+      ?statement ps:P39 wd:Q18510612 .
+      OPTIONAL { ?statement pq:P2937 ?term . }
+    }
+    GROUP BY ?person
+  }
+}
+GROUP BY ?statements ?terms
+ORDER BY DESC(?people)
+```
+
+Two consequences worth knowing before a first run:
+
+- **P2937 is missing from ~89% of items.** Populating the `terms:` map will
+  make `ADD_TERM` fire for most of the chamber, and `ADD_TERM` is mechanical
+  under the P1307 rule — so `suggestions.qs` would become a bulk P2937 backfill.
+  Legitimate, but decide deliberately.
+- **2.8% of members hold several P39 statements for the same seat** (they left
+  and returned). QuickStatements matches an existing statement by property +
+  main value, which cannot tell those apart, so `is_mechanical` refuses
+  qualifier-only commands for them. They stay in the report for a human.
 
 ### 3. Verify the configured Q-IDs
 

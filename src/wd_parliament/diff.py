@@ -298,6 +298,13 @@ def _member_suggestions(
     statements = person.statements_for(body.position_qid)
     expected = expected_statements(member, periods, config.statement_model)
     used: set = set()
+    # A member who left and returned has several P39 statements for the same
+    # seat. QuickStatements matches an existing statement by property + main
+    # value, which then no longer identifies one of them, so a qualifier-only
+    # command could land on the wrong statement. ~2.8% of National Council
+    # items are in this position, so it is worth flagging rather than assuming
+    # away; ``quickstatements.is_mechanical`` refuses those commands.
+    ambiguous = len(statements) > 1
 
     district_qid = config.canton_qid(member.canton_abbreviation)
     group_qid = config.parl_group_qid(member.parl_group_abbreviation)
@@ -340,6 +347,7 @@ def _member_suggestions(
                 group_qid,
                 biography,
                 verify,
+                ambiguous,
             )
         )
 
@@ -357,8 +365,14 @@ def _statement_suggestions(
     group_qid: Optional[str],
     biography: str,
     verify: str,
+    ambiguous: bool = False,
 ) -> List[Suggestion]:
-    """Checks against one existing P39 statement."""
+    """Checks against one existing P39 statement.
+
+    ``ambiguous`` marks a member holding several P39 statements for this seat;
+    it is stamped onto every payload below so the QuickStatements renderer can
+    refuse commands that could not say which statement they mean.
+    """
     out: List[Suggestion] = []
 
     # Closed on Wikidata, still sitting per parlament.ch.
@@ -488,6 +502,10 @@ def _statement_suggestions(
                 },
             )
         )
+
+    if ambiguous:
+        for suggestion in out:
+            suggestion.payload["ambiguous_statement"] = True
     return out
 
 

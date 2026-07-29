@@ -27,18 +27,31 @@ make here:
 
 ## ⚠️ Unresolved at scaffold time — read before touching QuickStatements
 
-The project has **never been run against live data**; the environment it was
-built in could reach neither `ws.parlament.ch` nor `query.wikidata.org`. Two
-design assumptions rest on documentary evidence rather than observation, and
-both are written up under **Open verification steps** in the README:
+The project has **never been run end to end against live data**; the
+environment it was built in could reach neither `ws.parlament.ch` nor
+`query.wikidata.org`. See **Open verification steps** in the README.
 
-- **P1307 == `PersonNumber`** is strongly supported (Q121160 / P1307 = 1108
-  matches Parmelin's biography URL, and the property's URL pattern is built
-  from `PersonNumber`) but has not been checked against an actual
-  `MemberCouncil` row.
-- **`statement_model`** defaults to `period` on the strength of WikiProject
-  "every politician"'s per-term data pages and P39 model, **not** by sampling
-  live items. Getting it backwards emits hundreds of duplicate statements.
+- **`statement_model` is settled: `tenure`.** Censused against live Wikidata
+  (2026-07-29): of 3,043 items with both P1307 and a National Council P39,
+  97.2% have exactly one statement for the seat; 156 have one statement with
+  ≥2 P2937 terms (tenure) against 6 with one statement per term (period). This
+  **contradicts** WikiProject "every politician"'s documented per-term
+  convention — the data wins, since duplicates are what the tool must avoid.
+  Do not flip it back without re-running the census query in the README.
+- **P1307 == `PersonNumber`** is still unverified directly. Strongly supported
+  (Q121160 / P1307 = 1108 matches Parmelin's biography URL; the property's URL
+  pattern is built from `PersonNumber`; the census found 3,043 National
+  Councillors carrying it) but nobody has read `PersonNumber` off an actual
+  `MemberCouncil` row, and none of that distinguishes it from `PersonIdCode`.
+
+Two facts from the same census shape the diff's behaviour:
+
+- **89.4% of items carry no P2937 at all**, so populating `terms:` in the
+  config turns `ADD_TERM` into a bulk backfill across most of the chamber.
+- **2.8% of members hold several P39 statements for one seat** (left and
+  returned). `diff` stamps `payload["ambiguous_statement"]` on those, and
+  `quickstatements.is_mechanical` refuses qualifier-only commands for them,
+  because QuickStatements matches on property + main value alone.
 
 Do not remove the warnings in the README, `config/parliament.yaml` or
 `tests/fixtures/README.md` until the corresponding step has actually been
