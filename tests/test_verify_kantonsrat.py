@@ -38,6 +38,7 @@ from verify_kantonsrat import (  # noqa: E402
     OPENPARLDATA_ID,
     SWISS_PARLIAMENT_ID,
     classify_position_item,
+    classify_qualifier_readiness,
     classify_seat_count,
     classify_wikidata_reach,
     date_clusters,
@@ -55,6 +56,7 @@ from verify_kantonsrat import (  # noqa: E402
     seat_holder_ids,
     seat_holders,
     seat_reach_query,
+    split_numbered_label,
     summarise_position_candidates,
     summarise_qualifier_usage,
 )
@@ -523,6 +525,39 @@ def test_e_a_name_is_matched_to_a_qid_only_by_exact_label():
     assert unmatched == ["Bezirk Horgen"]
 
 
+# Run 15's live district names, which arrive numbered and untidily spaced.
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("XVII Bülach", ("XVII", "Bülach")),
+        ("I      Zürich 1+2", ("I", "Zürich 1+2")),
+        ("XIV Winterthur Stadt", ("XIV", "Winterthur Stadt")),
+        ("Uster", (None, "Uster")),
+    ],
+)
+def test_e_a_numbered_district_splits_into_numeral_and_name(value, expected):
+    assert split_numbered_label(value) == expected
+
+
+def test_e_the_numeral_is_stripped_to_match_but_kept_in_the_key():
+    """No Wikidata item is labelled 'XVII Bülach'...
+
+    ...but the key has to stay the value the adapter will look up, so the
+    numeral is dropped for the comparison only.
+    """
+    mapping, _, _, _ = reconcile_values({"XVII Bülach": 18}, {"Q1": "Bülach"})
+    assert mapping == {"XVII Bülach": "Q1"}
+
+
+def test_e_erratic_whitespace_never_reaches_the_config_key():
+    """Run 15 returned 'I      Zürich 1+2' with six spaces."""
+    mapping, unmatched, _, _ = reconcile_values(
+        {"I      Zürich 1+2": 5}, {"Q1": "Zürich 1+2"}
+    )
+    assert mapping == {"I Zürich 1+2": "Q1"}
+    assert unmatched == []
+
+
 def test_e_an_unmatched_name_is_reported_rather_than_guessed_at():
     _, _, _, lines = reconcile_values({"Bezirk Uster": 7}, {})
     text = "\n".join(lines)
@@ -530,11 +565,46 @@ def test_e_an_unmatched_name_is_reported_rather_than_guessed_at():
     assert "Bezirk Uster" in text
 
 
-def test_e_qids_in_use_that_match_no_current_name_are_surfaced():
-    """Historic districts are expected; a pile of them means a bad comparison."""
+def test_e_qids_in_use_that_match_no_source_value_are_surfaced():
     _, _, unused, lines = reconcile_values({"Uster": 7}, {"Q1": "Uster", "Q9": "Bülach"})
     assert unused == {"Q9": "Bülach"}
-    assert "historic districts are expected" in "\n".join(lines)
+    assert "matching no source value" in "\n".join(lines)
+
+
+# --- E. is there a practice to follow at all? -------------------------------
+def test_e_a_qualifier_nobody_uses_leaves_the_map_empty():
+    """Run 15: P2937 appears on no statement for the seat.
+
+    Nothing can be derived from usage, so the honest outcome is the federal
+    default — an empty map, which makes no suggestion.
+    """
+    verdict, detail = classify_qualifier_readiness("P2937", {}, 0, 18, 270)
+    assert verdict == INCONCLUSIVE
+    assert "no practice here to follow" in detail
+
+
+def test_e_three_statements_are_not_a_convention_to_infer_from():
+    """The live P768 case, and the reason it must not become the map.
+
+    Run 15 found P768 on 3 of 270 statements, naming 'Kreis 4', 'Kreis 5' and
+    'Kreis 11' — city-of-Zürich quarters, not any of the 18 Wahlkreise. Too
+    few to be a convention and the wrong kind of thing besides.
+    """
+    used = {"Q870098": "Kreis 11", "Q460885": "Kreis 5", "Q677133": "Kreis 4"}
+    verdict, detail = classify_qualifier_readiness("P768", used, 0, 18, 270)
+    assert verdict == CONTRADICTED
+    assert "Leave the map empty" in detail
+
+
+def test_e_a_partial_match_confirms_only_what_resolved():
+    verdict, detail = classify_qualifier_readiness("P768", {"Q1": "Uster"}, 1, 18, 270)
+    assert verdict == CONFIRMED
+    assert "leave the rest unmapped" in detail
+
+
+def test_e_no_statements_for_the_seat_measures_nothing():
+    verdict, _ = classify_qualifier_readiness("P768", {}, 0, 18, 0)
+    assert verdict == INCONCLUSIVE
 
 
 def test_e_only_resolved_names_reach_the_paste_block():

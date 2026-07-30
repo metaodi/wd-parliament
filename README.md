@@ -628,16 +628,19 @@ red.
 ### 7. 🔶 Could this be pointed at a cantonal parliament? — *yes, and P14527 is the join*
 
 The **Kantonsrat Zürich**, as the first case. `scripts/verify_kantonsrat.py`
-measures it, and runs 13 and 14 (2026-07-30) answered everything except the
-Wahlkreis Q-IDs:
+measures it. Runs 13–15 (2026-07-30) settled every question an adapter needs
+answered, and the two that came back "no" are both the harmless kind — a map
+left empty makes no suggestion:
 
 | | Verdict |
 | --- | --- |
 | Kantonsrat located as a group | **YES** — body `ZH`, group **5077**, `name_de='Kantonsrat Zürich'` |
 | Seat memberships dated | **CONFIRMED** — 912 of 913 carry a `begin_date` |
-| Seats currently held == 180 | **CONTRADICTED** at 186 raw → the funnel below explains all six |
+| Seats currently held == 180 | **CONFIRMED** — `186 open → 182 begun → 180 in a seat role` |
 | A Wikidata-asserted identifier | **CONFIRMED** — **35 of 35** linked members carry P14527 |
-| The position item | **Q21518678** "Mitglied des Zürcher Kantonsrat", *derived* |
+| The position item | **CONFIRMED** — `Q21518678`, held by 270 items, **167 currently (93% of 180)** |
+| P768 Wahlkreis map | **CONTRADICTED** — 18 districts in the source, **0 resolvable** |
+| P2937 term map | **INCONCLUSIVE** — the qualifier is used on **no** statement for the seat |
 
 **P14527 is the cantonal join, and the federal finding inverts exactly as
 predicted.** Of the 35 ZH members OpenParlData links to Wikidata, **all 35**
@@ -762,24 +765,34 @@ cantonal *executive*, seven members, five letters from the legislature.
 
 Two more things the extension needs, both smaller:
 
-- **P768 comes from 18 Wahlkreise, not 26 cantons.** The config's `cantons:`
-  map becomes a per-body district map with different keys. Run 13 found the key
-  itself: `electoral_district_de/fr/it` on the **person** records, not on the
-  memberships. Section E now builds the map the way section D found the
-  position — from the **P768 values Wikidata already uses** on statements for
-  `Q21518678`, joined to the source's district names by exact label — and prints
-  a paste-ready `districts:` block plus the names that did not resolve. It reads
-  the names off *current* members only, because Zurich redrew its districts for
-  2007 and the historic names would put the count past 18.
-- **P2937 has no `LegislativePeriod` table to read.** Section F asks the same
-  qualifier-usage question for the terms, and reports where members' start dates
-  cluster as the source-side evidence — the federal reasoning that 200 National
-  Councillors shared only 16 distinct `DateJoining` values. Zurich elects every
-  four years, so a term map is a handful of rows rather than ~52.
-- **`statement_model` would have to move onto `Body`.** It is global today
-  (`config.py`), and two parliaments will not share one Wikidata convention —
-  the federal census settled on `tenure`, while OpenParlData's per-term rows
-  push a cantonal body toward `period`.
+- **P768: the source has all 18 Wahlkreise; Wikidata has no practice to copy.**
+  The names are on the **person** records (`electoral_district_de`), numbered
+  and untidy — `'XVII Bülach'`, `'I      Zürich 1+2'` — and the 18 distinct
+  values over the 180 current members sum to exactly 180 members. But P768
+  appears on only **3 of 270** statements for the seat, and those three are
+  `Kreis 4`, `Kreis 5` and `Kreis 11` — *city of Zürich quarters*, not cantonal
+  electoral districts. Three statements are not a convention, and they are not
+  even the right kind of thing, so **the map stays empty**: an unmapped district
+  makes no suggestion, while a wrong one becomes a qualifier on real statements.
+  Resolving the 18 items is a Wikidata-side job for a human, not something to
+  infer.
+- **P2937: the qualifier is used on no statement for the seat at all.** Nothing
+  can be derived from usage, so that map stays empty too — the federal default.
+  Section F does show the source-side evidence, and it is clean: the start dates
+  cluster on the election dates, four years apart (`1991-05-06 ×53`,
+  `1995-04-02 ×41`, `1999-05-31 ×51`, `2003-05-19 ×41`, `2007-05-21 ×47`,
+  `2011-05-09 ×49`, `2015-05-18 ×40`, `2019-05-06 ×43`), so a term list is a
+  handful of rows whenever someone wants one.
+- **`statement_model` for a ZH body is `tenure`, not `period`** — correcting
+  what this section said before run 15 measured it. The clusters above are the
+  giveaway: 913 memberships across 834 people is ~1.1 rows each, and each
+  election contributes only ~40–50 new rows rather than 180. So OpenParlData
+  gives ZH **one row per continuous tenure**, not the per-term rows it gives
+  federally, and P2937 would have to be constructed by interval overlap against
+  a term list exactly as `period_overlap.py` already does. That is convenient
+  rather than costly — the module transfers unchanged — but it does mean
+  `statement_model` still needs to move onto `Body` (it is global in
+  `config.py`), since two parliaments need not share one convention.
 
 And two things that **do not transfer**, so nothing here inherits their
 verdicts: step 4's roll-call cross-check has no cantonal equivalent unless the

@@ -174,6 +174,18 @@ join** — 35 of the 35 linked ZH members carry it, so it needs no change to
   role seen, because neither an allowlist nor a denylist self-corrects when the
   source adds a role — only the 180 check does.
 
+Run 15 closed the two Q-ID maps, and both answers are "leave it empty":
+**P768** appears on 3 of 270 statements for the seat and those three are
+`Kreis 4/5/11`, *city of Zürich quarters* rather than any of the 18 Wahlkreise
+— too few to be a convention and the wrong kind of thing, so never paste them.
+**P2937** appears on none at all. The source side is fine either way: all 18
+districts are on the person records as `electoral_district_de` (numbered and
+untidily spaced — `'I      Zürich 1+2'` — so `_tidy` before keying), and the
+start dates cluster on the four-yearly election dates. Note ZH memberships are
+**one row per tenure**, not per term as federally (913 rows / 834 people, ~40–50
+new rows per election), so a ZH body is `statement_model: tenure` and its P2937
+must come from interval overlap.
+
 Three more rules follow from step 7 and hold before any cantonal code is written.
 **Never join a cantonal seat on P1307** — it is the federal service, so it
 reaches only members who also sat in Bern, and the people it misses are exactly

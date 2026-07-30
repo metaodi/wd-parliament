@@ -110,6 +110,7 @@ federal probes without letting its answer affect the job result.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -897,11 +898,44 @@ def summarise_qualifier_usage(
     return used, lines
 
 
-def distinct_values(rows: Sequence[Dict[str, Any]], field: str) -> Dict[str, int]:
+def _tidy(value: Any) -> str:
+    """Collapse runs of whitespace, keeping case. Pure.
+
+    The source's district names are not tidy: run 15 returned
+    ``'I      Zürich 1+2'`` with six spaces. That string would become a config
+    key and be looked up against whatever the API returns next time, so the
+    whitespace is normalised here rather than being carried into the map.
+    """
+    return " ".join(_text(value).split())
+
+
+# The Wahlkreis names arrive numbered — ``'XVII Bülach'``, ``'XIV Winterthur
+# Stadt'``. The numeral is the district's official number and part of the value
+# the adapter would look up, so it stays in the key; but no Wikidata item is
+# labelled that way, so matching also tries the name on its own.
+_NUMBERED_RE = re.compile(r"^([IVXLC]+)\s+(.+)$")
+
+
+def split_numbered_label(value: str) -> Tuple[Optional[str], str]:
+    """``('XVII', 'Bülach')`` from ``'XVII Bülach'``. Pure.
+
+    ``(None, value)`` when there is no numeral, so an unnumbered source is
+    handled by the same path rather than by a special case.
+    """
+    text = _tidy(value)
+    match = _NUMBERED_RE.match(text)
+    if match:
+        return match.group(1), match.group(2)
+    return None, text
+
+
+def distinct_values(
+    rows: Sequence[Dict[str, Any]], field: str, tidy: bool = False
+) -> Dict[str, int]:
     """Distinct non-empty values of ``field``, with how often each occurs. Pure."""
     counts: Dict[str, int] = {}
     for row in rows:
-        value = _text(row.get(field)).strip()
+        value = _tidy(row.get(field)) if tidy else _text(row.get(field)).strip()
         if value:
             counts[value] = counts.get(value, 0) + 1
     return counts
@@ -915,49 +949,111 @@ def reconcile_values(
     Returns ``(mapping, unmatched_names, unused_qids, lines)``.
 
     Matched by **normalised equality** against the item's label, never by
-    substring — the discipline ``is_kantonsrat`` earns its keep with. A name
-    that does not match is reported, not guessed at: the config's own rule is
-    that an unmapped value produces no suggestion, which is strictly better
-    than a qualifier pointing at the wrong item.
+    substring — the discipline ``is_kantonsrat`` earns its keep with. The
+    numeral is stripped for the comparison only (``'XVII Bülach'`` is matched
+    as ``Bülach``) and kept in the key, because the key is what the adapter
+    would look the source's value up by.
 
-    Q-IDs in use that match no current name are returned too. They are not
-    errors — Zurich redrew its districts for 2007, so an item used only on
-    historic statements is expected — but a *large* number of them means the
-    labels are being compared against the wrong thing.
+    A name that does not match is reported, not guessed at: the config's own
+    rule is that an unmapped value produces no suggestion, which is strictly
+    better than a qualifier pointing at the wrong item.
+
+    Q-IDs in use that match nothing are returned too, and the caller must not
+    read them as near misses. Run 15 found three: ``Kreis 4``, ``Kreis 5`` and
+    ``Kreis 11`` — *city of Zürich* quarters, not cantonal electoral districts
+    — on 3 statements out of 270. Too few to be a convention and the wrong kind
+    of thing besides, which is why :func:`classify_qualifier_readiness` grades
+    the usage rather than this function implying the leftovers are historic.
     """
-    by_label = {_normalise(label): qid for qid, label in used.items()}
+    by_label: Dict[str, str] = {}
+    for qid, label in used.items():
+        by_label.setdefault(_normalise(label), qid)
+
     mapping: Dict[str, str] = {}
     unmatched: List[str] = []
-    for name in sorted(source_counts):
-        qid = by_label.get(_normalise(name))
+    for raw in sorted(source_counts):
+        key = _tidy(raw)
+        _, name = split_numbered_label(raw)
+        qid = by_label.get(_normalise(key)) or by_label.get(_normalise(name))
         if qid:
-            mapping[name] = qid
+            mapping[key] = qid
         else:
-            unmatched.append(name)
+            unmatched.append(key)
 
     matched_qids = set(mapping.values())
     unused = {q: label for q, label in used.items() if q not in matched_qids}
 
     lines = [
-        f"  source values:      {len(source_counts)}",
-        f"  matched to a Q-ID:  {len(mapping)}",
-        f"  unmatched by name:  {len(unmatched)}",
+        f"  source values:        {len(source_counts)}",
+        f"  matched to a Q-ID:    {len(mapping)}",
+        f"  unmatched by name:    {len(unmatched)}",
         f"  in use but unmatched: {len(unused)}",
     ]
     if unmatched:
         lines.append("")
         lines.append("  no Q-ID found by exact label match (resolve by hand):")
         for name in unmatched:
-            lines.append(f"    {name!r} ({source_counts[name]} member(s))")
+            original = next(
+                (r for r in source_counts if _tidy(r) == name), name
+            )
+            lines.append(f"    {name!r} ({source_counts[original]} member(s))")
     if unused:
         lines.append("")
-        lines.append(
-            "  used on the seat's statements but matching no current value "
-            "(historic districts are expected here):"
-        )
+        lines.append("  in use on the seat's statements but matching no source value:")
         for qid, label in sorted(unused.items(), key=lambda kv: kv[1]):
             lines.append(f"    {qid:<12} {label}")
     return mapping, unmatched, unused, lines
+
+
+def classify_qualifier_readiness(
+    prop: str, used: Dict[str, str], matched: int, source_count: int, holders: int
+) -> Tuple[str, str]:
+    """Is there an established Wikidata practice to follow for ``prop``? Pure.
+
+    The question the map actually turns on, and it is not "did the labels
+    match". Run 15: P768 appears on **3** statements out of 270 for the seat,
+    and all three name city-of-Zürich quarters rather than any of the 18
+    Wahlkreise. Three statements are not a convention — inferring one from them
+    would be the same error as taking a search result for the position item,
+    which is how ``Q19479543`` got in.
+
+    So a qualifier nobody uses is INCONCLUSIVE and the honest outcome is to
+    leave the map empty, exactly as the federal config ships it. The tool
+    already handles that: an unmapped value makes no suggestion.
+    """
+    if holders == 0:
+        return INCONCLUSIVE, "No statements for the seat, so nothing was measured."
+    if not used:
+        return (
+            INCONCLUSIVE,
+            f"{prop} appears on no statement for this seat, so Wikidata has no "
+            "practice here to follow and nothing can be derived from usage. "
+            "Leave the map empty — an unmapped value makes no suggestion — and "
+            "revisit once the qualifier is in use, or resolve the items by "
+            "hand and check them with --verify-config.",
+        )
+    if matched == 0:
+        return (
+            CONTRADICTED,
+            f"{prop} is used, but on {len(used)} value(s) that match none of "
+            f"the {source_count} the source gives. Do not treat those as the "
+            "map: too few statements to be a convention, and possibly not the "
+            "same kind of thing — run 15 found city quarters where the "
+            "electoral districts should be. Leave the map empty.",
+        )
+    if matched < source_count:
+        return (
+            CONFIRMED,
+            f"{matched} of {source_count} source values resolved to a {prop} "
+            "value already in use. Paste those and leave the rest unmapped "
+            "rather than guessing at them.",
+        )
+    return (
+        CONFIRMED,
+        f"All {source_count} source values resolved to a {prop} value already "
+        "in use on this seat's statements. Check them with --verify-config "
+        "before the first run all the same.",
+    )
 
 
 def render_qid_yaml(mapping: Dict[str, str], key: str, indent: str = "  ") -> List[str]:
@@ -1198,6 +1294,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("D. Which item is the seat?")
     print("=" * 70)
     pos_verdict, pos_detail = INCONCLUSIVE, "No candidate position was given."
+    holders_total = 0
 
     if args.position:
         print(f"Checking the candidate {args.position}:")
@@ -1215,7 +1312,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     "which is exactly what Q19479543 would have done."
                 )
             rows = wikidata.run_query(seat_reach_query(args.position))
-            holders = _count(rows, "holders")
+            holders = holders_total = _count(rows, "holders")
             open_holders = _count(rows, "open")
             print(f"  held by:     {holders} item(s), {open_holders} currently")
             pos_verdict, pos_detail = classify_position_item(
@@ -1266,7 +1363,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     source_districts: Dict[str, int] = {}
     mapping: Dict[str, str] = {}
     if district_field:
-        source_districts = distinct_values(sitting, district_field)
+        source_districts = distinct_values(sitting, district_field, tidy=True)
         print(f"  read from:               {district_field}")
         print(f"  current members:         {len(sitting)}")
         print(f"  distinct districts:      {len(source_districts)}"
@@ -1297,24 +1394,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     else:
         print("    (no --position, so there are no statements to read)")
 
+    district_verdict, district_detail = INCONCLUSIVE, "Nothing was measured."
     if source_districts or used_districts:
         print()
-        mapping, unmatched, _, recon_lines = reconcile_values(
+        mapping, _, _, recon_lines = reconcile_values(
             source_districts, used_districts
         )
         for line in recon_lines:
             print(line)
-        print()
-        print("  Paste-ready, for the values that resolved:")
-        for line in render_qid_yaml(mapping, "districts", indent="    "):
-            print(line)
-        print()
-        print(
-            "  Check every line with --verify-config before using it, and "
-            "leave the unmatched ones out rather than guessing: an unmapped "
-            "district makes no suggestion, while a wrong one becomes a P768 "
-            "qualifier on real statements."
+        if mapping:
+            print()
+            print("  Paste-ready, for the values that resolved:")
+            for line in render_qid_yaml(mapping, "districts", indent="    "):
+                print(line)
+        district_verdict, district_detail = classify_qualifier_readiness(
+            "P768", used_districts, len(mapping), len(source_districts), holders_total
         )
+        print()
+        print(f"{district_verdict}: {district_detail}")
 
     # --- F. what would supply P2937? ----------------------------------------
     print()
@@ -1358,6 +1455,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "handful of rows rather than the federal ~52."
         )
 
+    term_verdict, term_detail = classify_qualifier_readiness(
+        "P2937", used_terms, 0, 0, holders_total
+    )
+    print()
+    print(f"{term_verdict}: {term_detail}")
     print()
     print(
         "  Both maps ship EMPTY federally on purpose, and the same default is "
@@ -1375,9 +1477,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")
     print(f"C. Wikidata-asserted identifier  : {reach_verdict}")
     print(f"D. Position item {args.position or '(none given)':<15}: {pos_verdict}")
-    print(f"E. Wahlkreis map for P768        : "
-          f"{len(mapping)}/{args.expect_districts} resolved")
-    print(f"F. Term items for P2937          : {len(used_terms)} in use on Wikidata")
+    print(f"E. Wahlkreis map for P768        : {district_verdict} "
+          f"({len(mapping)}/{args.expect_districts} resolved)")
+    print(f"F. Term items for P2937          : {term_verdict} "
+          f"({len(used_terms)} in use)")
     print("=" * 70)
     print(
         "This probe evaluates an option; it gates nothing. B decides whether "
