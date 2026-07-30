@@ -38,13 +38,20 @@ predicted — step 0b, which is now the one that would do damage. Later
 dispatches confirmed the source read is fixed and settled step 6
 ([run 30494063489](https://github.com/metaodi/wd-parliament/actions/runs/30494063489)).
 
-Step 0c is answered and fixed: `DateJoining` is a mandate-*segment* start, so
-P580 now comes from `MemberCouncilHistory` instead.
+Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
 
-**Step 4 is now runnable without a human first hunting roll-call numbers** —
-`--validate-periods` discovers them — and the `Verify assumptions` workflow
-runs it. **Step 5 is the only one left that no workflow can do for you:** it
-needs a person to paste one line into QuickStatements and look at the result.
+- **step 4 is done and clean.** The period overlap was cross-checked against
+  three real roll-calls, discovered automatically; every sitting member who
+  voted had been assigned that period. In the current legislature that is 183
+  of 183, with nothing to explain away.
+- **step 0c now has the measurement it was missing.** `DateJoining` is a
+  mandate-*segment* start, so P580 comes from `MemberCouncilHistory` — and the
+  date that comes out of it agrees with OpenParlData for **244 of 244** sitting
+  members, two sources sharing neither key nor publisher. P580 may be applied
+  in bulk.
+
+**Step 5 is the only one left, and no workflow can do it:** a person has to
+paste one line into QuickStatements and look at what landed.
 
 The tool is built against **swissparlpy 2.0.0**, which fixed the OpenParlData
 defaults this repo's probes had to work around
@@ -205,10 +212,16 @@ Comparing 2 against the *latest term* rather than the chained run would report
 every long-serving member as a disagreement — which is why they are two
 functions (`chained_start` and `current_start`) and not one.
 
+**Run 12 answers it: `CONFIRMED`, 244 of 244, 100.0%.** Every sitting member's
+tenure start, derived from `MemberCouncilHistory` by `tenure_start`, is exactly
+the date OpenParlData gives for the run they are currently serving. Two sources
+that share no key and no publisher agree on all 244. **P580 may be applied in
+bulk.**
+
+Getting there took one wrong answer, and it is the one worth remembering.
 **Run 11 ([30538886383](https://github.com/metaodi/wd-parliament/actions/runs/30538886383))
-made the mistake that teaches the rest of it.** Comparison 2 came back
-`CONTRADICTED`, 22 of 244 — and every one of the 22 was a *Council of States*
-member:
+returned `CONTRADICTED`, 22 of 244 — and every one of the 22 was a *Council of
+States* member:**
 
 ```
 4116 Gössi Petra (SR):  tenure start 2023-12-04, OpenParlData 2011-12-05
@@ -222,9 +235,10 @@ had an NR row ending 2019-12-01 and an SR row starting 2019-12-02 — which chai
 straight across the change into one run. The tool models **one P39 per seat**,
 so the comparison has to: seat rows are now keyed by `(Q-ID, council)`.
 
-The lesson generalises, and step 4 walked into the same wall: *a person is not
-a seat.* Any check that joins these two sources on a person alone will read a
-chamber change as a contradiction.
+The lesson generalises, and step 4 walked into the same wall on the same 25
+people: *a person is not a seat.* Any check that joins these two sources on a
+person alone will read a chamber change as a contradiction. With the key fixed,
+the 22 disappeared and comparison 2 went to 100%.
 
 Re-run it after touching any of this.
 
@@ -352,7 +366,7 @@ Note that while `terms` is empty, no `ADD_TERM` suggestions are made, and under
 either** — without the P2937 term a command cannot say which of several
 same-seat statements it means. That is deliberately fail-safe.
 
-### 4. 🔶 Validate the period join — *runnable now; dispatch it*
+### 4. ✅ Validate the period join — *done: the overlap agrees with who voted*
 
 ```bash
 # discover one roll-call per recent period, or name them yourself
@@ -393,21 +407,29 @@ at all:
   `Member.start_date`, so validating against uncorrected `DateJoining` values
   would be validating an interval the pipeline does not use.
 
-**What run 11 measured**, on the three most recent periods, before the second
-rule above existed:
+**Run 12 ([30539278018](https://github.com/metaodi/wd-parliament/actions/runs/30539278018))
+answers it**, on the three most recent periods, from votes it discovered
+itself (`16344`, `23315`, `31148`):
 
-| period | assigned | voted | still sitting | not assigned |
-| ---: | ---: | ---: | ---: | ---: |
-| 52nd | 246 | 200 | 183 | **0** |
-| 51st | 160 | 200 | 126 | 12 |
-| 50th | 86 | 199 | 72 | 13 |
+| period | assigned | voted | still sitting | earlier mandate | **not assigned** |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 52nd | 246 | 200 | 183 | 0 | **0** |
+| 51st | 160 | 200 | 126 | 12 | **0** |
+| 50th | 86 | 199 | 72 | 13 | **0** |
 
-The 52nd is the result that matters and it is clean: **183 people demonstrably
-voted, and the interval overlap had assigned every one of them.** The 25 in the
-older two periods were all chamber switchers — the same people comparison 2
-flagged, for the same reason — and are now counted as earlier mandates. The
-next dispatch is what confirms that; until it has run, treat this step as
-measured but not yet green.
+```
+✅ Every sitting member who voted was assigned to that period by the overlap.
+```
+
+The 52nd is the strongest single result: **183 people demonstrably voted, and
+the interval overlap had assigned every one of them** — no absences to explain
+away, no reclassification.
+
+Run 11 scored the 25 in the older periods as failures before the earlier-mandate
+rule existed. Every one was a chamber switch: Gössi, Graf, Burkart and the rest
+voted in the 50th and 51st as *National* Councillors, and their Council of
+States tenure rightly begins later. That the same 25 people were also
+comparison 2's false disagreements is what identified the shared cause.
 
 It reports without gating the workflow: what it decides is the P2937 qualifier,
 `terms:` in the config ships empty, and unknown values are skipped — so nothing
@@ -496,6 +518,21 @@ The last row is the one that keeps the OData read where it is for now:
 the identifier that established the match. Sourcing the Q-ID from OpenParlData
 instead would be a different class of claim wearing the same provenance flag,
 and it would have to be given its own.
+
+**And the gap the comparison was meant to expose has closed.** Run 12 put the
+two sources' tenure starts side by side for all 244 joinable sitting members
+and they agree **100%**. So the argument for switching is no longer "the dates
+are better"; they are the same dates. What is left is the shape of the work:
+OpenParlData hands you per-term rows, so P2937 falls out of the data instead of
+being constructed by interval overlap, and 3,686 historic members come with it.
+Against that, the OData read is written, tested and now verified end to end,
+and the party/group Q-IDs OpenParlData would supply can be taken from it
+*without* changing the source at all — that is the cheap half of the win.
+
+A reasonable reading of the evidence: **keep OData as the source, take
+OpenParlData for enrichment**, and revisit if the historic-members extension
+gets built, where per-term rows back to 1853 are worth more than they are
+today.
 
 **P14527 adds nobody.** It exists and is close to P1307 in size, but the
 overlap is what matters:

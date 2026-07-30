@@ -89,6 +89,11 @@ adjacent-segment chaining applied to OpenParlData's per-term rows. **Comparison
 reuse `current_start`: comparing a chained tenure against a single term reports
 every long-serving member as a disagreement.
 
+Run 12 (2026-07-30) returned `CONFIRMED`, **244 of 244**: the chained tenure
+start equals OpenParlData's independent per-term start for every sitting
+member, so P580 may be applied in bulk. Step 4 came back clean in the same run
+— 183 of 183 voting members assigned in the current legislature.
+
 **A person is not a seat, and both new checks got that wrong first.** Run 11
 had comparison 2 keying OpenParlData rows by Q-ID alone, so a member who moved
 NR→SR chained their National Council years onto their Council of States seat —
