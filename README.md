@@ -205,6 +205,27 @@ Comparing 2 against the *latest term* rather than the chained run would report
 every long-serving member as a disagreement — which is why they are two
 functions (`chained_start` and `current_start`) and not one.
 
+**Run 11 ([30538886383](https://github.com/metaodi/wd-parliament/actions/runs/30538886383))
+made the mistake that teaches the rest of it.** Comparison 2 came back
+`CONTRADICTED`, 22 of 244 — and every one of the 22 was a *Council of States*
+member:
+
+```
+4116 Gössi Petra (SR):  tenure start 2023-12-04, OpenParlData 2011-12-05
+806  Graf Maya (SR):    tenure start 2019-12-04, OpenParlData 2001-06-05
+4189 Burkart Thierry (SR): tenure start 2019-12-02, OpenParlData 2015-11-30
+```
+
+Those OpenParlData dates are when they entered the **National Council**. The
+probe was keying its seat rows by Q-ID alone, so a member who moved chambers
+had an NR row ending 2019-12-01 and an SR row starting 2019-12-02 — which chain
+straight across the change into one run. The tool models **one P39 per seat**,
+so the comparison has to: seat rows are now keyed by `(Q-ID, council)`.
+
+The lesson generalises, and step 4 walked into the same wall: *a person is not
+a seat.* Any check that joins these two sources on a person alone will read a
+chamber change as a contradiction.
+
 Re-run it after touching any of this.
 
 
@@ -351,8 +372,8 @@ to — the only periods where a list of *sitting* members can test anything. The
 `Verify assumptions` workflow runs it as section 5, and takes a `vote_ids`
 input if you would rather name them.
 
-Two things the comparison now does that decide whether its answer means
-anything at all:
+Three things the comparison does that decide whether its answer means anything
+at all:
 
 - **only voters who are still sitting are compared.** The member list is the
   ~246 people in office today; every roll-call also contains people who have
@@ -360,9 +381,33 @@ anything at all:
   "not assigned" would report a mismatch that is purely an artefact — and one
   that grows the older the vote is. They are reported separately as
   `voted_but_no_longer_sitting`, which is an expected number, not a finding.
+- **a vote cast before the member's current tenure is an earlier mandate, not
+  a mismatch.** The tool models one P39 per *seat*, so a member who moved from
+  the National Council to the Council of States has a Council of States tenure
+  that rightly begins at the move — their earlier votes belong to a different
+  statement. Reported as `voted_before_their_current_tenure`, recognised by the
+  period ending before `Member.start_date`. That is a bare date comparison and
+  **not** another call into `period_overlap`, so a bug in the function under
+  test cannot excuse itself.
 - **the step 0c tenure correction is applied first.** The overlap reads
   `Member.start_date`, so validating against uncorrected `DateJoining` values
   would be validating an interval the pipeline does not use.
+
+**What run 11 measured**, on the three most recent periods, before the second
+rule above existed:
+
+| period | assigned | voted | still sitting | not assigned |
+| ---: | ---: | ---: | ---: | ---: |
+| 52nd | 246 | 200 | 183 | **0** |
+| 51st | 160 | 200 | 126 | 12 |
+| 50th | 86 | 199 | 72 | 13 |
+
+The 52nd is the result that matters and it is clean: **183 people demonstrably
+voted, and the interval overlap had assigned every one of them.** The 25 in the
+older two periods were all chamber switchers — the same people comparison 2
+flagged, for the same reason — and are now counted as earlier mandates. The
+next dispatch is what confirms that; until it has run, treat this step as
+measured but not yet green.
 
 It reports without gating the workflow: what it decides is the P2937 qualifier,
 `terms:` in the config ships empty, and unknown values are skipped — so nothing
@@ -383,7 +428,7 @@ parliament TODO` first.
 
 ### 6. 🔶 Should the source be OpenParlData instead? — *viable; a real decision, not a dismissal*
 
-`swissparlpy` 1.0.0 ships a second backend, `openparldata`, reading
+`swissparlpy` ships a second backend, `openparldata`, reading
 [api.openparldata.ch](https://api.openparldata.ch), and Wikidata has an
 *OpenParlData ID* property, [P14527](https://www.wikidata.org/wiki/Property:P14527).
 `scripts/verify_openparldata.py` measures both.
@@ -428,12 +473,29 @@ are per-term — the P2937 qualifier. That is more than `MemberCouncil` offers
 for free, and the history reaches far enough to make the "historic members"
 extension possible.
 
-**It also bears directly on step 0c.** `MemberCouncil` gives Parmelin
-`DateJoining = 2026-01-01`, the current year rather than a tenure start.
-OpenParlData gives spans that line up with legislature boundaries. If those
-disagree for sitting members, OpenParlData is the more trustworthy of the two
-and step 0c resolves in its favour. **Compare them before switching** — that
-comparison is the next thing to do here, and it is not yet done.
+**It bore directly on step 0c, and that comparison has now been made.**
+`scripts/compare_tenure_dates.py` joined both sources through Wikidata: 11 of
+244 sitting members had `MemberCouncil.DateJoining` *later* than OpenParlData's
+legislature start, and reading Bregy's `MemberCouncilHistory` settled which was
+right — OpenParlData's. So on the date that matters most, **OpenParlData was
+the more trustworthy of the two, and parlament.ch only matched it once a second
+table and a chaining rule were added.**
+
+That is the honest summary of where the two stand:
+
+| | parlament.ch OData | OpenParlData |
+| --- | --- | --- |
+| tenure start | `MemberCouncilHistory` + `tenure_start` chaining | per-term `begin_date`, directly |
+| P2937 term qualifier | constructed by interval overlap (step 4) | implied by the per-term rows |
+| historic members | same-shaped table, plus `IdPredecessor` chains | 5,618 rows back to 1853 |
+| party / group Q-IDs | not carried; the config maps ship empty | 87.3% carry a party Q-ID |
+| identifier join | `PersonNumber` ↔ P1307, confirmed | `wikidata_id` on 3,685 of 3,686 — but *asserted by a third party*, not by Wikidata |
+
+The last row is the one that keeps the OData read where it is for now:
+`is_mechanical` gates on `QID_FROM_IDENTIFIER`, meaning **Wikidata** asserted
+the identifier that established the match. Sourcing the Q-ID from OpenParlData
+instead would be a different class of claim wearing the same provenance flag,
+and it would have to be given its own.
 
 **P14527 adds nobody.** It exists and is close to P1307 in size, but the
 overlap is what matters:

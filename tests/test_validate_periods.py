@@ -87,15 +87,41 @@ def test_a_voter_who_has_left_is_not_counted_as_a_mismatch(member_rows, period_r
     assert report[52]["voted_but_not_assigned"] == []
 
 
-def test_a_sitting_member_who_voted_but_was_not_assigned_is_the_finding(
+def test_a_vote_from_before_the_current_tenure_is_an_earlier_mandate(
     member_rows, period_rows
 ):
-    """1110 joined in 2024, so an overlap bug is the only way this happens."""
-    attendance = {900: {5049: {1105, 1110}}}
+    """The 50th ended 2019-12-01; 1110's current seat starts 2024-09-23.
+
+    So their vote was cast under an earlier mandate — the other chamber, or a
+    spell before a break — which the tool models as a separate P39 statement.
+    Not being assigned that period is correct, and run 11 scored 25 of these
+    as mismatches.
+    """
+    attendance = {900: {5050: {1101, 1110}}}
     report, _ = run(member_rows, period_rows, attendance, vote_ids=[900])
 
-    # 1105 joined in 2011 and belongs in the 49th; 1110 does not.
-    assert report[49]["voted_but_not_assigned"] == [1110]
+    assert report[50]["voted_before_their_current_tenure"] == [1110]
+    assert report[50]["voted_but_not_assigned"] == []
+
+
+def test_a_sitting_member_who_voted_inside_their_tenure_is_the_finding(
+    member_rows, period_rows, monkeypatch
+):
+    """1105 has sat since 2011, so the 52nd is well inside their tenure.
+
+    Withholding it from the overlap is the one shape that means the interval
+    logic is wrong, and it is the only one that must not be explained away —
+    which is why the "earlier mandate" test is a bare date comparison rather
+    than another call into period_overlap.
+    """
+    from wd_parliament import period_overlap
+
+    monkeypatch.setattr(period_overlap, "coverage_report", lambda m, p: {})
+    report, _ = run(member_rows, period_rows, {900: {PERIOD_52: {1105}}},
+                    vote_ids=[900])
+
+    assert report[52]["voted_but_not_assigned"] == [1105]
+    assert report[52]["voted_before_their_current_tenure"] == []
 
 
 def test_absences_are_counted_but_are_not_a_mismatch(member_rows, period_rows):

@@ -202,13 +202,25 @@ def validate_periods(
     ``max_periods`` most recent periods the overlap assigned anybody to — the
     only periods where sitting members give this check any power.
 
-    **Only voters who are still sitting can test the interval logic.** The
-    member list is the ~246 people currently in office, so a roll-call from any
-    period also contains people who have since left; they are absent from the
-    list entirely, and counting them as "not assigned" would report a false
-    mismatch that grows with the age of the vote. They are reported separately
-    as ``voted_but_no_longer_sitting``, which is an expected number, not a
-    finding.
+    Two kinds of voter cannot testify about the interval logic, and both are
+    counted separately rather than scored as mismatches:
+
+    - **people who have since left.** The member list is the ~246 currently in
+      office, so a roll-call from any period also contains members who have
+      gone; they are absent from the list entirely. Counting them as "not
+      assigned" would report a false mismatch that grows with the age of the
+      vote. They are ``voted_but_no_longer_sitting``.
+    - **people who sat under an earlier mandate.** The tool models one P39 per
+      *seat*: someone who moved from the National Council to the Council of
+      States has a Council of States tenure that rightly begins at the move,
+      and their earlier votes were cast under a National Council statement this
+      run is not about. The same goes for anyone who left and returned. Run 11
+      scored 25 of these as mismatches, all in the 50th and 51st periods, and
+      every one was a chamber switch. They are
+      ``voted_before_their_current_tenure``, recognised by the period ending
+      before :attr:`models.Member.start_date` — a plain date comparison, not
+      :func:`period_overlap.assign_periods`, so a bug in that function cannot
+      excuse itself here.
 
     Two known holes, per the README: Ständerat roll-call votes only exist from
     the 2010s, and a very short tenure may include no recorded vote. So
@@ -259,20 +271,48 @@ def validate_periods(
     # ``coverage_report`` keys by LegislativePeriodNumber; translate before
     # comparing, or every period would look like a total mismatch.
     number_by_id = {p.id: p.number for p in periods if p.id is not None}
-    sitting = {m.person_number for m in members}
+    period_by_number = {p.number: p for p in periods}
+    member_by_number = {m.person_number: m for m in members}
+    sitting = set(member_by_number)
 
     out = {}
     for period_id, voters in attended.items():
         number = number_by_id.get(period_id, period_id)
         expected = assigned.get(number, set())
         comparable = voters & sitting
+        period = period_by_number.get(number)
+
+        earlier, unexplained = [], []
+        for person in sorted(comparable - expected):
+            if _predates_current_tenure(member_by_number[person], period):
+                earlier.append(person)
+            else:
+                unexplained.append(person)
+
         out[number] = {
             "period_id": period_id,
             "assigned": len(expected),
             "voted": len(voters),
             "voted_and_still_sitting": len(comparable),
             "voted_but_no_longer_sitting": len(voters - sitting),
-            "voted_but_not_assigned": sorted(comparable - expected),
+            "voted_before_their_current_tenure": earlier,
+            "voted_but_not_assigned": unexplained,
             "assigned_but_did_not_vote": len(expected - voters),
         }
     return out
+
+
+def _predates_current_tenure(member: Member, period: Optional[Period]) -> bool:
+    """Did this period end before the member's current tenure began? Pure.
+
+    If so, their vote in it was cast under an earlier mandate — another
+    chamber, or a spell before a break in service — which the tool models as a
+    separate P39 statement. Not being assigned that period is then correct.
+
+    Deliberately a bare date comparison rather than a call into
+    :mod:`period_overlap`: this is what stops the check excusing the very
+    function it exists to test.
+    """
+    if period is None or period.end is None or member.start_date is None:
+        return False
+    return period.end < member.start_date

@@ -89,6 +89,16 @@ adjacent-segment chaining applied to OpenParlData's per-term rows. **Comparison
 reuse `current_start`: comparing a chained tenure against a single term reports
 every long-serving member as a disagreement.
 
+**A person is not a seat, and both new checks got that wrong first.** Run 11
+had comparison 2 keying OpenParlData rows by Q-ID alone, so a member who moved
+NR→SR chained their National Council years onto their Council of States seat —
+all 22 "disagreements" were that. Step 4 scored the same 25 people as interval
+failures. The rules that follow from it, and that must not be undone:
+`seats_by_seat` is keyed by `(qid, council)`, and `validate_periods` classifies
+a voter whose period ended before `start_date` as an earlier mandate. Anything
+joining these two sources on a person alone reads a chamber change as a
+contradiction.
+
 **OpenParlData is a live option, not a dead end** (README step 6). Its chambers
 are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality
 because `Präsidium des Nationalrates` and `Büro NR` are not the chamber. The

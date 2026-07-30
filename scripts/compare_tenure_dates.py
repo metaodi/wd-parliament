@@ -472,14 +472,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print("  -> no chamber group found, so there is nothing to compare against.")
         return 1
 
-    seats_by_qid: Dict[str, List[Dict[str, Any]]] = {}
+    # Keyed by (Q-ID, **council**), never by Q-ID alone. Pooling a person's two
+    # chambers is what run 11 measured and got wrong: a member who moved from
+    # the National Council to the Council of States has an NR row ending
+    # 2019-12-01 and an SR row starting 2019-12-02, which chain into one run
+    # across a chamber change. Every one of that run's 22 "disagreements" was an
+    # SR member whose National Council years had been chained on. The tool
+    # models one P39 per seat, so the comparison must too.
+    seats_by_seat: Dict[tuple, List[Dict[str, Any]]] = {}
     for council, group in chambers.items():
         rows, _ = fetch(opd, "memberships", group_id=group.get("id"))
         for row in rows:
             qid = qid_by_person.get(row.get("person_id"))
             if qid:
-                seats_by_qid.setdefault(qid, []).append(row)
-    print(f"OpenParlData: seat rows for {len(seats_by_qid)} Q-ID(s)")
+                seats_by_seat.setdefault((qid, council), []).append(row)
+    print(
+        f"OpenParlData: seat rows for {len(seats_by_seat)} (Q-ID, council) pair(s)"
+    )
     print()
 
     # --- 4. compare -------------------------------------------------------
@@ -492,7 +501,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     unjoined = 0
     for member in members:
         qid = qid_by_parliament_id.get(str(member.person_number))
-        rows = seats_by_qid.get(qid or "")
+        rows = seats_by_seat.get((qid or "", member.council.upper()))
         if not qid or not rows:
             unjoined += 1
             continue

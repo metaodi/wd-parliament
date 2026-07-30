@@ -201,10 +201,17 @@ def _validate(args) -> int:
         return 1
 
     departed = sum(v["voted_but_no_longer_sitting"] for v in report.values())
+    earlier = sum(len(v["voted_before_their_current_tenure"]) for v in report.values())
     if departed:
         print(
             f"\nℹ️  {departed} voter(s) are no longer sitting members and so "
             "cannot be checked — expected, and not a mismatch."
+        )
+    if earlier:
+        print(
+            f"ℹ️  {earlier} voted before their current tenure began — an earlier "
+            "mandate, in the other chamber or before a break, which the tool "
+            "models as a separate statement. Also expected."
         )
     mismatched = sum(len(v["voted_but_not_assigned"]) for v in report.values())
     if mismatched:
