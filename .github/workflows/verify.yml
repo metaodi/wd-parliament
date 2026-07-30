@@ -57,9 +57,9 @@ on:
         required: false
         default: "ZH"
       kantonsrat_position:
-        description: "Candidate Q-ID for the Kantonsrat seat — UNVERIFIED, step 7 checks it"
+        description: "Candidate Q-ID for the Kantonsrat seat (blank = discover candidates)"
         required: false
-        default: "Q19479543"
+        default: ""
 
 # Read-only on purpose. This workflow must never write to the repository.
 permissions:

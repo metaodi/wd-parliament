@@ -22,6 +22,7 @@ membership pointing at that group with ``begin_date`` / ``end_date``.
 """
 
 import sys
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -41,21 +42,28 @@ from verify_kantonsrat import (  # noqa: E402
     classify_wikidata_reach,
     district_fields,
     find_kantonsrat_group,
+    identifier_reach_query,
     is_kantonsrat,
     kantonsrat_candidates,
+    position_candidates_query,
+    seat_holders,
     seat_reach_query,
+    summarise_position_candidates,
 )
+
+TODAY = date(2026, 7, 30)
 
 
 def group(id=1, name="Kantonsrat", body_key="ZH"):
     return {"id": id, "body_key": body_key, "name_de": name}
 
 
-def seat(start="2023-05-08", end=None, person_id=1, district=None):
+def seat(start="2023-05-08", end=None, person_id=1, district=None, role="Mitglied"):
     """One seat membership as the live API shapes it."""
     row = {
         "type_harmonized": "council_legislative",
-        "group_name_de": "Kantonsrat",
+        "group_name_de": "Kantonsrat Zürich",
+        "role_name_de": role,
         "person_id": person_id,
         "begin_date": start,
         "end_date": end,
@@ -72,6 +80,14 @@ def seats(open_count, closed_count=0):
         seat(person_id=1000 + i, end="2023-05-07") for i in range(closed_count)
     ]
     return rows
+
+
+def binding(qid, label, holders):
+    return {
+        "position": {"value": f"http://www.wikidata.org/entity/{qid}"},
+        "positionLabel": {"value": label},
+        "holders": {"value": str(holders)},
+    }
 
 
 # --- A. locating the chamber -------------------------------------------------
@@ -159,8 +175,10 @@ def test_a_nothing_mentioning_the_chamber_blames_the_body_key():
 
 
 # --- B. is the chamber the right size? --------------------------------------
-def test_b_exactly_180_open_seats_confirms_the_data_is_current():
-    verdict, detail, _ = classify_seat_count(seats(180, closed_count=900))
+def test_b_exactly_180_seat_holders_confirms_the_data_is_current():
+    verdict, detail, _ = classify_seat_count(
+        seats(180, closed_count=900), today=TODAY
+    )
     assert verdict == CONFIRMED
     assert "180" in detail
 
@@ -174,14 +192,79 @@ def test_b_a_near_miss_on_the_seat_count_is_contradicted_not_waved_through():
     suggestions federally.
     """
     for count in (179, 181):
-        verdict, _, _ = classify_seat_count(seats(count))
+        verdict, _, _ = classify_seat_count(seats(count), today=TODAY)
         assert verdict == CONTRADICTED, count
 
 
 def test_b_all_seats_closed_means_this_is_not_the_sitting_chamber():
-    verdict, detail, _ = classify_seat_count(seats(0, closed_count=200))
+    verdict, detail, _ = classify_seat_count(seats(0, closed_count=200), today=TODAY)
     assert verdict == CONTRADICTED
     assert "holds nobody today" in detail
+
+
+# The three corrections run 13 forced. The live group returned 186 open
+# memberships against 180 seats, and none of the difference was vacancies.
+def test_b_a_member_who_has_not_taken_office_yet_is_not_a_sitting_member():
+    """Run 13: several open rows began 2026-08-17, eighteen days out.
+
+    They are real and correctly open, but a member who starts next month is
+    not sitting today, and counting them inflates the chamber.
+    """
+    rows = seats(180) + [seat(person_id=900 + i, start="2026-08-17") for i in range(6)]
+    assert classify_seat_count(rows, today=TODAY)[0] == CONFIRMED
+    # ...and on a date after they take office, they are members and the
+    # chamber is over-full, which is a finding rather than a rounding error.
+    assert classify_seat_count(rows, today=date(2026, 9, 1))[0] == CONTRADICTED
+
+
+def test_b_a_presiding_member_is_one_person_not_two():
+    """The presidium trap, one level down from the federal one.
+
+    There it was a *group* that was not the chamber; here it is a second row
+    for somebody who already holds a seat. Counting rows counts them twice.
+    """
+    rows = seats(180) + [seat(person_id=5, role="2. Vizepräsidium")]
+    assert classify_seat_count(rows, today=TODAY)[0] == CONFIRMED
+
+
+def test_b_a_guest_is_not_a_member():
+    rows = seats(180) + [seat(person_id=901, role="Gast")]
+    assert classify_seat_count(rows, today=TODAY, seat_role="Mitglied")[0] == CONFIRMED
+    # Without the role filter the guest counts, and the probe says so rather
+    # than quietly absorbing them.
+    assert classify_seat_count(rows, today=TODAY)[0] == CONTRADICTED
+
+
+def test_b_the_funnel_is_reported_at_every_stage():
+    """A drop from 186 to 180 must be visible, not inferred."""
+    rows = seats(180) + [
+        seat(person_id=900, start="2026-08-17"),
+        seat(person_id=5, role="2. Vizepräsidium"),
+        seat(person_id=901, role="Gast"),
+    ]
+    count, lines = seat_holders(rows, today=TODAY, seat_role="Mitglied")
+    text = "\n".join(lines)
+    assert count == 180
+    assert "open (no end_date):    183" in text
+    assert "1 start later" in text
+    assert "Gast=1" in text
+    assert "distinct people:        180" in text
+
+
+def test_b_reaching_the_size_only_after_narrowing_is_stated_in_the_verdict():
+    rows = seats(180) + [seat(person_id=901, role="Gast")]
+    _, detail, _ = classify_seat_count(rows, today=TODAY, seat_role="Mitglied")
+    assert "raw open count is 181" in detail
+
+
+def test_b_without_a_person_column_rows_are_counted_and_the_funnel_says_so():
+    rows = [
+        {"role_name_de": "Mitglied", "begin_date": "2023-05-08", "end_date": None}
+        for _ in range(180)
+    ]
+    count, lines = seat_holders(rows, today=TODAY)
+    assert count == 180
+    assert any("no person column" in line for line in lines)
 
 
 def test_b_a_missing_end_column_is_inconclusive_never_contradicted():
@@ -193,20 +276,20 @@ def test_b_a_missing_end_column_is_inconclusive_never_contradicted():
     verdict about the data.
     """
     rows = [{"type_harmonized": "council_legislative", "person_id": i} for i in range(180)]
-    verdict, detail, _ = classify_seat_count(rows)
+    verdict, detail, _ = classify_seat_count(rows, today=TODAY)
     assert verdict == INCONCLUSIVE
     assert "END_FIELDS" in detail
 
 
 def test_b_no_rows_is_inconclusive():
-    verdict, _, _ = classify_seat_count([])
+    verdict, _, _ = classify_seat_count([], today=TODAY)
     assert verdict == INCONCLUSIVE
 
 
 def test_b_the_expected_size_is_a_parameter_not_a_constant():
     """So the probe generalises to the other 25 cantons without an edit."""
-    assert classify_seat_count(seats(100), expected=100)[0] == CONFIRMED
-    assert classify_seat_count(seats(100), expected=180)[0] == CONTRADICTED
+    assert classify_seat_count(seats(100), expected=100, today=TODAY)[0] == CONFIRMED
+    assert classify_seat_count(seats(100), expected=180, today=TODAY)[0] == CONTRADICTED
 
 
 # --- C. may the cantonal tool ever write? -----------------------------------
@@ -291,6 +374,62 @@ def test_d_a_plausible_count_confirms_and_incomplete_coverage_does_not_falsify()
 def test_d_held_by_people_but_by_nobody_currently_is_inconclusive():
     verdict, _ = classify_position_item(holders=300, open_holders=0)
     assert verdict == INCONCLUSIVE
+
+
+def test_d_the_category_item_run_13_disproved_is_caught_by_the_holder_count():
+    """Q19479543 is 'Kategorie:Kantonsrat (Zürich, Person)', held by nobody.
+
+    It shipped as this probe's default on the strength of a search, and as a
+    P39 main value it would have claimed people hold a Wikimedia category.
+    Counting holders is what caught it — the label alone read plausibly.
+    """
+    verdict, detail = classify_position_item(holders=0, open_holders=0)
+    assert verdict == CONTRADICTED
+    assert "category" in detail
+
+
+# --- D. discovering the position rather than guessing it again --------------
+def test_d_candidates_are_ranked_by_how_many_known_members_hold_them():
+    rows = [
+        binding("Q123", "Mitglied des Kantonsrats Zürich", 28),
+        binding("Q18510612", "Mitglied des Nationalrats", 9),
+    ]
+    lines, top = summarise_position_candidates(rows, sample_size=35)
+    assert top == "Q123"
+    assert any("Q123" in line and "28" in line for line in lines)
+
+
+def test_d_the_top_candidate_is_offered_as_a_candidate_not_an_answer():
+    """A federal seat can outrank the cantonal one in a small sample."""
+    _, top = summarise_position_candidates([binding("Q18510612", "NR", 3)], 4)
+    assert top == "Q18510612"
+    lines, _ = summarise_position_candidates([binding("Q18510612", "NR", 3)], 4)
+    assert any("not" in line and "answer" in line for line in lines)
+
+
+def test_d_no_candidates_is_a_reported_answer_not_a_crash():
+    lines, top = summarise_position_candidates([], sample_size=0)
+    assert top is None
+    assert lines
+
+
+def test_d_the_discovery_query_asks_about_the_given_people():
+    sparql = position_candidates_query(["Q117716", "Q117154"])
+    assert "wd:Q117716" in sparql and "wd:Q117154" in sparql
+    assert "GROUP BY" in sparql
+    assert "DeprecatedRank" in sparql
+
+
+def test_the_identifier_reach_query_does_not_depend_on_the_position_item():
+    """Run 13's section C returned 0 for everything because the P39 was wrong.
+
+    Asking about the people directly cannot fail that way, so this pins down
+    that the query mentions no position at all.
+    """
+    sparql = identifier_reach_query(["Q117716"])
+    assert "wd:Q117716" in sparql
+    assert f"wdt:{OPENPARLDATA_ID}" in sparql
+    assert "P39" not in sparql
 
 
 # --- E. what could supply P768? ---------------------------------------------

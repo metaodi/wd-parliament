@@ -144,7 +144,27 @@ Three things about it that cost a wrong answer each, and are now guarded:
   Zürich has no P1307, so P14527 may be the only Wikidata-asserted identifier
   that reaches those people. `scripts/verify_kantonsrat.py` measures it.
 
-Three rules follow from step 7 and hold before any cantonal code is written.
+Run 13 (2026-07-30) measured the cantonal source and it is sound: body `ZH`,
+group **5077** `Kantonsrat Zürich`, 913 memberships, 912 with a `begin_date`,
+`electoral_district_de/fr/it` on the *person* records. Two traps it caught, both
+now enforced in `verify_kantonsrat.py`:
+
+- **`Q19479543` is `Kategorie:Kantonsrat (Zürich, Person)`** — a Wikimedia
+  category, held by nobody. It shipped as the probe's default off a web search
+  and as a P39 main value would have claimed people hold a category. **Never
+  reinstate it.** The default is empty on purpose; section D discovers
+  candidates from the members OpenParlData links rather than guessing twice.
+  A wrong position item is also silently contagious: it made every identifier
+  count in section C read 0, which looks like "no coverage" and meant "no such
+  seat". That is why the reach query now mentions no position at all.
+- **counting open membership rows is not counting members.** The group's rows
+  carry `role_name_de` = `Mitglied` *and* `Gast` and `2. Vizepräsidium`, and
+  some open rows start in the future. 186 open rows against 180 seats was all
+  three. Count **distinct people with an open, already-begun, seat-role
+  membership**, and print the funnel — the same "a committee is not the
+  chamber" lesson as `chamber_of`, one level down.
+
+Three more rules follow from step 7 and hold before any cantonal code is written.
 **Never join a cantonal seat on P1307** — it is the federal service, so it
 reaches only members who also sat in Bern, and the people it misses are exactly
 those who never went federal: a bias that reads as coverage rather than as a

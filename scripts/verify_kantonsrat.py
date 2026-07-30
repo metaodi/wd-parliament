@@ -100,6 +100,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -136,7 +137,6 @@ from verify_openparldata import (  # noqa: E402
     _present,
     _text,
     classify_seat_memberships,
-    count_only,
     date_columns,
     fetch,
     summarise_wikidata_ids,
@@ -156,16 +156,22 @@ DEFAULT_BODY_KEY = "ZH"
 # current". 180 is the number to expect here.
 DEFAULT_SEATS = 180
 
-# **Unverified.** Search points at this item for "member of the Cantonal
-# Council of Zürich" (with Q2110002 as the council itself), but it was not
-# checked against a live store when this file was written, and the phrasing
-# that produced it was ambiguous between the *position* item and a *category*
-# of members. Section D exists to settle it, and ``--position`` overrides it.
+# **Unknown, deliberately.** This shipped as ``Q19479543`` on the strength of a
+# search, and run 13 (2026-07-30) disproved it: that item is
+# ``Kategorie:Kantonsrat (Zürich, Person)``, instance of *Wikimedia category*,
+# held by nobody. As a P39 main value it would have written hundreds of
+# statements claiming people hold a Wikimedia category — which is why section D
+# counts holders rather than reading a label, and why the default is now empty
+# instead of a second guess.
 #
-# Getting this wrong is not a small error: ``position`` is the main value of
-# every P39 this tool would emit, so a category item here would write hundreds
-# of statements saying somebody holds a Wikimedia category.
-KANTONSRAT_POSITION = "Q19479543"
+# With no candidate, section D *discovers* them from the members OpenParlData
+# already links to Wikidata; pass ``--position`` to check one.
+KANTONSRAT_POSITION = ""
+
+# The membership role that is a seat. Run 13: the Kantonsrat group's rows carry
+# ``Mitglied`` alongside ``Gast`` and ``2. Vizepräsidium``, so counting rows
+# counts a guest as a member and a presiding member twice.
+DEFAULT_SEAT_ROLE = "Mitglied"
 
 # How the chamber names itself, normalised. Matched by **equality** against
 # each name field on a group, never by substring — see the module docstring.
@@ -191,6 +197,18 @@ KANTONSRAT_NAMES = (
 # What a row might call the electoral district. Reported, never assumed — the
 # same rule as BEGIN_FIELDS, for the same reason.
 DISTRICT_HINTS = ("district", "wahlkreis", "constituency", "electoral", "circle")
+
+# What a membership might call the role it records, and who holds it. Both
+# resolved from the rows for the usual reason.
+#
+# The role field is what run 13 showed this probe could not do without. The
+# Kantonsrat group's memberships are not all seats: alongside ``Mitglied`` they
+# carry ``2. Vizepräsidium`` and ``Gast``, so counting rows counts a member
+# twice when they also preside, and counts a guest as a member. That is the
+# federal presidium trap one level down — there it was a *group* that was not
+# the chamber, here it is a *role* within the right group.
+ROLE_FIELDS = ("role_name_de", "role_name", "role_harmonized", "role")
+PERSON_FIELDS = ("person_id", "person_key", "personid")
 
 
 def is_kantonsrat(row: Dict[str, Any]) -> bool:
@@ -260,22 +278,125 @@ def find_kantonsrat_group(
     return found, lines
 
 
+def _as_date(value: Any) -> Optional[date]:
+    """An ISO date off a row value, or ``None``. Pure and tolerant.
+
+    Unparseable is ``None`` rather than an exception, for the reason
+    ``parliament._as_date`` gives: one malformed date must not cost the whole
+    measurement.
+    """
+    text = _text(value).strip()
+    if not text:
+        return None
+    try:
+        return date.fromisoformat(text.replace(" ", "T").split("T")[0])
+    except ValueError:
+        return None
+
+
+def seat_holders(
+    rows: Sequence[Dict[str, Any]],
+    today: Optional[date] = None,
+    seat_role: Optional[str] = None,
+) -> Tuple[int, List[str]]:
+    """How many people actually hold a seat right now, and the funnel. Pure.
+
+    Three filters, each of which run 13 proved is needed, applied in order and
+    reported at every stage so that a drop is visible rather than assumed:
+
+    1. **open** — no end date, i.e. not yet vacated;
+    2. **already begun** — a start date at or before ``today``. The source
+       carries rows for members who take office *later*: on 2026-07-30 several
+       Kantonsrat rows began 2026-08-17. They are real and correctly open, but
+       they are not sitting members, and counting them inflates the chamber;
+    3. **the seat role**, when ``seat_role`` is given and the column exists.
+       ``Gast`` is not a member, and ``2. Vizepräsidium`` is a *second* row for
+       somebody who already has one.
+
+    The result is then **distinct people**, not rows, because 2 makes a
+    presiding member two rows. Falls back to counting rows when the source
+    carries no person column, and says so in the funnel rather than silently
+    changing what the number means.
+    """
+    lines: List[str] = []
+    today = today or date.today()
+    end_field = _present(rows, END_FIELDS)
+    begin_field = _present(rows, BEGIN_FIELDS)
+    role_field = _present(rows, ROLE_FIELDS)
+    person_field = _present(rows, PERSON_FIELDS)
+
+    open_rows = [r for r in rows if not _text(r.get(end_field)).strip()]
+    lines.append(f"memberships:            {len(rows)}")
+    lines.append(f"open (no {end_field}):    {len(open_rows)}")
+
+    if begin_field:
+        begun = [
+            r
+            for r in open_rows
+            if (_as_date(r.get(begin_field)) or date.min) <= today
+        ]
+        future = len(open_rows) - len(begun)
+        lines.append(f"of those, begun by {today}: {len(begun)}"
+                     + (f"  ({future} start later)" if future else ""))
+    else:
+        begun = list(open_rows)
+        lines.append("start column absent, so no future starts excluded")
+
+    if role_field:
+        counts: Dict[str, int] = {}
+        for row in begun:
+            counts[_text(row.get(role_field)) or "(none)"] = (
+                counts.get(_text(row.get(role_field)) or "(none)", 0) + 1
+            )
+        lines.append(
+            "roles among those:      "
+            + ", ".join(f"{k}={v}" for k, v in sorted(counts.items()))
+        )
+        if seat_role:
+            wanted = " ".join(seat_role.lower().split())
+            begun = [
+                r
+                for r in begun
+                if " ".join(_text(r.get(role_field)).lower().split()) == wanted
+            ]
+            lines.append(f"with role {seat_role!r}:      {len(begun)}")
+    elif seat_role:
+        lines.append(
+            f"no role column, so --seat-role {seat_role!r} could not be applied"
+        )
+
+    if person_field:
+        count = len({r.get(person_field) for r in begun})
+        lines.append(f"distinct people:        {count}")
+    else:
+        count = len(begun)
+        lines.append(f"rows (no person column): {count}")
+    return count, lines
+
+
 def classify_seat_count(
-    rows: Sequence[Dict[str, Any]], expected: int = DEFAULT_SEATS
+    rows: Sequence[Dict[str, Any]],
+    expected: int = DEFAULT_SEATS,
+    today: Optional[date] = None,
+    seat_role: Optional[str] = None,
 ) -> Tuple[str, str, List[str]]:
-    """Do the open-ended seat memberships number ``expected``? Pure.
+    """Does the chamber currently hold ``expected`` people? Pure.
 
     The check that turns "this column is populated" into "this data is current
-    and complete". A membership with no end date is a seat somebody holds
-    *today*, so the open rows should come to the size of the chamber — the
-    federal probe got exactly 200 and 46 and that is what made its answer
-    trustworthy rather than merely non-empty.
+    and complete" — the federal probe got exactly 200 National Council and 46
+    Council of States seats, and that is what made its answer trustworthy
+    rather than merely non-empty.
 
-    A count that is *close* is reported as CONTRADICTED rather than waved
-    through, because the near misses are the interesting failures: 179 means a
-    vacant seat or a member the source has not yet opened a row for, and 181
-    means a row that should have been closed. Both change what the diff would
-    claim, and both are things a human should look at before a run.
+    Counting *people who currently hold a seat* rather than open rows is what
+    run 13 forced. The raw open count was 186 against 180 seats, and the
+    difference was neither vacancies nor stale rows but future starts and
+    non-seat roles — see :func:`seat_holders`. That is a fact about the source,
+    so it belongs in the funnel and not in a tolerance.
+
+    A count that is *close* is still CONTRADICTED rather than waved through:
+    179 means a vacancy or a member the source has not opened a row for, 181
+    means a row that should have been closed, and both change who the diff
+    thinks is sitting.
     """
     lines: List[str] = []
     if not rows:
@@ -296,19 +417,26 @@ def classify_seat_count(
             lines,
         )
 
-    open_rows = [r for r in rows if not _text(r.get(end_field)).strip()]
     lines.append(f"read as end:            {end_field}")
-    lines.append(f"memberships:            {len(rows)}")
-    lines.append(f"open (no {end_field}):  {len(open_rows)}")
+    count, funnel = seat_holders(rows, today=today, seat_role=seat_role)
+    lines.extend(funnel)
     lines.append(f"expected seats:         {expected}")
 
-    if len(open_rows) == expected:
+    open_rows = sum(1 for r in rows if not _text(r.get(end_field)).strip())
+    if count == expected:
+        narrowed = (
+            f" The raw open count is {open_rows}; the chamber's size is "
+            "reached only after excluding future starts and non-seat roles, "
+            "which is a fact about the source worth carrying into the adapter."
+            if open_rows != expected
+            else ""
+        )
         return (
             CONFIRMED,
-            f"{len(open_rows)} memberships are open, exactly the {expected} "
-            "seats of the Kantonsrat. The data is current as well as dated, "
-            "which is the same signal that made the federal read trustworthy "
-            "(200 National Council and 46 Council of States seats).",
+            f"{count} people currently hold a seat, exactly the {expected} of "
+            "the Kantonsrat. The data is current as well as dated, which is "
+            "the signal that made the federal read trustworthy (200 National "
+            f"Council and 46 Council of States seats).{narrowed}",
             lines,
         )
     if not open_rows:
@@ -321,12 +449,13 @@ def classify_seat_count(
         )
     return (
         CONTRADICTED,
-        f"{len(open_rows)} memberships are open against {expected} seats. "
-        "Do not build the adapter on this until the difference is explained: a "
-        "count near the chamber's size usually means vacancies or rows that "
-        "were never closed, and a count far from it means the group is not the "
-        "chamber. Either way the member list would be wrong, which is the "
-        "failure that published 2,234 bad suggestions federally.",
+        f"{count} people currently hold a seat against {expected}. Do not "
+        "build the adapter on this until the funnel above explains the "
+        "difference: a count near the chamber's size means vacancies, rows "
+        "that were never closed, or a role this run did not exclude, and a "
+        "count far from it means the group is not the chamber. Either way the "
+        "member list would be wrong, which is the failure that published "
+        "2,234 bad suggestions federally.",
         lines,
     )
 
@@ -519,6 +648,125 @@ WHERE {{
 """
 
 
+def identifier_reach_query(person_qids: Sequence[str]) -> str:
+    """Which identifiers Wikidata asserts about a known set of people.
+
+    Deliberately independent of the position item. Run 13 asked the same
+    question *through* a P39 that turned out to be a Wikimedia category, so
+    every count came back 0 — which reads as "cantonal members carry no
+    identifier" when it actually meant "nobody holds that item". Asking about
+    the people directly cannot fail that way: the sample comes from
+    OpenParlData, not from a guess about how Wikidata models the seat.
+    """
+    values = " ".join(f"wd:{q}" for q in person_qids)
+    return f"""
+SELECT
+  (COUNT(DISTINCT ?withOpd) AS ?withOpd)
+  (COUNT(DISTINCT ?withFederal) AS ?withFederal)
+  (COUNT(DISTINCT ?either) AS ?either)
+WHERE {{
+  VALUES ?person {{ {values} }}
+  OPTIONAL {{ ?person wdt:{OPENPARLDATA_ID} ?opd . BIND(?person AS ?withOpd) }}
+  OPTIONAL {{
+    ?person wdt:{SWISS_PARLIAMENT_ID} ?fed . BIND(?person AS ?withFederal)
+  }}
+  OPTIONAL {{
+    {{ ?person wdt:{OPENPARLDATA_ID} ?a }}
+    UNION
+    {{ ?person wdt:{SWISS_PARLIAMENT_ID} ?b }}
+    BIND(?person AS ?either)
+  }}
+}}
+"""
+
+
+def position_candidates_query(person_qids: Sequence[str], language: str = "de") -> str:
+    """Which P39 positions do these known members hold, ranked by frequency?
+
+    The answer to "which item *is* the seat?", derived rather than guessed.
+    Run 13 settled why that matters: the candidate this file shipped with,
+    Q19479543, turned out to be ``Kategorie:Kantonsrat (Zürich, Person)`` — a
+    Wikimedia category, held by nobody, which as a P39 main value would have
+    claimed that people hold a category.
+
+    Guessing a second time would repeat the mistake, so this asks the data
+    instead. ``person_qids`` are the Q-IDs OpenParlData records for people it
+    says sit in the Kantonsrat; whatever position most of them hold is the
+    seat. Their federal seats and party offices appear in the same list, which
+    is why the result is ranked and printed rather than taken as an answer.
+    """
+    values = " ".join(f"wd:{q}" for q in person_qids)
+    return f"""
+SELECT ?position ?positionLabel (COUNT(DISTINCT ?person) AS ?holders) WHERE {{
+  VALUES ?person {{ {values} }}
+  ?person p:P39 ?statement .
+  ?statement ps:P39 ?position ;
+             wikibase:rank ?rank .
+  FILTER ( ?rank != wikibase:DeprecatedRank )
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,en". }}
+}}
+GROUP BY ?position ?positionLabel
+ORDER BY DESC(?holders)
+LIMIT 25
+"""
+
+
+def summarise_position_candidates(
+    bindings: Sequence[dict], sample_size: int = 0
+) -> Tuple[List[str], Optional[str]]:
+    """Rank the discovered positions and pick the likeliest seat. Pure.
+
+    Returns the lines to print and the top candidate's Q-ID, or ``None`` when
+    nothing came back. The pick is only ever *reported* — a position held by
+    most of a sample of known members is a strong hint, not a verified fact,
+    and `--verify-config` plus section D's own count are what settle it.
+    """
+    lines: List[str] = []
+    if not bindings:
+        return (
+            [
+                "  (no positions came back — either none of these people has a "
+                "P39 at all, or there were no Q-IDs to ask about)"
+            ],
+            None,
+        )
+
+    ranked: List[Tuple[str, str, int]] = []
+    for row in bindings:
+        qid = _qid(row.get("position", {}).get("value", ""))
+        if not qid:
+            continue
+        label = (row.get("positionLabel") or {}).get("value") or qid
+        try:
+            holders = int((row.get("holders") or {}).get("value", 0))
+        except (TypeError, ValueError):
+            holders = 0
+        ranked.append((qid, label, holders))
+
+    if not ranked:
+        return ["  (no usable position rows)"], None
+
+    for qid, label, holders in ranked[:12]:
+        share = f" ({100.0 * holders / sample_size:.0f}% of sample)" if sample_size else ""
+        lines.append(f"    {holders:>4} x {qid:<12} {label}{share}")
+    top = ranked[0]
+    lines.append("")
+    lines.append(
+        f"  -> most-held position: {top[0]} {top[1]!r} ({top[2]} of "
+        f"{sample_size or 'the'} sampled member(s)). Treat as a candidate, not "
+        "an answer: a federal seat or a party office can outrank the cantonal "
+        "one in a small sample. Re-run with --position to have section D count "
+        "it against the chamber's size."
+    )
+    return lines, top[0]
+
+
+def _qid(uri: str) -> Optional[str]:
+    """The Q-ID at the end of an entity URI. Pure."""
+    tail = (uri or "").rsplit("/", 1)[-1]
+    return tail if tail.startswith("Q") and tail[1:].isdigit() else None
+
+
 def _count(bindings: Sequence[dict], name: str) -> int:
     if not bindings:
         return 0
@@ -543,8 +791,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--position",
         default=KANTONSRAT_POSITION,
         help=(
-            "Candidate Q-ID for 'member of the Cantonal Council of Zürich'. "
-            "The default is UNVERIFIED; section D is what checks it."
+            "Candidate Q-ID for the Kantonsrat seat. Empty by default because "
+            "run 13 disproved the first candidate; section D then discovers "
+            "candidates from the members instead of checking a guess."
         ),
     )
     parser.add_argument(
@@ -552,6 +801,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         type=int,
         default=DEFAULT_SEATS,
         help="Seats in the chamber. 180 for the Kantonsrat Zürich.",
+    )
+    parser.add_argument(
+        "--seat-role",
+        default=DEFAULT_SEAT_ROLE,
+        help=(
+            "The membership role that *is* a seat. The Kantonsrat group also "
+            "carries 'Gast' and presidium rows, which are not seats and not "
+            "extra members. Pass '' to count every role."
+        ),
     )
     args = parser.parse_args(argv)
 
@@ -624,7 +882,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print()
 
         seat_verdict, seat_detail, seat_lines = classify_seat_count(
-            seat_rows, args.expect_seats
+            seat_rows, args.expect_seats, seat_role=args.seat_role or None
         )
         for line in seat_lines:
             print("  " + line if line else "")
@@ -638,36 +896,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("C. Are the members reachable on Wikidata, and by which identifier?")
     print("=" * 70)
     wikidata = WikidataClient(http)
-    reach_verdict, reach_detail = INCONCLUSIVE, "The reach query could not be run."
-    pos_verdict, pos_detail = INCONCLUSIVE, "The reach query could not be run."
-    try:
-        rows = wikidata.run_query(seat_reach_query(args.position))
-        holders = _count(rows, "holders")
-        open_holders = _count(rows, "open")
-        with_opd = _count(rows, "withOpd")
-        with_fed = _count(rows, "withFederal")
-        either = _count(rows, "either")
-        print(f"  holding {args.position:<10}    : {holders}")
-        print(f"  of them currently        : {open_holders}")
-        print(f"  carrying {OPENPARLDATA_ID:<9}      : {with_opd}")
-        print(f"  carrying {SWISS_PARLIAMENT_ID:<9}       : {with_fed} "
-              "(federal service, not this seat)")
-        print(f"  carrying either          : {either}")
-        reach_verdict, reach_detail = classify_wikidata_reach(
-            holders, with_opd, with_fed, either, args.expect_seats
-        )
-        pos_verdict, pos_detail = classify_position_item(
-            holders, open_holders, args.expect_seats
-        )
-    except Exception as exc:
-        print(f"  ! WDQS: {exc}")
-    print()
-    print(f"{reach_verdict}: {reach_detail}")
 
-    # The source-asserted Q-ID, measured separately because it is a different
-    # class of claim: see the module docstring and summarise_wikidata_ids.
-    print()
-    print("  OpenParlData's own wikidata_id, for comparison:")
+    # The source-asserted Q-IDs come first: they are what section D discovers
+    # the position from, so they have to be in hand before either query runs.
+    # Measured separately from anything Wikidata asserts, because a Q-ID a
+    # third party asserts *about* Wikidata is a different class of claim.
     person_ids = {r.get("person_id") for r in seat_rows if r.get("person_id") is not None}
     people, _ = fetch(client, "persons", body_key=args.body_key)
     seated = [r for r in people if r.get("id") in person_ids] or people
@@ -681,26 +914,95 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "not by Wikidata. It needs its own QID_FROM_* constant and its own "
         "decision in is_mechanical; it must not inherit the P1307 gate."
     )
+    known_qids = [
+        _text(r.get("wikidata_id")).strip()
+        for r in seated
+        if _text(r.get("wikidata_id")).strip().startswith("Q")
+    ]
 
-    # --- D. is the position item right? -------------------------------------
+    # Which identifiers Wikidata asserts about those same people. This does
+    # **not** need the position item, which is what makes it worth asking
+    # separately: run 13 had the position wrong, and every number in this
+    # section came back 0 as a result, saying nothing about cantonal coverage.
+    print()
+    print(f"  What Wikidata asserts about those {len(known_qids)} item(s):")
+    reach_verdict, reach_detail = INCONCLUSIVE, "The reach query could not be run."
+    if known_qids:
+        try:
+            rows = wikidata.run_query(identifier_reach_query(known_qids))
+            with_opd = _count(rows, "withOpd")
+            with_fed = _count(rows, "withFederal")
+            either = _count(rows, "either")
+            print(f"    carrying {OPENPARLDATA_ID:<9}    : {with_opd}")
+            print(f"    carrying {SWISS_PARLIAMENT_ID:<9}     : {with_fed} "
+                  "(federal service, not this seat)")
+            print(f"    carrying either        : {either}")
+            reach_verdict, reach_detail = classify_wikidata_reach(
+                len(known_qids), with_opd, with_fed, either, args.expect_seats
+            )
+        except Exception as exc:
+            print(f"    ! WDQS: {exc}")
+    else:
+        reach_verdict, reach_detail = (
+            INCONCLUSIVE,
+            "OpenParlData links none of these people to a Wikidata item, so "
+            "there is no sample to ask about. That is itself a finding: with "
+            "no Q-IDs from the source, section D cannot discover the position "
+            "either.",
+        )
+    print()
+    print(f"{reach_verdict}: {reach_detail}")
+
+    # --- D. which item IS the seat? -----------------------------------------
     print()
     print("=" * 70)
-    print(f"D. Is {args.position} really the seat?")
+    print("D. Which item is the seat?")
     print("=" * 70)
-    try:
-        described = wikidata.describe_qids([args.position], config.language)
-        entry = described.get(args.position, {})
-        print(f"  label:       {entry.get('label')!r}")
-        print(f"  description: {entry.get('description')!r}")
-        instances = entry.get("instance_of") or []
-        print(f"  instance of: {', '.join(str(i) for i in instances) or '(none)'}")
-        if any("category" in str(i).lower() for i in instances):
-            print(
-                "  ! this is a CATEGORY item, not a position. Emitting it as "
-                "P39 would claim people hold a Wikimedia category."
+    pos_verdict, pos_detail = INCONCLUSIVE, "No candidate position was given."
+
+    if args.position:
+        print(f"Checking the candidate {args.position}:")
+        try:
+            described = wikidata.describe_qids([args.position], config.language)
+            entry = described.get(args.position, {})
+            print(f"  label:       {entry.get('label')!r}")
+            print(f"  description: {entry.get('description')!r}")
+            instances = entry.get("instance_of") or []
+            print(f"  instance of: {', '.join(str(i) for i in instances) or '(none)'}")
+            if any("category" in str(i).lower() for i in instances):
+                print(
+                    "  ! this is a CATEGORY item, not a position. Emitting it "
+                    "as P39 would claim people hold a Wikimedia category — "
+                    "which is exactly what Q19479543 would have done."
+                )
+            rows = wikidata.run_query(seat_reach_query(args.position))
+            holders = _count(rows, "holders")
+            open_holders = _count(rows, "open")
+            print(f"  held by:     {holders} item(s), {open_holders} currently")
+            pos_verdict, pos_detail = classify_position_item(
+                holders, open_holders, args.expect_seats
             )
-    except Exception as exc:
-        print(f"  ! WDQS: {exc}")
+        except Exception as exc:
+            print(f"  ! WDQS: {exc}")
+        print()
+
+    # Discovery, always: a disproved candidate should hand over a better one
+    # rather than just a "no". Asking which positions the known members hold
+    # derives the seat from the data instead of from a search result.
+    print(f"Positions held by the {len(known_qids)} member(s) OpenParlData "
+          "links to Wikidata:")
+    if known_qids:
+        try:
+            found = wikidata.run_query(
+                position_candidates_query(known_qids, config.language)
+            )
+            cand_lines, top = summarise_position_candidates(found, len(known_qids))
+            for line in cand_lines:
+                print(line)
+        except Exception as exc:
+            print(f"  ! WDQS: {exc}")
+    else:
+        print("  (no linked items, so nothing to derive the position from)")
     print()
     print(f"{pos_verdict}: {pos_detail}")
 
@@ -737,7 +1039,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"B. Seat tenure dated             : {date_verdict}")
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")
     print(f"C. Wikidata-asserted identifier  : {reach_verdict}")
-    print(f"D. Position item {args.position:<12}   : {pos_verdict}")
+    print(f"D. Position item {args.position or '(none given)':<15}: {pos_verdict}")
     print("=" * 70)
     print(
         "This probe evaluates an option; it gates nothing. B decides whether "
