@@ -61,18 +61,18 @@ Two facts about the source, both learned the hard way, both now enforced in
   is `PersonNumber` and not `PersonIdCode`. `resolve.match_by_identifier` is
   comparing the right fields.
 
-Still open, and the reason `ADD_MEMBERSHIP` / `ADD_START_DATE` should not be
-applied in bulk yet:
+**`DateJoining` is a mandate-*segment* start, not a tenure start — so P580 must
+not be emitted from it, and `ADD_MEMBERSHIP` / `ADD_START_DATE` must not be
+bulk-applied.** Measured (README step 0c): of 244 sitting members joined against
+OpenParlData, 233 agree and 11 have `DateJoining` *later* than the legislature
+opening. Bregy is the proof — `MemberCouncil` says 2025-09-16 while his
+`MemberCouncilHistory` carries an active row from 2023-12-04. A2 corroborates:
+200 National Councillors share only 16 distinct `DateJoining` values.
 
-- **Is `DateJoining` a tenure start or a reporting-year segment?** Parmelin's
-  sitting row says `2026-01-01`, not his 2016 start, and his history rows are
-  broken up by year. If sitting `NR` / `SR` rows are segmented the same way,
-  P580 emitted from `DateJoining` is wrong — and both kinds that emit it are
-  mechanical. `scripts/verify_source.py` section **A2** shows the shape;
-  `scripts/compare_tenure_dates.py` answers it, by comparing `DateJoining`
-  against OpenParlData's per-term `begin_date` joined through Wikidata
-  (`PersonNumber` →P1307→ Q-ID ←`wikidata_id`). Both run in `verify.yml`
-  without gating it.
+The right date is already in `MemberCouncilHistory` — the earliest
+`DateJoining` of the current continuous run — so fixing this does **not** require
+switching source. `scripts/compare_tenure_dates.py` re-checks it; CONFIRMED
+there is what unblocks a bulk apply.
 
 **OpenParlData is a live option, not a dead end** (README step 6). Its chambers
 are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality

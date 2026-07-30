@@ -38,9 +38,9 @@ predicted — step 0b, which is now the one that would do damage. Later
 dispatches confirmed the source read is fixed and settled step 6
 ([run 30494063489](https://github.com/metaodi/wd-parliament/actions/runs/30494063489)).
 
-**Steps 4 and 5 remain untouched, and 0c is the one to answer before any bulk
-apply** — step 6 now offers a second way to answer it. Work through what is
-left before applying any QuickStatements.
+**Steps 4 and 5 remain untouched.** Step 0c is now answered, and the answer
+is a blocker: `DateJoining` is a mandate-*segment* start, so P580 must not be
+emitted from it until it is derived from `MemberCouncilHistory` instead.
 
 ### 0. ✅ The source read — *fixed: the council filter*
 
@@ -118,46 +118,54 @@ and lose their P2937 qualifiers.
 fixtures were rewritten to carry the sentinel the way the service does, since
 their previous `"DateLeaving": null` is the fiction that hid this.
 
-### 0c. ⚠️ Still open: is `DateJoining` a tenure start or a year segment?
+### 0c. ✅ `DateJoining` is a *segment* start — do not emit P580 from it
 
-Parmelin's sitting row gives `DateJoining = 2026-01-01` — the current year, not
-his 2016 start. His `MemberCouncilHistory` rows tell the same story: `BR`
-segments broken at 2016–2018, 2019, 2020, 2021, 2022–2024, 2025. If sitting
-`NR` / `SR` rows are segmented the same way, then `DateJoining` is the start of
-a reporting period and **not** when the member took office — and
-`ADD_MEMBERSHIP` and `ADD_START_DATE`, both mechanical, would write it to
-Wikidata as P580.
+**Answered against `MemberCouncil`.** `scripts/compare_tenure_dates.py` compared
+all 246 sitting members against OpenParlData's per-term `begin_date`, joining
+through Wikidata (`PersonNumber` →P1307→ Q-ID ←`wikidata_id`); 244 joined, 2
+skipped:
 
-His National Council history rows *do* carry real term dates (2003-12-01,
-2007-12-03, 2011-12-05, 2015-11-30), so this may well be specific to Federal
-Councillors. It is not yet known either way, because the probe only fetched
-Parmelin, who now sits in neither chamber.
-
-Two things now measure it, and the second is the one that can actually answer
-it:
-
-- `scripts/verify_source.py` section **A2** prints the `DateJoining` spread per
-  chamber and warns when every start is a 1 January. It can see the *shape* of
-  the problem but not the right answer, having only the one source.
-- `scripts/compare_tenure_dates.py` compares `DateJoining` against
-  OpenParlData's per-term `begin_date` for the same member, joining the two
-  through Wikidata — `PersonNumber` →P1307→ Q-ID ←`wikidata_id`— since there is
-  no shared key. Both ends of that join are confirmed (steps 1 and 6). A member
-  who cannot be joined is counted and skipped, never guessed at.
-
-```bash
-uv run python scripts/compare_tenure_dates.py
+```
+agree exactly:                    233 (95.5%)
+disagree:                         11
+  of those, OData is a 1 January: 0
 ```
 
-It reports `CONFIRMED` when the two agree (so P580 from `DateJoining` is right),
-and `CONTRADICTED` when they do not — saying specifically whether the
-disagreements are all `DateJoining` on a 1 January against a real date, which is
-the failure this step predicts. Fewer than ten joinable members is
-`INCONCLUSIVE`: that is a finding about the join, not about the dates.
+So the *reporting-year* shape this step feared is **not** what happens to
+sitting NR/SR rows — Parmelin's `2026-01-01` is specific to Federal Councillors.
+But every one of the 11 has `DateJoining` **later** than OpenParlData's
+`2023-12-04`, the 52nd legislature's opening.
 
-Both run in `Verify assumptions`, reporting without gating the job — a
-disagreement blocks a **bulk apply**, not the generation of reports. Read it
-before letting any `ADD_MEMBERSHIP` or `ADD_START_DATE` reach QuickStatements.
+Philipp Bregy settles which source is right. `MemberCouncil` gives him
+`DateJoining = 2025-09-16`; his `MemberCouncilHistory` rows read:
+
+```
+2019-03-04 → 2019-12-01   (NR, Active=False)
+2019-12-02 → 2023-12-03   (NR, Active=False)
+2023-12-04 → <sentinel>   (NR, Active=True)   <- the current legislature
+```
+
+He has held the seat since 2023-12-04 and the *history* says so. The
+`2025-09-16` on the current row is a **later mandate segment**, not when he took
+office. `verify_source.py` section A2 corroborates: 200 National Councillors
+share just **16 distinct `DateJoining` values** (earliest 2023-12-04, latest
+2026-06-01), which is the signature of most members carrying the legislature
+start and a handful having been re-segmented at later session dates.
+
+**Consequences.**
+
+- **Do not bulk-apply `ADD_MEMBERSHIP` or `ADD_START_DATE`.** Both are
+  mechanical, and on the current data they would write a wrong P580 for 11 of
+  244 sitting members (4.5%) — the 233 who agree are fine, but nothing in the
+  pipeline distinguishes them.
+- **The fix need not mean switching source.** `MemberCouncilHistory` already
+  contains the right date: the earliest `DateJoining` of the member's current
+  continuous run. Deriving P580 from that keeps the OData-only design and the
+  P1307 join intact. OpenParlData's `begin_date` agrees with it and is the
+  cross-check.
+- Re-run the comparison after any such change; `CONFIRMED` there is what
+  unblocks a bulk apply.
+
 
 ### 1. ✅ The P1307 assumption — *CONFIRMED*
 
