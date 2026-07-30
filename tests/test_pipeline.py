@@ -22,7 +22,11 @@ from wd_parliament.models import (
     PositionStatement,
     WikidataPerson,
 )
-from wd_parliament.parliament import members_from_rows, periods_from_rows
+from wd_parliament.parliament import (
+    members_from_rows,
+    periods_from_rows,
+    segments_from_rows,
+)
 from wd_parliament.quickstatements import render_file
 from wd_parliament.report import write_reports
 
@@ -33,9 +37,10 @@ STATES = Body(council="SR", label="Swiss Council of States", position_qid="Q1851
 class FakeParliament:
     """Serves the committed fixtures instead of calling parlament.ch."""
 
-    def __init__(self, member_rows, period_rows):
+    def __init__(self, member_rows, period_rows, history_rows=None):
         self._member_rows = member_rows
         self._period_rows = period_rows
+        self._history_rows = history_rows or []
 
     def get_members(self, councils=None, active_only=True, table=None):
         return members_from_rows(
@@ -44,6 +49,16 @@ class FakeParliament:
 
     def get_periods(self):
         return periods_from_rows(self._period_rows)
+
+    def get_member_segments(self, councils=None):
+        return segments_from_rows(self._history_rows, councils=councils)
+
+
+class HistorylessParliament(FakeParliament):
+    """No MemberCouncilHistory at all — the degradation path."""
+
+    def get_member_segments(self, councils=None):
+        raise RuntimeError("MemberCouncilHistory unavailable")
 
 
 class FakeWikidata:
@@ -281,3 +296,96 @@ def test_unmatched_members_never_reach_the_quickstatements_file(pipeline, config
     assert all_suggestions  # there are findings...
     qs = render_file(all_suggestions, date(2026, 7, 29), config.statement_model)
     assert [ln for ln in qs.splitlines() if ln and not ln.startswith("#")] == []
+
+
+# --- P580 comes from the tenure start, not the segment start ------------------
+# README step 0c. MemberCouncil gives Bachmann 2015-11-30, but a history of
+# adjacent segments shows her holding the seat since 2011-12-05 — and P580 is
+# emitted by two mechanical kinds, so the wrong one would be written unreviewed.
+def _history(person, spans, abbr="NR"):
+    return [
+        {
+            "PersonNumber": person,
+            "Language": "DE",
+            "Active": end is None,
+            "CouncilAbbreviation": abbr,
+            "CouncilName": "Nationalrat",
+            "FirstName": "Andrea",
+            "LastName": "Bachmann",
+            "DateJoining": start,
+            "DateLeaving": end or "1753-01-01T00:00:00",
+        }
+        for start, end in spans
+    ]
+
+
+BACHMANN_HISTORY = _history(
+    1101,
+    [
+        ("2011-12-05T00:00:00", "2015-11-29T00:00:00"),
+        ("2015-11-30T00:00:00", None),
+    ],
+)
+
+
+def test_p580_uses_the_tenure_start_from_the_history(
+    member_rows, period_rows, config
+):
+    people = {
+        "Q1101": WikidataPerson(qid="Q1101", label="Andrea Bachmann", parliament_id="1101")
+    }
+    results = process(
+        config,
+        FakeParliament(member_rows, period_rows, BACHMANN_HISTORY),
+        FakeWikidata(people),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q1101"
+    )
+    # The adjacent segments chain, so the tenure begins at the earlier one.
+    assert suggestion.payload["start"] == date(2011, 12, 5)
+
+    qs = render_file([suggestion], date(2026, 7, 29), config.statement_model)
+    assert "P580|+2011-12-05T00:00:00Z/11" in qs
+    assert "2015-11-30" not in qs
+
+
+def test_a_broken_history_degrades_to_the_raw_field_instead_of_aborting(
+    member_rows, period_rows, config
+):
+    """A worse P580 beats no report at all — but only because it is logged."""
+    people = {
+        "Q1101": WikidataPerson(qid="Q1101", label="Andrea Bachmann", parliament_id="1101")
+    }
+    results = process(
+        config,
+        HistorylessParliament(member_rows, period_rows),
+        FakeWikidata(people),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q1101"
+    )
+    assert suggestion.payload["start"] == date(2015, 11, 30)  # MemberCouncil's value
+
+
+def test_a_real_break_in_the_history_does_not_backdate_p580(
+    member_rows, period_rows, config
+):
+    """Left and returned: P580 is the return, not the first-ever election."""
+    history = _history(
+        1101,
+        [
+            ("2003-12-01T00:00:00", "2007-12-02T00:00:00"),
+            ("2015-11-30T00:00:00", None),
+        ],
+    )
+    people = {
+        "Q1101": WikidataPerson(qid="Q1101", label="Andrea Bachmann", parliament_id="1101")
+    }
+    results = process(
+        config, FakeParliament(member_rows, period_rows, history), FakeWikidata(people)
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q1101"
+    )
+    assert suggestion.payload["start"] == date(2015, 11, 30)

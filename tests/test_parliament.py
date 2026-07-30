@@ -12,8 +12,11 @@ import pytest
 from wd_parliament.parliament import (
     _as_bool,
     _as_date,
+    apply_tenure_starts,
     member_from_row,
     members_from_rows,
+    segments_from_rows,
+    tenure_start,
     period_from_row,
     periods_from_rows,
 )
@@ -201,3 +204,109 @@ def test_periods_are_deduplicated_and_sorted(period_rows):
 
 def test_periods_from_rows_ignores_rows_without_a_number():
     assert periods_from_rows([{"LegislativePeriodNumber": None}]) == []
+
+
+# --- mandate segments and the tenure start -----------------------------------
+# README step 0c: MemberCouncil.DateJoining is the start of the *current
+# segment*, not of the tenure. Bregy's row says 2025-09-16 while his history
+# shows continuous service from 2019-03-04, and P580 is emitted by two
+# mechanical kinds — so reading the raw field would write a wrong date unseen.
+def history_row(joining, leaving, person=4230, abbr="NR", language="DE", active=False):
+    return {
+        "PersonNumber": person,
+        "Language": language,
+        "Active": active,
+        "CouncilAbbreviation": abbr,
+        "CouncilName": "Nationalrat",
+        "FirstName": "Philipp Matthias",
+        "LastName": "Bregy",
+        "DateJoining": joining,
+        "DateLeaving": leaving,
+    }
+
+
+BREGY = [
+    history_row("2019-03-04T00:00:00", "2019-12-01T00:00:00"),
+    history_row("2019-12-02T00:00:00", "2023-12-03T00:00:00"),
+    history_row("2023-12-04T00:00:00", "1753-01-01T00:00:00", active=True),
+]
+
+
+def test_adjacent_segments_chain_into_one_tenure():
+    """Bregy, exactly as the live service returns him."""
+    segments = segments_from_rows(BREGY, councils=["NR"])
+    assert tenure_start(segments[(4230, "NR")]) == date(2019, 3, 4)
+
+
+def test_a_real_break_starts_a_new_tenure():
+    """Left and returned years later: the current tenure begins at the return."""
+    rows = [
+        history_row("2011-12-05T00:00:00", "2015-11-29T00:00:00"),
+        history_row("2023-12-04T00:00:00", "1753-01-01T00:00:00", active=True),
+    ]
+    segments = segments_from_rows(rows, councils=["NR"])
+    assert tenure_start(segments[(4230, "NR")]) == date(2023, 12, 4)
+
+
+def test_segments_are_not_deduplicated_away():
+    """members_from_rows collapses (person, council); this must not."""
+    segments = segments_from_rows(BREGY, councils=["NR"])
+    assert len(segments[(4230, "NR")]) == 3
+
+
+def test_language_duplicates_are_dropped_but_distinct_spans_survive():
+    rows = BREGY + [
+        history_row("2019-03-04T00:00:00", "2019-12-01T00:00:00", language="FR"),
+    ]
+    segments = segments_from_rows(rows, councils=["NR"])
+    assert len(segments[(4230, "NR")]) == 3  # the FR copy of span 1 is dropped
+
+
+def test_an_undated_segment_is_discarded_rather_than_chained():
+    rows = BREGY + [history_row("1753-01-01T00:00:00", "1753-01-01T00:00:00")]
+    segments = segments_from_rows(rows, councils=["NR"])
+    assert len(segments[(4230, "NR")]) == 3
+    assert tenure_start(segments[(4230, "NR")]) == date(2019, 3, 4)
+
+
+def test_no_segments_gives_no_start_rather_than_a_guess():
+    assert tenure_start([]) is None
+
+
+def test_an_open_earlier_segment_stops_the_chain():
+    """Overlapping open rows are not a continuous run; do not measure a gap."""
+    rows = [
+        history_row("2015-11-30T00:00:00", "1753-01-01T00:00:00", active=True),
+        history_row("2023-12-04T00:00:00", "1753-01-01T00:00:00", active=True),
+    ]
+    segments = segments_from_rows(rows, councils=["NR"])
+    assert tenure_start(segments[(4230, "NR")]) == date(2023, 12, 4)
+
+
+def test_apply_tenure_starts_counts_only_the_corrections():
+    """The count is what is worth reporting: rows whose raw value was a segment."""
+    segmented = member_from_row(
+        history_row("2025-09-16T00:00:00", "1753-01-01T00:00:00", active=True)
+    )
+    unchanged = member_from_row(
+        history_row("2023-12-04T00:00:00", "1753-01-01T00:00:00", person=4053, active=True)
+    )
+    segments = segments_from_rows(
+        BREGY + [history_row("2023-12-04T00:00:00", "1753-01-01T00:00:00", person=4053)],
+        councils=["NR"],
+    )
+    corrected = apply_tenure_starts([segmented, unchanged], segments)
+    assert corrected == 1
+    assert segmented.tenure_start == date(2019, 3, 4)
+    assert segmented.start_date == date(2019, 3, 4)
+    assert unchanged.start_date == date(2023, 12, 4)
+
+
+def test_a_member_with_no_history_keeps_the_raw_field():
+    """Degrade to DateJoining rather than inventing a tenure start."""
+    member = member_from_row(
+        history_row("2025-09-16T00:00:00", "1753-01-01T00:00:00", person=9999, active=True)
+    )
+    assert apply_tenure_starts([member], {}) == 0
+    assert member.tenure_start is None
+    assert member.start_date == date(2025, 9, 16)

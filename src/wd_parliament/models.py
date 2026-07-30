@@ -121,7 +121,7 @@ class Member:
     parl_group_abbreviation: Optional[str] = None
     party_name: Optional[str] = None  # -> P102, via the party map
     party_abbreviation: Optional[str] = None
-    date_joining: Optional[date] = None  # -> P580
+    date_joining: Optional[date] = None  # a *segment* start — see start_date
     date_leaving: Optional[date] = None  # -> P582
     date_election: Optional[date] = None
     date_oath: Optional[date] = None
@@ -130,6 +130,9 @@ class Member:
     date_of_death: Optional[date] = None  # -> P570
     person_id_code: Optional[int] = None
     id: Optional[int] = None
+    # Filled in from MemberCouncilHistory by ``parliament.tenure_start``; see
+    # ``start_date`` and README step 0c.
+    tenure_start: Optional[date] = None
     # Filled in by ``resolve.match_members``.
     qid: Optional[str] = None
     qid_source: Optional[str] = None  # one of the QID_FROM_* constants
@@ -141,6 +144,26 @@ class Member:
     @property
     def sort_name(self) -> str:
         return " ".join(p for p in (self.last_name, self.first_name) if p).strip()
+
+    @property
+    def start_date(self) -> Optional[date]:
+        """When the member took office — **the only start P580 may come from**.
+
+        ``date_joining`` is the start of the *current mandate segment*, not of
+        the tenure. parlament.ch re-segments a sitting member's row at later
+        dates: Philipp Bregy's ``MemberCouncil`` row says 2025-09-16 while his
+        ``MemberCouncilHistory`` shows him holding the seat continuously from
+        2019-03-04. Measured over the 244 sitting members who could be
+        cross-checked, 11 carry a segment start rather than a tenure start
+        (README step 0c), and P580 is emitted by two *mechanical* kinds — so
+        reading ``date_joining`` here would write a wrong date without review.
+
+        ``tenure_start``, when :func:`parliament.tenure_start` could establish
+        it from the history, is that continuous run's first day. Falling back to
+        ``date_joining`` keeps the tool working when the history is unavailable,
+        at the accuracy the raw field allows.
+        """
+        return self.tenure_start or self.date_joining
 
 
 @dataclass

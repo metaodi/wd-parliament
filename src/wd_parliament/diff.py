@@ -93,7 +93,7 @@ def expected_statements(
         return statements
     return [
         ExpectedStatement(
-            start=member.date_joining,
+            start=member.start_date,
             end=member.date_leaving,
             period=None,
             periods=covered,

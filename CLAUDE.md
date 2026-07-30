@@ -69,10 +69,19 @@ opening. Bregy is the proof — `MemberCouncil` says 2025-09-16 while his
 `MemberCouncilHistory` carries an active row from 2023-12-04. A2 corroborates:
 200 National Councillors share only 16 distinct `DateJoining` values.
 
-The right date is already in `MemberCouncilHistory` — the earliest
-`DateJoining` of the current continuous run — so fixing this does **not** require
-switching source. `scripts/compare_tenure_dates.py` re-checks it; CONFIRMED
-there is what unblocks a bulk apply.
+**Fixed** without changing source: `segments_from_rows` groups
+`MemberCouncilHistory` into mandate segments (it must *not* de-duplicate on
+`(person, council)` the way `members_from_rows` does — that is what loses the
+tenure), `tenure_start` chains segments that are adjacent to within a day, and
+`Member.start_date` (`tenure_start or date_joining`) is the **only** start
+`diff` and `period_overlap` may read. `app.process` fetches the history once and
+degrades to the raw field rather than aborting if it cannot.
+
+A real break stops the chain, so someone who left and returned gets the return.
+Re-run `scripts/compare_tenure_dates.py` after touching this; it compares
+against OpenParlData's *per-term* start, so a continuous multi-legislature run
+now reads as disagreeing in the other direction — that is the tenure model, not
+a regression.
 
 **OpenParlData is a live option, not a dead end** (README step 6). Its chambers
 are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality

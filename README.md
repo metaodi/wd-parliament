@@ -118,7 +118,7 @@ and lose their P2937 qualifiers.
 fixtures were rewritten to carry the sentinel the way the service does, since
 their previous `"DateLeaving": null` is the fiction that hid this.
 
-### 0c. ✅ `DateJoining` is a *segment* start — do not emit P580 from it
+### 0c. ✅ `DateJoining` is a *segment* start — **fixed**: P580 comes from the history
 
 **Answered against `MemberCouncil`.** `scripts/compare_tenure_dates.py` compared
 all 246 sitting members against OpenParlData's per-term `begin_date`, joining
@@ -154,17 +154,33 @@ start and a handful having been re-segmented at later session dates.
 
 **Consequences.**
 
-- **Do not bulk-apply `ADD_MEMBERSHIP` or `ADD_START_DATE`.** Both are
-  mechanical, and on the current data they would write a wrong P580 for 11 of
-  244 sitting members (4.5%) — the 233 who agree are fine, but nothing in the
-  pipeline distinguishes them.
-- **The fix need not mean switching source.** `MemberCouncilHistory` already
-  contains the right date: the earliest `DateJoining` of the member's current
-  continuous run. Deriving P580 from that keeps the OData-only design and the
-  P1307 join intact. OpenParlData's `begin_date` agrees with it and is the
-  cross-check.
-- Re-run the comparison after any such change; `CONFIRMED` there is what
-  unblocks a bulk apply.
+**The fix, and it did not need a change of source.** `MemberCouncilHistory`
+already carries the right date, so P580 now comes from there:
+
+- `parliament.segments_from_rows` groups the history into mandate segments per
+  `(person, council)`. It deliberately does **not** de-duplicate the way
+  `members_from_rows` does — collapsing `(person, council)` is exactly what
+  loses the tenure. Only language duplicates are dropped, on the full
+  `(person, council, joining, leaving)` tuple.
+- `parliament.tenure_start` walks back from the newest segment while each one
+  begins within a day of the previous ending, and returns where that chain
+  starts. A legislature boundary is such a join (Bregy's 2019-12-01 /
+  2019-12-02), so continuous re-election is one tenure. A **real** break stops
+  the walk, so a member who left and returned gets the return — not their
+  first-ever election.
+- `models.Member.start_date` is `tenure_start or date_joining`, and it is the
+  only start `diff` and `period_overlap` read. `date_joining` stays as the raw
+  field it is.
+- `app.process` fetches the history once and **degrades rather than aborting**
+  if it cannot: a slightly-wrong P580 on a handful of members is a worse
+  report, whereas no report is a worse outcome. It logs how many members had a
+  later segment start, so the correction is visible in every run.
+
+Re-run `compare_tenure_dates.py` after touching any of this — `CONFIRMED` there
+is what says P580 may be applied in bulk. Note it compares against
+OpenParlData's *per-term* `begin_date`, so a member with a continuous run
+spanning several legislatures will now read as "disagreeing" in the other
+direction; that is the tenure model working, not a regression.
 
 
 ### 1. ✅ The P1307 assumption — *CONFIRMED*
