@@ -765,9 +765,17 @@ Two more things the extension needs, both smaller:
 - **P768 comes from 18 Wahlkreise, not 26 cantons.** The config's `cantons:`
   map becomes a per-body district map with different keys. Run 13 found the key
   itself: `electoral_district_de/fr/it` on the **person** records, not on the
-  memberships. The 18 Wahlkreis Q-IDs still have to be found and checked with
-  `--verify-config`; until they are, P768 stays unmapped, which the tool already
-  handles — an unmapped district makes no suggestion.
+  memberships. Section E now builds the map the way section D found the
+  position — from the **P768 values Wikidata already uses** on statements for
+  `Q21518678`, joined to the source's district names by exact label — and prints
+  a paste-ready `districts:` block plus the names that did not resolve. It reads
+  the names off *current* members only, because Zurich redrew its districts for
+  2007 and the historic names would put the count past 18.
+- **P2937 has no `LegislativePeriod` table to read.** Section F asks the same
+  qualifier-usage question for the terms, and reports where members' start dates
+  cluster as the source-side evidence — the federal reasoning that 200 National
+  Councillors shared only 16 distinct `DateJoining` values. Zurich elects every
+  four years, so a term map is a handful of rows rather than ~52.
 - **`statement_model` would have to move onto `Body`.** It is global today
   (`config.py`), and two parliaments will not share one Wikidata convention —
   the federal census settled on `tenure`, while OpenParlData's per-term rows

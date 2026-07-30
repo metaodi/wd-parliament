@@ -63,11 +63,22 @@ checks it the way B checks the memberships — by counting. An item held by
 roughly 180 people with an open statement is the seat; an item held by nobody,
 or by thousands, is not.
 
-**E. What would supply P768?** Federally the electoral district is the canton
-and ``cantons:`` has 26 entries. Zurich elects its 180 members from **18
-Wahlkreise**, so that map becomes a per-body district map with different keys —
-and something in the source has to carry the key. This reports which field
-could, rather than assuming one.
+**E. What supplies P768, and what are the 18 Wahlkreis Q-IDs?** Federally the
+electoral district is the canton and ``cantons:`` has 26 entries. Zurich elects
+its 180 members from **18 Wahlkreise**, so that map becomes a per-body district
+map with different keys. The Q-IDs are **derived the way section D derives the
+position** — from the P768 values Wikidata already carries on statements for
+this seat — and only then joined to the source's district names by exact label.
+A name that does not resolve is printed for a human, never guessed at: an
+unmapped district makes no suggestion, while a wrong one becomes a qualifier on
+real statements.
+
+**F. What would supply P2937?** The same qualifier-usage question for the
+legislature terms, plus the source-side evidence: there is no
+``LegislativePeriod`` table to read, so the probe reports where the members'
+start dates cluster. Most members start when the legislature does — the
+federal measurement found 200 National Councillors sharing 16 distinct
+``DateJoining`` values — so a four-yearly cantonal boundary stands out.
 
 What it deliberately does not do
 --------------------------------
@@ -132,12 +143,11 @@ from verify_openparldata import (  # noqa: E402
     OPENPARLDATA_ID,
     SWISS_PARLIAMENT_ID,
     _describe,
-    _describe_membership,
     _name_values,
+    _normalise,
     _present,
     _text,
     classify_seat_memberships,
-    date_columns,
     fetch,
     summarise_wikidata_ids,
 )
@@ -217,6 +227,22 @@ KANTONSRAT_NAMES = (
 # What a row might call the electoral district. Reported, never assumed — the
 # same rule as BEGIN_FIELDS, for the same reason.
 DISTRICT_HINTS = ("district", "wahlkreis", "constituency", "electoral", "circle")
+
+# The district column to read values from, most likely first. German because
+# the probe is pinned to ``lang='de'`` and the Wahlkreis names are matched
+# against German Wikidata labels; run 14 found all three language variants
+# present on the person records.
+DISTRICT_FIELDS = (
+    "electoral_district_de",
+    "electoral_district",
+    "district_de",
+    "district",
+    "wahlkreis",
+)
+
+# Wahlkreise the Kantonsrat elects from: twelve districts, with Winterthur
+# split in two and the city of Zürich in six.
+DEFAULT_DISTRICTS = 18
 
 # What a membership might call the role it records, and who holds it. Both
 # resolved from the rows for the usual reason.
@@ -338,12 +364,54 @@ def seat_holders(
     carries no person column, and says so in the funnel rather than silently
     changing what the number means.
     """
+    filtered, lines = _current_seat_rows(rows, today, seat_roles)
+    person_field = _present(rows, PERSON_FIELDS)
+    if person_field:
+        count = len({r.get(person_field) for r in filtered})
+        lines.append(f"distinct people:        {count}")
+    else:
+        count = len(filtered)
+        lines.append(f"rows (no person column): {count}")
+    return count, lines
+
+
+def seat_holder_ids(
+    rows: Sequence[Dict[str, Any]],
+    today: Optional[date] = None,
+    seat_roles: Optional[Sequence[str]] = None,
+) -> set:
+    """The ``person_id``s currently holding a seat. Pure.
+
+    The same three filters :func:`seat_holders` counts, exposed as the set
+    itself so that other sections can ask about *today's* members rather than
+    everyone who ever sat. Section F needs exactly that: Zurich redrew its
+    electoral districts for the 2007 election, so the distinct Wahlkreis values
+    over all 834 person records would include districts that no longer exist,
+    and the count would not be 18.
+    """
+    person_field = _present(rows, PERSON_FIELDS)
+    if not person_field:
+        return set()
+    filtered, _ = _current_seat_rows(rows, today, seat_roles)
+    return {r.get(person_field) for r in filtered}
+
+
+def _current_seat_rows(
+    rows: Sequence[Dict[str, Any]],
+    today: Optional[date] = None,
+    seat_roles: Optional[Sequence[str]] = None,
+) -> Tuple[List[Dict[str, Any]], List[str]]:
+    """Open, already-begun, seat-role rows, plus the funnel. Pure.
+
+    Factored out so the count and the id set cannot drift apart — they must
+    describe the same people or section F would report the districts of a
+    different set from the one section B measured.
+    """
     lines: List[str] = []
     today = today or date.today()
     end_field = _present(rows, END_FIELDS)
     begin_field = _present(rows, BEGIN_FIELDS)
     role_field = _present(rows, ROLE_FIELDS)
-    person_field = _present(rows, PERSON_FIELDS)
 
     open_rows = [r for r in rows if not _text(r.get(end_field)).strip()]
     lines.append(f"memberships:            {len(rows)}")
@@ -386,13 +454,7 @@ def seat_holders(
     elif seat_roles:
         lines.append("no role column, so --seat-roles could not be applied")
 
-    if person_field:
-        count = len({r.get(person_field) for r in begun})
-        lines.append(f"distinct people:        {count}")
-    else:
-        count = len(begun)
-        lines.append(f"rows (no person column): {count}")
-    return count, lines
+    return begun, lines
 
 
 def classify_seat_count(
@@ -782,6 +844,153 @@ def summarise_position_candidates(
     return lines, top[0]
 
 
+def qualifier_usage_query(
+    position_qid: str, prop: str, language: str = "de"
+) -> str:
+    """Which values a qualifier already takes on statements for this seat.
+
+    The same move that settled the position item in section D, applied to the
+    qualifiers: rather than matching a Wahlkreis by its *name* — which is how
+    ``Q19479543`` got in — ask what P768 values Wikidata already carries on
+    statements whose main value is the seat. A value in use is evidence of how
+    the community models this parliament; a value matched from a label is a
+    guess wearing the same clothes.
+
+    **One property per query, deliberately.** P768, P4100 and P2937 are all
+    repeatable, so asking for them together would produce a cartesian product
+    per statement — the reason ``wikidata.py`` runs three bounded queries
+    instead of one wide one.
+    """
+    return f"""
+SELECT ?value ?valueLabel (COUNT(DISTINCT ?statement) AS ?uses) WHERE {{
+  ?statement ps:P39 wd:{position_qid} ;
+             pq:{prop} ?value ;
+             wikibase:rank ?rank .
+  FILTER ( ?rank != wikibase:DeprecatedRank )
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,en". }}
+}}
+GROUP BY ?value ?valueLabel
+ORDER BY DESC(?uses)
+LIMIT 60
+"""
+
+
+def summarise_qualifier_usage(
+    bindings: Sequence[dict],
+) -> Tuple[Dict[str, str], List[str]]:
+    """Map Q-ID → label for the values in use, plus the lines to print. Pure."""
+    used: Dict[str, str] = {}
+    lines: List[str] = []
+    for row in bindings:
+        qid = _qid(row.get("value", {}).get("value", ""))
+        if not qid:
+            continue
+        label = (row.get("valueLabel") or {}).get("value") or qid
+        try:
+            uses = int((row.get("uses") or {}).get("value", 0))
+        except (TypeError, ValueError):
+            uses = 0
+        used[qid] = label
+        lines.append(f"    {uses:>4} x {qid:<12} {label}")
+    if not lines:
+        lines.append("    (this qualifier is not used on any statement for the seat)")
+    return used, lines
+
+
+def distinct_values(rows: Sequence[Dict[str, Any]], field: str) -> Dict[str, int]:
+    """Distinct non-empty values of ``field``, with how often each occurs. Pure."""
+    counts: Dict[str, int] = {}
+    for row in rows:
+        value = _text(row.get(field)).strip()
+        if value:
+            counts[value] = counts.get(value, 0) + 1
+    return counts
+
+
+def reconcile_values(
+    source_counts: Dict[str, int], used: Dict[str, str]
+) -> Tuple[Dict[str, str], List[str], Dict[str, str], List[str]]:
+    """Join the source's names to the Q-IDs Wikidata already uses. Pure.
+
+    Returns ``(mapping, unmatched_names, unused_qids, lines)``.
+
+    Matched by **normalised equality** against the item's label, never by
+    substring — the discipline ``is_kantonsrat`` earns its keep with. A name
+    that does not match is reported, not guessed at: the config's own rule is
+    that an unmapped value produces no suggestion, which is strictly better
+    than a qualifier pointing at the wrong item.
+
+    Q-IDs in use that match no current name are returned too. They are not
+    errors — Zurich redrew its districts for 2007, so an item used only on
+    historic statements is expected — but a *large* number of them means the
+    labels are being compared against the wrong thing.
+    """
+    by_label = {_normalise(label): qid for qid, label in used.items()}
+    mapping: Dict[str, str] = {}
+    unmatched: List[str] = []
+    for name in sorted(source_counts):
+        qid = by_label.get(_normalise(name))
+        if qid:
+            mapping[name] = qid
+        else:
+            unmatched.append(name)
+
+    matched_qids = set(mapping.values())
+    unused = {q: label for q, label in used.items() if q not in matched_qids}
+
+    lines = [
+        f"  source values:      {len(source_counts)}",
+        f"  matched to a Q-ID:  {len(mapping)}",
+        f"  unmatched by name:  {len(unmatched)}",
+        f"  in use but unmatched: {len(unused)}",
+    ]
+    if unmatched:
+        lines.append("")
+        lines.append("  no Q-ID found by exact label match (resolve by hand):")
+        for name in unmatched:
+            lines.append(f"    {name!r} ({source_counts[name]} member(s))")
+    if unused:
+        lines.append("")
+        lines.append(
+            "  used on the seat's statements but matching no current value "
+            "(historic districts are expected here):"
+        )
+        for qid, label in sorted(unused.items(), key=lambda kv: kv[1]):
+            lines.append(f"    {qid:<12} {label}")
+    return mapping, unmatched, unused, lines
+
+
+def render_qid_yaml(mapping: Dict[str, str], key: str, indent: str = "  ") -> List[str]:
+    """The mapping as a paste-ready YAML block. Pure.
+
+    Printed rather than written: this file changes nothing, and a Q-ID map is
+    exactly the thing ``--verify-config`` exists to check *after* a human has
+    looked at it.
+    """
+    if not mapping:
+        return [f"{indent}# nothing resolved, so there is no block to paste"]
+    width = max(len(name) for name in mapping) + 2
+    out = [f"{indent}{key}:"]
+    for name, qid in sorted(mapping.items()):
+        quoted = f'"{name}":'
+        out.append(f"{indent}  {quoted:<{width + 3}}{qid}")
+    return out
+
+
+def date_clusters(
+    rows: Sequence[Dict[str, Any]], field: str, top: int = 8
+) -> List[Tuple[str, int]]:
+    """The most common values of a date column. Pure.
+
+    Evidence for where legislatures begin, on the same reasoning the federal
+    A2 measurement used: 200 National Councillors shared only 16 distinct
+    ``DateJoining`` values, because most members start when the legislature
+    does. A cantonal term boundary should stand out the same way.
+    """
+    counts = distinct_values(rows, field)
+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:top]
+
+
 def _qid(uri: str) -> Optional[str]:
     """The Q-ID at the end of an entity URI. Pure."""
     tail = (uri or "").rsplit("/", 1)[-1]
@@ -824,6 +1033,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="Seats in the chamber. 180 for the Kantonsrat Zürich.",
     )
     parser.add_argument(
+        "--expect-districts",
+        type=int,
+        default=DEFAULT_DISTRICTS,
+        help="Electoral districts the chamber elects from. 18 for Zürich.",
+    )
+    parser.add_argument(
         "--seat-roles",
         default=",".join(DEFAULT_SEAT_ROLES),
         help=(
@@ -848,9 +1063,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # document — so it belongs inside the same guard as the first call. Left
     # outside, an unreachable API ends the probe in a traceback that looks like
     # a bug in this script rather than the connectivity failure it is.
+    tables: List[str] = []
     try:
         client = spp.SwissParlClient(session=http.session, backend="openparldata")
-        client.get_tables()
+        tables = sorted(client.get_tables())
     except Exception as exc:
         print(f"  ! could not read the API at all: {exc}")
         print("\nConnectivity, not a finding. Nothing below was measured.")
@@ -892,6 +1108,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     date_verdict, date_detail = INCONCLUSIVE, "No Kantonsrat group was found."
     seat_verdict, seat_detail = INCONCLUSIVE, "No Kantonsrat group was found."
     seat_rows: List[Dict[str, Any]] = []
+    seat_roles = [r.strip() for r in args.seat_roles.split(",") if r.strip()] or None
     if chamber is not None:
         group_id = chamber.get("id")
         print(f"--- Kantonsrat (group {group_id}) ---")
@@ -904,10 +1121,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print()
 
         seat_verdict, seat_detail, seat_lines = classify_seat_count(
-            seat_rows,
-            args.expect_seats,
-            seat_roles=[r.strip() for r in args.seat_roles.split(",") if r.strip()]
-            or None,
+            seat_rows, args.expect_seats, seat_roles=seat_roles
         )
         for line in seat_lines:
             print("  " + line if line else "")
@@ -1031,29 +1245,125 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
     print(f"{pos_verdict}: {pos_detail}")
 
-    # --- E. what would supply P768? -----------------------------------------
+    # --- E. the Wahlkreis map for P768 --------------------------------------
     print()
     print("=" * 70)
-    print("E. What could supply the Wahlkreis (P768)?")
+    print(f"E. The Wahlkreis map for P768 (expecting {args.expect_districts})")
     print("=" * 70)
     print(f"  membership columns mentioning a district: "
           f"{', '.join(district_fields(seat_rows)) or '(none)'}")
     print(f"  person columns mentioning a district:     "
           f"{', '.join(district_fields(seated)) or '(none)'}")
-    print(f"  date-ish membership columns:              "
-          f"{', '.join(date_columns(seat_rows)) or '(none)'}")
-    if seat_rows:
+
+    # Only *current* members: Zurich redrew its districts for the 2007
+    # election, so the names over all 834 person records include ones that no
+    # longer exist and the count would not be 18.
+    holder_ids = seat_holder_ids(seat_rows, seat_roles=seat_roles)
+    sitting = [r for r in seated if r.get("id") in holder_ids] or seated
+    district_field = _present(seated, DISTRICT_FIELDS) or (
+        district_fields(seated)[0] if district_fields(seated) else None
+    )
+    source_districts: Dict[str, int] = {}
+    mapping: Dict[str, str] = {}
+    if district_field:
+        source_districts = distinct_values(sitting, district_field)
+        print(f"  read from:               {district_field}")
+        print(f"  current members:         {len(sitting)}")
+        print(f"  distinct districts:      {len(source_districts)}"
+              + ("  <- as expected"
+                 if len(source_districts) == args.expect_districts
+                 else f"  <- expected {args.expect_districts}"))
+        for name, n in sorted(source_districts.items()):
+            print(f"    {name} ({n})")
+    else:
+        print("  ! no district column on the person records, so P768 has no "
+              "source here. It would have to come from the canton's own "
+              "service, or stay unmapped.")
+
+    print()
+    print(f"  P768 values already used on {args.position or 'the seat'}:")
+    used_districts: Dict[str, str] = {}
+    if args.position:
+        try:
+            used_districts, usage_lines = summarise_qualifier_usage(
+                wikidata.run_query(
+                    qualifier_usage_query(args.position, "P768", config.language)
+                )
+            )
+            for line in usage_lines:
+                print(line)
+        except Exception as exc:
+            print(f"    ! WDQS: {exc}")
+    else:
+        print("    (no --position, so there are no statements to read)")
+
+    if source_districts or used_districts:
         print()
-        print("  sample memberships:")
-        for row in seat_rows[:5]:
-            print(f"    {_describe_membership(row)}")
+        mapping, unmatched, _, recon_lines = reconcile_values(
+            source_districts, used_districts
+        )
+        for line in recon_lines:
+            print(line)
+        print()
+        print("  Paste-ready, for the values that resolved:")
+        for line in render_qid_yaml(mapping, "districts", indent="    "):
+            print(line)
+        print()
+        print(
+            "  Check every line with --verify-config before using it, and "
+            "leave the unmatched ones out rather than guessing: an unmapped "
+            "district makes no suggestion, while a wrong one becomes a P768 "
+            "qualifier on real statements."
+        )
+
+    # --- F. what would supply P2937? ----------------------------------------
+    print()
+    print("=" * 70)
+    print("F. Legislature terms for P2937")
+    print("=" * 70)
+    print(f"  P2937 values already used on {args.position or 'the seat'}:")
+    used_terms: Dict[str, str] = {}
+    if args.position:
+        try:
+            used_terms, term_lines = summarise_qualifier_usage(
+                wikidata.run_query(
+                    qualifier_usage_query(args.position, "P2937", config.language)
+                )
+            )
+            for line in term_lines:
+                print(line)
+        except Exception as exc:
+            print(f"    ! WDQS: {exc}")
+    else:
+        print("    (no --position, so there are no statements to read)")
+
+    # The source side. There is no LegislativePeriod analogue to read, so the
+    # evidence is where the members start: the federal A2 measurement found 200
+    # National Councillors sharing only 16 distinct DateJoining values, because
+    # most members start when the legislature does. A cantonal term boundary
+    # should stand out the same way.
+    begin_field = _present(seat_rows, BEGIN_FIELDS)
+    period_tables = sorted(
+        t for t in tables if any(w in t.lower() for w in ("period", "legislat", "term"))
+    )
+    print()
+    print(f"  tables that might carry periods: {', '.join(period_tables) or '(none)'}")
+    if begin_field:
+        print(f"  most common {begin_field} among all {len(seat_rows)} memberships:")
+        for value, n in date_clusters(seat_rows, begin_field):
+            print(f"    {value}  x{n}")
+        print(
+            "  -> the large clusters are legislature starts. Zurich elects "
+            "every four years (last 2023-02-12, next 2027), so a term map is a "
+            "handful of rows rather than the federal ~52."
+        )
+
     print()
     print(
-        "  Zürich elects its 180 members from 18 Wahlkreise, so the config's "
-        "26-entry 'cantons' map becomes a per-body district map with different "
-        "keys. If nothing above carries the Wahlkreis, P768 has to come from "
-        "the canton's own service (opendata.swiss) or be left unmapped — which "
-        "the tool already handles: an unmapped district makes no suggestion."
+        "  Both maps ship EMPTY federally on purpose, and the same default is "
+        "right here: an unmapped term makes no ADD_TERM suggestion, and a "
+        "wrong Q-ID would be attached as a qualifier to real statements. "
+        "Neither blocks a first cantonal run."
     )
 
     # --- what it all means --------------------------------------------------
@@ -1065,12 +1375,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")
     print(f"C. Wikidata-asserted identifier  : {reach_verdict}")
     print(f"D. Position item {args.position or '(none given)':<15}: {pos_verdict}")
+    print(f"E. Wahlkreis map for P768        : "
+          f"{len(mapping)}/{args.expect_districts} resolved")
+    print(f"F. Term items for P2937          : {len(used_terms)} in use on Wikidata")
     print("=" * 70)
     print(
         "This probe evaluates an option; it gates nothing. B decides whether "
         "an adapter is possible at all, C decides whether it may ever write, "
-        "and D decides what it would write to. Do not start the adapter until "
-        "all three have answers."
+        "and D decides what it would write to. E and F are the two Q-ID maps "
+        "the config would need, and neither blocks a first run — an unmapped "
+        "value makes no suggestion."
     )
     # Exit 0 whenever the APIs answered: a "no" here is an answer, not a fault.
     return 0

@@ -40,16 +40,23 @@ from verify_kantonsrat import (  # noqa: E402
     classify_position_item,
     classify_seat_count,
     classify_wikidata_reach,
+    date_clusters,
     district_fields,
+    distinct_values,
     find_kantonsrat_group,
     DEFAULT_SEAT_ROLES,
     identifier_reach_query,
     is_kantonsrat,
     kantonsrat_candidates,
     position_candidates_query,
+    qualifier_usage_query,
+    reconcile_values,
+    render_qid_yaml,
+    seat_holder_ids,
     seat_holders,
     seat_reach_query,
     summarise_position_candidates,
+    summarise_qualifier_usage,
 )
 
 TODAY = date(2026, 7, 30)
@@ -483,7 +490,7 @@ def test_the_identifier_reach_query_does_not_depend_on_the_position_item():
     assert "P39" not in sparql
 
 
-# --- E. what could supply P768? ---------------------------------------------
+# --- E. the Wahlkreis map for P768 ------------------------------------------
 def test_e_district_columns_are_reported_not_guessed():
     rows = [seat(district="Bezirk Winterthur")]
     assert district_fields(rows) == ["electoral_district"]
@@ -491,6 +498,109 @@ def test_e_district_columns_are_reported_not_guessed():
 
 def test_e_no_district_column_is_an_empty_list_not_a_guess():
     assert district_fields([seat()]) == []
+
+
+def test_e_only_current_members_supply_the_district_names():
+    """Zurich redrew its districts for 2007.
+
+    Taking the names off all 834 person records would include districts that
+    no longer exist, and the count could never be 18. The ids come from the
+    same funnel section B counts, so the two cannot describe different people.
+    """
+    rows = seats(180) + [seat(person_id=1001, end="2006-04-30")]
+    ids = seat_holder_ids(rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES)
+    assert len(ids) == 180
+    assert 1001 not in ids
+
+
+def test_e_a_name_is_matched_to_a_qid_only_by_exact_label():
+    """A substring match is how a plausible-but-wrong item gets in."""
+    mapping, unmatched, _, _ = reconcile_values(
+        {"Winterthur-Stadt": 12, "Bezirk Horgen": 9},
+        {"Q1": "Winterthur-Stadt", "Q2": "Horgen"},
+    )
+    assert mapping == {"Winterthur-Stadt": "Q1"}
+    assert unmatched == ["Bezirk Horgen"]
+
+
+def test_e_an_unmatched_name_is_reported_rather_than_guessed_at():
+    _, _, _, lines = reconcile_values({"Bezirk Uster": 7}, {})
+    text = "\n".join(lines)
+    assert "resolve by hand" in text
+    assert "Bezirk Uster" in text
+
+
+def test_e_qids_in_use_that_match_no_current_name_are_surfaced():
+    """Historic districts are expected; a pile of them means a bad comparison."""
+    _, _, unused, lines = reconcile_values({"Uster": 7}, {"Q1": "Uster", "Q9": "Bülach"})
+    assert unused == {"Q9": "Bülach"}
+    assert "historic districts are expected" in "\n".join(lines)
+
+
+def test_e_only_resolved_names_reach_the_paste_block():
+    lines = render_qid_yaml({"Uster": "Q1", "Dietikon": "Q2"}, "districts")
+    text = "\n".join(lines)
+    assert "districts:" in text
+    assert '"Dietikon":' in text and "Q2" in text
+    assert "Bülach" not in text
+
+
+def test_e_nothing_resolved_yields_no_pasteable_block():
+    assert "districts:" not in "\n".join(render_qid_yaml({}, "districts"))
+
+
+def test_e_the_qualifier_usage_query_asks_one_property_at_a_time():
+    """P768, P4100 and P2937 are all repeatable.
+
+    Asking for them in one SELECT would produce a cartesian product per
+    statement — the reason wikidata.py runs three bounded queries.
+    """
+    sparql = qualifier_usage_query("Q21518678", "P768")
+    assert "pq:P768" in sparql
+    assert "pq:P2937" not in sparql and "pq:P4100" not in sparql
+    assert "ps:P39 wd:Q21518678" in sparql
+
+
+def test_e_values_in_use_are_ranked_and_labelled():
+    used, lines = summarise_qualifier_usage(
+        [
+            {
+                "value": {"value": "http://www.wikidata.org/entity/Q1"},
+                "valueLabel": {"value": "Winterthur-Stadt"},
+                "uses": {"value": "12"},
+            }
+        ]
+    )
+    assert used == {"Q1": "Winterthur-Stadt"}
+    assert "Winterthur-Stadt" in "\n".join(lines)
+
+
+def test_e_a_qualifier_nobody_uses_says_so_instead_of_returning_nothing():
+    used, lines = summarise_qualifier_usage([])
+    assert used == {}
+    assert "not used on any statement" in "\n".join(lines)
+
+
+# --- F. legislature terms for P2937 -----------------------------------------
+def test_f_start_dates_cluster_at_legislature_boundaries():
+    """The federal A2 reasoning: 200 National Councillors, 16 distinct starts.
+
+    Most members start when the legislature does, so a term boundary stands
+    out as a large cluster without needing a periods table to read.
+    """
+    rows = (
+        [seat(person_id=i, start="2023-05-08") for i in range(170)]
+        + [seat(person_id=200 + i, start="2019-05-13") for i in range(8)]
+        + [seat(person_id=300, start="2024-11-04")]
+    )
+    clusters = date_clusters(rows, "begin_date")
+    assert clusters[0] == ("2023-05-08", 170)
+    assert clusters[1] == ("2019-05-13", 8)
+
+
+def test_f_distinct_values_counts_occurrences_and_skips_blanks():
+    rows = [seat(district="Uster"), seat(district="Uster"), seat(district=None)]
+    assert distinct_values(rows, "electoral_district") == {"Uster": 2}
 
 
 # --- the SPARQL --------------------------------------------------------------
