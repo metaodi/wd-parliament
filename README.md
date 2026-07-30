@@ -50,8 +50,11 @@ Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
   members, two sources sharing neither key nor publisher. P580 may be applied
   in bulk.
 
-**Step 5 is the only one left, and no workflow can do it:** a person has to
-paste one line into QuickStatements and look at what landed.
+**Step 5 is the only one left on the federal pipeline, and no workflow can do
+it:** a person has to paste one line into QuickStatements and look at what
+landed. Step 7 — extending the tool to a *cantonal* parliament, the Kantonsrat
+Zürich — is open too, but it gates nothing here: its probe is written and has
+not yet been dispatched.
 
 The tool is built against **swissparlpy 2.0.0**, which fixed the OpenParlData
 defaults this repo's probes had to work around
@@ -613,6 +616,106 @@ uv run python scripts/verify_openparldata.py
 Wired into the `Verify assumptions` workflow as an evaluation that **never
 gates the job** — an answer about a design option must not turn the diagnostic
 red.
+
+### 7. ⬜ Could this be pointed at a cantonal parliament? — *unmeasured; the probe is written*
+
+The **Kantonsrat Zürich**, as the first case. `scripts/verify_kantonsrat.py`
+measures it; **it has not been dispatched yet**, so everything below is either
+a fact about *this* repo's code or a question the probe exists to answer.
+Nothing here should be treated as settled.
+
+**Most of the pipeline is already parliament-agnostic**, which is the fact that
+makes this worth measuring at all. `period_overlap.py` is closed-interval
+arithmetic over dates. `diff.py` works off `Body`/`Member`/`Period`/`Config`.
+`quickstatements.py` never names P1307 — `is_mechanical` gates on
+`qid_source == QID_FROM_IDENTIFIER`, and P39/P580/P582/P768/P4100/P2937 are the
+same properties for a cantonal seat. `resolve.py` joins `Member.person_number`
+against `WikidataPerson.parliament_id`, whatever filled those in. What is
+federal is confined to three places: `parliament.py` (the OData tables),
+`wdt:P1307` hard-coded in two SPARQL builders in `wikidata.py`, and the config.
+
+So the extension is a **source adapter plus an identifier decision**, and the
+second is the hard half:
+
+**There is no cantonal P1307.** `is_mechanical`'s whole claim is that *Wikidata
+itself* asserted the identifier that established the match. Three candidates,
+not equivalent:
+
+| Candidate | Provenance | What it would cost |
+| --- | --- | --- |
+| **P14527** OpenParlData ID | Wikidata-asserted | nothing — slots into the existing gate; only `identifier_property` in the config and the two SPARQL builders need to become configurable |
+| OpenParlData's `wikidata_id` field | a third party asserting a Q-ID *about* Wikidata | its own `QID_FROM_*` constant and its own decision in `is_mechanical`; it must not inherit the P1307 gate |
+| name matching only | none | `is_mechanical` already refuses it → report-only, `quickstatements: false` |
+
+Note this **inverts** step 6's finding. There, P14527 added nobody: 0 National
+Councillors carry it without P1307. That is a fact about the *federal* overlap.
+Cantonally it may be the only Wikidata-asserted identifier that exists, so the
+property correctly dismissed above could be the whole join here. Section C
+measures it.
+
+Do not use P1307 as the cantonal join under any circumstances. It is the
+*federal* service and reaches only the members who also sat in Bern — the
+people it misses are precisely those who never went federal, which is a bias
+that looks like coverage rather than like a bug.
+
+**The position Q-ID is unverified.** The probe defaults to `Q19479543` for
+"member of the Cantonal Council of Zürich" (with `Q2110002` as the council
+itself), taken from a search and **not** checked against a live store. Section D
+counts rather than reads: an item held by roughly 180 people *currently* is the
+seat; one held by nobody is a category item or a typo, and one held by more than
+180 currently is something broader than one chamber. `position` is the main
+value of every P39 the tool would emit, so a category item there would write
+hundreds of statements claiming people hold a Wikimedia category.
+
+**The seat-count check is the one that would catch a bad source read.** Section
+B asks whether the open-ended memberships come to exactly **180**. That is the
+cantonal version of the federal probe's strongest signal — the National
+Council's came to exactly 200 and the Council of States' to 46 — and it is what
+separates "this column is populated" from "this data is current". A count *near*
+180 is reported as CONTRADICTED, not waved through: 179 means a vacancy or an
+unopened row and 181 an unclosed one, and both change who the diff thinks is
+sitting. Getting that wrong federally is what published 2,234 bad suggestions.
+
+Zurich also sharpens the matching discipline step 6 learned. There, a substring
+match made `Präsidium des Nationalrates` — a committee of eight — read as the
+National Council. Here the same mistake is worse: the **Regierungsrat** is the
+cantonal *executive*, seven members, five letters from the legislature.
+`is_kantonsrat` requires a name to **equal** one of the chamber's spellings, and
+`tests/test_verify_kantonsrat.py` pins that down.
+
+Two more things the extension needs, both smaller:
+
+- **P768 comes from 18 Wahlkreise, not 26 cantons.** The config's `cantons:`
+  map becomes a per-body district map with different keys, and something in the
+  source has to carry the key. Section E reports which column could, rather than
+  assuming one. If nothing does, P768 stays unmapped — which the tool already
+  handles: an unmapped district makes no suggestion.
+- **`statement_model` would have to move onto `Body`.** It is global today
+  (`config.py`), and two parliaments will not share one Wikidata convention —
+  the federal census settled on `tenure`, while OpenParlData's per-term rows
+  push a cantonal body toward `period`.
+
+And two things that **do not transfer**, so nothing here inherits their
+verdicts: step 4's roll-call cross-check has no cantonal equivalent unless the
+canton publishes votes, and run 12's "P580 is safe to apply in bulk, 244 of 244"
+was measured on federal members.
+
+```bash
+uv run python scripts/verify_kantonsrat.py
+uv run python scripts/verify_kantonsrat.py --body-key ZH --position Q19479543
+```
+
+Wired into `Verify assumptions` as section 6, and like step 6 it **never gates
+the job** — for the plainest reason of the three non-gating checks: it measures
+a parliament no config here processes, so nothing it finds can make the federal
+pipeline more or less safe to run.
+
+The alternative source, if OpenParlData turns out not to carry what section B
+needs: the canton's own service. opendata.swiss publishes *Kantonsratsmitglieder
+Kanton Zürich ab 1803* (members with entry/exit dates, party and Wahlkreis — the
+direct `MemberCouncil` + `MemberCouncilHistory` analogue) and an XML web service
+for the Kantonsrat's business system. That is the *authoritative* source in the
+sense `diff` relies on; OpenParlData is a harmonised aggregator of it.
 
 
 ---

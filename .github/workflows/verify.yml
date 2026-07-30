@@ -23,7 +23,11 @@ name: Verify assumptions
 #     decides. Read it before applying QuickStatements;
 #   * README step 4, comparing the legislative-period overlap against who
 #     actually voted in a roll-call. It decides P2937, and `terms:` ships
-#     empty, so today nothing it could falsify is emitted at all.
+#     empty, so today nothing it could falsify is emitted at all;
+#   * README step 7, measuring whether the tool could be pointed at a cantonal
+#     parliament (the Kantonsrat Zürich). It concerns a parliament this repo
+#     does not yet process at all, so it cannot gate anything here by
+#     construction.
 #
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
@@ -48,6 +52,14 @@ on:
         description: "IdVote numbers for the period cross-check, space separated ('auto' discovers them)"
         required: false
         default: "auto"
+      kantonsrat_body_key:
+        description: "OpenParlData body key for the canton (step 7)"
+        required: false
+        default: "ZH"
+      kantonsrat_position:
+        description: "Candidate Q-ID for the Kantonsrat seat — UNVERIFIED, step 7 checks it"
+        required: false
+        default: "Q19479543"
 
 # Read-only on purpose. This workflow must never write to the repository.
 permissions:
@@ -177,6 +189,38 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # README step 7: could this tool be pointed at a cantonal parliament?
+      # Reports, does not gate — and for the plainest reason of the three: it
+      # measures the Kantonsrat Zürich, which no config here processes, so
+      # nothing it finds can make the federal pipeline more or less safe to
+      # run. Its "no" answers are design findings (ship report-only, use a
+      # different position item), not faults.
+      #
+      # The position Q-ID is UNVERIFIED and section D of the probe is what
+      # checks it; passing it as an input is what lets a dispatch try another
+      # candidate without a commit.
+      - name: Evaluate a cantonal extension — Kantonsrat Zürich (step 7)
+        id: kantonsrat
+        continue-on-error: true
+        env:
+          # Via env rather than inline ${{ }}, so neither value can be
+          # interpolated into the shell.
+          BODY_KEY: ${{ inputs.kantonsrat_body_key }}
+          POSITION: ${{ inputs.kantonsrat_position }}
+        run: |
+          set +e
+          uv run python scripts/verify_kantonsrat.py \
+            --config config/parliament.yaml \
+            --body-key "$BODY_KEY" \
+            --position "$POSITION" 2>&1 | tee kantonsrat.txt
+          {
+            echo "## 6. Cantonal extension — README step 7 (evaluation only)"
+            echo
+            echo '```'
+            cat kantonsrat.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -191,6 +235,7 @@ jobs:
             echo "| OpenParlData evaluation | \`${{ steps.openparldata.outcome }}\` (does not gate) |"
             echo "| Tenure start dates (0c) | \`${{ steps.tenure.outcome }}\` (does not gate) |"
             echo "| Period join (step 4) | \`${{ steps.periods.outcome }}\` (does not gate) |"
+            echo "| Cantonal extension (step 7) | \`${{ steps.kantonsrat.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both gating checks passed: the members are readable, the"

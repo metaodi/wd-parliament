@@ -139,7 +139,21 @@ Three things about it that cost a wrong answer each, and are now guarded:
   iterator pages to exhaustion; `len()` is `meta.total_records`, and slicing
   loads only as far as the slice reaches;
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
-  P1307 join stays whatever happens to the source.
+  P1307 join stays whatever happens to the source. **That is a fact about the
+  *federal* overlap and it inverts cantonally** (README step 7): the Kantonsrat
+  Zürich has no P1307, so P14527 may be the only Wikidata-asserted identifier
+  that reaches those people. `scripts/verify_kantonsrat.py` measures it.
+
+Three rules follow from step 7 and hold before any cantonal code is written.
+**Never join a cantonal seat on P1307** — it is the federal service, so it
+reaches only members who also sat in Bern, and the people it misses are exactly
+those who never went federal: a bias that reads as coverage rather than as a
+bug. **Never let OpenParlData's `wikidata_id` inherit the P1307 gate** — a Q-ID
+a third party asserts *about* Wikidata is a different class of claim and needs
+its own `QID_FROM_*` constant. And **the Regierungsrat is not the Kantonsrat**:
+`is_kantonsrat` matches a group name by equality for the same reason
+`chamber_of` does, except the row it must not match is a seven-member cantonal
+*executive* rather than a committee.
 
 For enrichment it is unambiguously good: 3,685/3,686 federal members carry a
 `wikidata_id` and 87.3% a party Q-ID, which would fill the deliberately-empty
@@ -296,14 +310,18 @@ no run has happened yet.
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
-  `scripts/verify_openparldata.py` and `scripts/compare_tenure_dates.py`,
-  writes all four to the run summary, and writes nothing to the repo. Keep it
-  read-only: it is the diagnostic you run *before* trusting `update.yml`'s
-  output. The last two report without gating and are deliberately excluded
-  from the job's pass/fail — do not wire their outcomes into the gate; the
-  gate says whether the pipeline may run, and those two answer whether a
-  *bulk apply* is safe. The file must be on the default branch to appear in
-  the dispatch UI, though a dispatch then runs the selected ref's version.
+  `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
+  `--validate-periods` and `scripts/verify_kantonsrat.py`, writes all six to
+  the run summary, and writes nothing to the repo. Keep it read-only: it is
+  the diagnostic you run *before* trusting `update.yml`'s output. **Only the
+  first two gate**; the other four report without gating and are deliberately
+  excluded from the job's pass/fail — do not wire their outcomes into the
+  gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
+  `--validate-periods` answer whether a *bulk apply* is safe, and
+  `verify_kantonsrat` measures a parliament no config here processes, so it
+  cannot bear on the federal run by construction. The file must be on the
+  default branch to appear in the dispatch UI, though a dispatch then runs the
+  selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion
