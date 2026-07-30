@@ -186,45 +186,93 @@ def _fill_counts(
 def validate_periods(
     parliament: ParliamentClient,
     config: Config,
-    vote_ids: Sequence[int],
+    vote_ids: Optional[Sequence[int]] = None,
+    max_periods: int = 3,
 ) -> dict:
     """Cross-check the interval join against real roll-call attendance.
 
-    Verification step 2 from the README. Returns, per legislative period, the
-    members the overlap assigned, the ``PersonNumber``s that actually voted,
-    and the two differences. They should agree modulo absences; a systematic
-    mismatch means :mod:`period_overlap` is wrong.
+    README step 4. Returns, per legislative period, the members the overlap
+    assigned, the ``PersonNumber``s that actually voted, and the differences
+    between them. They should agree modulo absences; a systematic mismatch
+    means :mod:`period_overlap` is wrong.
 
-    Takes explicit ``vote_ids`` (one roll-call per period) because unbounded
-    ``Voting`` queries return 500s and must be batched.
+    ``vote_ids`` is one roll-call per period, taken explicitly because
+    unbounded ``Voting`` queries return 500s and must be batched. Left empty,
+    the votes are discovered with :meth:`ParliamentClient.find_votes` for the
+    ``max_periods`` most recent periods the overlap assigned anybody to — the
+    only periods where sitting members give this check any power.
+
+    **Only voters who are still sitting can test the interval logic.** The
+    member list is the ~246 people currently in office, so a roll-call from any
+    period also contains people who have since left; they are absent from the
+    list entirely, and counting them as "not assigned" would report a false
+    mismatch that grows with the age of the vote. They are reported separately
+    as ``voted_but_no_longer_sitting``, which is an expected number, not a
+    finding.
 
     Two known holes, per the README: Ständerat roll-call votes only exist from
     the 2010s, and a very short tenure may include no recorded vote. So
     ``assigned_but_did_not_vote`` is expected to be non-zero (absences);
-    ``voted_but_not_assigned`` is the number that must stay near zero, because
+    ``voted_but_not_assigned`` is the number that must stay at zero, because
     somebody who voted in a period demonstrably sat in it.
     """
     from .period_overlap import coverage_report
 
     periods = parliament.get_periods()
     members = parliament.get_members(councils=config.councils)
+
+    # The same correction ``process`` applies, for the same reason: the overlap
+    # reads ``Member.start_date``, so validating it against a member list whose
+    # starts were never corrected would validate an interval the pipeline does
+    # not use. Degrades rather than aborts, exactly as the run does.
+    try:
+        apply_tenure_starts(
+            members, parliament.get_member_segments(councils=config.councils)
+        )
+    except Exception:  # noqa: BLE001 - degrade, do not abort
+        log.warning(
+            "Could not read %s; validating against MemberCouncil.DateJoining, "
+            "which is a segment start for some members (README step 0c)",
+            HISTORIC_MEMBER_TABLE,
+            exc_info=True,
+        )
+
     assigned = coverage_report(members, periods)
+    if not vote_ids:
+        candidates = sorted(
+            (p for p in periods if p.id is not None and assigned.get(p.number)),
+            key=lambda p: p.number,
+            reverse=True,
+        )
+        discovered = parliament.find_votes(candidates[:max_periods])
+        vote_ids = sorted(discovered.values())
+        log.info("Discovered vote ids: %s", vote_ids)
+    if not vote_ids:
+        raise RuntimeError(
+            "No roll-call votes could be found to validate against. Pass one "
+            "IdVote per period explicitly: --validate-periods 12345 23456."
+        )
+
     attended = parliament.get_period_attendance(vote_ids)
 
     # ``Voting.IdLegislativePeriod`` is the LegislativePeriod row ID, while
     # ``coverage_report`` keys by LegislativePeriodNumber; translate before
     # comparing, or every period would look like a total mismatch.
     number_by_id = {p.id: p.number for p in periods if p.id is not None}
+    sitting = {m.person_number for m in members}
 
     out = {}
     for period_id, voters in attended.items():
         number = number_by_id.get(period_id, period_id)
         expected = assigned.get(number, set())
+        comparable = voters & sitting
         out[number] = {
             "period_id": period_id,
             "assigned": len(expected),
             "voted": len(voters),
-            "voted_but_not_assigned": sorted(voters - expected),
+            "voted_and_still_sitting": len(comparable),
+            "voted_but_no_longer_sitting": len(voters - sitting),
+            "voted_but_not_assigned": sorted(comparable - expected),
             "assigned_but_did_not_vote": len(expected - voters),
         }
     return out

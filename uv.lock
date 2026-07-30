@@ -490,15 +490,15 @@ wheels = [
 
 [[package]]
 name = "swissparlpy"
-version = "1.0.0"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyodata" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c0/6c/a78b6ca960cb0009ee6780007a114e52aa01e1af373f27de80d041537c67/swissparlpy-1.0.0.tar.gz", hash = "sha256:7379e471c94c715ba4f15b7e64f44a66774756ad04cb605d3c17a15b01ca6d1b", size = 1668002, upload-time = "2026-02-25T07:37:25.236Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/0d/eb233221ca451b5d14967dd830bd2e85ed4afd498d8ebe9f7c66fd95f387/swissparlpy-2.0.0.tar.gz", hash = "sha256:bb8717cb4ac6e7883e2f89d49a6a80ec498b061f511d837aeab6a6c8fd8bed36", size = 4307944, upload-time = "2026-07-30T08:23:06.524Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/a5/e1747abbf7f84075dac039cd6ac874dfb600b71ab167e0b4ead806a0ba77/swissparlpy-1.0.0-py3-none-any.whl", hash = "sha256:2224346a8567e3873dbdd95edbcdd722a40297db2a1e9bf8dce6b7292b43cbf6", size = 31352, upload-time = "2026-02-25T07:37:23.769Z" },
+    { url = "https://files.pythonhosted.org/packages/be/f3/33cbcde87cb0098aa926d5751b513112f09f918e9c7a73a09bd700627893/swissparlpy-2.0.0-py3-none-any.whl", hash = "sha256:37b6c9b0e865dd1e946e785285e045edf07bc6fc82aa4d99d9265f92bd4b1a48", size = 32599, upload-time = "2026-07-30T08:23:04.958Z" },
 ]
 
 [[package]]
@@ -595,6 +595,6 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "requests", specifier = ">=2.31" },
-    { name = "swissparlpy", specifier = ">=1.0" },
+    { name = "swissparlpy", specifier = ">=2.0" },
 ]
 provides-extras = ["dev"]

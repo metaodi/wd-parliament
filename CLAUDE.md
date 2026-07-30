@@ -78,10 +78,16 @@ tenure), `tenure_start` chains segments that are adjacent to within a day, and
 degrades to the raw field rather than aborting if it cannot.
 
 A real break stops the chain, so someone who left and returned gets the return.
-Re-run `scripts/compare_tenure_dates.py` after touching this; it compares
-against OpenParlData's *per-term* start, so a continuous multi-legislature run
-now reads as disagreeing in the other direction — that is the tenure model, not
-a regression.
+
+Re-run `scripts/compare_tenure_dates.py` after touching this. It prints **two**
+verdicts off one join and they are not interchangeable: comparison 1 judges the
+raw `DateJoining` against OpenParlData's *latest term* (step 0c as posed, kept
+as the regression check for the finding), comparison 2 judges what the pipeline
+actually emits — `Member.start_date` against `chained_start`, the same
+adjacent-segment chaining applied to OpenParlData's per-term rows. **Comparison
+2 is the one that says a bulk apply of P580 is safe.** Do not "simplify" it to
+reuse `current_start`: comparing a chained tenure against a single term reports
+every long-serving member as a disagreement.
 
 **OpenParlData is a live option, not a dead end** (README step 6). Its chambers
 are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality
@@ -103,14 +109,20 @@ Three things about it that cost a wrong answer each, and are now guarded:
   through `.get()` and mean opposite things;
 - the seat is reachable from the **group**, not the person: walking a member
   returns committees and interest groups but not their own council seat;
-- **pass `lang='de'`**: swissparlpy hard-codes `lang='en'` with
-  `lang_format='flat'`, and the English columns are null, so a table can read
-  as *empty* — `bodies` gives 0 rows by default and 1,405 with `lang='de'`.
+- **pass `lang='de'`**: swissparlpy **1.0.0** hard-coded `lang='en'` with
+  `lang_format='flat'`, and the English columns are null, so a table could read
+  as *empty* — `bodies` gave 0 rows by default and 1,405 with `lang='de'`.
+  **2.0.0 fixed that** (issue #52, filed off these runs) and sends no `lang`
+  unless asked, but keep passing it: `CHAMBER_NAMES` matches German spellings,
+  and a pinned language is what makes the probes reproducible. 2.0.0 also
+  stopped forcing `search_scope='all'`, so the API's defaults (`metadata`,
+  `partial`) now apply — pass `search_scope='all'` for the full-text indexes.
   Narrow with field filters (`body_key=CHE`, `group_id=`, `lastname=`); the
   `search` parameter works too, but its `exact` mode is case-sensitive in
   practice ('Nationalrat' → 1 row, 'nationalrat' → 0) and `CHAMBER_NAMES`
   holds lowercase spellings. `limit` is a page size, not a cap — the response
-  iterator pages to exhaustion; `len()` is `meta.total_records`;
+  iterator pages to exhaustion; `len()` is `meta.total_records`, and slicing
+  loads only as far as the slice reaches;
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
   P1307 join stays whatever happens to the source.
 
@@ -154,7 +166,10 @@ uv run python -m wd_parliament --config config/parliament.yaml --limit 20 --verb
 # Check every Q-ID in the config against Wikidata
 uv run python -m wd_parliament --verify-config
 
-# Cross-check the period join against roll-call attendance (one IdVote per period)
+# Cross-check the period join against roll-call attendance. With no IdVote (or
+# 'auto') the votes are discovered from the Vote table for the most recent
+# periods; naming them explicitly takes exactly those.
+uv run python -m wd_parliament --validate-periods
 uv run python -m wd_parliament --validate-periods 12345 23456
 ```
 
@@ -229,7 +244,14 @@ expensive one.
   `TeamResult`. Surfaces the **P1307 hit rate**, the run's key health number.
 - **`app.py`** / **`__main__.py`** — orchestration and CLI. `process` catches
   per-chamber exceptions and records them on `BodyResult.error` so one broken
-  chamber never aborts the run.
+  chamber never aborts the run. `validate_periods` (README step 4) compares the
+  overlap against roll-call attendance and has **two rules that make its answer
+  mean anything**: it applies the same `apply_tenure_starts` correction
+  `process` does, because the overlap reads `Member.start_date`; and it counts
+  only voters who are **still sitting** as comparable, because the member list
+  is today's ~246 people and every roll-call also contains people who have left
+  — scoring those as "not assigned" is a false mismatch that grows with the age
+  of the vote.
 
 ## Conventions
 
