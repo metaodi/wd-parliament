@@ -713,6 +713,32 @@ question *through* that position, so every count came back 0 — which reads as
 The reach query now asks about the **people** directly and mentions no position
 at all, which is why run 14 could answer it.
 
+**The adapter is built.** `config/kantonsrat-zh.yaml` plus
+`src/wd_parliament/openparldata.py` run the same pipeline against the same
+dataclasses — `period_overlap`, `diff` and `quickstatements` cannot tell which
+source produced a `Member`:
+
+```bash
+uv run python -m wd_parliament --config config/kantonsrat-zh.yaml \
+  --reports-dir reports/kantonsrat-zh --docs-dir docs/kantonsrat-zh
+```
+
+`Update parliament TODO` takes the config as a dispatch parameter and runs one
+parliament per run; the scheduled run does both, serialised, so a broken
+cantonal source can never stop the federal report from being published. The
+federal outputs keep the top level (Pages serves `docs/index.html` and that URL
+should not move) and each other parliament gets a subdirectory named after its
+config.
+
+**It ships report-only** (`quickstatements: false`), for two independent
+reasons. Only 35 of 834 ZH people have a Wikidata item at all, so the report is
+chiefly a worklist for *creating* them rather than for fixing statements. And
+one link in the join is still unmeasured: P14527 is carried by all 35, but that
+its **value equals OpenParlData's person id** has not been shown the way the
+federal side showed it (Parmelin: `PersonNumber` 1108 == P1307 1108). Section C
+of the probe now compares them on every dispatch; turn QuickStatements on when
+it says CONFIRMED, and not before.
+
 The rest of this section is design that the measurements have not changed.
 
 **Most of the pipeline is already parliament-agnostic**, which is the fact that

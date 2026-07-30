@@ -41,12 +41,14 @@ from verify_kantonsrat import (  # noqa: E402
     classify_qualifier_readiness,
     classify_seat_count,
     classify_wikidata_reach,
+    compare_identifier_values,
     date_clusters,
     district_fields,
     distinct_values,
     find_kantonsrat_group,
     DEFAULT_SEAT_ROLES,
     identifier_reach_query,
+    identifier_values_query,
     is_kantonsrat,
     kantonsrat_candidates,
     position_candidates_query,
@@ -692,3 +694,56 @@ def test_the_open_count_rewalks_the_statement_rather_than_reusing_the_bound_one(
     sparql = seat_reach_query("Q19479543")
     assert "?openStatement" in sparql
     assert "FILTER NOT EXISTS { ?openStatement pq:P582 ?anyEnd . }" in sparql
+
+
+# --- C. is the identifier's VALUE the person id? ----------------------------
+def _binding(qid, value):
+    return {
+        "person": {"value": f"http://www.wikidata.org/entity/{qid}"},
+        "value": {"value": str(value)},
+    }
+
+
+def test_c_matching_values_confirm_the_cantonal_join():
+    """The federal check, cantonally: Parmelin's PersonNumber 1108 == P1307 1108.
+
+    Coverage is not correctness — 35 of 35 carrying P14527 says nothing about
+    whether the value is the person id the source gave.
+    """
+    verdict, detail, _ = compare_identifier_values(
+        {"Q117716": 9532, "Q117154": 21905},
+        [_binding("Q117716", 9532), _binding("Q117154", 21905)],
+    )
+    assert verdict == CONFIRMED
+    assert "quickstatements: false" in detail
+
+
+def test_c_leading_zeros_and_ints_are_the_same_identifier():
+    verdict, _, _ = compare_identifier_values(
+        {"Q1": 9532}, [_binding("Q1", "09532")]
+    )
+    assert verdict == CONFIRMED
+
+
+def test_c_one_disagreement_is_enough_to_refuse_the_join():
+    """No tolerance here: is_mechanical writes real edits off this claim."""
+    verdict, detail, lines = compare_identifier_values(
+        {"Q1": 9532, "Q2": 21905},
+        [_binding("Q1", 9532), _binding("Q2", 777)],
+    )
+    assert verdict == CONTRADICTED
+    assert "wrong people" in detail
+    assert any("Q2" in line for line in lines)
+
+
+def test_c_nothing_to_compare_leaves_the_join_unverified():
+    verdict, detail, _ = compare_identifier_values({}, [])
+    assert verdict == INCONCLUSIVE
+    assert "Keep quickstatements off" in detail
+
+
+def test_c_the_value_query_asks_only_about_the_given_people():
+    sparql = identifier_values_query(["Q117716"])
+    assert "wd:Q117716" in sparql
+    assert f"wdt:{OPENPARLDATA_ID}" in sparql
+    assert "P39" not in sparql

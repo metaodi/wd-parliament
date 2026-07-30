@@ -1,0 +1,141 @@
+# wd-parliament — Kantonsrat Zürich
+#
+# The first *cantonal* config. Same pipeline as config/parliament.yaml, a
+# different source and a different join. Everything here was measured before it
+# was written: README step 7, runs 13-15 (2026-07-30) of the
+# `Verify assumptions` workflow, via scripts/verify_kantonsrat.py.
+#
+# Run it separately from the federal one — they write different files:
+#
+#   uv run python -m wd_parliament --config config/kantonsrat-zh.yaml \
+#     --reports-dir reports/zh --docs-dir docs/zh
+
+language: de
+
+user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
+request_delay: 1.0
+
+# ---------------------------------------------------------------------------
+# Source
+# ---------------------------------------------------------------------------
+# api.openparldata.ch rather than the parlament.ch OData service, which is
+# federal only. A *body* there is the level of parliament, so the canton is the
+# body and the chamber is a group under it.
+source: openparldata
+body_key: ZH
+
+# ---------------------------------------------------------------------------
+# The identifier join  --  READ THIS BEFORE TURNING QUICKSTATEMENTS ON
+# ---------------------------------------------------------------------------
+# There is no cantonal P1307: it is the federal service, and joining on it would
+# reach only the members who also sat in Bern — silently excluding exactly the
+# people who never went federal, a bias that reads as coverage rather than as a
+# bug. P14527 (OpenParlData ID) is the alternative, and unlike federally — where
+# it adds nobody, every holder already having P1307 — it is here the only
+# Wikidata-asserted identifier that reaches these people at all: 35 of the 35
+# members OpenParlData links to Wikidata carry it (run 14).
+#
+# Because *Wikidata* asserts it, a match through it is the same class of fact as
+# the federal P1307 match, and quickstatements.is_mechanical needs no change.
+#
+# ⚠️ ONE THING IS STILL UNVERIFIED: that a P14527 *value* equals OpenParlData's
+# person id. The federal equivalent was checked directly (Parmelin: PersonNumber
+# 1108 == P1307 1108, verify_source.py section B); the cantonal one has not
+# been. That is why `quickstatements` is false below. Confirm it before
+# flipping that, exactly as the federal side did.
+identifier_property: P14527
+
+# One P39 statement per continuous tenure. Measured rather than assumed: the ZH
+# memberships are one row per *tenure*, not per term as the federal ones are —
+# 913 rows across 834 people, with each election adding only ~40-50 rows rather
+# than 180 (run 15).
+statement_model: tenure
+
+# Group the report by electoral district — the Wahlkreis, for a cantonal body.
+group_by: canton
+
+# ---------------------------------------------------------------------------
+# REPORT-ONLY for now
+# ---------------------------------------------------------------------------
+# Two reasons, either of which is sufficient:
+#
+#   1. the P14527 == person id equality above is unconfirmed;
+#   2. OpenParlData links only 35 of 834 ZH people to a Wikidata item (4.2%,
+#      against 3,685 of 3,686 federally), so most members have no item at all
+#      and the report is chiefly a worklist for *creating* them. There is very
+#      little to emit mechanically even once the join is confirmed.
+#
+# The federal side began the same way. Turn this on only after a probe confirms
+# the join and a human has pasted one line by hand (README step 5).
+quickstatements: false
+
+# There is no per-person biography page in the API's data, so this is the
+# chamber's own member list rather than a fabricated per-person deep link.
+# {language} and {person_number} would be substituted if used.
+biography_url: "https://www.kantonsrat.zh.ch/mitglieder/"
+
+# ---------------------------------------------------------------------------
+# Chambers
+# ---------------------------------------------------------------------------
+# `council` is this tool's own short key for the chamber (it names the report
+# file and groups the members); `group_id` is the OpenParlData `groups` row that
+# *is* the chamber, measured at 5077 on 2026-07-30. `group_name` is the fallback
+# if the id ever changes: it is matched by EXACT name, never as a substring,
+# because "Büro des Kantonsrates" is an organ of the chamber and — far worse —
+# the *Regierungsrat* is the cantonal executive, seven members, five letters
+# away from the legislature.
+#
+# `position` is Q21518678, derived rather than guessed (run 14): of the members
+# OpenParlData links to Wikidata, it is the cantonal seat they hold, and run 15
+# confirmed it is held by 270 items with 167 of them current — 93% of the 180
+# seats. An earlier candidate, Q19479543, turned out to be
+# "Kategorie:Kantonsrat (Zürich, Person)", a Wikimedia CATEGORY held by nobody.
+# Never put that back.
+bodies:
+  - council: KR
+    label: Cantonal Council of Zürich
+    position: Q21518678    # member of the Cantonal Council of Zürich
+    group_id: 5077
+    group_name: Kantonsrat Zürich
+
+# ---------------------------------------------------------------------------
+# Wahlkreise  ->  P768 electoral district (qualifier)
+# ---------------------------------------------------------------------------
+# Keyed by the person record's `electoral_district_de`, whitespace-normalised —
+# the source spells them 'XVII Bülach', 'I Zürich 1+2' and so on, and all 18 are
+# present across the 180 sitting members.
+#
+# EMPTY ON PURPOSE, and not for want of looking. Run 15 asked what P768 values
+# Wikidata already carries on statements for this seat: **3 of 270 statements**,
+# naming Kreis 4, Kreis 5 and Kreis 11 — *city of Zürich quarters*, not cantonal
+# electoral districts. Three statements are not a convention to follow, and
+# those three are not even the right kind of thing. Matching the 18 names to
+# items by label instead would be exactly the guess that put a Wikimedia
+# category in `position` above.
+#
+# So: an unmapped district makes no P768 suggestion, which is the safe default.
+# Filling this in is a Wikidata-side job for a human, checked with
+# `wd-parliament --verify-config`.
+cantons: {}
+  # "XVII Bülach": Q...
+  # "XII Uster":   Q...
+
+# Fraktionen -> P4100. Not yet sourced; the person records carry a party, not a
+# parliamentary group.
+parl_groups: {}
+
+# Parties -> P102. The person records do carry a party, and 822 of 834 (98.6%)
+# even carry a party Q-ID in `party_harmonized_wikidata_id` — a much better
+# source than this map. Left empty until that field is read directly; an
+# unmapped party produces no suggestion, and REVIEW_PARTY is never mechanical
+# anyway.
+parties: {}
+
+# Legislative terms -> P2937. Empty, and there is nothing to fill it from yet:
+# OpenParlData exposes no period table for ZH, so `get_periods` returns none and
+# no P2937 is suggested at all. Run 15 also found P2937 on *no* statement for
+# this seat, so there is no convention to copy either. The election dates are
+# clearly visible in the data when someone wants to build a term list — the
+# start dates cluster on 1991-05-06, 1995-04-02, 1999-05-31, 2003-05-19,
+# 2007-05-21, 2011-05-09, 2015-05-18, 2019-05-06.
+terms: {}

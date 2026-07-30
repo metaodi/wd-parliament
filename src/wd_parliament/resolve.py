@@ -25,6 +25,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Sequence
 
 from .models import (
+    P_PARLIAMENT_ID,
     QID_FROM_IDENTIFIER,
     QID_FROM_NAME,
     Member,
@@ -223,6 +224,7 @@ def resolve_members(
     wikidata: "WikidataClient",
     position_qids: Sequence[str],
     language: str = "de",
+    identifier_property: str = P_PARLIAMENT_ID,
 ) -> Dict[int, WikidataPerson]:
     """Wire :func:`match_members` around the one name-search network call.
 
@@ -234,7 +236,8 @@ def resolve_members(
     matched = match_by_identifier(members, people)
     hit_rate = (len(matched) / len(members) * 100) if members else 0.0
     log.info(
-        "P1307 join: %d/%d members matched by identifier (%.1f%%)",
+        "%s join: %d/%d members matched by identifier (%.1f%%)",
+        identifier_property,
         len(matched),
         len(members),
         hit_rate,
@@ -246,7 +249,9 @@ def resolve_members(
 
     log.info("Falling back to a name search for %d members", len(names))
     try:
-        matches = wikidata.search_people(names, position_qids, language)
+        matches = wikidata.search_people(
+            names, position_qids, language, identifier_property
+        )
     except Exception as exc:  # non-fatal: report the rest of the run anyway
         log.warning("Name search failed: %s", exc)
         return matched

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 900001,
+    "person_id": 9532,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Mitglied",
+    "begin_date": "2023-05-08",
+    "end_date": null
+  },
+  {
+    "id": 900002,
+    "person_id": 21905,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Präsidium",
+    "begin_date": "2026-05-04",
+    "end_date": null
+  },
+  {
+    "id": 900003,
+    "person_id": 17728,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Gast",
+    "begin_date": "2024-05-27",
+    "end_date": null
+  },
+  {
+    "id": 900004,
+    "person_id": 17860,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Mitglied",
+    "begin_date": "2026-08-17",
+    "end_date": null
+  },
+  {
+    "id": 900005,
+    "person_id": 18759,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Mitglied",
+    "begin_date": "2011-05-09",
+    "end_date": "2019-05-05"
+  },
+  {
+    "id": 900006,
+    "person_id": 18759,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": "Mitglied",
+    "begin_date": "2023-05-08",
+    "end_date": null
+  },
+  {
+    "id": 900007,
+    "person_id": 24011,
+    "group_id": 5077,
+    "group_name_de": "Kantonsrat Zürich",
+    "type_harmonized": "council_legislative",
+    "role_name_de": null,
+    "begin_date": "2023-05-08",
+    "end_date": null
+  }
+]

@@ -14,7 +14,20 @@ from typing import Dict, List, Optional
 
 import yaml
 
-from .models import MODEL_PERIOD, STATEMENT_MODELS, Body
+from .models import (
+    IDENTIFIER_PROPERTIES,
+    MODEL_PERIOD,
+    P_PARLIAMENT_ID,
+    STATEMENT_MODELS,
+    Body,
+)
+
+# Which source a config reads its members from. "parlament" is the parlament.ch
+# OData service (the Federal Assembly); "openparldata" is api.openparldata.ch,
+# which covers the cantons and cities as well.
+SOURCE_PARLAMENT = "parlament"
+SOURCE_OPENPARLDATA = "openparldata"
+SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA)
 
 DEFAULT_USER_AGENT = "wd-parliament/0.1 (+https://github.com/metaodi/wd-parliament)"
 DEFAULT_BIOGRAPHY_URL = "https://www.parlament.ch/{language}/biografie/wd/{person_number}"
@@ -26,7 +39,15 @@ _PLACEHOLDER_AGENTS = ("example.com", "example.org", "you@", "your@", "changeme"
 
 @dataclass
 class Config:
-    language: str = "de"  # parlament.ch content language, and label preference
+    language: str = "de"  # source content language, and label preference
+    source: str = SOURCE_PARLAMENT
+    # OpenParlData only: the body (level of parliament) the chambers sit under.
+    body_key: str = ""
+    # The Wikidata property whose value equals the source's person identifier.
+    # Federally P1307 == MemberCouncil.PersonNumber; cantonally there is no
+    # P1307 at all and P14527 (OpenParlData ID) is the only Wikidata-asserted
+    # identifier that reaches those people.
+    identifier_property: str = P_PARLIAMENT_ID
     user_agent: str = DEFAULT_USER_AGENT
     request_delay: float = 1.0
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
@@ -46,6 +67,26 @@ class Config:
     # lets an operator turn it off entirely while the statement model is still
     # being confirmed against live Wikidata.
     quickstatements: bool = True
+
+    @property
+    def source_name(self) -> str:
+        """What to call the source in user-facing text.
+
+        The reports and suggestion texts name the source ("parlament.ch says
+        they are still sitting"), and naming the wrong one is not cosmetic: it
+        tells a reader to go and check a service that has never heard of this
+        member.
+        """
+        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else "parlament.ch"
+
+    @property
+    def district_label(self) -> str:
+        """What the P768 value is *called* here.
+
+        Federally the electoral district is the canton; for a cantonal chamber
+        it is the Wahlkreis. Only affects headings.
+        """
+        return "Canton" if self.source == SOURCE_PARLAMENT else "Electoral district"
 
     @property
     def councils(self) -> List[str]:
@@ -138,12 +179,19 @@ def load_config(path: str | Path) -> Config:
         if not position.startswith("Q") or not position[1:].isdigit():
             raise ValueError(f"bodies: '{position}' is not a Q-ID.")
         number = item.get("council_number")
+        group_id = item.get("group_id")
         bodies.append(
             Body(
                 council=council,
                 label=str(item.get("label") or council),
                 position_qid=position,
                 council_number=int(number) if number is not None else None,
+                group_id=int(group_id) if group_id is not None else None,
+                group_name=(
+                    str(item["group_name"]).strip()
+                    if item.get("group_name")
+                    else None
+                ),
             )
         )
 
@@ -158,8 +206,30 @@ def load_config(path: str | Path) -> Config:
     if group_by not in ("canton", "group"):
         raise ValueError(f"group_by must be 'canton' or 'group'; got '{group_by}'.")
 
+    source = str(data.get("source", SOURCE_PARLAMENT)).strip()
+    if source not in SOURCES:
+        raise ValueError(
+            f"source must be one of {', '.join(SOURCES)}; got '{source}'."
+        )
+
+    identifier_property = str(
+        data.get("identifier_property", P_PARLIAMENT_ID)
+    ).strip().upper()
+    if identifier_property not in IDENTIFIER_PROPERTIES:
+        raise ValueError(
+            "identifier_property must be one of "
+            f"{', '.join(sorted(IDENTIFIER_PROPERTIES))}; got "
+            f"'{identifier_property}'. It is the property whose value equals "
+            "the source's person id, and quickstatements.is_mechanical trusts "
+            "a match made through it — so an unmeasured property must not be "
+            "added here without a probe confirming the values are equal."
+        )
+
     cfg = Config(
         language=str(data.get("language", "de")),
+        source=source,
+        body_key=str(data.get("body_key", "") or "").strip(),
+        identifier_property=identifier_property,
         user_agent=str(data.get("user_agent", DEFAULT_USER_AGENT)),
         request_delay=float(data.get("request_delay", 1.0)),
         statement_model=statement_model,
@@ -175,6 +245,12 @@ def load_config(path: str | Path) -> Config:
 
     if not cfg.bodies:
         raise ValueError("Config must define at least one entry under 'bodies'.")
+    if cfg.source == SOURCE_OPENPARLDATA and not cfg.body_key:
+        raise ValueError(
+            "source 'openparldata' needs a 'body_key' (the canton or city whose "
+            "parliament this is, e.g. ZH). A body is the *level* of parliament "
+            "there, and the chambers are groups under it."
+        )
     if not cfg.user_agent or any(
         marker in cfg.user_agent.lower() for marker in _PLACEHOLDER_AGENTS
     ):

@@ -186,6 +186,27 @@ start dates cluster on the four-yearly election dates. Note ZH memberships are
 new rows per election), so a ZH body is `statement_model: tenure` and its P2937
 must come from interval overlap.
 
+**The cantonal adapter now exists**: `openparldata.py` beside `parliament.py`,
+selected by `config.source` in `app.build_source`, joined on
+`config.identifier_property` (P14527 for ZH, P1307 federally) and configured by
+`config/kantonsrat-zh.yaml`. Four things about it that are load-bearing:
+
+- **`Member.active` is computed, not read.** The source has no usable flag, and
+  `is_seat_row` — open, already begun, in a seat role — is the entire
+  difference between 186 rows and 180 members.
+- **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
+  purpose.** No period table exists (so no P2937 is ever suggested), and the
+  rows are per-tenure so `begin_date` is already the date P580 wants. Do not
+  "fix" either by inventing data.
+- **user-facing strings are parameters.** `report` and `diff` take
+  `source_name` / `identifier_property` / `district_label`; a cantonal report
+  saying "parlament.ch" or "P1307" sends a reader to a service that has never
+  heard of these members.
+- **it ships `quickstatements: false`.** P14527 coverage is proven; P14527's
+  *value* being the person id is not. `verify_kantonsrat`'s
+  `compare_identifier_values` checks it — the cantonal twin of the Parmelin
+  check — and that must read CONFIRMED before anything is emitted.
+
 Three more rules follow from step 7 and hold before any cantonal code is written.
 **Never join a cantonal seat on P1307** — it is the federal service, so it
 reaches only members who also sat in Bern, and the people it misses are exactly

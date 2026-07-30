@@ -764,6 +764,100 @@ WHERE {{
 """
 
 
+def identifier_values_query(person_qids: Sequence[str]) -> str:
+    """The P14527 *value* each of these items carries.
+
+    Coverage is not the same question as correctness. Run 14 established that
+    35 of 35 linked members carry P14527; this asks whether the value **equals
+    OpenParlData's person id**, which is what the join actually depends on.
+    The federal side checked exactly this and it is why the P1307 join is
+    trusted: Parmelin's row reads ``PersonNumber=1108`` against Wikidata's
+    P1307 = 1108 (``verify_source.py`` section B).
+
+    Until this agrees, ``config/kantonsrat-zh.yaml`` stays ``quickstatements:
+    false`` — a wrong identifier would attach real edits to the wrong people.
+    """
+    values = " ".join(f"wd:{q}" for q in person_qids)
+    return f"""
+SELECT ?person ?value WHERE {{
+  VALUES ?person {{ {values} }}
+  ?person wdt:{OPENPARLDATA_ID} ?value .
+}}
+"""
+
+
+def compare_identifier_values(
+    expected: Dict[str, Any], bindings: Sequence[dict]
+) -> Tuple[str, str, List[str]]:
+    """Does each item's P14527 equal the person id the source gave? Pure.
+
+    ``expected`` maps Q-ID → OpenParlData person id. Compared as strings after
+    an int round-trip so ``'09532'`` and ``9532`` agree, the same normalisation
+    ``resolve._normalise_identifier`` applies to P1307.
+
+    A single disagreement is CONTRADICTED, not a tolerance: this is the claim
+    that makes a match a fact rather than a guess, and ``is_mechanical`` writes
+    edits off the back of it.
+    """
+    def norm(value: Any) -> str:
+        text = str(value).strip()
+        try:
+            return str(int(text))
+        except (TypeError, ValueError):
+            return text
+
+    actual: Dict[str, str] = {}
+    for row in bindings:
+        qid = _qid(row.get("person", {}).get("value", ""))
+        value = (row.get("value") or {}).get("value")
+        if qid and value is not None:
+            actual[qid] = norm(value)
+
+    lines: List[str] = []
+    agree, differ, absent = 0, [], 0
+    for qid, person_id in sorted(expected.items()):
+        got = actual.get(qid)
+        if got is None:
+            absent += 1
+            continue
+        if got == norm(person_id):
+            agree += 1
+        else:
+            differ.append(f"{qid}: {OPENPARLDATA_ID}={got!r} but person id={person_id!r}")
+
+    lines.append(f"  compared:            {len(expected)}")
+    lines.append(f"  value == person id:  {agree}")
+    lines.append(f"  value != person id:  {len(differ)}")
+    lines.append(f"  carries no {OPENPARLDATA_ID}: {absent}")
+    for line in differ[:10]:
+        lines.append(f"    {line}")
+
+    if not expected or (agree == 0 and not differ):
+        return (
+            INCONCLUSIVE,
+            "No item could be compared, so the join is still unverified. "
+            "Keep quickstatements off.",
+            lines,
+        )
+    if differ:
+        return (
+            CONTRADICTED,
+            f"{len(differ)} item(s) carry a {OPENPARLDATA_ID} that is not the "
+            "person id the source gives. The join would attach edits to the "
+            f"wrong people. Do NOT set identifier_property: {OPENPARLDATA_ID} "
+            "without working out what the value actually is.",
+            lines,
+        )
+    return (
+        CONFIRMED,
+        f"{agree} of {agree} compared item(s) carry a {OPENPARLDATA_ID} equal "
+        "to OpenParlData's person id, so the cantonal join is the same class "
+        "of fact as the federal P1307 one. This is the check "
+        "config/kantonsrat-zh.yaml's 'quickstatements: false' was waiting on.",
+        lines,
+    )
+
+
 def position_candidates_query(person_qids: Sequence[str], language: str = "de") -> str:
     """Which P39 positions do these known members hold, ranked by frequency?
 
@@ -1288,6 +1382,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
     print(f"{reach_verdict}: {reach_detail}")
 
+    # Coverage is not correctness. The join depends on the *value* being the
+    # person id, which is what the federal side checked directly and what
+    # config/kantonsrat-zh.yaml's 'quickstatements: false' is waiting on.
+    print()
+    print(f"  Does a {OPENPARLDATA_ID} value equal OpenParlData's person id?")
+    value_verdict, value_detail = INCONCLUSIVE, "Not compared."
+    expected_ids = {
+        _text(r.get("wikidata_id")).strip(): r.get("id")
+        for r in seated
+        if _text(r.get("wikidata_id")).strip().startswith("Q")
+    }
+    if expected_ids:
+        try:
+            value_verdict, value_detail, value_lines = compare_identifier_values(
+                expected_ids,
+                wikidata.run_query(identifier_values_query(list(expected_ids))),
+            )
+            for line in value_lines:
+                print(line)
+        except Exception as exc:
+            print(f"    ! WDQS: {exc}")
+    print()
+    print(f"{value_verdict}: {value_detail}")
+
     # --- D. which item IS the seat? -----------------------------------------
     print()
     print("=" * 70)
@@ -1476,6 +1594,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"B. Seat tenure dated             : {date_verdict}")
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")
     print(f"C. Wikidata-asserted identifier  : {reach_verdict}")
+    print(f"C. ...and its value is the id    : {value_verdict}")
     print(f"D. Position item {args.position or '(none given)':<15}: {pos_verdict}")
     print(f"E. Wahlkreis map for P768        : {district_verdict} "
           f"({len(mapping)}/{args.expect_districts} resolved)")
