@@ -103,15 +103,39 @@ def test_every_disagreement_being_a_1_january_names_the_predicted_failure():
     assert any("<- 1 Jan" in ln for ln in lines)
 
 
-def test_a_mixed_disagreement_says_so_rather_than_overclaiming():
-    """Not every mismatch is the reporting-year shape; don't pretend it is."""
+def test_a_uniformly_later_odata_date_names_the_two_readings():
+    """What run 9 actually found: 11 of 244 differ, none a 1 January, every
+    OData date later than the same OpenParlData legislature start."""
     pairs = agreeing(MIN_JOINED) + [
-        pair(2001, "2026-01-01", "2023-12-04"),
-        pair(2002, "2023-12-05", "2023-12-04"),
+        pair(2001, "2025-09-16", "2023-12-04"),
+        pair(2002, "2023-12-11", "2023-12-04"),
     ]
     verdict, detail, _ = classify_start_dates(pairs)
     assert verdict == CONTRADICTED
-    assert "not purely the reporting-year shape" in detail
+    assert "not the reporting-year failure" in detail
+    assert "swearing-in" in detail and "segment" in detail
+    assert "MemberCouncilHistory" in detail
+    assert "2023-12-04" in detail  # the shared date is named
+
+
+def test_a_shared_opd_date_is_only_claimed_when_it_is_shared():
+    pairs = agreeing(MIN_JOINED) + [
+        pair(2001, "2025-09-16", "2023-12-04"),
+        pair(2002, "2021-03-05", "2019-12-02"),
+    ]
+    _, detail, _ = classify_start_dates(pairs)
+    assert "legislature start" not in detail
+
+
+def test_a_mixed_disagreement_says_so_rather_than_overclaiming():
+    """Neither shape dominates, so claim neither."""
+    pairs = agreeing(MIN_JOINED) + [
+        pair(2001, "2026-01-01", "2023-12-04"),
+        pair(2002, "2023-12-01", "2023-12-04"),
+    ]
+    verdict, detail, _ = classify_start_dates(pairs)
+    assert verdict == CONTRADICTED
+    assert "no single shape" in detail
     assert "read the rows above" in detail
 
 

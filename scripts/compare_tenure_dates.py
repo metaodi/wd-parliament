@@ -187,13 +187,39 @@ def classify_start_dates(
             lines,
         )
 
+    later = [p for p in differ if p.odata_start > p.opd_start]  # type: ignore[operator]
+    if not year_starts and len(later) == len(differ):
+        shared = {p.opd_start for p in differ}
+        shared_note = (
+            f" All of them sit against the same OpenParlData date, {shared.pop()}, "
+            "which is a legislature start."
+            if len(shared) == 1
+            else ""
+        )
+        return (
+            CONTRADICTED,
+            f"{len(differ)} of {len(comparable)} members disagree, and in **every** "
+            "case DateJoining is *later* than OpenParlData's start — none is a 1 "
+            f"January.{shared_note} So this is not the reporting-year failure step "
+            "0c was about. Two readings remain, and they call for opposite "
+            "actions: either DateJoining is the member's own swearing-in (more "
+            "precise than a term boundary, and the better P580), or it is the "
+            "start of a later mandate *segment* for someone who has sat since "
+            "before it (wrong for P580). Settle it by reading one of these "
+            "members' MemberCouncilHistory rows — dispatch 'Verify assumptions' "
+            "with last_name set to one of the surnames above and read section B. "
+            "Do not bulk-apply until then.",
+            lines,
+        )
+
     return (
         CONTRADICTED,
         f"{len(differ)} of {len(comparable)} members disagree, {len(year_starts)} "
-        "of them with DateJoining on a 1 January. The sources do not tell the "
-        "same story, so P580 from DateJoining cannot be trusted in bulk — but "
-        "the disagreement is not purely the reporting-year shape, so read the "
-        "rows above before deciding which source is right.",
+        "of them with DateJoining on a 1 January and "
+        f"{len(later)} with DateJoining later than OpenParlData's. The sources do "
+        "not tell the same story and the disagreement has no single shape, so "
+        "P580 from DateJoining cannot be trusted in bulk — read the rows above "
+        "before deciding which source is right.",
         lines,
     )
 
