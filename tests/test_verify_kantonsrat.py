@@ -42,6 +42,7 @@ from verify_kantonsrat import (  # noqa: E402
     classify_wikidata_reach,
     district_fields,
     find_kantonsrat_group,
+    DEFAULT_SEAT_ROLES,
     identifier_reach_query,
     is_kantonsrat,
     kantonsrat_candidates,
@@ -217,43 +218,93 @@ def test_b_a_member_who_has_not_taken_office_yet_is_not_a_sitting_member():
     assert classify_seat_count(rows, today=date(2026, 9, 1))[0] == CONTRADICTED
 
 
-def test_b_a_presiding_member_is_one_person_not_two():
-    """The presidium trap, one level down from the federal one.
+def test_b_a_presiding_officer_holds_their_seat_through_the_presidium_row():
+    """Run 14's correction, and it went the opposite way from run 13's.
 
-    There it was a *group* that was not the chamber; here it is a second row
-    for somebody who already holds a seat. Counting rows counts them twice.
+    Filtering to ``Mitglied`` alone gave 177 against 180 seats. The presidium
+    rows are **not** second rows for people who also hold a plain membership —
+    a presiding member has no ``Mitglied`` row at all, so their presidium row
+    *is* their seat. 177 + 3 presiding officers = 180.
     """
-    rows = seats(180) + [seat(person_id=5, role="2. Vizepräsidium")]
-    assert classify_seat_count(rows, today=TODAY)[0] == CONFIRMED
+    rows = seats(177) + [
+        seat(person_id=900, role="Präsidium"),
+        seat(person_id=901, role="1. Vizepräsidium"),
+        seat(person_id=902, role="2. Vizepräsidium"),
+    ]
+    assert classify_seat_count(rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES)[0] == (
+        CONFIRMED
+    )
+    # Excluding them — run 13's rule — is three seats short.
+    assert classify_seat_count(rows, today=TODAY, seat_roles=["Mitglied"])[0] == (
+        CONTRADICTED
+    )
 
 
 def test_b_a_guest_is_not_a_member():
     rows = seats(180) + [seat(person_id=901, role="Gast")]
-    assert classify_seat_count(rows, today=TODAY, seat_role="Mitglied")[0] == CONFIRMED
+    assert classify_seat_count(
+        rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES
+    )[0] == CONFIRMED
     # Without the role filter the guest counts, and the probe says so rather
     # than quietly absorbing them.
     assert classify_seat_count(rows, today=TODAY)[0] == CONTRADICTED
 
 
+def test_b_a_member_holding_two_rows_is_still_one_person():
+    """Whatever the roles, the count is of people."""
+    rows = seats(180) + [seat(person_id=5, role="Präsidium")]
+    assert classify_seat_count(
+        rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES
+    )[0] == CONFIRMED
+
+
 def test_b_the_funnel_is_reported_at_every_stage():
-    """A drop from 186 to 180 must be visible, not inferred."""
-    rows = seats(180) + [
-        seat(person_id=900, start="2026-08-17"),
-        seat(person_id=5, role="2. Vizepräsidium"),
-        seat(person_id=901, role="Gast"),
-    ]
-    count, lines = seat_holders(rows, today=TODAY, seat_role="Mitglied")
+    """A drop from 186 to 180 must be visible, not inferred.
+
+    These are run 14's live numbers: 186 open, 4 starting later, and roles
+    Mitglied=177, Präsidium/1./2. Vizepräsidium=1 each, Gast=1, none=1.
+    """
+    rows = (
+        seats(177)
+        + [seat(person_id=900 + i, start="2026-08-17") for i in range(4)]
+        + [
+            seat(person_id=910, role="Präsidium"),
+            seat(person_id=911, role="1. Vizepräsidium"),
+            seat(person_id=912, role="2. Vizepräsidium"),
+            seat(person_id=913, role="Gast"),
+            seat(person_id=914, role=None),
+        ]
+    )
+    count, lines = seat_holders(rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES)
     text = "\n".join(lines)
     assert count == 180
-    assert "open (no end_date):    183" in text
-    assert "1 start later" in text
+    assert "open (no end_date):    186" in text
+    assert "4 start later" in text
     assert "Gast=1" in text
+    assert "Mitglied=177" in text
     assert "distinct people:        180" in text
+
+
+def test_b_an_unrecognised_role_stays_visible_in_the_breakdown():
+    """The allowlist can only be wrong in silence if the roles are not printed.
+
+    Neither an allowlist nor a denylist is self-correcting when the source adds
+    a role, so what protects the count is the breakdown plus the refusal to
+    call a wrong total CONFIRMED.
+    """
+    rows = seats(180) + [seat(person_id=999, role="Interimspräsidium")]
+    verdict, _, lines = classify_seat_count(
+        rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES
+    )
+    assert verdict == CONFIRMED  # the new role is not a seat under this list...
+    assert "Interimspräsidium=1" in "\n".join(lines)  # ...but it is visible
 
 
 def test_b_reaching_the_size_only_after_narrowing_is_stated_in_the_verdict():
     rows = seats(180) + [seat(person_id=901, role="Gast")]
-    _, detail, _ = classify_seat_count(rows, today=TODAY, seat_role="Mitglied")
+    _, detail, _ = classify_seat_count(
+        rows, today=TODAY, seat_roles=DEFAULT_SEAT_ROLES
+    )
     assert "raw open count is 181" in detail
 
 

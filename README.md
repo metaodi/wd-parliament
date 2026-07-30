@@ -53,8 +53,16 @@ Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
 **Step 5 is the only one left on the federal pipeline, and no workflow can do
 it:** a person has to paste one line into QuickStatements and look at what
 landed. Step 7 — extending the tool to a *cantonal* parliament, the Kantonsrat
-Zürich — is open too, but it gates nothing here: its probe is written and has
-not yet been dispatched.
+Zürich — is open too, but it gates nothing here: runs 13 and 14 settled the
+source, the position item and the identifier join, and what remains is the
+adapter itself.
+
+⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
+timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
+returned a timeout error`. It is intermittent rather than an outage: the *same*
+query succeeded later in both jobs (section B of `verify_source.py`, and
+`--validate-periods`). `HttpClient` retries 429/5xx, but this arrives as an
+OData error document rather than an HTTP status, so nothing retries it.
 
 The tool is built against **swissparlpy 2.0.0**, which fixed the OpenParlData
 defaults this repo's probes had to work around
@@ -617,18 +625,33 @@ Wired into the `Verify assumptions` workflow as an evaluation that **never
 gates the job** — an answer about a design option must not turn the diagnostic
 red.
 
-### 7. 🔶 Could this be pointed at a cantonal parliament? — *the source is there; the Wikidata side is not*
+### 7. 🔶 Could this be pointed at a cantonal parliament? — *yes, and P14527 is the join*
 
 The **Kantonsrat Zürich**, as the first case. `scripts/verify_kantonsrat.py`
-measures it, and run 13 (2026-07-30) answered the structural half:
+measures it, and runs 13 and 14 (2026-07-30) answered everything except the
+Wahlkreis Q-IDs:
 
 | | Verdict |
 | --- | --- |
 | Kantonsrat located as a group | **YES** — body `ZH`, group **5077**, `name_de='Kantonsrat Zürich'` |
 | Seat memberships dated | **CONFIRMED** — 912 of 913 carry a `begin_date` |
-| Open seats == 180 | **CONTRADICTED** at 186 — explained below, now corrected |
-| A Wikidata-asserted identifier | **not yet measured** — the query went through the wrong position item |
-| Position item `Q19479543` | **CONTRADICTED** — it is a *Wikimedia category* |
+| Seats currently held == 180 | **CONTRADICTED** at 186 raw → the funnel below explains all six |
+| A Wikidata-asserted identifier | **CONFIRMED** — **35 of 35** linked members carry P14527 |
+| The position item | **Q21518678** "Mitglied des Zürcher Kantonsrat", *derived* |
+
+**P14527 is the cantonal join, and the federal finding inverts exactly as
+predicted.** Of the 35 ZH members OpenParlData links to Wikidata, **all 35**
+carry P14527 and 27 also carry P1307. Because P14527 is *Wikidata-asserted*, it
+slots into `is_mechanical` with **no change to the safety rule** — only
+`identifier_property` in the config and the two SPARQL builders in
+`wikidata.py` need to become configurable. Step 6 found P14527 added nobody
+federally; here it is the whole join.
+
+Two caveats on that 35. It is 35 of **834** ZH person records (4.2%, against
+3,685 of 3,686 federally), so the vast majority of cantonal members have no
+Wikidata item at all — the report will be dominated by `NO_WIKIDATA_ITEM`, a
+worklist for *creating* items. And 100% is measured over the people
+OpenParlData already links, which is a biased sample by construction.
 
 **The source side works.** 46 groups under body `ZH`, the chamber found by
 exact name, 913 memberships all of `type_harmonized='council_legislative'`,
@@ -636,37 +659,56 @@ dated with `begin_date`/`end_date`, 727 of them closed. The electoral district
 is there too, on the *person* records: `electoral_district_de/fr/it`. So
 OpenParlData can source a cantonal P39, P580, P582 and P768.
 
-**186 open memberships against 180 seats — and the difference was not
-vacancies.** The rows carry a `role_name_de`, and alongside `Mitglied` it holds
-`Gast` and `2. Vizepräsidium`. So counting open rows counts a guest as a member
-and counts a presiding member twice. Several open rows also began `2026-08-17`,
-which is in the future: real, correctly open, and not sitting yet. The probe now
-counts **distinct people holding an open, already-begun membership in the seat
-role**, and reports the funnel at every stage so the drop is visible rather than
-absorbed into a tolerance. This is the federal presidium trap one level down —
-there a *group* was not the chamber, here a *role* within the right group is not
-a seat.
+**186 open memberships against 180 seats, and none of the six was a vacancy.**
+The funnel run 14 printed:
 
-**`Q19479543` is `Kategorie:Kantonsrat (Zürich, Person)`, instance of Wikimedia
-category, held by nobody.** It shipped as the probe's default on the strength
-of a web search. As a P39 main value it would have written hundreds of
-statements claiming people hold a Wikimedia category — which is why section D
-counts holders instead of reading a label, and why it caught this on the first
-dispatch. **The default is now empty rather than a second guess**, and section D
-*discovers* candidates instead: it asks which P39 positions the members
-OpenParlData already links to Wikidata actually hold, ranked by frequency.
+```
+open (no end_date):    186
+of those, begun by 2026-07-30: 182  (4 start later)
+roles among those:      (none)=1, 1. Vizepräsidium=1, 2. Vizepräsidium=1,
+                        Gast=1, Mitglied=177, Präsidium=1
+```
 
-That failure also invalidated section C: every identifier count came back 0,
-which reads as "cantonal members carry no identifier" but only meant "nobody
-holds that item". The reach question is now asked about the **people** directly
-and mentions no position at all, so it cannot fail that way again.
+Four rows start on `2026-08-17` — real, correctly open, not sitting yet. One is
+a `Gast` and one carries no role. The remaining **177 `Mitglied` + 3 presiding
+officers = 180**, exactly.
 
-**The Wikidata side looks thin whichever route.** OpenParlData links only
-**35 of 834** ZH person records (4.2%) to a Wikidata item, against 3,685 of
-3,686 federally. Party Q-IDs are the opposite: **822 of 834 (98.6%)**. So the
-cantonal report will be dominated by `NO_WIKIDATA_ITEM` — a worklist for
-*creating* items rather than fixing statements — and P14527 coverage over those
-35 is the number that decides whether anything may be emitted mechanically.
+That last part corrected the correction. Run 13's rule filtered to `Mitglied`
+and got **177**, because the presidium rows are *not* second rows for people who
+also hold a plain membership — **a presiding member has no `Mitglied` row at
+all, so their presidium row is their seat.** So `DEFAULT_SEAT_ROLES` is an
+allowlist of roles that hold a seat. Neither polarity is self-correcting when
+the source adds a role, so what actually protects the count is the probe
+printing every role it saw and refusing to call a total that is not 180
+CONFIRMED.
+
+**`Q19479543` was `Kategorie:Kantonsrat (Zürich, Person)`** — instance of
+Wikimedia category, held by nobody. It shipped as the probe's default on the
+strength of a web search, and as a P39 main value it would have written
+hundreds of statements claiming people hold a Wikimedia category. Section D
+caught it because it *counts holders* instead of reading a label.
+
+Rather than guess again, section D now **derives** the position: it asks which
+P39 positions the members OpenParlData links actually hold, ranked. Run 14:
+
+```
+  26 x Q18510612    Mitglied des schweizerischen Nationalrats     (74% of sample)
+  12 x Q21518678    Mitglied des Zürcher Kantonsrat               (34% of sample)
+   7 x Q98502244    Mitglied des Regierungsrats Zürich            (20% of sample)
+```
+
+**Q21518678 is the seat.** Note the top of that ranking is the *National
+Council* — the sample is cantonal members notable enough to have a Wikidata
+item, which skews hard towards people who later went federal. So the discovery
+output names its top hit a candidate rather than an answer, and a human picks
+from the list. (The Regierungsrat appearing third is the executive-vs-legislature
+trap, visible in the data.)
+
+The category item also invalidated section C on run 13: it asked its identifier
+question *through* that position, so every count came back 0 — which reads as
+"cantonal members carry no identifier" and only meant "nobody holds that item".
+The reach query now asks about the **people** directly and mentions no position
+at all, which is why run 14 could answer it.
 
 The rest of this section is design that the measurements have not changed.
 
@@ -685,7 +727,7 @@ second is the hard half:
 
 **There is no cantonal P1307.** `is_mechanical`'s whole claim is that *Wikidata
 itself* asserted the identifier that established the match. Three candidates,
-not equivalent:
+not equivalent — and run 14 settled it in favour of the first:
 
 | Candidate | Provenance | What it would cost |
 | --- | --- | --- |
@@ -693,11 +735,9 @@ not equivalent:
 | OpenParlData's `wikidata_id` field | a third party asserting a Q-ID *about* Wikidata | its own `QID_FROM_*` constant and its own decision in `is_mechanical`; it must not inherit the P1307 gate |
 | name matching only | none | `is_mechanical` already refuses it → report-only, `quickstatements: false` |
 
-Note this **inverts** step 6's finding. There, P14527 added nobody: 0 National
+This **inverts** step 6's finding. There, P14527 added nobody: 0 National
 Councillors carry it without P1307. That is a fact about the *federal* overlap.
-Cantonally it may be the only Wikidata-asserted identifier that exists, so the
-property correctly dismissed above could be the whole join here. Section C
-measures it.
+Cantonally it is the whole join — measured at 35 of 35.
 
 Do not use P1307 as the cantonal join under any circumstances. It is the
 *federal* service and reaches only the members who also sat in Bern — the
@@ -739,14 +779,12 @@ canton publishes votes, and run 12's "P580 is safe to apply in bulk, 244 of 244"
 was measured on federal members.
 
 ```bash
-# discovers position candidates from the members OpenParlData links
+# checks Q21518678 and re-derives the candidates from the members
 uv run python scripts/verify_kantonsrat.py
 
-# checks a specific candidate against the chamber's size
-uv run python scripts/verify_kantonsrat.py --position Q12345
-
-# another canton: the seat count and the role are both parameters
-uv run python scripts/verify_kantonsrat.py --body-key BE --expect-seats 160
+# another canton: body, seat count and seat roles are all parameters
+uv run python scripts/verify_kantonsrat.py \
+  --body-key BE --expect-seats 160 --position ''
 ```
 
 Wired into `Verify assumptions` as section 6, and like step 6 it **never gates

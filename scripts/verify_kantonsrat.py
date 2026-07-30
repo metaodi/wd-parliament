@@ -156,22 +156,42 @@ DEFAULT_BODY_KEY = "ZH"
 # current". 180 is the number to expect here.
 DEFAULT_SEATS = 180
 
-# **Unknown, deliberately.** This shipped as ``Q19479543`` on the strength of a
-# search, and run 13 (2026-07-30) disproved it: that item is
+# **Discovered, not guessed.** This shipped as ``Q19479543`` on the strength of
+# a web search, and run 13 (2026-07-30) disproved it: that item is
 # ``Kategorie:Kantonsrat (Zürich, Person)``, instance of *Wikimedia category*,
 # held by nobody. As a P39 main value it would have written hundreds of
 # statements claiming people hold a Wikimedia category — which is why section D
-# counts holders rather than reading a label, and why the default is now empty
-# instead of a second guess.
+# counts holders rather than reading a label.
 #
-# With no candidate, section D *discovers* them from the members OpenParlData
-# already links to Wikidata; pass ``--position`` to check one.
-KANTONSRAT_POSITION = ""
+# Run 14 then *derived* the right one instead of guessing again: of the 35
+# members OpenParlData links to Wikidata, 12 hold ``Q21518678`` "Mitglied des
+# Zürcher Kantonsrat". Section D still counts it against the chamber's size on
+# every dispatch, because a derived value is evidence and not proof.
+#
+# Note what the same run showed about *how* it was derived: the most-held
+# position among those 35 was ``Q18510612``, the **National Council**, at 26 of
+# 35. The sample is drawn from cantonal members notable enough to have a
+# Wikidata item, and that skews hard towards people who later went federal — so
+# the top of the ranking is not the answer, which is why the discovery output
+# says so and a human picks from the list.
+KANTONSRAT_POSITION = "Q21518678"
 
-# The membership role that is a seat. Run 13: the Kantonsrat group's rows carry
-# ``Mitglied`` alongside ``Gast`` and ``2. Vizepräsidium``, so counting rows
-# counts a guest as a member and a presiding member twice.
-DEFAULT_SEAT_ROLE = "Mitglied"
+# The membership roles that *are* a seat.
+#
+# Run 13 established that counting open rows is not counting members: the group
+# carries ``Gast`` and presidium roles alongside ``Mitglied``. Run 14 then
+# corrected the correction. Filtering to ``Mitglied`` alone gave 177 against 180
+# seats, because the presidium rows are **not** second rows for people who also
+# hold a plain membership — a presiding member's seat *is* their presidium row,
+# and they have no ``Mitglied`` row at all. 177 + 3 presiding officers = 180
+# exactly.
+#
+# So this is an allowlist of roles that hold a seat, not a denylist of roles
+# that do not. Both polarities can be wrong when the source adds a role, and
+# neither is self-correcting — what protects the count is
+# :func:`classify_seat_count` reporting every role it saw and refusing to call
+# a total that is not the chamber's size CONFIRMED.
+DEFAULT_SEAT_ROLES = ("Mitglied", "Präsidium", "1. Vizepräsidium", "2. Vizepräsidium")
 
 # How the chamber names itself, normalised. Matched by **equality** against
 # each name field on a group, never by substring — see the module docstring.
@@ -297,24 +317,24 @@ def _as_date(value: Any) -> Optional[date]:
 def seat_holders(
     rows: Sequence[Dict[str, Any]],
     today: Optional[date] = None,
-    seat_role: Optional[str] = None,
+    seat_roles: Optional[Sequence[str]] = None,
 ) -> Tuple[int, List[str]]:
     """How many people actually hold a seat right now, and the funnel. Pure.
 
-    Three filters, each of which run 13 proved is needed, applied in order and
-    reported at every stage so that a drop is visible rather than assumed:
+    Three filters, each of which a dispatch proved is needed, applied in order
+    and reported at every stage so that a drop is visible rather than assumed:
 
     1. **open** — no end date, i.e. not yet vacated;
     2. **already begun** — a start date at or before ``today``. The source
-       carries rows for members who take office *later*: on 2026-07-30 several
+       carries rows for members who take office *later*: on 2026-07-30 four
        Kantonsrat rows began 2026-08-17. They are real and correctly open, but
        they are not sitting members, and counting them inflates the chamber;
-    3. **the seat role**, when ``seat_role`` is given and the column exists.
-       ``Gast`` is not a member, and ``2. Vizepräsidium`` is a *second* row for
-       somebody who already has one.
+    3. **a seat role**, when ``seat_roles`` is given and the column exists.
+       ``Gast`` is not a member; the presidium roles are — see
+       :data:`DEFAULT_SEAT_ROLES` for why that is an allowlist.
 
-    The result is then **distinct people**, not rows, because 2 makes a
-    presiding member two rows. Falls back to counting rows when the source
+    The result is **distinct people**, not rows, so that a member holding two
+    rows cannot count twice. Falls back to counting rows when the source
     carries no person column, and says so in the funnel rather than silently
     changing what the number means.
     """
@@ -352,18 +372,19 @@ def seat_holders(
             "roles among those:      "
             + ", ".join(f"{k}={v}" for k, v in sorted(counts.items()))
         )
-        if seat_role:
-            wanted = " ".join(seat_role.lower().split())
+        if seat_roles:
+            wanted = {" ".join(r.lower().split()) for r in seat_roles}
             begun = [
                 r
                 for r in begun
-                if " ".join(_text(r.get(role_field)).lower().split()) == wanted
+                if " ".join(_text(r.get(role_field)).lower().split()) in wanted
             ]
-            lines.append(f"with role {seat_role!r}:      {len(begun)}")
-    elif seat_role:
-        lines.append(
-            f"no role column, so --seat-role {seat_role!r} could not be applied"
-        )
+            lines.append(
+                f"in a seat role:         {len(begun)}  "
+                f"({', '.join(seat_roles)})"
+            )
+    elif seat_roles:
+        lines.append("no role column, so --seat-roles could not be applied")
 
     if person_field:
         count = len({r.get(person_field) for r in begun})
@@ -378,7 +399,7 @@ def classify_seat_count(
     rows: Sequence[Dict[str, Any]],
     expected: int = DEFAULT_SEATS,
     today: Optional[date] = None,
-    seat_role: Optional[str] = None,
+    seat_roles: Optional[Sequence[str]] = None,
 ) -> Tuple[str, str, List[str]]:
     """Does the chamber currently hold ``expected`` people? Pure.
 
@@ -418,7 +439,7 @@ def classify_seat_count(
         )
 
     lines.append(f"read as end:            {end_field}")
-    count, funnel = seat_holders(rows, today=today, seat_role=seat_role)
+    count, funnel = seat_holders(rows, today=today, seat_roles=seat_roles)
     lines.extend(funnel)
     lines.append(f"expected seats:         {expected}")
 
@@ -803,12 +824,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="Seats in the chamber. 180 for the Kantonsrat Zürich.",
     )
     parser.add_argument(
-        "--seat-role",
-        default=DEFAULT_SEAT_ROLE,
+        "--seat-roles",
+        default=",".join(DEFAULT_SEAT_ROLES),
         help=(
-            "The membership role that *is* a seat. The Kantonsrat group also "
-            "carries 'Gast' and presidium rows, which are not seats and not "
-            "extra members. Pass '' to count every role."
+            "Comma-separated membership roles that hold a seat. The Kantonsrat "
+            "group also carries 'Gast', which does not. Presiding officers have "
+            "no separate 'Mitglied' row, so their presidium role IS their seat. "
+            "Pass '' to count every role."
         ),
     )
     args = parser.parse_args(argv)
@@ -882,7 +904,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print()
 
         seat_verdict, seat_detail, seat_lines = classify_seat_count(
-            seat_rows, args.expect_seats, seat_role=args.seat_role or None
+            seat_rows,
+            args.expect_seats,
+            seat_roles=[r.strip() for r in args.seat_roles.split(",") if r.strip()]
+            or None,
         )
         for line in seat_lines:
             print("  " + line if line else "")
