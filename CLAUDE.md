@@ -25,19 +25,29 @@ make here:
    *disagrees* (`FIX_START_DATE`, `REVIEW_ENDED`, `REVIEW_PARTY`), not merely
    that one is missing. That is also what justifies emitting QuickStatements.
 
-## ⚠️ Unresolved at scaffold time — read before touching QuickStatements
+## ⚠️ What the live service actually returns — read before touching QuickStatements
 
-See **Open verification steps** in the README. The blocking one:
+See **Open verification steps** in the README. The `Verify assumptions`
+workflow ran against live parlament.ch on 2026-07-29 and settled most of these.
 
-- **The parlament.ch read is broken.** The first live run (2026-07-29) fetched
-  **zero** sitting members, silently, and published 2,234 wrong "this member has
-  left" suggestions — every Wikidata seat holder, flagged by the diff's second
-  pass because the member list was empty. Nothing reached QuickStatements
-  (`is_mechanical` rejected all of them), which is the safety rule earning its
-  keep. `app.process` now raises on an empty fetch and
-  `diff.compute_suggestions` skips the reverse walk without members, but
-  **neither fixes the read**: run `scripts/verify_source.py` to find whether
-  the `Active` boolean or the `CouncilAbbreviation` filter is at fault.
+Two facts about the source, both learned the hard way, both now enforced in
+`parliament.py`. **Do not "simplify" either away:**
+
+- **`CouncilAbbreviation` is `NR` / `SR`** (German, because the service is
+  queried with `Language=DE`; the distinct values are `''`, `BR`, `NR`, `SR`,
+  and French rows say `CN`). The config asked for `N` / `S` — from the OData
+  docs, matching nothing — which is why the first live run fetched **zero**
+  sitting members and published 2,234 wrong "this member has left" suggestions.
+  Nothing reached QuickStatements; `is_mechanical` rejected all of them, the
+  safety rule earning its keep.
+- **"No date" is `1753-01-01`, not a null** — SQL Server's `datetime` minimum,
+  on every sitting member's `DateLeaving`. `parliament.NULL_DATE` maps it (and
+  anything below) to `None` at the mapping boundary. Left unmapped it reads as
+  "left in 1753", which makes `diff` raise `ADD_END_DATE` for the whole
+  chamber — and that kind **is** mechanical, so it would have reached
+  QuickStatements as a P582 backfill. It also reverses every tenure interval,
+  costing every P2937 qualifier silently. The P1307 provenance rule does not
+  catch this class of error; only the mapping does.
 
 - **`statement_model` is settled: `tenure`.** Censused against live Wikidata
   (2026-07-29): of 3,043 items with both P1307 and a National Council P39,
@@ -46,11 +56,67 @@ See **Open verification steps** in the README. The blocking one:
   **contradicts** WikiProject "every politician"'s documented per-term
   convention — the data wins, since duplicates are what the tool must avoid.
   Do not flip it back without re-running the census query in the README.
-- **P1307 == `PersonNumber`** is still unverified directly. Strongly supported
-  (Q121160 / P1307 = 1108 matches Parmelin's biography URL; the property's URL
-  pattern is built from `PersonNumber`; the census found 3,043 National
-  Councillors carrying it) but nobody has read `PersonNumber` off an actual
-  `MemberCouncil` row, and none of that distinguishes it from `PersonIdCode`.
+- **P1307 == `PersonNumber`: confirmed.** Parmelin's row reads
+  `PersonNumber=1108, PersonIdCode=2621` against Wikidata's P1307 = 1108, so it
+  is `PersonNumber` and not `PersonIdCode`. `resolve.match_by_identifier` is
+  comparing the right fields.
+
+**`DateJoining` is a mandate-*segment* start, not a tenure start — so P580 must
+not be emitted from it, and `ADD_MEMBERSHIP` / `ADD_START_DATE` must not be
+bulk-applied.** Measured (README step 0c): of 244 sitting members joined against
+OpenParlData, 233 agree and 11 have `DateJoining` *later* than the legislature
+opening. Bregy is the proof — `MemberCouncil` says 2025-09-16 while his
+`MemberCouncilHistory` carries an active row from 2023-12-04. A2 corroborates:
+200 National Councillors share only 16 distinct `DateJoining` values.
+
+**Fixed** without changing source: `segments_from_rows` groups
+`MemberCouncilHistory` into mandate segments (it must *not* de-duplicate on
+`(person, council)` the way `members_from_rows` does — that is what loses the
+tenure), `tenure_start` chains segments that are adjacent to within a day, and
+`Member.start_date` (`tenure_start or date_joining`) is the **only** start
+`diff` and `period_overlap` may read. `app.process` fetches the history once and
+degrades to the raw field rather than aborting if it cannot.
+
+A real break stops the chain, so someone who left and returned gets the return.
+Re-run `scripts/compare_tenure_dates.py` after touching this; it compares
+against OpenParlData's *per-term* start, so a continuous multi-legislature run
+now reads as disagreeing in the other direction — that is the tenure model, not
+a regression.
+
+**OpenParlData is a live option, not a dead end** (README step 6). Its chambers
+are *groups* (`Nationalrat` 1663, `Ständerat` 1664), matched by name equality
+because `Präsidium des Nationalrates` and `Büro NR` are not the chamber. The
+seat is a `memberships` row pointing at one, and **all 5,618 carry a
+`begin_date`** — real per-term spans back to 1853, with 200 open-ended NR and
+46 open-ended SR rows, both chambers' sizes exactly. So it *can* source P39 including P2937,
+and it reaches far enough back for the historic-members extension. Whether to
+switch turns on comparing its dates against `MemberCouncil.DateJoining` —
+`scripts/compare_tenure_dates.py` does that, and the same comparison answers
+step 0c.
+
+Three things about it that cost a wrong answer each, and are now guarded:
+
+- the columns are **`begin_date` / `end_date`**, not `date_start` / `date_end`
+  (that is `speeches`). `classify_seat_memberships` resolves the column from
+  the rows and returns INCONCLUSIVE — never CONTRADICTED — when it is absent,
+  because "no such column" and "column full of nulls" are indistinguishable
+  through `.get()` and mean opposite things;
+- the seat is reachable from the **group**, not the person: walking a member
+  returns committees and interest groups but not their own council seat;
+- **pass `lang='de'`**: swissparlpy hard-codes `lang='en'` with
+  `lang_format='flat'`, and the English columns are null, so a table can read
+  as *empty* — `bodies` gives 0 rows by default and 1,405 with `lang='de'`.
+  Narrow with field filters (`body_key=CHE`, `group_id=`, `lastname=`); the
+  `search` parameter works too, but its `exact` mode is case-sensitive in
+  practice ('Nationalrat' → 1 row, 'nationalrat' → 0) and `CHAMBER_NAMES`
+  holds lowercase spellings. `limit` is a page size, not a cap — the response
+  iterator pages to exhaustion; `len()` is `meta.total_records`;
+- P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
+  P1307 join stays whatever happens to the source.
+
+For enrichment it is unambiguously good: 3,685/3,686 federal members carry a
+`wikidata_id` and 87.3% a party Q-ID, which would fill the deliberately-empty
+`parties` / `parl_groups` maps.
 
 Two facts from the same census shape the diff's behaviour:
 
@@ -192,10 +258,15 @@ no run has happened yet.
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
-  `scripts/verify_source.py` and `--verify-config`, writes both to the run
-  summary, and writes nothing to the repo. Keep it read-only: it is the
-  diagnostic you run *before* trusting `update.yml`'s output. Note
-  `workflow_dispatch` requires the file to be on the default branch.
+  `scripts/verify_source.py`, `--verify-config`,
+  `scripts/verify_openparldata.py` and `scripts/compare_tenure_dates.py`,
+  writes all four to the run summary, and writes nothing to the repo. Keep it
+  read-only: it is the diagnostic you run *before* trusting `update.yml`'s
+  output. The last two report without gating and are deliberately excluded
+  from the job's pass/fail — do not wire their outcomes into the gate; the
+  gate says whether the pipeline may run, and those two answer whether a
+  *bulk apply* is safe. The file must be on the default branch to appear in
+  the dispatch UI, though a dispatch then runs the selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion

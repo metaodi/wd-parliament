@@ -63,13 +63,13 @@ def intervals_overlap(
 
 def period_covers(member: Member, period: Period) -> bool:
     """True when ``member``'s tenure overlaps ``period``."""
-    if member.date_joining is None:
+    if member.start_date is None:
         return False
     if period.start is None:
         # A period without a start date cannot be intersected meaningfully.
         return False
     return intervals_overlap(
-        member.date_joining, member.date_leaving, period.start, period.end
+        member.start_date, member.date_leaving, period.start, period.end
     )
 
 
@@ -95,7 +95,7 @@ def clip_to_period(
     when both the tenure and the period are open ended; a member still sitting
     in a period that has since closed gets that period's ``EndDate``.
     """
-    start = member.date_joining
+    start = member.start_date
     if start is None or period.start is None:
         return (start, member.date_leaving)
     clipped_start = max(start, period.start)

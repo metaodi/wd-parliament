@@ -26,6 +26,20 @@ VOTING_TABLE = "Voting"
 
 DEFAULT_LANGUAGE = "DE"
 
+# SQL Server's ``datetime`` minimum. The OData service is backed by one and
+# sends this value for "no date" rather than a null — every sitting member's
+# ``DateLeaving`` arrives as 1753-01-01 (confirmed against the live service on
+# 2026-07-29). Read literally it means "this member left in 1753", which is
+# not a harmless wrong number: ``diff`` would raise ADD_END_DATE for the whole
+# chamber and ADD_END_DATE *is* mechanical, so it would reach QuickStatements
+# as a P582 backfill. It also reverses every tenure interval, which
+# ``period_overlap`` correctly refuses, silently costing every P2937 term.
+#
+# Compared with ``<=`` rather than ``==`` because a smaller value cannot be a
+# real date either: SQL Server cannot represent one, so anything at or below
+# the floor is the absence of a date however it was encoded.
+NULL_DATE = date(1753, 1, 1)
+
 
 def _as_date(value: Any) -> Optional[date]:
     """Coerce an OData ``Edm.DateTime`` (or an ISO string) to a ``date``.
@@ -33,24 +47,32 @@ def _as_date(value: Any) -> Optional[date]:
     ``swissparlpy`` hands back ``datetime`` objects, but the JSON fixtures the
     tests use carry ISO strings, so both are accepted. Anything unparseable
     becomes ``None`` rather than raising: a single malformed date must not cost
-    us the whole member.
+    us the whole member. So does the :data:`NULL_DATE` sentinel, which is how
+    the service spells an absent date.
     """
     if value is None or value == "":
         return None
     if isinstance(value, datetime):
-        return value.date()
+        return _unless_null(value.date())
     if isinstance(value, date):
-        return value
+        return _unless_null(value)
     text = str(value).strip()
     if not text:
         return None
     # Tolerate "2023-12-04T00:00:00", "2023-12-04 00:00:00" and "2023-12-04".
     text = text.replace(" ", "T").split("T")[0]
     try:
-        return date.fromisoformat(text)
+        return _unless_null(date.fromisoformat(text))
     except ValueError:
         log.debug("Could not parse date %r", value)
         return None
+
+
+def _unless_null(value: date) -> Optional[date]:
+    """``None`` for the service's null-date sentinel, otherwise ``value``."""
+    if value <= NULL_DATE:
+        return None
+    return value
 
 
 def _as_int(value: Any) -> Optional[int]:
@@ -124,11 +146,15 @@ def members_from_rows(
 ) -> List[Member]:
     """Map and filter ``MemberCouncil`` rows. Pure — the tests' entry point.
 
-    ``councils`` filters on ``CouncilAbbreviation`` ("N" / "S"); ``None`` keeps
-    every chamber. Members are de-duplicated on ``(person_number, council)``,
-    keeping the row with the latest ``DateJoining`` — the OData service returns
-    one row per person *per language*, and a caller that forgets the language
-    filter would otherwise see each member several times over.
+    ``councils`` filters on ``CouncilAbbreviation`` ("NR" / "SR" — the German
+    abbreviations, since the service is queried with ``Language=DE``);
+    ``None`` keeps every chamber. Members are de-duplicated on
+    ``(person_number, council)``, keeping the row with the latest
+    ``DateJoining``: the service returns several rows per person — one per
+    language, and sometimes more than one within a language — so a caller that
+    forgets the language filter would otherwise see each member several times
+    over, under French abbreviations ("CN" for the National Council) that the
+    filter does not want.
     """
     wanted = {c.strip().upper() for c in councils} if councils else None
     best: Dict[tuple, Member] = {}
@@ -164,6 +190,105 @@ def period_from_row(row: Dict[str, Any]) -> Optional[Period]:
         end=_as_date(row.get("EndDate")),
         id=_as_int(row.get("ID")),
     )
+
+
+# Two segments belong to the same continuous tenure when the second starts the
+# day after the first ends. Legislature boundaries are exactly that — Bregy's
+# 2019-12-01 / 2019-12-02 pair spans the 50th into the 51st — so a member
+# re-elected without a break has one tenure, not two.
+MAX_SEGMENT_GAP_DAYS = 1
+
+
+def segments_from_rows(
+    rows: Iterable[Dict[str, Any]],
+    councils: Optional[Sequence[str]] = None,
+) -> Dict[tuple, List[Member]]:
+    """Group ``MemberCouncilHistory`` rows into segments per person and council.
+
+    Pure. Unlike :func:`members_from_rows` this must **not** de-duplicate on
+    ``(person_number, council)`` — the several rows per person are the mandate
+    segments, and collapsing them is exactly what loses the tenure start. Only
+    the language duplicates are dropped, on the full
+    ``(person, council, joining, leaving)`` tuple, so two genuinely different
+    spans always survive.
+
+    Returned lists are sorted by ``date_joining``, oldest first, with undated
+    segments discarded: a segment with no start cannot be chained to anything.
+    """
+    wanted = {c.strip().upper() for c in councils} if councils else None
+    seen: set = set()
+    out: Dict[tuple, List[Member]] = {}
+    for row in rows:
+        member = member_from_row(row)
+        if member is None or member.date_joining is None:
+            continue
+        council = member.council.upper()
+        if wanted is not None and council not in wanted:
+            continue
+        fingerprint = (
+            member.person_number,
+            council,
+            member.date_joining,
+            member.date_leaving,
+        )
+        if fingerprint in seen:
+            continue
+        seen.add(fingerprint)
+        out.setdefault((member.person_number, council), []).append(member)
+    for segments in out.values():
+        segments.sort(key=lambda m: m.date_joining)  # type: ignore[arg-type,return-value]
+    return out
+
+
+def tenure_start(segments: Sequence[Member]) -> Optional[date]:
+    """First day of the **current continuous run** through ``segments``. Pure.
+
+    Walks back from the newest segment for as long as each one begins within
+    :data:`MAX_SEGMENT_GAP_DAYS` of the previous ending, and returns where that
+    chain starts. A real break — a member who left and returned years later —
+    stops the walk, so their current tenure begins at the return and the earlier
+    service is a separate P39 statement.
+
+    ``None`` when there is nothing to say: no segments, or the newest one has no
+    start. The caller then keeps ``date_joining``, which is the accuracy the raw
+    field allows rather than a guess.
+    """
+    dated = [s for s in segments if s.date_joining is not None]
+    if not dated:
+        return None
+    ordered = sorted(dated, key=lambda m: m.date_joining)  # type: ignore[arg-type,return-value]
+    start = ordered[-1].date_joining
+    for earlier, later in zip(reversed(ordered[:-1]), reversed(ordered[1:])):
+        if earlier.date_leaving is None:
+            # An open earlier segment cannot be chained: without an end there is
+            # no gap to measure, and overlapping rows are not a continuous run.
+            break
+        gap = (later.date_joining - earlier.date_leaving).days  # type: ignore[operator]
+        if gap > MAX_SEGMENT_GAP_DAYS or gap < 0:
+            break
+        start = earlier.date_joining
+    return start
+
+
+def apply_tenure_starts(
+    members: Iterable[Member], segments: Dict[tuple, List[Member]]
+) -> int:
+    """Set ``tenure_start`` on each member from their history. Pure.
+
+    Returns how many members got a start *earlier* than their ``date_joining``
+    — the count of rows whose raw value was a segment start, which is the
+    number worth reporting. Members with no history are left alone rather than
+    being given a guessed date.
+    """
+    corrected = 0
+    for member in members:
+        found = tenure_start(segments.get((member.person_number, member.council.upper()), []))
+        if found is None:
+            continue
+        member.tenure_start = found
+        if member.date_joining is not None and found < member.date_joining:
+            corrected += 1
+    return corrected
 
 
 def periods_from_rows(rows: Iterable[Dict[str, Any]]) -> List[Period]:
@@ -222,7 +347,7 @@ class ParliamentClient:
         active_only: bool = True,
         table: str = MEMBER_TABLE,
     ) -> List[Member]:
-        """Current members of the given chambers ("N", "S"), as dataclasses.
+        """Current members of the given chambers ("NR", "SR"), as dataclasses.
 
         The ``Active`` filter is pushed down to OData so the service returns
         the ~246 sitting members rather than every member since 1848.
@@ -234,6 +359,27 @@ class ParliamentClient:
         members = members_from_rows(rows, councils=councils, active_only=active_only)
         log.info("Fetched %d members from %s", len(members), table)
         return members
+
+    def get_member_segments(
+        self, councils: Optional[Sequence[str]] = None
+    ) -> Dict[tuple, List[Member]]:
+        """Mandate segments per ``(person_number, council)`` from the history.
+
+        One request for the whole ``MemberCouncilHistory``, which is the only
+        way to get it: the table has no filter that selects "the segments of
+        these 246 people", and a per-person fetch would be 246 round trips.
+        It is the largest read the pipeline makes — every member since 1848 —
+        and it exists solely so P580 comes from a tenure start rather than a
+        segment start (README step 0c).
+        """
+        rows = self._rows(HISTORIC_MEMBER_TABLE, Language=self.language)
+        segments = segments_from_rows(rows, councils=councils)
+        log.info(
+            "Fetched %d history rows covering %d (person, council) pair(s)",
+            len(rows),
+            len(segments),
+        )
+        return segments
 
     def get_periods(self) -> List[Period]:
         """Every ``LegislativePeriod`` row (~52), as dataclasses."""

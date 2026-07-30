@@ -1,12 +1,13 @@
 """Tests for the pure decisions in ``scripts/verify_source.py``.
 
-The fetching is network code and is left alone. ``diagnose_member_fetch`` and
-``classify`` are what decide *what the probe concluded*, so they are the parts
-worth pinning down — especially the first, which exists to attribute the
-zero-member read of 2026-07-29 to the filter that caused it.
+The fetching is network code and is left alone. ``diagnose_member_fetch``,
+``describe_tenure_dates`` and ``classify`` are what decide *what the probe
+concluded*, so they are the parts worth pinning down — especially the first,
+which attributed the zero-member read of 2026-07-29 to the council filter.
 """
 
 import sys
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,7 @@ from verify_source import (  # noqa: E402
     CONTRADICTED,
     INCONCLUSIVE,
     classify,
+    describe_tenure_dates,
     diagnose_member_fetch,
 )
 
@@ -28,33 +30,45 @@ def row(person_number=None, id_code=None):
     return {"PersonNumber": person_number, "PersonIdCode": id_code, "LastName": "Parmelin"}
 
 
-def member_row(person_number=1101, active=True, abbr="N"):
+def member_row(
+    person_number=1101,
+    active=True,
+    abbr="NR",
+    joining="2023-12-04T00:00:00",
+    leaving="1753-01-01T00:00:00",
+):
+    """One MemberCouncil row as the live service actually shapes it.
+
+    "NR"/"SR", and a leaving date of 1753-01-01 — the null-date sentinel —
+    for anyone still sitting.
+    """
     return {
         "PersonNumber": person_number,
         "Active": active,
         "CouncilAbbreviation": abbr,
-        "CouncilName": "Nationalrat" if abbr == "N" else "Ständerat",
+        "CouncilName": "Nationalrat" if abbr == "NR" else "Ständerat",
         "FirstName": "Anna",
         "LastName": "Muster",
-        "DateJoining": "2023-12-04T00:00:00",
+        "DateJoining": joining,
+        "DateLeaving": leaving,
     }
 
 
 # --- diagnosing the zero-member read ----------------------------------------
 def test_a_healthy_fetch_passes():
-    ok, lines = diagnose_member_fetch([member_row(), member_row(1102)], ["N", "S"])
+    ok, lines = diagnose_member_fetch([member_row(), member_row(1102)], ["NR", "SR"])
     assert ok is True
     assert any("2 sitting members would reach the diff" in ln for ln in lines)
 
 
 def test_an_empty_odata_response_blames_the_odata_filters():
-    ok, lines = diagnose_member_fetch([], ["N", "S"])
+    ok, lines = diagnose_member_fetch([], ["NR", "SR"])
     assert ok is False
     assert any("OData itself returned nothing" in ln for ln in lines)
 
 
 def test_a_council_abbreviation_mismatch_is_named_exactly():
-    """The failure mode that would silently empty the list: NR/SR vs N/S."""
+    """The failure that emptied the first run's list, confirmed 2026-07-29."""
     raw = [member_row(abbr="NR"), member_row(1102, abbr="SR")]
     ok, lines = diagnose_member_fetch(raw, ["N", "S"])
     assert ok is False
@@ -65,16 +79,65 @@ def test_a_council_abbreviation_mismatch_is_named_exactly():
 
 def test_rows_without_a_person_number_are_called_out():
     raw = [member_row(person_number=None), member_row(person_number=None)]
-    ok, lines = diagnose_member_fetch(raw, ["N", "S"])
+    ok, lines = diagnose_member_fetch(raw, ["NR", "SR"])
     assert ok is False
     assert any("PersonNumber" in ln for ln in lines)
 
 
 def test_no_active_rows_is_distinguished_from_a_bad_council_filter():
     raw = [member_row(active=False), member_row(1102, active=False)]
-    ok, lines = diagnose_member_fetch(raw, ["N", "S"])
+    ok, lines = diagnose_member_fetch(raw, ["NR", "SR"])
     assert ok is False
     assert any("Active" in ln for ln in lines)
+
+
+# --- are the dates believable? ----------------------------------------------
+def test_tenure_dates_are_reported_per_chamber():
+    raw = [member_row(), member_row(1102, abbr="SR")]
+    blob = "\n".join(describe_tenure_dates(raw, ["NR", "SR"]))
+    assert "NR: 1 sitting member(s)" in blob
+    assert "SR: 1 sitting member(s)" in blob
+    assert "OK: no sitting member carries a leaving date" in blob
+
+
+def test_starts_that_are_all_1_january_are_flagged():
+    """A per-year mandate segment, not a tenure: P580 from it would be wrong."""
+    raw = [
+        member_row(joining="2026-01-01T00:00:00"),
+        member_row(1102, joining="2026-01-01T00:00:00"),
+    ]
+    blob = "\n".join(describe_tenure_dates(raw, ["NR", "SR"]))
+    assert "per-year mandate segments" in blob
+
+
+def test_ordinary_starts_are_not_flagged():
+    raw = [member_row(joining="2023-12-04T00:00:00")]
+    blob = "\n".join(describe_tenure_dates(raw, ["NR", "SR"]))
+    assert "per-year mandate segments" not in blob
+
+
+def test_a_leaking_sentinel_is_caught():
+    """If parliament._as_date stops handling it, a sitting member "leaves"."""
+    import wd_parliament.parliament as parliament
+
+    original = parliament.NULL_DATE
+    parliament.NULL_DATE = date(1, 1, 1)  # disable the sentinel handling
+    try:
+        blob = "\n".join(describe_tenure_dates([member_row()], ["NR", "SR"]))
+    finally:
+        parliament.NULL_DATE = original
+    assert "sentinel is leaking" in blob
+
+
+def test_members_without_a_start_date_are_counted():
+    raw = [member_row(joining="1753-01-01T00:00:00")]
+    blob = "\n".join(describe_tenure_dates(raw, ["NR", "SR"]))
+    assert "1 sitting member(s) have no DateJoining" in blob
+
+
+def test_nothing_to_say_when_the_filter_emptied_the_list():
+    blob = "\n".join(describe_tenure_dates([member_row()], ["N", "S"]))
+    assert "no members survived the filter" in blob
 
 
 def test_person_number_matching_confirms_the_assumption():
