@@ -1,6 +1,6 @@
 """Evaluate the OpenParlData backend as an alternative (or addition) to OData.
 
-`swissparlpy` 1.0.0 ships a second backend, ``openparldata``, reading
+`swissparlpy` ships a second backend, ``openparldata``, reading
 https://api.openparldata.ch. Its ``persons`` records carry two fields this tool
 currently has no source for — ``wikidata_id`` and
 ``party_harmonized_wikidata_id`` — and Wikidata has an *OpenParlData ID*
@@ -46,18 +46,27 @@ Near parity, so the useful number is not which is bigger but how many seat
 holders carry P14527 and *not* P1307 — that is exactly what a second join path
 would add.
 
-Three things about querying it, from the API's own OpenAPI document:
+Four things about querying it, from the API's own OpenAPI document — the first
+two rewritten for **swissparlpy 2.0.0**, which fixed the defaults this probe
+originally had to work around (issue #52, reported off the 2026-07-29 runs):
 
-- **``lang='de'`` is load-bearing.** swissparlpy hard-codes ``lang='en'``
-  with ``lang_format='flat'``, and the English columns are null, so a table
-  can read as completely empty: ``bodies`` returns 0 rows under the defaults
-  and **1,405** with ``lang='de'``. Neither ``search='%'`` nor
-  ``search_language='de'`` makes any difference — measured, not assumed.
-- **``search`` works, but ``exact`` is case-sensitive** in practice, despite
-  the documentation calling it a case-insensitive exact match.
-  ``search='Nationalrat'`` returns exactly 1 group; the lowercase
-  ``search='nationalrat'`` returns 0. Its default mode is ``partial`` (ILIKE
-  substring), which is why a surname alone returned the wrong Andrey.
+- **``lang='de'`` is now a choice, not a workaround.** swissparlpy 1.0.0
+  hard-coded ``lang='en'`` with ``lang_format='flat'``, and the English columns
+  are null, so a table could read as completely empty: ``bodies`` returned 0
+  rows under those defaults and 1,405 with ``lang='de'``. 2.0.0 sends no
+  ``lang`` at all unless asked. This probe still passes ``lang='de'``
+  explicitly, because :data:`CHAMBER_NAMES` matches German spellings and a
+  pinned language is what makes that reproducible — not because the default is
+  broken. Section E measures the difference rather than assuming it.
+- **``search`` works, but mind the scope and the casing.** 1.0.0 forced
+  ``search_scope='all'`` and sent an empty ``search=''`` on every request;
+  2.0.0 sends neither, so the API's own defaults apply — scope ``metadata``
+  and mode ``partial``. Pass ``search_scope='all'`` explicitly to reach the
+  full-text indexes. ``exact`` is **case-sensitive in practice**, despite the
+  documentation calling it a case-insensitive exact match:
+  ``search='Nationalrat'`` returns exactly 1 group, the lowercase
+  ``search='nationalrat'`` returns 0. And ``partial`` is ILIKE substring
+  matching, which is why a surname alone returned the wrong Andrey.
 - **field filters are ordinary query parameters and do work**, so
   ``firstname=``, ``lastname=``, ``body_key=CHE`` and ``group_id=1663``
   narrow server-side. Prefer that to fetching a table and sieving it here —
@@ -68,10 +77,11 @@ Three things about querying it, from the API's own OpenAPI document:
   the response is ``meta.total_records`` off the first page, which
   :func:`count_only` uses to count without paging.
 
-Note also that the backend logs *unrecognised* parameters as a warning and
-sends them anyway rather than rejecting them, and the warning does not
-interpolate the table name — it prints a literal ``'{table}'``. So a typo in a
-filter is easy to miss; check the counts look plausible.
+Note the backend still forwards *unrecognised* parameters with only a warning
+rather than rejecting them, so a mistyped filter silently does nothing — check
+the counts look plausible. Under 2.0.0 the warning names the table and no
+longer fires for documented query parameters, so when one does appear it is
+worth reading.
 
 Run it locally::
 
@@ -547,13 +557,20 @@ def compare_counts(total: int, non_null: int, field: str) -> Tuple[str, str]:
 #
 # Field filters (``firstname=``, ``lastname=``, ``body_key=``, ``group_id=``)
 # stay the mechanism A-D use: they need no casing care and are already proven.
+#
+# Both keys are named rather than left to default. ``metadata`` happens to be
+# the API's default under swissparlpy 2.0.0, but 1.0.0 forced ``all``, and a
+# value this probe depends on should not change under it when the library does.
 EXACT = {"search_mode": "exact", "search_scope": "metadata"}
 
 
-# Combinations worth trying against the ``search`` parameter, which returns
-# nothing under swissparlpy's defaults. The backend always sends ``search=""``
-# with ``lang="en"``, ``lang_format="flat"`` and ``search_scope="all"``, and any
-# of those could be the reason.
+# Combinations worth trying against the ``search`` parameter. Under
+# swissparlpy 1.0.0 the bare defaults returned nothing, because the backend
+# always sent ``search=""`` with ``lang="en"``, ``lang_format="flat"`` and
+# ``search_scope="all"``. 2.0.0 sends only ``lang_format="flat"``, so
+# "swissparlpy defaults" now means the API's own defaults — and re-measuring
+# that is the point of keeping this section: it is the one place the run says
+# what the installed version actually does, rather than what a changelog claims.
 #
 # Two notes on the parameters themselves. The language one is
 # ``search_language`` — ``search_lang`` is **not** a parameter, and this backend
@@ -567,13 +584,18 @@ SEARCH_VARIANTS: Tuple[Tuple[str, Dict[str, Any]], ...] = (
     ("search_language=de", {"search_language": "de"}),
     ("search=% + search_language=de", {"search": "%", "search_language": "de"}),
     ("search=% + scope=metadata", {"search": "%", "search_scope": "metadata"}),
+    ("search=% + scope=all", {"search": "%", "search_scope": "all"}),
     ("lang=de", {"lang": "de"}),
+    ("lang=en", {"lang": "en"}),
     ("search=% + lang=de", {"search": "%", "lang": "de"}),
 )
 
 # The same, for looking a chamber up by name rather than listing a table.
+# ``search_scope`` is now the API's default (``metadata``) unless named, so
+# both scopes are measured: the full-text index is what 1.0.0 used to force.
 NAMED_VARIANTS: Tuple[Tuple[str, Dict[str, Any]], ...] = (
     ("exact", {"search_mode": "exact"}),
+    ("exact + scope=all", {"search_mode": "exact", "search_scope": "all"}),
     ("exact + search_language=de", {"search_mode": "exact", "search_language": "de"}),
     ("exact + lang=de", {"search_mode": "exact", "lang": "de"}),
     ("partial + search_language=de", {"search_mode": "partial", "search_language": "de"}),
@@ -693,7 +715,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("-" * 70)
     print("E. Does the 'search' parameter work with different parameters?")
     print("-" * 70)
-    print("listing a table (bodies returns 0 under the defaults):")
+    print(f"(swissparlpy {getattr(spp, '__version__', 'unknown')}; under 1.0.0 "
+          "'bodies' returned 0 rows under the defaults)")
+    print("listing a table:")
     body_results = [
         (label, count_only(client, "bodies", **params))
         for label, params in SEARCH_VARIANTS
@@ -713,12 +737,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
 
     # The body is the *level*, not a chamber; reported for orientation only.
-    # An earlier run read 0 rows here, which was blamed on the API. It is more
-    # likely swissparlpy's defaults: it always sends search="" with
-    # search_scope="all", so scope is pinned to metadata explicitly.
-    # lang="de" is load-bearing: swissparlpy hard-codes lang="en" with
-    # lang_format="flat", and the English columns are null, so the table reads
-    # as empty. This is why `bodies` looked broken for four runs.
+    # An earlier run read 0 rows here and blamed the API; it was swissparlpy
+    # 1.0.0 hard-coding lang="en" with lang_format="flat", whose English columns
+    # are null, so the table read as empty. That is fixed in 2.0.0, but lang="de"
+    # stays passed explicitly: the names matched below are German, and pinning
+    # the language is what keeps this reproducible across versions.
     bodies, _ = fetch(client, "bodies", lang="de")
     print(f"bodies: {len(bodies)} row(s)")
     for row in bodies[:5]:
@@ -731,8 +754,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
 
     # Narrow by body_key, which is a field filter and does work, then match the
-    # chamber by name here. The `search` parameter returns nothing through this
-    # backend (see EXACT), so the narrowing has to come from a filter.
+    # chamber by name here. `search` would also do it (see EXACT), but it needs
+    # the right mode, scope and casing to; a field filter needs none of that.
     groups, _ = fetch(client, "groups", body_key=args.body_key)
     if not groups:
         print(f"  (no groups for body_key={args.body_key!r}; falling back to all)")

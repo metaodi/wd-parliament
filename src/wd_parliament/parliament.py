@@ -23,6 +23,16 @@ MEMBER_TABLE = "MemberCouncil"
 HISTORIC_MEMBER_TABLE = "MemberCouncilHistory"  # same shape; future extension
 PERIOD_TABLE = "LegislativePeriod"
 VOTING_TABLE = "Voting"
+VOTE_TABLE = "Vote"
+
+# What a ``Vote`` row might call its own identifier. ``Voting`` joins to it on
+# ``IdVote``, but the row that *is* the vote may well call the same number
+# ``ID`` — so the column is resolved from the row rather than assumed, and an
+# unrecognised row yields nothing instead of a wrong number. Same discipline as
+# ``verify_openparldata.classify_seat_memberships``: "no such column" and
+# "column full of nulls" look identical through ``.get()`` and mean opposite
+# things.
+VOTE_ID_FIELDS = ("IdVote", "ID", "Id")
 
 DEFAULT_LANGUAGE = "DE"
 
@@ -291,6 +301,22 @@ def apply_tenure_starts(
     return corrected
 
 
+def vote_id_from_row(row: Dict[str, Any]) -> Optional[int]:
+    """The ``IdVote`` of one ``Vote`` row, or ``None``. Pure.
+
+    Tries :data:`VOTE_ID_FIELDS` in order and returns the first that holds a
+    number. ``None`` means the row cannot be identified — which is a reason to
+    skip it, never to fall back to a positional guess: a wrong ``IdVote`` would
+    fetch some other period's roll-call and report a mismatch that is entirely
+    an artefact of the lookup.
+    """
+    for field in VOTE_ID_FIELDS:
+        value = _as_int(row.get(field))
+        if value is not None:
+            return value
+    return None
+
+
 def periods_from_rows(rows: Iterable[Dict[str, Any]]) -> List[Period]:
     """Map ``LegislativePeriod`` rows, de-duplicated by number. Pure."""
     best: Dict[int, Period] = {}
@@ -341,6 +367,18 @@ class ParliamentClient:
         log.debug("Fetching %s %s", table, filters)
         return list(self.client.get_data(table, **filters))
 
+    def _first_rows(
+        self, table: str, count: int, **filters: Any
+    ) -> List[Dict[str, Any]]:
+        """The first ``count`` rows, without paging through the whole result.
+
+        ``swissparlpy``'s response iterator follows the OData ``next`` link to
+        exhaustion, so ``list()`` on a large table is a lot of requests.
+        Slicing loads only as far as the slice reaches, which is one page.
+        """
+        log.debug("Fetching first %d of %s %s", count, table, filters)
+        return list(self.client.get_data(table, **filters)[0:count])
+
     def get_members(
         self,
         councils: Optional[Sequence[str]] = None,
@@ -387,6 +425,46 @@ class ParliamentClient:
         periods = periods_from_rows(rows)
         log.info("Fetched %d legislative periods", len(periods))
         return periods
+
+    def find_votes(self, periods: Sequence[Period]) -> Dict[int, int]:
+        """One ``IdVote`` per legislative period, discovered from ``Vote``.
+
+        So that the period cross-check can be *run* without somebody first
+        hunting roll-call numbers by hand — which is the only reason README
+        step 4 sat untouched. ``Vote`` is the table of votes themselves (one row
+        each), not ``Voting``'s per-member ballots, so this is a small read;
+        only the first page is loaded per period.
+
+        Periods that yield nothing are simply absent from the result. That is
+        the honest outcome: the Council of States has no roll-call record
+        before the 2010s, and a period with no vote to sample is a gap in the
+        cross-check, not a failure of the interval logic.
+        """
+        found: Dict[int, int] = {}
+        for period in periods:
+            if period.id is None:
+                continue
+            try:
+                rows = self._first_rows(
+                    VOTE_TABLE,
+                    1,
+                    Language=self.language,
+                    IdLegislativePeriod=period.id,
+                )
+            except Exception as exc:  # noqa: BLE001 - a gap, not a crash
+                log.warning(
+                    "Could not read %s for period %d: %s", VOTE_TABLE, period.number, exc
+                )
+                continue
+            vote_id = next(
+                (v for v in (vote_id_from_row(r) for r in rows) if v is not None), None
+            )
+            if vote_id is None:
+                log.info("No usable %s row for period %d", VOTE_TABLE, period.number)
+                continue
+            found[period.number] = vote_id
+        log.info("Discovered roll-call votes for %d period(s)", len(found))
+        return found
 
     def get_period_attendance(self, vote_ids: Sequence[int]) -> Dict[int, set]:
         """``PersonNumber`` sets per legislative period, from roll-call votes.

@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [{ name = "Stefan Oderbolz" }]
 dependencies = [
-    "swissparlpy>=1.0",
+    "swissparlpy>=2.0",
     "requests>=2.31",
     "PyYAML>=6.0",
     "Jinja2>=3.1",

@@ -10,16 +10,20 @@ name: Verify assumptions
 #   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
 #      the items they claim to?
 #
-# It also runs two things that report without gating:
+# It also runs three things that report without gating:
 #
 #   * whether swissparlpy's OpenParlData backend could source this tool's
 #     data, and whether P14527 is a better join key than P1307 — a "no" there
 #     is an answer about a design option, not a broken pipeline;
-#   * README step 0c, comparing MemberCouncil.DateJoining against
-#     OpenParlData's per-term begin_date. A disagreement blocks a *bulk
-#     apply* of ADD_MEMBERSHIP / ADD_START_DATE, since both are mechanical,
-#     but it does not stop reports being generated — which is what this
-#     job's pass/fail decides. Read it before applying QuickStatements.
+#   * README step 0c, comparing both the raw MemberCouncil.DateJoining and
+#     the tenure start the tool actually emits as P580 against OpenParlData's
+#     seat memberships. A disagreement blocks a *bulk apply* of
+#     ADD_MEMBERSHIP / ADD_START_DATE, since both are mechanical, but it does
+#     not stop reports being generated — which is what this job's pass/fail
+#     decides. Read it before applying QuickStatements;
+#   * README step 4, comparing the legislative-period overlap against who
+#     actually voted in a roll-call. It decides P2937, and `terms:` ships
+#     empty, so today nothing it could falsify is emitted at all.
 #
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
@@ -40,6 +44,10 @@ on:
         description: "A sitting National Councillor, to sample OpenParlData memberships"
         required: false
         default: "Andrey"
+      vote_ids:
+        description: "IdVote numbers for the period cross-check, space separated ('auto' discovers them)"
+        required: false
+        default: "auto"
 
 # Read-only on purpose. This workflow must never write to the repository.
 permissions:
@@ -141,6 +149,34 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # README step 4: does the interval overlap agree with who actually voted?
+      # Reports, does not gate — for a different reason than the two above.
+      # P2937 is the qualifier this decides, `terms:` in the config ships empty,
+      # and the tool skips unknown values, so nothing this check could falsify
+      # currently reaches QuickStatements at all. It gates a *bulk apply* the
+      # day that map is filled in, not the generation of reports.
+      #
+      # VOTE_IDS is unquoted on purpose: several IdVotes are several arguments.
+      # It reaches argparse, not a shell command, and anything that is neither a
+      # number nor 'auto' is rejected there rather than silently ignored.
+      - name: Cross-check the period join (step 4)
+        id: periods
+        continue-on-error: true
+        env:
+          VOTE_IDS: ${{ inputs.vote_ids }}
+        run: |
+          set +e
+          uv run python -m wd_parliament \
+            --config config/parliament.yaml \
+            --validate-periods $VOTE_IDS 2>&1 | tee periods.txt
+          {
+            echo "## 5. Legislative-period join — README step 4"
+            echo
+            echo '```'
+            cat periods.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -154,12 +190,16 @@ jobs:
             echo "| Configured Q-IDs | \`$qids\` |"
             echo "| OpenParlData evaluation | \`${{ steps.openparldata.outcome }}\` (does not gate) |"
             echo "| Tenure start dates (0c) | \`${{ steps.tenure.outcome }}\` (does not gate) |"
+            echo "| Period join (step 4) | \`${{ steps.periods.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
-              echo "Both checks passed: the members are readable, the identifier"
-              echo "join is verified, and every configured Q-ID resolves — read the"
-              echo "labels above to confirm they name what you meant. The remaining"
-              echo "steps are \`--validate-periods\` and a hand-applied QuickStatement."
+              echo "Both gating checks passed: the members are readable, the"
+              echo "identifier join is verified, and every configured Q-ID resolves"
+              echo "— read the labels above to confirm they name what you meant."
+              echo "Before *applying* anything, read section 4's second verdict"
+              echo "(P580 as emitted) and section 5. The only step left that"
+              echo "nothing here can do for you is step 5: paste one line into"
+              echo "QuickStatements by hand and check it lands."
             else
               echo "At least one check failed — see the detail above. Do not run"
               echo "\"Update parliament TODO\" or apply any QuickStatements until"

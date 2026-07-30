@@ -1,9 +1,13 @@
 """Tests for the pure decisions in ``scripts/compare_tenure_dates.py``.
 
-The three fetches are network code and are left alone, as elsewhere. What is
-worth pinning down is the verdict: this script decides whether P580 may be
-emitted from ``MemberCouncil.DateJoining``, and both kinds that emit it are
-mechanical, so a wrong CONFIRMED here writes wrong dates to Wikidata at scale.
+The fetches are network code and are left alone, as elsewhere. What is worth
+pinning down are the two verdicts: this script decides whether P580 may be
+applied in bulk, and both kinds that emit it are mechanical, so a wrong
+CONFIRMED here writes wrong dates to Wikidata at scale.
+
+``classify_start_dates`` judges the raw ``MemberCouncil.DateJoining`` (step 0c
+as posed); ``classify_tenure_starts`` judges the date the pipeline actually
+emits, which is the start of the current continuous run of history segments.
 """
 
 import sys
@@ -20,7 +24,9 @@ from compare_tenure_dates import (  # noqa: E402
     INCONCLUSIVE,
     MIN_JOINED,
     Pair,
+    chained_start,
     classify_start_dates,
+    classify_tenure_starts,
     current_start,
 )
 
@@ -165,3 +171,78 @@ def test_the_agreement_share_is_reported():
     pairs = agreeing(MIN_JOINED) + [pair(2001, "2026-01-01", "2023-12-04")]
     _, _, lines = classify_start_dates(pairs)
     assert any("agree exactly:                    10 (90.9%)" in ln for ln in lines)
+
+
+# --- the second comparison: what the tool actually emits as P580 -------------
+# ``current_start`` answers "which term is being served"; ``chained_start``
+# answers "since when, without a break" — the same question
+# ``parliament.tenure_start`` answers on the other source. Comparing the
+# pipeline's P580 against the *latest term* would report every long-serving
+# member as a disagreement, which is why these are two functions.
+def test_adjacent_terms_chain_into_one_tenure():
+    """Legislature boundaries are a one-day join, so this is a single run."""
+    rows = [
+        membership("2015-11-30", "2019-12-01"),
+        membership("2019-12-02", "2023-12-03"),
+        membership("2023-12-04", None),
+    ]
+    assert chained_start(rows) == date(2015, 11, 30)
+    # The distinction that matters: the newest term alone is a different date.
+    assert current_start(rows) == date(2023, 12, 4)
+
+
+def test_a_real_break_stops_the_chain_at_the_return():
+    """Somebody who left and returned gets the return, not their first term."""
+    rows = [
+        membership("2007-12-03", "2011-12-04"),
+        membership("2019-12-02", "2023-12-03"),
+        membership("2023-12-04", None),
+    ]
+    assert chained_start(rows) == date(2019, 12, 2)
+
+
+def test_a_single_open_term_is_its_own_tenure():
+    assert chained_start([membership("2023-12-04", None)]) == date(2023, 12, 4)
+
+
+def test_an_undated_earlier_row_stops_the_chain_rather_than_extending_it():
+    """No end date means no gap to measure, so it cannot be chained."""
+    rows = [membership("2019-12-02", None), membership("2023-12-04", None)]
+    assert chained_start(rows) == date(2023, 12, 4)
+
+
+def test_chaining_needs_the_begin_column_to_exist():
+    assert chained_start([]) is None
+    assert chained_start([{"type_harmonized": "council_legislative"}]) is None
+
+
+def test_rows_out_of_order_still_chain():
+    rows = [
+        membership("2023-12-04", None),
+        membership("2015-11-30", "2019-12-01"),
+        membership("2019-12-02", "2023-12-03"),
+    ]
+    assert chained_start(rows) == date(2015, 11, 30)
+
+
+def test_agreeing_tenure_starts_clear_p580_for_bulk_apply():
+    verdict, detail, _ = classify_tenure_starts(agreeing(MIN_JOINED))
+    assert verdict == CONFIRMED
+    assert "applied in bulk" in detail
+
+
+def test_a_tenure_disagreement_blocks_the_bulk_apply_and_says_which_way():
+    pairs = agreeing(MIN_JOINED) + [
+        pair(2001, "2015-11-30", "2019-12-02"),  # ours earlier: over-chained?
+        pair(2002, "2023-12-04", "2019-12-02"),  # ours later: a missed link
+    ]
+    verdict, detail, lines = classify_tenure_starts(pairs)
+    assert verdict == CONTRADICTED
+    assert "1 with an earlier tenure start" in detail
+    assert "1 with a later one" in detail
+    assert any("tenure start 2015-11-30, OpenParlData 2019-12-02" in ln for ln in lines)
+
+
+def test_too_few_joined_members_is_inconclusive_for_the_tenure_check_too():
+    verdict, _, _ = classify_tenure_starts(agreeing(MIN_JOINED - 1))
+    assert verdict == INCONCLUSIVE

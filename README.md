@@ -38,9 +38,28 @@ predicted — step 0b, which is now the one that would do damage. Later
 dispatches confirmed the source read is fixed and settled step 6
 ([run 30494063489](https://github.com/metaodi/wd-parliament/actions/runs/30494063489)).
 
-**Steps 4 and 5 remain untouched.** Step 0c is now answered, and the answer
-is a blocker: `DateJoining` is a mandate-*segment* start, so P580 must not be
-emitted from it until it is derived from `MemberCouncilHistory` instead.
+Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
+
+- **step 4 is done and clean.** The period overlap was cross-checked against
+  three real roll-calls, discovered automatically; every sitting member who
+  voted had been assigned that period. In the current legislature that is 183
+  of 183, with nothing to explain away.
+- **step 0c now has the measurement it was missing.** `DateJoining` is a
+  mandate-*segment* start, so P580 comes from `MemberCouncilHistory` — and the
+  date that comes out of it agrees with OpenParlData for **244 of 244** sitting
+  members, two sources sharing neither key nor publisher. P580 may be applied
+  in bulk.
+
+**Step 5 is the only one left, and no workflow can do it:** a person has to
+paste one line into QuickStatements and look at what landed.
+
+The tool is built against **swissparlpy 2.0.0**, which fixed the OpenParlData
+defaults this repo's probes had to work around
+([issue #52](https://github.com/metaodi/swissparlpy/issues/52)). The
+work-arounds are kept where they are still meaningful as *choices* — `lang='de'`
+pins the German columns the chamber names are matched in — and the probe's
+section E re-measures the defaults on every dispatch rather than trusting a
+changelog.
 
 ### 0. ✅ The source read — *fixed: the council filter*
 
@@ -176,11 +195,52 @@ already carries the right date, so P580 now comes from there:
   report, whereas no report is a worse outcome. It logs how many members had a
   later segment start, so the correction is visible in every run.
 
-Re-run `compare_tenure_dates.py` after touching any of this — `CONFIRMED` there
-is what says P580 may be applied in bulk. Note it compares against
-OpenParlData's *per-term* `begin_date`, so a member with a continuous run
-spanning several legislatures will now read as "disagreeing" in the other
-direction; that is the tenure model working, not a regression.
+**And measure it, don't assume it.** Bregy proves the correction is right for
+Bregy; nothing measured it across the chamber, which is a thin basis for a date
+written mechanically. `compare_tenure_dates.py` therefore prints **two**
+verdicts off one join:
+
+1. *the raw field* — `DateJoining` against OpenParlData's latest term. This is
+   0c as posed, and its `CONTRADICTED` (the 11 above) is the finding that moved
+   P580 off the field. Kept as the regression check.
+2. *what ships* — `Member.start_date` against the same segment chaining applied
+   to OpenParlData's per-term rows, so both sides answer "since when, without a
+   break". **This is the verdict to read before applying anything**: it is the
+   only one that measures the date the tool would actually write.
+
+Comparing 2 against the *latest term* rather than the chained run would report
+every long-serving member as a disagreement — which is why they are two
+functions (`chained_start` and `current_start`) and not one.
+
+**Run 12 answers it: `CONFIRMED`, 244 of 244, 100.0%.** Every sitting member's
+tenure start, derived from `MemberCouncilHistory` by `tenure_start`, is exactly
+the date OpenParlData gives for the run they are currently serving. Two sources
+that share no key and no publisher agree on all 244. **P580 may be applied in
+bulk.**
+
+Getting there took one wrong answer, and it is the one worth remembering.
+**Run 11 ([30538886383](https://github.com/metaodi/wd-parliament/actions/runs/30538886383))
+returned `CONTRADICTED`, 22 of 244 — and every one of the 22 was a *Council of
+States* member:**
+
+```
+4116 Gössi Petra (SR):  tenure start 2023-12-04, OpenParlData 2011-12-05
+806  Graf Maya (SR):    tenure start 2019-12-04, OpenParlData 2001-06-05
+4189 Burkart Thierry (SR): tenure start 2019-12-02, OpenParlData 2015-11-30
+```
+
+Those OpenParlData dates are when they entered the **National Council**. The
+probe was keying its seat rows by Q-ID alone, so a member who moved chambers
+had an NR row ending 2019-12-01 and an SR row starting 2019-12-02 — which chain
+straight across the change into one run. The tool models **one P39 per seat**,
+so the comparison has to: seat rows are now keyed by `(Q-ID, council)`.
+
+The lesson generalises, and step 4 walked into the same wall on the same 25
+people: *a person is not a seat.* Any check that joins these two sources on a
+person alone will read a chamber change as a contradiction. With the key fixed,
+the 22 disappeared and comparison 2 went to 100%.
+
+Re-run it after touching any of this.
 
 
 ### 1. ✅ The P1307 assumption — *CONFIRMED*
@@ -306,29 +366,91 @@ Note that while `terms` is empty, no `ADD_TERM` suggestions are made, and under
 either** — without the P2937 term a command cannot say which of several
 same-seat statements it means. That is deliberately fail-safe.
 
-### 4. ⬜ Validate the period join — *not started*
+### 4. ✅ Validate the period join — *done: the overlap agrees with who voted*
 
 ```bash
+# discover one roll-call per recent period, or name them yourself
+uv run python -m wd_parliament --validate-periods
 uv run python -m wd_parliament --validate-periods 12345 23456
 ```
 
-Give it one roll-call `IdVote` per period. It compares the `PersonNumber`s that
-actually voted against the members the interval overlap assigned to that
-period. They should agree modulo absences; anyone who **voted but was not
-assigned** means the interval logic is wrong.
+It compares the `PersonNumber`s that actually voted in a roll-call against the
+members the interval overlap assigned to that period. They should agree modulo
+absences; a sitting member who **voted but was not assigned** means the
+interval logic is wrong.
 
-Worth doing after step 0c, not before: if `DateJoining` turns out to be a
-reporting-year start, the period assignment is wrong for a reason this check
-would report but not explain.
+This sat untouched because it needed `IdVote` numbers nobody had. It no longer
+does: given none (or `auto`) the votes are discovered from the `Vote` table,
+one per period, for the three most recent periods the overlap assigns anybody
+to — the only periods where a list of *sitting* members can test anything. The
+`Verify assumptions` workflow runs it as section 5, and takes a `vote_ids`
+input if you would rather name them.
 
-### 5. ⬜ Try one or two QuickStatements by hand — *not started*
+Three things the comparison does that decide whether its answer means anything
+at all:
+
+- **only voters who are still sitting are compared.** The member list is the
+  ~246 people in office today; every roll-call also contains people who have
+  since left, and they are absent from that list entirely. Counting them as
+  "not assigned" would report a mismatch that is purely an artefact — and one
+  that grows the older the vote is. They are reported separately as
+  `voted_but_no_longer_sitting`, which is an expected number, not a finding.
+- **a vote cast before the member's current tenure is an earlier mandate, not
+  a mismatch.** The tool models one P39 per *seat*, so a member who moved from
+  the National Council to the Council of States has a Council of States tenure
+  that rightly begins at the move — their earlier votes belong to a different
+  statement. Reported as `voted_before_their_current_tenure`, recognised by the
+  period ending before `Member.start_date`. That is a bare date comparison and
+  **not** another call into `period_overlap`, so a bug in the function under
+  test cannot excuse itself.
+- **the step 0c tenure correction is applied first.** The overlap reads
+  `Member.start_date`, so validating against uncorrected `DateJoining` values
+  would be validating an interval the pipeline does not use.
+
+**Run 12 ([30539278018](https://github.com/metaodi/wd-parliament/actions/runs/30539278018))
+answers it**, on the three most recent periods, from votes it discovered
+itself (`16344`, `23315`, `31148`):
+
+| period | assigned | voted | still sitting | earlier mandate | **not assigned** |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 52nd | 246 | 200 | 183 | 0 | **0** |
+| 51st | 160 | 200 | 126 | 12 | **0** |
+| 50th | 86 | 199 | 72 | 13 | **0** |
+
+```
+✅ Every sitting member who voted was assigned to that period by the overlap.
+```
+
+The 52nd is the strongest single result: **183 people demonstrably voted, and
+the interval overlap had assigned every one of them** — no absences to explain
+away, no reclassification.
+
+Run 11 scored the 25 in the older periods as failures before the earlier-mandate
+rule existed. Every one was a chamber switch: Gössi, Graf, Burkart and the rest
+voted in the 50th and 51st as *National* Councillors, and their Council of
+States tenure rightly begins later. That the same 25 people were also
+comparison 2's false disagreements is what identified the shared cause.
+
+It reports without gating the workflow: what it decides is the P2937 qualifier,
+`terms:` in the config ships empty, and unknown values are skipped — so nothing
+this check could falsify currently reaches QuickStatements at all. It gates a
+bulk apply the day that map is filled in.
+
+### 5. ⬜ Try one or two QuickStatements by hand — *not started, and only a human can*
 
 Before any bulk apply, paste a single line into QuickStatements and confirm the
-statement lands with its qualifiers and reference intact.
+statement lands with its qualifiers and reference intact. This is the one
+remaining step no workflow can carry out for you: it needs a Wikidata account,
+and its whole point is that a person looks at what actually landed.
+
+Do it against a fresh run's `docs/suggestions.qs`, not the committed file —
+that one is still the failed run of 2026-07-29 and says `Statement model:
+period`, which the config no longer does. Regenerate it with `Update
+parliament TODO` first.
 
 ### 6. 🔶 Should the source be OpenParlData instead? — *viable; a real decision, not a dismissal*
 
-`swissparlpy` 1.0.0 ships a second backend, `openparldata`, reading
+`swissparlpy` ships a second backend, `openparldata`, reading
 [api.openparldata.ch](https://api.openparldata.ch), and Wikidata has an
 *OpenParlData ID* property, [P14527](https://www.wikidata.org/wiki/Property:P14527).
 `scripts/verify_openparldata.py` measures both.
@@ -373,12 +495,44 @@ are per-term — the P2937 qualifier. That is more than `MemberCouncil` offers
 for free, and the history reaches far enough to make the "historic members"
 extension possible.
 
-**It also bears directly on step 0c.** `MemberCouncil` gives Parmelin
-`DateJoining = 2026-01-01`, the current year rather than a tenure start.
-OpenParlData gives spans that line up with legislature boundaries. If those
-disagree for sitting members, OpenParlData is the more trustworthy of the two
-and step 0c resolves in its favour. **Compare them before switching** — that
-comparison is the next thing to do here, and it is not yet done.
+**It bore directly on step 0c, and that comparison has now been made.**
+`scripts/compare_tenure_dates.py` joined both sources through Wikidata: 11 of
+244 sitting members had `MemberCouncil.DateJoining` *later* than OpenParlData's
+legislature start, and reading Bregy's `MemberCouncilHistory` settled which was
+right — OpenParlData's. So on the date that matters most, **OpenParlData was
+the more trustworthy of the two, and parlament.ch only matched it once a second
+table and a chaining rule were added.**
+
+That is the honest summary of where the two stand:
+
+| | parlament.ch OData | OpenParlData |
+| --- | --- | --- |
+| tenure start | `MemberCouncilHistory` + `tenure_start` chaining | per-term `begin_date`, directly |
+| P2937 term qualifier | constructed by interval overlap (step 4) | implied by the per-term rows |
+| historic members | same-shaped table, plus `IdPredecessor` chains | 5,618 rows back to 1853 |
+| party / group Q-IDs | not carried; the config maps ship empty | 87.3% carry a party Q-ID |
+| identifier join | `PersonNumber` ↔ P1307, confirmed | `wikidata_id` on 3,685 of 3,686 — but *asserted by a third party*, not by Wikidata |
+
+The last row is the one that keeps the OData read where it is for now:
+`is_mechanical` gates on `QID_FROM_IDENTIFIER`, meaning **Wikidata** asserted
+the identifier that established the match. Sourcing the Q-ID from OpenParlData
+instead would be a different class of claim wearing the same provenance flag,
+and it would have to be given its own.
+
+**And the gap the comparison was meant to expose has closed.** Run 12 put the
+two sources' tenure starts side by side for all 244 joinable sitting members
+and they agree **100%**. So the argument for switching is no longer "the dates
+are better"; they are the same dates. What is left is the shape of the work:
+OpenParlData hands you per-term rows, so P2937 falls out of the data instead of
+being constructed by interval overlap, and 3,686 historic members come with it.
+Against that, the OData read is written, tested and now verified end to end,
+and the party/group Q-IDs OpenParlData would supply can be taken from it
+*without* changing the source at all — that is the cheap half of the win.
+
+A reasonable reading of the evidence: **keep OData as the source, take
+OpenParlData for enrichment**, and revisit if the historic-members extension
+gets built, where per-term rows back to 1853 are worth more than they are
+today.
 
 **P14527 adds nobody.** It exists and is close to P1307 in size, but the
 overlap is what matters:
@@ -412,33 +566,45 @@ Council seat**, though group 1663 holds 4,398 such rows. So
 `memberships?person_id=` and `memberships?group_id=` disagree about what a
 membership is. Any rewrite must read the seat by group.
 
-**How to query it**, learned the hard way and worth following:
+**How to query it**, learned the hard way. The first two were reported as
+[swissparlpy #52](https://github.com/metaodi/swissparlpy/issues/52) and are
+**fixed in 2.0.0**, which this project now requires; they are kept here because
+the reasoning still applies and the probe still measures them:
 
-- **`lang='de'` is load-bearing.** swissparlpy hard-codes `lang='en'` with
-  `lang_format='flat'`, and the English columns are null — so a table can read
-  as *completely empty*. `bodies` returns 0 rows under the defaults and
-  **1,405** with `lang='de'`. Neither `search='%'` nor `search_language='de'`
-  changes anything; this was measured across seven combinations, not guessed.
-- **`search` works, but `exact` is case-sensitive** in practice, despite the
-  documentation calling it a case-insensitive exact match:
-  `search='Nationalrat'` returns exactly 1 group, `search='nationalrat'`
-  returns 0. Its default mode is `partial` — ILIKE substring — which is why
-  `lastname=Andrey` alone matched *Pascal* Andrey, a Fribourg cantonal member,
-  and made one run measure the wrong person.
+- **`lang='de'` was load-bearing, and is now a deliberate choice.** swissparlpy
+  1.0.0 hard-coded `lang='en'` with `lang_format='flat'`, and the English
+  columns are null — so a table could read as *completely empty*: `bodies`
+  returned 0 rows under the defaults and **1,405** with `lang='de'`. Neither
+  `search='%'` nor `search_language='de'` changed anything; that was measured
+  across seven combinations, not guessed. 2.0.0 sends no `lang` unless asked,
+  and the probes still pass `lang='de'` explicitly — the chamber names they
+  match are German, and pinning the language is what keeps the answer the same
+  across library versions.
+- **`search` works, but mind the scope and the casing.** 1.0.0 forced
+  `search_scope='all'` and sent an empty `search=''` on every request; 2.0.0
+  sends neither, so the API's own defaults apply — scope `metadata`, mode
+  `partial`. Pass `search_scope='all'` explicitly for the full-text indexes.
+  `exact` is **case-sensitive** in practice, despite the documentation calling
+  it a case-insensitive exact match: `search='Nationalrat'` returns exactly 1
+  group, `search='nationalrat'` returns 0. And `partial` is ILIKE substring
+  matching, which is why `lastname=Andrey` alone matched *Pascal* Andrey, a
+  Fribourg cantonal member, and made one run measure the wrong person.
 - **Field filters need no such care** and are what this probe narrows with:
   `body_key=CHE` cuts 8,817 groups to 1,041, and `firstname=`/`lastname=`
   together find the right person.
 - **`limit` is the page size, not a cap.** swissparlpy's response iterator
   follows `next_page` to exhaustion, so iterating returns everything that
   matches regardless. `len()` on a response is `meta.total_records` off the
-  first page, so a count costs one request.
+  first page, so a count costs one request. Slicing (`response[0:1]`) loads
+  only as far as the slice reaches — which is how `find_votes` samples one row
+  from a large table.
 - Unrecognised parameters are **logged and sent anyway** rather than rejected,
-  and the warning does not interpolate the table name — it prints a literal
-  `'{table}'`. A mistyped filter is easy to miss; check the counts look
-  plausible.
+  so a mistyped filter silently does nothing; check the counts look plausible.
+  Under 2.0.0 the warning names the table and no longer fires for documented
+  query parameters, so one that does appear is worth reading.
 
 `bodies` returning 0 rows was **not** an API bug — it was the `lang='en'`
-default, as above. With `lang='de'` it returns 1,405.
+default, as above.
 
 ```bash
 uv run python scripts/verify_openparldata.py
@@ -503,7 +669,9 @@ associations are to `Session`, `Business` and `Vote`. The join is constructed:
   roll-call votes only exist from the 2010s, and a very short tenure may include
   no recorded vote. Never pull the whole table; `swissparlpy`'s README warns
   that unbounded `Voting` queries return 500s. `--validate-periods` fetches one
-  vote at a time.
+  vote at a time, and finds them in `Vote` — the table of votes themselves,
+  one row each — rather than making you supply `IdVote` numbers by hand.
+  Only voters who are *still sitting* can be compared; see step 4.
 - **Rejected — `BusinessRole` → `Business`.** Only covers members who filed or
   were assigned business, and dates by *submission* rather than by membership.
   Weaker on both coverage and meaning.

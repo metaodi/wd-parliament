@@ -37,13 +37,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--validate-periods",
         metavar="IDVOTE",
-        nargs="+",
-        type=int,
+        nargs="*",
         default=None,
         help=(
             "Instead of a normal run, cross-check the legislative-period "
-            "overlap against these roll-call votes (one IdVote per period) and "
-            "print the comparison as JSON."
+            "overlap against roll-call votes (one IdVote per period) and print "
+            "the comparison as JSON. Give no IdVote, or 'auto', to have them "
+            "discovered from the Vote table for the most recent periods."
         ),
     )
     parser.add_argument(
@@ -71,7 +71,9 @@ def main(argv=None) -> int:
     if args.verify_config:
         return _verify_config(args)
 
-    if args.validate_periods:
+    # ``is not None`` rather than truthiness: an empty list is "--validate-periods
+    # with no IdVote", which means discover them, not "do a normal run".
+    if args.validate_periods is not None:
         return _validate(args)
 
     try:
@@ -150,33 +152,79 @@ def _verify_config(args) -> int:
     return 0
 
 
+def parse_vote_ids(tokens) -> list:
+    """The ``IdVote``s given on the command line. Pure.
+
+    ``[]`` — from no tokens at all, or the literal ``auto`` — means "discover
+    them". Anything that is neither a number nor ``auto`` raises, rather than
+    being dropped: a silently ignored argument would run the check against a
+    different set of votes than the caller asked for.
+    """
+    ids = []
+    for token in tokens or []:
+        if str(token).strip().lower() == "auto":
+            continue
+        try:
+            ids.append(int(token))
+        except (TypeError, ValueError):
+            raise ValueError(
+                f"--validate-periods takes IdVote numbers or 'auto', not {token!r}"
+            )
+    return ids
+
+
 def _validate(args) -> int:
-    """Run the period cross-check described in the README (verification 2)."""
+    """Run the period cross-check described in the README (step 4)."""
     from .config import load_config
     from .http_client import HttpClient
     from .parliament import ParliamentClient
 
     try:
+        vote_ids = parse_vote_ids(args.validate_periods)
         config = load_config(args.config)
         http = HttpClient(
             user_agent=config.user_agent, request_delay=config.request_delay
         )
         parliament = ParliamentClient(session=http.session, language=config.language)
-        report = validate_periods(parliament, config, args.validate_periods)
+        report = validate_periods(parliament, config, vote_ids)
     except Exception as exc:  # pragma: no cover - top level guard
         logging.error("Validation failed: %s", exc)
         return 1
 
     print(json.dumps(report, indent=2, sort_keys=True))
-    mismatched = sum(len(v["voted_but_not_assigned"]) for v in report.values())
-    if mismatched:
+    if not report:
         print(
-            f"\n⚠️  {mismatched} member(s) voted in a period the overlap did not "
-            "assign them to — the interval logic needs a look.",
+            "\n⚠️  No period could be compared: the votes named or discovered "
+            "carry no attendance rows.",
             file=sys.stderr,
         )
         return 1
-    print("\n✅ Every member who voted was assigned to that period by the overlap.")
+
+    departed = sum(v["voted_but_no_longer_sitting"] for v in report.values())
+    earlier = sum(len(v["voted_before_their_current_tenure"]) for v in report.values())
+    if departed:
+        print(
+            f"\nℹ️  {departed} voter(s) are no longer sitting members and so "
+            "cannot be checked — expected, and not a mismatch."
+        )
+    if earlier:
+        print(
+            f"ℹ️  {earlier} voted before their current tenure began — an earlier "
+            "mandate, in the other chamber or before a break, which the tool "
+            "models as a separate statement. Also expected."
+        )
+    mismatched = sum(len(v["voted_but_not_assigned"]) for v in report.values())
+    if mismatched:
+        print(
+            f"\n⚠️  {mismatched} sitting member(s) voted in a period the overlap "
+            "did not assign them to — the interval logic needs a look.",
+            file=sys.stderr,
+        )
+        return 1
+    print(
+        "\n✅ Every sitting member who voted was assigned to that period by the "
+        "overlap."
+    )
     return 0
 
 
