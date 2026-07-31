@@ -1,6 +1,6 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-07-31 06:49 UTC
+Generated: 2026-07-31 20:45 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (OpenParlData): 180
@@ -12,7 +12,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## By kind
 
-- Item matched by name but has no Swiss parliament ID (P1307): **131**
+- Item matched by name but has no unique ID (P1307/P14527): **131**
 - Recorded as sitting, but the member has left: **44**
 - Sitting member, but no position held (P39) statement: **15**
 - Open membership without a start date (P580): **103**
@@ -20,7 +20,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: I Zürich 1+2 (7)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (3)
+### Item matched by name but has no unique ID (P1307/P14527) (3)
 
 - **[Sonja Rueff-Frenkel](https://www.wikidata.org/wiki/Q110402390)** ([#18172](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18172'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Stephan Hegetschweiler](https://www.wikidata.org/wiki/Q131940639)** ([#18176](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18176'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -38,7 +38,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: II Zürich 3+9 (21)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (10)
+### Item matched by name but has no unique ID (P1307/P14527) (10)
 
 - **[Angie Romero](https://www.wikidata.org/wiki/Q131940637)** ([#17850](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17850'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Isabel Garcia](https://www.wikidata.org/wiki/Q116195961)** ([#17807](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17807'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -73,7 +73,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: III Zürich 4+5 (7)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (2)
+### Item matched by name but has no unique ID (P1307/P14527) (2)
 
 - **[Gabi Petri](https://www.wikidata.org/wiki/Q92715358)** ([#17957](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17957'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Sandra Bienek](https://www.wikidata.org/wiki/Q118763557)** ([#18145](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18145'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -94,7 +94,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: IV Zürich 6+10 (14)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (7)
+### Item matched by name but has no unique ID (P1307/P14527) (7)
 
 - **[Alexander Jäger](https://www.wikidata.org/wiki/Q131940636)** ([#18151](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18151'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Christoph Marty](https://www.wikidata.org/wiki/Q131946068)** ([#18127](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18127'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -122,7 +122,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: IX Horgen (24)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (11)
+### Item matched by name but has no unique ID (P1307/P14527) (11)
 
 - **[Alexia Bischof](https://www.wikidata.org/wiki/Q131938284)** ([#17767](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17767'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#17435](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17435'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -160,7 +160,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: V Zürich 7+8 (9)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (4)
+### Item matched by name but has no unique ID (P1307/P14527) (4)
 
 - **[Benjamin Krähenmann](https://www.wikidata.org/wiki/Q131940641)** ([#17770](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17770'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Claudio Zihlmann](https://www.wikidata.org/wiki/Q131940638)** ([#17470](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17470'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -180,7 +180,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: VI Zürich 11+12 (20)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (9)
+### Item matched by name but has no unique ID (P1307/P14527) (9)
 
 - **[Beat Habegger](https://www.wikidata.org/wiki/Q131940635)** ([#17465](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17465'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Birgit Tognella-Geertsen](https://www.wikidata.org/wiki/Q131939871)** ([#17761](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17761'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -214,7 +214,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: VII Dietikon (19)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (9)
+### Item matched by name but has no unique ID (P1307/P14527) (9)
 
 - **[André Bender](https://www.wikidata.org/wiki/Q131940595)** ([#18183](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18183'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Janine Vannaz](https://www.wikidata.org/wiki/Q131940544)** ([#17451](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17451'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -247,7 +247,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: VIII Affoltern (12)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (6)
+### Item matched by name but has no unique ID (P1307/P14527) (6)
 
 - **[Daniel Sommer](https://www.wikidata.org/wiki/Q131948277)** ([#17431](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17431'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Marc Bochsler](https://www.wikidata.org/wiki/Q131940627)** ([#17797](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17797'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -270,7 +270,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: X Meilen (21)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (10)
+### Item matched by name but has no unique ID (P1307/P14527) (10)
 
 - **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#18153](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18153'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Corinne Hoss-Blatter](https://www.wikidata.org/wiki/Q131940632)** ([#17579](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17579'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -305,7 +305,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XI Hinwil (20)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (9)
+### Item matched by name but has no unique ID (P1307/P14527) (9)
 
 - **[Andrea Gisler](https://www.wikidata.org/wiki/Q131940579)** ([#18045](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '18045'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Andrea Grossen-Aerni](https://www.wikidata.org/wiki/Q131940629)** ([#17510](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17510'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -339,7 +339,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XII Uster (23)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (9)
+### Item matched by name but has no unique ID (P1307/P14527) (9)
 
 - **[Anita Borer](https://www.wikidata.org/wiki/Q131940617)** ([#17897](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17897'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Claudia Frei](https://www.wikidata.org/wiki/Q131944825)** ([#17940](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17940'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -376,7 +376,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XIII Pfäffikon (12)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (5)
+### Item matched by name but has no unique ID (P1307/P14527) (5)
 
 - **[Andreas Hasler](https://www.wikidata.org/wiki/Q131944827)** ([#17822](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17822'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Andreas Juchli](https://www.wikidata.org/wiki/Q131940606)** ([#17895](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17895'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -402,7 +402,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XIV Winterthur Stadt (18)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (10)
+### Item matched by name but has no unique ID (P1307/P14527) (10)
 
 - **[Andreas Daurù](https://www.wikidata.org/wiki/Q131939377)** ([#17880](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17880'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Dieter Kläy](https://www.wikidata.org/wiki/Q119144397)** ([#17610](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17610'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -434,7 +434,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XV Winterthur Land (12)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (5)
+### Item matched by name but has no unique ID (P1307/P14527) (5)
 
 - **[Markus Schaaf](https://www.wikidata.org/wiki/Q131948275)** ([#17796](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17796'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#17639](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17639'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -457,7 +457,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XVI Andelfingen (6)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (2)
+### Item matched by name but has no unique ID (P1307/P14527) (2)
 
 - **[Paul Mayer](https://www.wikidata.org/wiki/Q131946072)** ([#17815](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17815'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Sibylle Jüttner](https://www.wikidata.org/wiki/Q131939457)** ([#17762](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17762'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -474,7 +474,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XVII Bülach (29)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (13)
+### Item matched by name but has no unique ID (P1307/P14527) (13)
 
 - **[Alexander Seiler](https://www.wikidata.org/wiki/Q131948088)** ([#17841](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17841'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Barbara Grüter](https://www.wikidata.org/wiki/Q131940604)** ([#17894](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17894'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
@@ -514,7 +514,7 @@ Generated: 2026-07-31 06:49 UTC
 
 ## Electoral district: XVIII Dielsdorf (17)
 
-### Item matched by name but has no Swiss parliament ID (P1307) (7)
+### Item matched by name but has no unique ID (P1307/P14527) (7)
 
 - **[Barbara Franzen](https://www.wikidata.org/wiki/Q131944822)** ([#17701](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17701'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
 - **[Hans Egli](https://www.wikidata.org/wiki/Q131944820)** ([#17447](https://www.kantonsrat.zh.ch/mitglieder/)) ⚠️ — Add P14527 '17447'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by the Swiss parliament ID, so please confirm it is the right person.
