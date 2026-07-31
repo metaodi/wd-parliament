@@ -97,7 +97,20 @@ def _markdown_member(s: Suggestion) -> str:
     return name
 
 
-def render_body_markdown(result: BodyResult, generated_at: str, group_by: str) -> str:
+def render_body_markdown(
+    result: BodyResult,
+    generated_at: str,
+    group_by: str,
+    source_name: str = "parlament.ch",
+    identifier_property: str = "P1307",
+    district_label: str = "Canton",
+) -> str:
+    """One chamber's Markdown report.
+
+    The source and identifier are parameters rather than constants because the
+    same renderer serves a cantonal chamber, where naming parlament.ch or P1307
+    would send a reader to a service that has never heard of these members.
+    """
     body = result.body
     lines = [
         f"# {body.label} — Wikidata TODO",
@@ -106,8 +119,8 @@ def render_body_markdown(result: BodyResult, generated_at: str, group_by: str) -
         "",
         f"- Position item: [{body.position_qid}]"
         f"(https://www.wikidata.org/wiki/{body.position_qid})",
-        f"- Sitting members (parlament.ch): {result.member_count}",
-        f"- Matched by Swiss parliament ID (P1307): {result.matched_by_identifier} "
+        f"- Sitting members ({source_name}): {result.member_count}",
+        f"- Matched by {identifier_property}: {result.matched_by_identifier} "
         f"({result.identifier_hit_rate:.1f}%)",
         f"- Matched by name + birth date: {result.matched_by_name}",
         f"- Not matched at all: {result.unmatched}",
@@ -120,7 +133,7 @@ def render_body_markdown(result: BodyResult, generated_at: str, group_by: str) -
         lines += [f"> ⚠️ Could not fully process this chamber: {result.error}", ""]
 
     if not result.suggestions:
-        lines += ["✅ Nothing to do — parlament.ch and Wikidata agree.", ""]
+        lines += [f"✅ Nothing to do — {source_name} and Wikidata agree.", ""]
         return "\n".join(lines)
 
     lines += ["## By kind", ""]
@@ -128,7 +141,7 @@ def render_body_markdown(result: BodyResult, generated_at: str, group_by: str) -
         lines.append(f"- {KIND_LABEL.get(kind, kind)}: **{len(items)}**")
     lines.append("")
 
-    label = "Canton" if group_by == "canton" else "Parliamentary group"
+    label = district_label if group_by == "canton" else "Parliamentary group"
     for name, items in group_suggestions(result.suggestions, group_by):
         lines.append(f"## {label}: {name} ({len(items)})")
         lines.append("")
@@ -142,7 +155,10 @@ def render_body_markdown(result: BodyResult, generated_at: str, group_by: str) -
 
 
 def render_index_markdown(
-    results: Sequence[BodyResult], generated_at: str, quickstatements: int = 0
+    results: Sequence[BodyResult],
+    generated_at: str,
+    quickstatements: int = 0,
+    identifier_property: str = "P1307",
 ) -> str:
     total = sum(len(r.suggestions) for r in results)
     members = sum(r.member_count for r in results)
@@ -157,7 +173,8 @@ def render_index_markdown(
         f"{quickstatements} of them are mechanical enough to be emitted as "
         "QuickStatements (see `../docs/suggestions.qs`).",
         "",
-        "| Chamber | Members | P1307 match | By name | Unmatched | Suggestions | Report |",
+        f"| Chamber | Members | {identifier_property} match | By name | Unmatched "
+        "| Suggestions | Report |",
         "| --- | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for r in sorted(results, key=lambda x: x.body.council):
@@ -302,20 +319,20 @@ _HTML_TEMPLATE = """<!doctype html>
 <body>
 <div class="wrap">
   <h1>wd-parliament &mdash; suggested Wikidata edits</h1>
-  <p class="sub">Sitting members of the Swiss Federal Assembly (parlament.ch)
+  <p class="sub">Sitting members of {{ source_name }}
      vs. <em>position held</em> (P39) statements on Wikidata.
      Generated {{ generated_at }}.</p>
 
   <div class="totals">
     <div class="stat"><b>{{ total }}</b><span>suggested edits</span></div>
     <div class="stat"><b>{{ members }}</b><span>sitting members</span></div>
-    <div class="stat"><b>{{ hit_rate }}%</b><span>matched by P1307</span></div>
+    <div class="stat"><b>{{ hit_rate }}%</b><span>matched by {{ identifier_property }}</span></div>
     <div class="stat"><b>{{ quickstatements }}</b><span>QuickStatements</span></div>
   </div>
 
   <table>
     <thead><tr><th>Chamber</th><th class="num">Members</th>
-      <th class="num">P1307</th><th class="num">By name</th>
+      <th class="num">{{ identifier_property }}</th><th class="num">By name</th>
       <th class="num">Unmatched</th><th class="num">Suggestions</th></tr></thead>
     <tbody>
     {% for r in results %}
@@ -340,7 +357,7 @@ _HTML_TEMPLATE = """<!doctype html>
     <h2 id="{{ r.slug }}">{{ r.body.label }}</h2>
     {% if r.error %}<p class="byname">Error: {{ r.error }}</p>{% endif %}
     {% if not r.suggestions %}
-      <p>✅ Nothing to do &mdash; parlament.ch and Wikidata agree.</p>
+      <p>✅ Nothing to do &mdash; {{ source_name }} and Wikidata agree.</p>
     {% else %}
       {% for name, items in r.groups %}
       <details class="group" {% if loop.first %}open{% endif %}>
@@ -358,7 +375,7 @@ _HTML_TEMPLATE = """<!doctype html>
               {% if s.person_qid %}<a href="https://www.wikidata.org/wiki/{{ s.person_qid }}">{{ s.member_label }}</a>
               {% else %}<strong>{{ s.member_label }}</strong>{% endif %}
               {% if s.payload.biography %}(<a href="{{ s.payload.biography }}">#{{ s.person_number }}</a>){% endif %}
-              {% if s.qid_source == 'name' %}<span class="byname" title="matched by name, not by P1307">&#9888;</span>{% endif %}
+              {% if s.qid_source == 'name' %}<span class="byname" title="matched by name, not by the identifier">&#9888;</span>{% endif %}
               <span class="detail">&mdash; {{ s.detail }}</span>
             </li>
             {% endfor %}
@@ -375,7 +392,7 @@ _HTML_TEMPLATE = """<!doctype html>
     Built by <a href="https://github.com/metaodi/wd-parliament">wd-parliament</a>
     from the official <a href="https://ws.parlament.ch/odata.svc/">parlament.ch
     OData service</a>. Members marked &#9888; were matched by name rather than by
-    Swiss parliament ID (P1307) &mdash; check the identity before editing.
+    {{ identifier_property }} &mdash; check the identity before editing.
   </footer>
 </div>
 </body>
@@ -388,6 +405,9 @@ def render_html(
     generated_at: str,
     group_by: str = "canton",
     quickstatements: int = 0,
+    source_name: str = "parlament.ch",
+    identifier_property: str = "P1307",
+    district_label: str = "Canton",
 ) -> str:
     env = Environment(autoescape=True)
     env.filters["by_kind"] = by_kind
@@ -421,7 +441,9 @@ def render_html(
         hit_rate=round(matched / members * 100, 1) if members else 0.0,
         kind_label=KIND_LABEL,
         priority=PRIORITY,
-        group_label="Canton" if group_by == "canton" else "Group",
+        group_label=district_label if group_by == "canton" else "Group",
+        source_name=source_name,
+        identifier_property=identifier_property,
     )
 
 
@@ -449,6 +471,9 @@ def write_reports(
     group_by: str = "canton",
     quickstatements_text: Optional[str] = None,
     quickstatements_count: int = 0,
+    source_name: str = "parlament.ch",
+    identifier_property: str = "P1307",
+    district_label: str = "Canton",
 ) -> None:
     generated_at = generated_at or now_iso()
     reports_dir = Path(reports_dir)
@@ -457,16 +482,25 @@ def write_reports(
     docs_dir.mkdir(parents=True, exist_ok=True)
 
     (reports_dir / "README.md").write_text(
-        render_index_markdown(results, generated_at, quickstatements_count),
+        render_index_markdown(
+            results, generated_at, quickstatements_count, identifier_property
+        ),
         encoding="utf-8",
     )
     for r in results:
         (reports_dir / body_filename(r.body)).write_text(
-            render_body_markdown(r, generated_at, group_by), encoding="utf-8"
+            render_body_markdown(
+                r, generated_at, group_by, source_name, identifier_property,
+                district_label,
+            ),
+            encoding="utf-8",
         )
 
     (docs_dir / "index.html").write_text(
-        render_html(results, generated_at, group_by, quickstatements_count),
+        render_html(
+            results, generated_at, group_by, quickstatements_count,
+            source_name, identifier_property, district_label,
+        ),
         encoding="utf-8",
     )
     (docs_dir / "data.json").write_text(

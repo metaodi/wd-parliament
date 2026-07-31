@@ -139,7 +139,84 @@ Three things about it that cost a wrong answer each, and are now guarded:
   iterator pages to exhaustion; `len()` is `meta.total_records`, and slicing
   loads only as far as the slice reaches;
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
-  P1307 join stays whatever happens to the source.
+  P1307 join stays whatever happens to the source. **That is a fact about the
+  *federal* overlap and it inverts cantonally** (README step 7): the Kantonsrat
+  Zürich has no P1307, so P14527 may be the only Wikidata-asserted identifier
+  that reaches those people. `scripts/verify_kantonsrat.py` measures it.
+
+Runs 13 and 14 (2026-07-30) measured the cantonal source and it is sound: body
+`ZH`, group **5077** `Kantonsrat Zürich`, 913 memberships, 912 with a
+`begin_date`, `electoral_district_de/fr/it` on the *person* records. **The
+position is `Q21518678`** "Mitglied des Zürcher Kantonsrat" and **P14527 is the
+join** — 35 of the 35 linked ZH members carry it, so it needs no change to
+`is_mechanical`. Three traps paid for along the way, all now enforced in
+`verify_kantonsrat.py`:
+
+- **`Q19479543` is `Kategorie:Kantonsrat (Zürich, Person)`** — a Wikimedia
+  category, held by nobody. It shipped as the probe's default off a web search
+  and as a P39 main value would have claimed people hold a category. **Never
+  reinstate it.** A wrong position item is also silently contagious: it made
+  every identifier count in section C read 0, which looks like "no coverage"
+  and meant "no such seat". That is why the reach query mentions no position at
+  all, and why section D *derives* candidates from the members OpenParlData
+  links instead of trusting a name.
+- **the derived ranking's top hit is not the answer.** Among those 35, the
+  most-held position is the *National Council* (26 of 35) — the sample is
+  cantonal members notable enough to have an item, which skews to people who
+  went federal. Q21518678 is second at 12. Read the list; do not take the max.
+- **counting open membership rows is not counting members.** The rows carry
+  `role_name_de`, and 186 open against 180 seats was four future starts, a
+  `Gast`, and one row with no role. Filtering to `Mitglied` then gave **177**,
+  because a presiding member has **no `Mitglied` row** — their `Präsidium` /
+  `1.` / `2. Vizepräsidium` row *is* their seat. 177 + 3 = 180. So
+  `DEFAULT_SEAT_ROLES` is an allowlist of seat-holding roles; count **distinct
+  people with an open, already-begun, seat-role membership** and print every
+  role seen, because neither an allowlist nor a denylist self-corrects when the
+  source adds a role — only the 180 check does.
+
+Run 15 closed the two Q-ID maps, and both answers are "leave it empty":
+**P768** appears on 3 of 270 statements for the seat and those three are
+`Kreis 4/5/11`, *city of Zürich quarters* rather than any of the 18 Wahlkreise
+— too few to be a convention and the wrong kind of thing, so never paste them.
+**P2937** appears on none at all. The source side is fine either way: all 18
+districts are on the person records as `electoral_district_de` (numbered and
+untidily spaced — `'I      Zürich 1+2'` — so `_tidy` before keying), and the
+start dates cluster on the four-yearly election dates. Note ZH memberships are
+**one row per tenure**, not per term as federally (913 rows / 834 people, ~40–50
+new rows per election), so a ZH body is `statement_model: tenure` and its P2937
+must come from interval overlap.
+
+**The cantonal adapter now exists**: `openparldata.py` beside `parliament.py`,
+selected by `config.source` in `app.build_source`, joined on
+`config.identifier_property` (P14527 for ZH, P1307 federally) and configured by
+`config/kantonsrat-zh.yaml`. Four things about it that are load-bearing:
+
+- **`Member.active` is computed, not read.** The source has no usable flag, and
+  `is_seat_row` — open, already begun, in a seat role — is the entire
+  difference between 186 rows and 180 members.
+- **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
+  purpose.** No period table exists (so no P2937 is ever suggested), and the
+  rows are per-tenure so `begin_date` is already the date P580 wants. Do not
+  "fix" either by inventing data.
+- **user-facing strings are parameters.** `report` and `diff` take
+  `source_name` / `identifier_property` / `district_label`; a cantonal report
+  saying "parlament.ch" or "P1307" sends a reader to a service that has never
+  heard of these members.
+- **it ships `quickstatements: false`.** P14527 coverage is proven; P14527's
+  *value* being the person id is not. `verify_kantonsrat`'s
+  `compare_identifier_values` checks it — the cantonal twin of the Parmelin
+  check — and that must read CONFIRMED before anything is emitted.
+
+Three more rules follow from step 7 and hold before any cantonal code is written.
+**Never join a cantonal seat on P1307** — it is the federal service, so it
+reaches only members who also sat in Bern, and the people it misses are exactly
+those who never went federal: a bias that reads as coverage rather than as a
+bug. **Never let OpenParlData's `wikidata_id` inherit the P1307 gate** — a Q-ID
+a third party asserts *about* Wikidata is a different class of claim and needs
+its own `QID_FROM_*` constant. And **the Regierungsrat is not the Kantonsrat**:
+`is_kantonsrat` matches a group name by equality for the same reason
+`chamber_of` does, except the row it must not match is a seven-member cantonal
+*executive* rather than a committee.
 
 For enrichment it is unambiguously good: 3,685/3,686 federal members carry a
 `wikidata_id` and 87.3% a party Q-ID, which would fill the deliberately-empty
@@ -296,14 +373,18 @@ no run has happened yet.
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
-  `scripts/verify_openparldata.py` and `scripts/compare_tenure_dates.py`,
-  writes all four to the run summary, and writes nothing to the repo. Keep it
-  read-only: it is the diagnostic you run *before* trusting `update.yml`'s
-  output. The last two report without gating and are deliberately excluded
-  from the job's pass/fail — do not wire their outcomes into the gate; the
-  gate says whether the pipeline may run, and those two answer whether a
-  *bulk apply* is safe. The file must be on the default branch to appear in
-  the dispatch UI, though a dispatch then runs the selected ref's version.
+  `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
+  `--validate-periods` and `scripts/verify_kantonsrat.py`, writes all six to
+  the run summary, and writes nothing to the repo. Keep it read-only: it is
+  the diagnostic you run *before* trusting `update.yml`'s output. **Only the
+  first two gate**; the other four report without gating and are deliberately
+  excluded from the job's pass/fail — do not wire their outcomes into the
+  gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
+  `--validate-periods` answer whether a *bulk apply* is safe, and
+  `verify_kantonsrat` measures a parliament no config here processes, so it
+  cannot bear on the federal run by construction. The file must be on the
+  default branch to appear in the dispatch UI, though a dispatch then runs the
+  selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion

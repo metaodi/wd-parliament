@@ -1,12 +1,31 @@
 name: Update parliament TODO
 
+# One workflow, one parliament per run. The config file is the parameter, and
+# everything that differs between parliaments — the source, the identifier the
+# join is made on, the position items, the output directories — lives in it
+# rather than here.
+#
+# A run is deliberately per-parliament rather than a loop over all of them, so
+# that a broken cantonal source can never stop the federal report from being
+# published, and so the commit for each one is separately reviewable in the
+# git history. The scheduled run therefore uses a matrix, serialised: two jobs
+# pushing to the same branch at once is a race, not parallelism.
+
 on:
-  # Run every Monday at 06:00 UTC.
+  # Every Monday at 06:00 UTC, for every parliament in the matrix below.
   schedule:
     - cron: "0 6 * * 1"
-  # Allow manual runs from the Actions tab.
+  # Manual runs pick one parliament.
   workflow_dispatch:
     inputs:
+      config:
+        description: "Which parliament to generate"
+        required: true
+        default: config/parliament.yaml
+        type: choice
+        options:
+          - config/parliament.yaml
+          - config/kantonsrat-zh.yaml
       limit:
         description: "Only process the first N members per chamber (leave empty for all)"
         required: false
@@ -23,6 +42,22 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    strategy:
+      # Serialised on purpose: each job commits and pushes to the same branch,
+      # so running them together would have the second fail to push (or clobber
+      # the first). It also keeps one parliament's failure from cancelling the
+      # other's run.
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        # A scheduled run does every parliament; a dispatch does the one asked
+        # for. `fromJSON` because a matrix value must be a list either way.
+        config: >-
+          ${{ github.event_name == 'workflow_dispatch'
+              && fromJSON(format('["{0}"]', inputs.config))
+              || fromJSON('["config/parliament.yaml", "config/kantonsrat-zh.yaml"]') }}
+
+    name: ${{ matrix.config }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -33,22 +68,61 @@ jobs:
           python-version: "3.11"
           enable-cache: true
 
-      - name: Generate parliament TODO
+      # Each parliament writes its own directories, so two runs never overwrite
+      # each other's report. The federal one keeps the top level (reports/ and
+      # docs/) because Pages serves docs/index.html and that URL should not
+      # move; everything else goes in a subdirectory named after its config.
+      - name: Choose the output directories
+        id: out
+        env:
+          CONFIG: ${{ matrix.config }}
         run: |
+          set -euo pipefail
+          slug="$(basename "$CONFIG" .yaml)"
+          if [ "$slug" = "parliament" ]; then
+            echo "reports=reports" >> "$GITHUB_OUTPUT"
+            echo "docs=docs" >> "$GITHUB_OUTPUT"
+            echo "name=Federal Assembly" >> "$GITHUB_OUTPUT"
+          else
+            echo "reports=reports/$slug" >> "$GITHUB_OUTPUT"
+            echo "docs=docs/$slug" >> "$GITHUB_OUTPUT"
+            echo "name=$slug" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate the TODO
+        env:
+          # Via env rather than inline ${{ }}, so neither value is interpolated
+          # into the shell.
+          CONFIG: ${{ matrix.config }}
+          REPORTS: ${{ steps.out.outputs.reports }}
+          DOCS: ${{ steps.out.outputs.docs }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          set -euo pipefail
+          # LIMIT is unquoted so an empty value contributes no argument; it
+          # reaches argparse, which rejects anything that is not a number.
           uv run python -m wd_parliament \
-            --config config/parliament.yaml \
-            --reports-dir reports \
-            --docs-dir docs \
-            ${{ github.event.inputs.limit && format('--limit {0}', github.event.inputs.limit) || '' }}
+            --config "$CONFIG" \
+            --reports-dir "$REPORTS" \
+            --docs-dir "$DOCS" \
+            ${LIMIT:+--limit $LIMIT}
 
       - name: Commit and push changes
+        env:
+          REPORTS: ${{ steps.out.outputs.reports }}
+          DOCS: ${{ steps.out.outputs.docs }}
+          NAME: ${{ steps.out.outputs.name }}
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports docs
+          git add "$REPORTS" "$DOCS"
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore: update parliament TODO ($(date -u +%Y-%m-%d))"
+            git commit -m "chore: update $NAME TODO ($(date -u +%Y-%m-%d))"
+            # The matrix is serialised, but the federal job may still have
+            # pushed since this one checked out; rebase rather than fail.
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           fi

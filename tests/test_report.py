@@ -101,7 +101,7 @@ def test_by_kind_orders_by_priority():
 def test_body_markdown_reports_the_hit_rate(result):
     md = render_body_markdown(result, GENERATED, "canton")
     assert "# Swiss National Council — Wikidata TODO" in md
-    assert "Matched by Swiss parliament ID (P1307): 180 (90.0%)" in md
+    assert "Matched by P1307: 180 (90.0%)" in md
     assert "## Canton: ZH (1)" in md
 
 

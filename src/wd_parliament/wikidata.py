@@ -26,7 +26,7 @@ from datetime import date
 from typing import Dict, Iterable, Iterator, List, Optional, Sequence
 
 from .http_client import HttpClient
-from .models import PersonMatch, PositionStatement, WikidataPerson
+from .models import P_PARLIAMENT_ID, PersonMatch, PositionStatement, WikidataPerson
 
 log = logging.getLogger(__name__)
 
@@ -113,11 +113,21 @@ class WikidataClient:
 
     # -- queries -------------------------------------------------------------
     @staticmethod
-    def identifier_query(language: str = "de") -> str:
-        """Every item carrying a Swiss parliament ID (P1307), ~3,600 rows."""
+    def identifier_query(
+        language: str = "de", identifier_property: str = P_PARLIAMENT_ID
+    ) -> str:
+        """Every item carrying the join identifier, with its birth/death dates.
+
+        The property is configuration because the join key is not the same at
+        every level of government: federally it is P1307 against
+        ``MemberCouncil.PersonNumber``, but **no cantonal parliament has a
+        P1307**, and for the Kantonsrat Zürich the Wikidata-asserted identifier
+        is P14527 (OpenParlData ID) — carried by 35 of the 35 members
+        OpenParlData links, where federally it adds nobody.
+        """
         return f"""
 SELECT ?person ?personLabel ?parliamentId ?birth ?death WHERE {{
-  ?person wdt:P1307 ?parliamentId .
+  ?person wdt:{identifier_property} ?parliamentId .
   OPTIONAL {{ ?person wdt:P569 ?birth . }}
   OPTIONAL {{ ?person wdt:P570 ?death . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,fr,it,en". }}
@@ -125,7 +135,11 @@ SELECT ?person ?personLabel ?parliamentId ?birth ?death WHERE {{
 """.strip()
 
     @staticmethod
-    def position_query(position_qids: Sequence[str], language: str = "de") -> str:
+    def position_query(
+        position_qids: Sequence[str],
+        language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
+    ) -> str:
         """P39 statements for the configured seats, with their qualifiers.
 
         Walks the statement node (``p:``/``ps:``) rather than the truthy
@@ -146,7 +160,7 @@ SELECT ?person ?personLabel ?statement ?position ?start ?end
   OPTIONAL {{ ?statement pq:P768 ?district . }}
   OPTIONAL {{ ?statement pq:P4100 ?group . }}
   OPTIONAL {{ ?statement pq:P2937 ?term . }}
-  OPTIONAL {{ ?person wdt:P1307 ?parliamentId . }}
+  OPTIONAL {{ ?person wdt:{identifier_property} ?parliamentId . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,fr,it,en". }}
 }}
 """.strip()
@@ -169,7 +183,10 @@ SELECT ?person ?party WHERE {{
 
     @staticmethod
     def people_search_query(
-        names: Sequence[str], position_qids: Sequence[str], language: str = "de"
+        names: Sequence[str],
+        position_qids: Sequence[str],
+        language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
     ) -> str:
         """Look each name up as a person's label or alias.
 
@@ -195,16 +212,18 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
   )
   BIND ( EXISTS {{ VALUES ?seat {{ {positions} }} ?person wdt:P39 ?seat }} AS ?hasPosition )
   OPTIONAL {{ ?person wdt:P569 ?birth . }}
-  OPTIONAL {{ ?person wdt:P1307 ?parliamentId . }}
+  OPTIONAL {{ ?person wdt:{identifier_property} ?parliamentId . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,fr,it,en". }}
 }}
 """.strip()
 
     # -- fetching ------------------------------------------------------------
-    def get_identifier_index(self, language: str = "de") -> Dict[str, WikidataPerson]:
-        """Map Q-ID → :class:`WikidataPerson` for every item with a P1307."""
+    def get_identifier_index(
+        self, language: str = "de", identifier_property: str = P_PARLIAMENT_ID
+    ) -> Dict[str, WikidataPerson]:
+        """Map Q-ID → :class:`WikidataPerson` for every item with the join id."""
         people: Dict[str, WikidataPerson] = {}
-        for row in self.run_query(self.identifier_query(language)):
+        for row in self.run_query(self.identifier_query(language, identifier_property)):
             qid = qid_from_uri(row.get("person", {}).get("value", ""))
             if not qid:
                 continue
@@ -213,11 +232,16 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
             person.parliament_id = _literal(row.get("parliamentId")) or person.parliament_id
             person.birth_date = person.birth_date or date_value(row.get("birth"))
             person.death_date = person.death_date or date_value(row.get("death"))
-        log.info("Wikidata: %d items carry a Swiss parliament ID (P1307)", len(people))
+        log.info(
+            "Wikidata: %d item(s) carry %s", len(people), identifier_property
+        )
         return people
 
     def get_position_holders(
-        self, position_qids: Sequence[str], language: str = "de"
+        self,
+        position_qids: Sequence[str],
+        language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
     ) -> Dict[str, WikidataPerson]:
         """Everyone holding one of ``position_qids``, with their P39 statements.
 
@@ -225,10 +249,12 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
         Wikidata the diff works from: people with an identifier but no seat,
         people with a seat but no identifier, and everyone in between.
         """
-        people = self.get_identifier_index(language)
+        people = self.get_identifier_index(language, identifier_property)
         statements: Dict[str, PositionStatement] = {}
 
-        for row in self.run_query(self.position_query(position_qids, language)):
+        for row in self.run_query(
+            self.position_query(position_qids, language, identifier_property)
+        ):
             qid = qid_from_uri(row.get("person", {}).get("value", ""))
             statement_uri = row.get("statement", {}).get("value", "")
             position = qid_from_uri(row.get("position", {}).get("value", ""))
@@ -325,6 +351,7 @@ SELECT ?item ?itemLabel ?itemDescription ?instanceLabel WHERE {{
         names: Sequence[str],
         position_qids: Sequence[str],
         language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
     ) -> Dict[str, List[PersonMatch]]:
         """Map each searchable name to the Wikidata items carrying it.
 
@@ -339,7 +366,9 @@ SELECT ?item ?itemLabel ?itemDescription ?instanceLabel WHERE {{
         ]
         matches: Dict[str, List[PersonMatch]] = {}
         for batch in _chunks(unique, SEARCH_BATCH_SIZE):
-            sparql = self.people_search_query(batch, position_qids, language)
+            sparql = self.people_search_query(
+                batch, position_qids, language, identifier_property
+            )
             for row in self.run_query(sparql):
                 qid = qid_from_uri(row.get("person", {}).get("value", ""))
                 name = _literal(row.get("name"))

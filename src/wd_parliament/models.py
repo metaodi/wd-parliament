@@ -69,6 +69,17 @@ QID_FROM_NAME = "name"  # label/alias match, birth date agreed
 # the diff and the QuickStatements renderer cannot drift apart.
 P_POSITION_HELD = "P39"
 P_PARLIAMENT_ID = "P1307"
+
+# The identifier properties a source can be joined on, and what each one's
+# value is. ``QID_FROM_IDENTIFIER`` — the provenance ``quickstatements`` gates
+# on — means *Wikidata itself* asserted one of these, which is what makes the
+# match a fact rather than a guess. Both qualify; a Q-ID asserted by a third
+# party **about** Wikidata (OpenParlData's own ``wikidata_id`` field) does not,
+# and would need its own constant before it could ever be emitted from.
+IDENTIFIER_PROPERTIES = {
+    "P1307": "Swiss parliament ID (MemberCouncil.PersonNumber)",
+    "P14527": "OpenParlData ID",
+}
 P_START_TIME = "P580"
 P_END_TIME = "P582"
 P_ELECTORAL_DISTRICT = "P768"
@@ -93,6 +104,12 @@ class Body:
     label: str
     position_qid: str  # the P39 value for a seat in this chamber
     council_number: Optional[int] = None  # MemberCouncil.Council, the numeric code
+    # OpenParlData only: the ``groups`` row that *is* this chamber. A body is a
+    # level of parliament there, so the chamber is a group under it and a seat
+    # is a membership pointing at that group. Measured at 5077 for the
+    # Kantonsrat Zürich; left None, the client looks it up by exact name.
+    group_id: Optional[int] = None
+    group_name: Optional[str] = None
 
     @property
     def slug_source(self) -> str:

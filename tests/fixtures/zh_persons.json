@@ -1,0 +1,60 @@
+[
+  {
+    "id": 9532,
+    "firstname": "Ruth",
+    "lastname": "Genner",
+    "fullname": "Ruth Genner",
+    "body_key": "ZH",
+    "electoral_district_de": "I      Zürich 1+2",
+    "electoral_district_fr": "I Zurich 1+2",
+    "party_name_de": "Grüne",
+    "party_harmonized_wikidata_id": "Q659739",
+    "wikidata_id": "Q117716",
+    "birthdate": "1956-08-30"
+  },
+  {
+    "id": 21905,
+    "firstname": "Christoph",
+    "lastname": "Mörgeli",
+    "fullname": "Christoph Mörgeli",
+    "body_key": "ZH",
+    "electoral_district_de": "XII Uster",
+    "party_name_de": "SVP",
+    "party_harmonized_wikidata_id": "Q385258",
+    "wikidata_id": "Q117154",
+    "birthdate": "1960-04-16"
+  },
+  {
+    "id": 17728,
+    "firstname": "Urs",
+    "lastname": "Hany",
+    "fullname": "Urs Hany",
+    "body_key": "ZH",
+    "electoral_district_de": "XVII Bülach",
+    "party_name_de": "Die Mitte",
+    "wikidata_id": "Q125423",
+    "birthdate": null
+  },
+  {
+    "id": 17860,
+    "firstname": "Sarah",
+    "lastname": "Akanji",
+    "fullname": "Sarah Akanji",
+    "body_key": "ZH",
+    "electoral_district_de": "XIV Winterthur Stadt",
+    "party_name_de": "SP",
+    "wikidata_id": "Q58120942",
+    "birthdate": "1996-01-31"
+  },
+  {
+    "id": 18759,
+    "firstname": "Ruedi",
+    "lastname": "Noser",
+    "fullname": "Ruedi Noser",
+    "body_key": "ZH",
+    "electoral_district_de": "IX Horgen",
+    "party_name_de": "FDP",
+    "wikidata_id": "Q693305",
+    "birthdate": "1961-04-19"
+  }
+]

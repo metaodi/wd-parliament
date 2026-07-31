@@ -220,9 +220,9 @@ def compute_suggestions(
                     body,
                     member,
                     f"'{member.full_name}' sits in the {body.label} "
-                    f"(parlament.ch #{member.person_number}) but no Wikidata item "
-                    "was found, by Swiss parliament ID (P1307) or by name. They "
-                    "may need a new item.",
+                    f"({config.source_name} #{member.person_number}) but no "
+                    f"Wikidata item was found, by {config.identifier_property} "
+                    "or by name. They may need a new item.",
                     payload={"biography": config.biography_url_for(member.person_number)},
                 )
             )
@@ -259,12 +259,13 @@ def compute_suggestions(
                 member_label=person.label or qid,
                 person_qid=qid,
                 detail=(
-                    f"Wikidata records an open '{body.label}' membership (no end "
-                    "date), but parlament.ch does not list this person as a "
-                    "sitting member. They have most likely left; add an end date "
-                    "(P582). parlament.ch gives no leaving date here because the "
-                    "person is outside the current-members set, so the date has "
-                    "to be looked up by hand."
+                    f"Wikidata records an open '{body.label}' membership (no "
+                    f"end date), but {config.source_name} does not list this "
+                    "person as a sitting member. They have most likely left; "
+                    f"add an end date (P582). {config.source_name} gives no "
+                    "leaving date here because the person is outside the "
+                    "current-members set, so the date has to be looked up by "
+                    "hand."
                 ),
                 links={"item": _item_url(qid), "position": _item_url(body.position_qid)},
                 payload={"statement_id": open_statements[0].statement_id},
@@ -295,9 +296,10 @@ def _member_suggestions(
                 KIND_ADD_IDENTIFIER,
                 body,
                 member,
-                f"Add the Swiss parliament ID (P1307) '{member.person_number}'. "
-                "The item was found by name and birth date; recording the "
-                "identifier makes every future comparison exact." + verify,
+                f"Add {config.identifier_property} "
+                f"'{member.person_number}'. The item was found by name and "
+                "birth date; recording the identifier makes every future "
+                "comparison exact." + verify,
                 payload={
                     "parliament_id": str(member.person_number),
                     "biography": biography,
@@ -330,8 +332,9 @@ def _member_suggestions(
                     body,
                     member,
                     f"Add a 'position held' (P39) statement → {body.label} "
-                    f"({body.position_qid}) for {exp.label}. parlament.ch lists "
-                    f"them as sitting since {_date_str(exp.start)}." + verify,
+                    f"({body.position_qid}) for {exp.label}. "
+                    f"{config.source_name} lists them as sitting since "
+                    f"{_date_str(exp.start)}." + verify,
                     payload={
                         "position": body.position_qid,
                         "start": exp.start,
@@ -358,6 +361,7 @@ def _member_suggestions(
                 biography,
                 verify,
                 ambiguous,
+                config.source_name,
             )
         )
 
@@ -376,6 +380,7 @@ def _statement_suggestions(
     biography: str,
     verify: str,
     ambiguous: bool = False,
+    source_name: str = "parlament.ch",
 ) -> List[Suggestion]:
     """Checks against one existing P39 statement.
 
@@ -392,10 +397,10 @@ def _statement_suggestions(
                 KIND_REVIEW_ENDED,
                 body,
                 member,
-                f"Wikidata ends this membership on {_date_str(statement.end)}, but "
-                "parlament.ch still lists the member as sitting. Either the end "
-                "date is wrong, or they left and returned (which needs a separate "
-                "statement)." + verify,
+                f"Wikidata ends this membership on {_date_str(statement.end)}, "
+                f"but {source_name} still lists the member as sitting. Either "
+                "the end date is wrong, or they left and returned (which needs "
+                "a separate statement)." + verify,
                 payload={"statement_id": statement.statement_id, "biography": biography},
             )
         )
@@ -406,8 +411,9 @@ def _statement_suggestions(
                 KIND_ADD_END_DATE,
                 body,
                 member,
-                f"Add an end date (P582) of {_date_str(exp.end)}; the membership is "
-                "open on Wikidata but parlament.ch gives a leaving date." + verify,
+                f"Add an end date (P582) of {_date_str(exp.end)}; the "
+                f"membership is open on Wikidata but {source_name} gives a "
+                "leaving date." + verify,
                 payload={
                     "position": body.position_qid,
                     "end": exp.end,
@@ -444,10 +450,11 @@ def _statement_suggestions(
                 KIND_FIX_START_DATE,
                 body,
                 member,
-                f"Wikidata's start date (P580) is {_date_str(statement.start)}, but "
-                f"parlament.ch gives {_date_str(exp.start)}. Check which is right "
-                "before changing it — a mid-term replacement often joins on a "
-                "different day from the one a Wikipedia list records." + verify,
+                f"Wikidata's start date (P580) is "
+                f"{_date_str(statement.start)}, but {source_name} gives "
+                f"{_date_str(exp.start)}. Check which is right before changing "
+                "it — a mid-term replacement often joins on a different day "
+                "from the one a Wikipedia list records." + verify,
                 payload={
                     "position": body.position_qid,
                     "start": exp.start,
@@ -541,14 +548,14 @@ def _party_suggestions(
     if not person.parties:
         detail = (
             f"No open 'member of political party' (P102) statement, but "
-            f"parlament.ch gives {member.party_abbreviation} "
+            f"{config.source_name} gives {member.party_abbreviation} "
             f"({member.party_name or '—'}) → {party_qid}."
         )
     else:
         detail = (
             f"Wikidata's open P102 value(s) {', '.join(person.parties)} do not "
             f"include {member.party_abbreviation} ({member.party_name or '—'}) → "
-            f"{party_qid} as given by parlament.ch. This is often a cantonal "
+            f"{party_qid} as given by {config.source_name}. This is often a cantonal "
             "section vs. national party difference rather than an error."
         )
     return [

@@ -13,7 +13,7 @@ from datetime import date
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-from .config import Config, load_config
+from .config import SOURCE_OPENPARLDATA, Config, load_config
 from .diff import compute_suggestions
 from .http_client import HttpClient
 from .models import QID_FROM_IDENTIFIER, QID_FROM_NAME, Member, Period
@@ -30,6 +30,32 @@ from .wikidata import WikidataClient
 log = logging.getLogger(__name__)
 
 
+def build_source(config: Config, http: HttpClient):
+    """The member source this config asks for.
+
+    The one place the two sources are chosen between. Both are handed the
+    :class:`~.http_client.HttpClient`'s session, so the APIs see the same
+    descriptive User-Agent as the Wikimedia ones do, and both return the same
+    dataclasses — everything after this point cannot tell which it got.
+    """
+    if config.source == SOURCE_OPENPARLDATA:
+        from .openparldata import OpenParlDataClient
+
+        log.info(
+            "Source: OpenParlData, body %r, joined on %s",
+            config.body_key,
+            config.identifier_property,
+        )
+        return OpenParlDataClient(
+            session=http.session,
+            language=config.language,
+            body_key=config.body_key,
+            bodies=config.bodies,
+        )
+    log.info("Source: parlament.ch OData, joined on %s", config.identifier_property)
+    return ParliamentClient(session=http.session, language=config.language)
+
+
 def run(
     config_path: str | Path,
     reports_dir: str | Path = "reports",
@@ -39,9 +65,7 @@ def run(
     """Execute a full run and write the report files. Returns the results."""
     config = load_config(config_path)
     http = HttpClient(user_agent=config.user_agent, request_delay=config.request_delay)
-    # Hand the OData client the same session, so parlament.ch sees the same
-    # descriptive User-Agent as the Wikimedia APIs do.
-    parliament = ParliamentClient(session=http.session, language=config.language)
+    parliament = build_source(config, http)
     wikidata = WikidataClient(http)
 
     results = process(config, parliament, wikidata, limit=limit)
@@ -68,6 +92,9 @@ def run(
         group_by=config.group_by,
         quickstatements_text=qs_text,
         quickstatements_count=len(statements),
+        source_name=config.source_name,
+        identifier_property=config.identifier_property,
+        district_label=config.district_label,
     )
     log.info(
         "Wrote reports for %d chamber(s) (%d suggestions, %d QuickStatements) "
@@ -131,17 +158,28 @@ def process(
     # produces thousands of confident, wrong suggestions. Fail loudly instead,
     # so the Action stops before committing anything.
     if not members:
+        probe = (
+            "scripts/verify_kantonsrat.py"
+            if config.source == SOURCE_OPENPARLDATA
+            else "scripts/verify_source.py"
+        )
         raise RuntimeError(
-            "parlament.ch returned no sitting members for "
-            f"{', '.join(config.councils)}. Expected roughly 246. Either the "
-            "OData filters (Language/Active) or the CouncilAbbreviation values "
-            "this config filters on are wrong — run "
-            "'python scripts/verify_source.py' to see which."
+            f"The source returned no sitting members for "
+            f"{', '.join(config.councils)}. Either the filters or the "
+            "chamber keys this config uses are wrong — run "
+            f"'python {probe}' to see what the source actually has."
         )
 
-    people = wikidata.get_position_holders(config.position_qids, config.language)
+    people = wikidata.get_position_holders(
+        config.position_qids, config.language, config.identifier_property
+    )
     resolve_members(
-        members, people.values(), wikidata, config.position_qids, config.language
+        members,
+        people.values(),
+        wikidata,
+        config.position_qids,
+        config.language,
+        config.identifier_property,
     )
 
     results: List[BodyResult] = []

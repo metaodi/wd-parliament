@@ -66,10 +66,10 @@ class FakeWikidata:
         self._people = people or {}
         self._matches = matches or {}
 
-    def get_position_holders(self, position_qids, language="de"):
+    def get_position_holders(self, position_qids, language="de", identifier_property="P1307"):
         return self._people
 
-    def search_people(self, names, position_qids, language="de"):
+    def search_people(self, names, position_qids, language="de", identifier_property="P1307"):
         return self._matches
 
 
@@ -246,7 +246,7 @@ def test_a_failing_chamber_records_the_error_instead_of_aborting(
             raise RuntimeError("boom")
 
     class Exploding(FakeWikidata):
-        def get_position_holders(self, position_qids, language="de"):
+        def get_position_holders(self, position_qids, language="de", identifier_property="P1307"):
             return {"Q1": Landmine(qid="Q1", label="Landmine")}
 
     results = process(config, FakeParliament(member_rows, period_rows), Exploding())
