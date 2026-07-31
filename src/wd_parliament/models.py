@@ -44,15 +44,15 @@ PRIORITY = {
 }
 
 KIND_LABEL = {
-    KIND_ADD_IDENTIFIER: "Item matched by name but has no Swiss parliament ID (P1307)",
+    KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (P1307/P14527)",
     KIND_REVIEW_ENDED: "Membership recorded as ended, but the member is still sitting",
     KIND_ADD_END_DATE: "Recorded as sitting, but the member has left",
     KIND_ADD_MEMBERSHIP: "Sitting member, but no position held (P39) statement",
-    KIND_FIX_START_DATE: "Start date (P580) disagrees with parlament.ch",
+    KIND_FIX_START_DATE: "Start date (P580) disagrees with source",
     KIND_ADD_START_DATE: "Open membership without a start date (P580)",
     KIND_ADD_TERM: "Membership missing a parliamentary term (P2937)",
     KIND_ADD_QUALIFIER: "Membership missing an electoral district (P768) or group (P4100)",
-    KIND_REVIEW_PARTY: "Political party (P102) missing or disagreeing with parlament.ch",
+    KIND_REVIEW_PARTY: "Political party (P102) missing or disagreeing with source",
     KIND_NO_WIKIDATA_ITEM: "Sitting member, but no Wikidata item could be found",
 }
 
