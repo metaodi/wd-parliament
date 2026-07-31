@@ -26,10 +26,6 @@ on:
         options:
           - config/parliament.yaml
           - config/kantonsrat-zh.yaml
-      limit:
-        description: "Only process the first N members per chamber (leave empty for all)"
-        required: false
-        default: ""
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
@@ -96,7 +92,6 @@ jobs:
           CONFIG: ${{ matrix.config }}
           REPORTS: ${{ steps.out.outputs.reports }}
           DOCS: ${{ steps.out.outputs.docs }}
-          LIMIT: ${{ inputs.limit }}
         run: |
           set -euo pipefail
           # LIMIT is unquoted so an empty value contributes no argument; it
@@ -104,8 +99,7 @@ jobs:
           uv run python -m wd_parliament \
             --config "$CONFIG" \
             --reports-dir "$REPORTS" \
-            --docs-dir "$DOCS" \
-            ${LIMIT:+--limit $LIMIT}
+            --docs-dir "$DOCS" 
 
       - name: Commit and push changes
         env:
