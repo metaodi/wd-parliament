@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-02 12:59 UTC
+Generated: 2026-08-02 18:39 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
