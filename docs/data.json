@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-02 11:46 UTC",
-  "total_suggestions": 2002,
+  "generated": "2026-08-02 12:20 UTC",
+  "total_suggestions": 1998,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -16,44 +16,6 @@
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
-        {
-          "kind": "REVIEW_ENDED",
-          "priority": 1,
-          "member": "Hans-Peter Portmann",
-          "person_qid": "Q18020671",
-          "person_number": 4141,
-          "qid_source": "identifier",
-          "canton": "ZH",
-          "parl_group": "RL",
-          "detail": "Wikidata ends this membership on 2027-12-05, but parlament.ch still lists the member as sitting. Either the end date is wrong, or they left and returned (which needs a separate statement).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q18020671"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q18020671-7E5DDC15-3BF8-47E3-B2D9-30E191EFEF83",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4141"
-          }
-        },
-        {
-          "kind": "REVIEW_ENDED",
-          "priority": 1,
-          "member": "Leo Müller",
-          "person_qid": "Q1345180",
-          "person_number": 4097,
-          "qid_source": "identifier",
-          "canton": "LU",
-          "parl_group": "M-E",
-          "detail": "Wikidata ends this membership on 2027-12-05, but parlament.ch still lists the member as sitting. Either the end date is wrong, or they left and returned (which needs a separate statement).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q1345180"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1345180-25E53554-24CC-43A9-8EE2-AD5A5F3364CF",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4097"
-          }
-        },
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
@@ -9236,28 +9198,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q99305132-13A5ED21-7B94-4A70-AA95-DB17962F7F8B"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Florence Brenzikofer",
-          "person_qid": "Q76435729",
-          "person_number": 4315,
-          "qid_source": "identifier",
-          "canton": "BL",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-09. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q76435729"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2019-12-09",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q76435729-0a467780-4468-9acd-06fa-b63b8374f58a",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4315"
           }
         },
         {
@@ -30914,30 +30854,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q18633299-0ACE070D-738B-4B13-94CF-83AB9B1C63B4"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
-          "member": "Christian Glur",
-          "person_qid": "Q131110863",
-          "person_number": 14803,
-          "qid_source": "identifier",
-          "canton": "AG",
-          "parl_group": "V",
-          "detail": "Add the missing qualifier(s): electoral district (P768) → AG (Q11972).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q131110863"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "district": "Q11972",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131110863-F8CAA107-1C2E-4544-B22C-DD3BA1AC627B",
-            "biography": "https://www.parlament.ch/de/biografie/wd/14803",
-            "ambiguous_statement": true
           }
         }
       ]

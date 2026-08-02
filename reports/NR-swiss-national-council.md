@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-02 11:46 UTC
+Generated: 2026-08-02 12:20 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,38 +8,18 @@ Generated: 2026-08-02 11:46 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 1904
-- Suggested edits: 1716
+- Suggested edits: 1712
 
 ## By kind
 
-- Membership recorded as ended, but the member is still sitting: **2**
 - Recorded as sitting, but the member has left: **1706**
-- Start date (P580) disagrees with source: **7**
-- Membership missing an electoral district (P768) or group (P4100): **1**
-
-## Canton: AG (1)
-
-### Membership missing an electoral district (P768) or group (P4100) (1)
-
-- **[Christian Glur](https://www.wikidata.org/wiki/Q131110863)** ([#14803](https://www.parlament.ch/de/biografie/wd/14803)) — Add the missing qualifier(s): electoral district (P768) → AG (Q11972).
-
-## Canton: BL (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Florence Brenzikofer](https://www.wikidata.org/wiki/Q76435729)** ([#4315](https://www.parlament.ch/de/biografie/wd/4315)) — Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-09. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
+- Start date (P580) disagrees with source: **6**
 
 ## Canton: JU (1)
 
 ### Start date (P580) disagrees with source (1)
 
 - **[Loïc Dobler](https://www.wikidata.org/wiki/Q138498177)** ([#16905](https://www.parlament.ch/de/biografie/wd/16905)) — Wikidata's start date (P580) is 2026-03-20, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
-
-## Canton: LU (1)
-
-### Membership recorded as ended, but the member is still sitting (1)
-
-- **[Leo Müller](https://www.wikidata.org/wiki/Q1345180)** ([#4097](https://www.parlament.ch/de/biografie/wd/4097)) — Wikidata ends this membership on 2027-12-05, but parlament.ch still lists the member as sitting. Either the end date is wrong, or they left and returned (which needs a separate statement).
 
 ## Canton: SG (2)
 
@@ -60,11 +40,7 @@ Generated: 2026-08-02 11:46 UTC
 
 - **[Raphaël Mahaim](https://www.wikidata.org/wiki/Q110634549)** ([#4327](https://www.parlament.ch/de/biografie/wd/4327)) — Wikidata's start date (P580) is 2022-03-01, but parlament.ch gives 2022-02-28. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
-## Canton: ZH (2)
-
-### Membership recorded as ended, but the member is still sitting (1)
-
-- **[Hans-Peter Portmann](https://www.wikidata.org/wiki/Q18020671)** ([#4141](https://www.parlament.ch/de/biografie/wd/4141)) — Wikidata ends this membership on 2027-12-05, but parlament.ch still lists the member as sitting. Either the end date is wrong, or they left and returned (which needs a separate statement).
+## Canton: ZH (1)
 
 ### Start date (P580) disagrees with source (1)
 
