@@ -26,6 +26,7 @@ on:
         options:
           - config/parliament.yaml
           - config/kantonsrat-zh.yaml
+          - All configs
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
@@ -47,9 +48,11 @@ jobs:
       fail-fast: false
       matrix:
         # A scheduled run does every parliament; a dispatch does the one asked
-        # for. `fromJSON` because a matrix value must be a list either way.
+        # for, unless that one is "All configs", which also does every
+        # parliament. `fromJSON` because a matrix value must be a list either
+        # way.
         config: >-
-          ${{ github.event_name == 'workflow_dispatch'
+          ${{ github.event_name == 'workflow_dispatch' && inputs.config != 'All configs'
               && fromJSON(format('["{0}"]', inputs.config))
               || fromJSON('["config/parliament.yaml", "config/kantonsrat-zh.yaml"]') }}
 
