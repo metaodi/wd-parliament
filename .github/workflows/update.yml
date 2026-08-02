@@ -24,9 +24,9 @@ on:
         default: config/parliament.yaml
         type: choice
         options:
+          - All configs
           - config/parliament.yaml
           - config/kantonsrat-zh.yaml
-          - All configs
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
