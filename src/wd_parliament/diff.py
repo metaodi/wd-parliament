@@ -201,6 +201,7 @@ def compute_suggestions(
     people: Dict[str, WikidataPerson],
     periods: Sequence[Period],
     config: Config,
+    today: Optional[date] = None,
 ) -> List[Suggestion]:
     """Produce the suggested edits for one chamber. Pure.
 
@@ -208,6 +209,7 @@ def compute_suggestions(
     everyone holding ``body.position_qid``, whether or not they matched a
     sitting member — the second pass below relies on it.
     """
+    today = today or date.today()
     suggestions: List[Suggestion] = []
     seen_qids: set = set()
 
@@ -230,7 +232,9 @@ def compute_suggestions(
 
         seen_qids.add(member.qid)
         person = people.get(member.qid) or WikidataPerson(qid=member.qid)
-        suggestions.extend(_member_suggestions(body, member, person, periods, config))
+        suggestions.extend(
+            _member_suggestions(body, member, person, periods, config, today)
+        )
 
     # 2) Wikidata -> parlament.ch: people Wikidata still lists as sitting.
     #
@@ -282,6 +286,7 @@ def _member_suggestions(
     person: WikidataPerson,
     periods: Sequence[Period],
     config: Config,
+    today: date,
 ) -> List[Suggestion]:
     """Every suggestion arising from one matched member."""
     out: List[Suggestion] = []
@@ -362,6 +367,7 @@ def _member_suggestions(
                 verify,
                 ambiguous,
                 config.source_name,
+                today,
             )
         )
 
@@ -381,6 +387,7 @@ def _statement_suggestions(
     verify: str,
     ambiguous: bool = False,
     source_name: str = "parlament.ch",
+    today: Optional[date] = None,
 ) -> List[Suggestion]:
     """Checks against one existing P39 statement.
 
@@ -388,10 +395,18 @@ def _statement_suggestions(
     it is stamped onto every payload below so the QuickStatements renderer can
     refuse commands that could not say which statement they mean.
     """
+    today = today or date.today()
     out: List[Suggestion] = []
 
-    # Closed on Wikidata, still sitting per parlament.ch.
-    if member.active and statement.end is not None and exp.end is None:
+    # Closed on Wikidata, still sitting per parlament.ch. A future end date is
+    # a planned/scheduled end (e.g. end of legislature), not a disagreement —
+    # only flag once that date has actually passed.
+    if (
+        member.active
+        and statement.end is not None
+        and statement.end <= today
+        and exp.end is None
+    ):
         out.append(
             _base_suggestion(
                 KIND_REVIEW_ENDED,

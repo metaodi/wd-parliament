@@ -174,6 +174,23 @@ def test_statement_closed_but_member_still_sitting(periods):
     assert KIND_REVIEW_ENDED in kinds(suggestions)
 
 
+def test_statement_end_date_in_the_future_is_not_a_disagreement(periods):
+    """A future P582 (e.g. end of legislature) is a plan, not a contradiction."""
+    member = make_member()
+    statement = make_statement(
+        start=date(2019, 12, 2), end=date(2027, 12, 5), districts=["Q11943"]
+    )
+    suggestions = compute_suggestions(
+        BODY,
+        [member],
+        {"Q7": person([statement])},
+        periods,
+        make_config(MODEL_TENURE),
+        today=date(2026, 8, 2),
+    )
+    assert KIND_REVIEW_ENDED not in kinds(suggestions)
+
+
 def test_open_statement_but_member_has_left(periods):
     member = make_member(active=False, date_leaving=date(2023, 12, 3))
     statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
