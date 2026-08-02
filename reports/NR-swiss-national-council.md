@@ -1,22 +1,21 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-07-30 14:07 UTC
+Generated: 2026-08-02 11:46 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
-- Matched by Swiss parliament ID (P1307): 199 (99.5%)
+- Matched by P1307: 200 (100.0%)
 - Matched by name + birth date: 0
-- Not matched at all: 1
-- Open memberships on Wikidata: 1905
-- Suggested edits: 1719
+- Not matched at all: 0
+- Open memberships on Wikidata: 1904
+- Suggested edits: 1716
 
 ## By kind
 
 - Membership recorded as ended, but the member is still sitting: **2**
-- Recorded as sitting, but the member has left: **1708**
-- Start date (P580) disagrees with parlament.ch: **7**
+- Recorded as sitting, but the member has left: **1706**
+- Start date (P580) disagrees with source: **7**
 - Membership missing an electoral district (P768) or group (P4100): **1**
-- Sitting member, but no Wikidata item could be found: **1**
 
 ## Canton: AG (1)
 
@@ -24,19 +23,15 @@ Generated: 2026-07-30 14:07 UTC
 
 - **[Christian Glur](https://www.wikidata.org/wiki/Q131110863)** ([#14803](https://www.parlament.ch/de/biografie/wd/14803)) — Add the missing qualifier(s): electoral district (P768) → AG (Q11972).
 
-## Canton: BL (2)
+## Canton: BL (1)
 
-### Start date (P580) disagrees with parlament.ch (1)
+### Start date (P580) disagrees with source (1)
 
 - **[Florence Brenzikofer](https://www.wikidata.org/wiki/Q76435729)** ([#4315](https://www.parlament.ch/de/biografie/wd/4315)) — Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-09. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
-### Sitting member, but no Wikidata item could be found (1)
-
-- **Miriam Locher** ([#17201](https://www.parlament.ch/de/biografie/wd/17201)) — 'Miriam Locher' sits in the Swiss National Council (parlament.ch #17201) but no Wikidata item was found, by Swiss parliament ID (P1307) or by name. They may need a new item.
-
 ## Canton: JU (1)
 
-### Start date (P580) disagrees with parlament.ch (1)
+### Start date (P580) disagrees with source (1)
 
 - **[Loïc Dobler](https://www.wikidata.org/wiki/Q138498177)** ([#16905](https://www.parlament.ch/de/biografie/wd/16905)) — Wikidata's start date (P580) is 2026-03-20, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
@@ -48,20 +43,20 @@ Generated: 2026-07-30 14:07 UTC
 
 ## Canton: SG (2)
 
-### Start date (P580) disagrees with parlament.ch (2)
+### Start date (P580) disagrees with source (2)
 
 - **[Arbër Bullakaj](https://www.wikidata.org/wiki/Q138611973)** ([#16902](https://www.parlament.ch/de/biografie/wd/16902)) — Wikidata's start date (P580) is 2026-04-26, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 - **[Mike Egger](https://www.wikidata.org/wiki/Q1933122)** ([#4229](https://www.parlament.ch/de/biografie/wd/4229)) — Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-03-04. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
 ## Canton: SO (1)
 
-### Start date (P580) disagrees with parlament.ch (1)
+### Start date (P580) disagrees with source (1)
 
 - **[Laura Gantenbein](https://www.wikidata.org/wiki/Q61614229)** ([#16804](https://www.parlament.ch/de/biografie/wd/16804)) — Wikidata's start date (P580) is 2026-04-25, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
 ## Canton: VD (1)
 
-### Start date (P580) disagrees with parlament.ch (1)
+### Start date (P580) disagrees with source (1)
 
 - **[Raphaël Mahaim](https://www.wikidata.org/wiki/Q110634549)** ([#4327](https://www.parlament.ch/de/biografie/wd/4327)) — Wikidata's start date (P580) is 2022-03-01, but parlament.ch gives 2022-02-28. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
@@ -71,13 +66,13 @@ Generated: 2026-07-30 14:07 UTC
 
 - **[Hans-Peter Portmann](https://www.wikidata.org/wiki/Q18020671)** ([#4141](https://www.parlament.ch/de/biografie/wd/4141)) — Wikidata ends this membership on 2027-12-05, but parlament.ch still lists the member as sitting. Either the end date is wrong, or they left and returned (which needs a separate statement).
 
-### Start date (P580) disagrees with parlament.ch (1)
+### Start date (P580) disagrees with source (1)
 
 - **[Martin Haab](https://www.wikidata.org/wiki/Q64617510)** ([#4236](https://www.parlament.ch/de/biografie/wd/4236)) — Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
-## Canton: Other (1708)
+## Canton: Other (1706)
 
-### Recorded as sitting, but the member has left (1708)
+### Recorded as sitting, but the member has left (1706)
 
 - **[Abraham Boivin](https://www.wikidata.org/wiki/Q78058209)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Abraham Louis Tourte](https://www.wikidata.org/wiki/Q18683312)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
@@ -1412,8 +1407,6 @@ Generated: 2026-07-30 14:07 UTC
 - **[Michel Jaccard](https://www.wikidata.org/wiki/Q3309961)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Michele Pedrazzini](https://www.wikidata.org/wiki/Q78068017)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Milli Wittenwiler](https://www.wikidata.org/wiki/Q105590414)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Miriam Locher](https://www.wikidata.org/wiki/Q138498889)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Miriam Locher](https://www.wikidata.org/wiki/Q23059413)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Monique Bauer-Lagier](https://www.wikidata.org/wiki/Q1944817)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Monique Paccolat](https://www.wikidata.org/wiki/Q117338224)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Moritz Kämpfen](https://www.wikidata.org/wiki/Q96360419)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.

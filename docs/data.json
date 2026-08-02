@@ -1,6 +1,6 @@
 {
-  "generated": "2026-07-30 14:07 UTC",
-  "total_suggestions": 2005,
+  "generated": "2026-08-02 11:46 UTC",
+  "total_suggestions": 2002,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -9,11 +9,11 @@
       "label": "Swiss National Council",
       "position_qid": "Q18510612",
       "member_count": 200,
-      "matched_by_identifier": 199,
+      "matched_by_identifier": 200,
       "matched_by_name": 0,
-      "unmatched": 1,
-      "wikidata_open": 1905,
-      "identifier_hit_rate": 99.5,
+      "unmatched": 0,
+      "wikidata_open": 1904,
+      "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
         {
@@ -24183,42 +24183,6 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
-          "member": "Miriam Locher",
-          "person_qid": "Q138498889",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q138498889",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q138498889-a33ae6de-4e6d-5ddc-9e7a-806e7745f400"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Miriam Locher",
-          "person_qid": "Q23059413",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q23059413",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q23059413-7cec18b3-47eb-2fc2-44e8-7a333750bbcf"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
           "member": "Monique Bauer-Lagier",
           "person_qid": "Q1944817",
           "person_number": null,
@@ -30974,23 +30938,6 @@
             "statement_id": "http://www.wikidata.org/entity/statement/Q131110863-F8CAA107-1C2E-4544-B22C-DD3BA1AC627B",
             "biography": "https://www.parlament.ch/de/biografie/wd/14803",
             "ambiguous_statement": true
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Miriam Locher",
-          "person_qid": null,
-          "person_number": 17201,
-          "qid_source": null,
-          "canton": "BL",
-          "parl_group": "S",
-          "detail": "'Miriam Locher' sits in the Swiss National Council (parlament.ch #17201) but no Wikidata item was found, by Swiss parliament ID (P1307) or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "biography": "https://www.parlament.ch/de/biografie/wd/17201"
           }
         }
       ]
