@@ -21,7 +21,7 @@ on:
       config:
         description: "Which parliament to generate"
         required: true
-        default: config/parliament.yaml
+        default: All configs
         type: choice
         options:
           - All configs
