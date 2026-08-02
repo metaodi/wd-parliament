@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-02 18:39 UTC
+Generated: 2026-08-02 19:06 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,30 +8,11 @@ Generated: 2026-08-02 18:39 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 1903
-- Suggested edits: 1708
+- Suggested edits: 1705
 
 ## By kind
 
 - Recorded as sitting, but the member has left: **1705**
-- Start date (P580) disagrees with source: **3**
-
-## Canton: JU (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Loïc Dobler](https://www.wikidata.org/wiki/Q138498177)** ([#16905](https://www.parlament.ch/de/biografie/wd/16905)) — Wikidata's start date (P580) is 2026-03-27, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
-
-## Canton: VD (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Raphaël Mahaim](https://www.wikidata.org/wiki/Q110634549)** ([#4327](https://www.parlament.ch/de/biografie/wd/4327)) — Wikidata's start date (P580) is 2022-03-01, but parlament.ch gives 2022-02-28. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
-
-## Canton: ZH (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Martin Haab](https://www.wikidata.org/wiki/Q64617510)** ([#4236](https://www.parlament.ch/de/biografie/wd/4236)) — Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
 ## Canton: Other (1705)
 

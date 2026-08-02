@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-02 18:39 UTC",
-  "total_suggestions": 1994,
+  "generated": "2026-08-02 19:06 UTC",
+  "total_suggestions": 1988,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -22643,28 +22643,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Loïc Dobler",
-          "person_qid": "Q138498177",
-          "person_number": 16905,
-          "qid_source": "identifier",
-          "canton": "JU",
-          "parl_group": "S",
-          "detail": "Wikidata's start date (P580) is 2026-03-27, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q138498177"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2026-04-27",
-            "wikidata_start": "2026-03-27",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q138498177-304eb413-44f8-7cfd-51f8-48ed9a9106f1",
-            "biography": "https://www.parlament.ch/de/biografie/wd/16905"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Lucien Decoppet",
@@ -23274,28 +23252,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q1590000-F82888B6-401E-4BD3-9023-629743649043"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Martin Haab",
-          "person_qid": "Q64617510",
-          "person_number": 4236,
-          "qid_source": "identifier",
-          "canton": "ZH",
-          "parl_group": "V",
-          "detail": "Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q64617510"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2019-06-03",
-            "wikidata_start": "2019-03-01",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q64617510-E6570504-BEC5-47F8-8805-D83E468CB25B",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4236"
           }
         },
         {
@@ -26230,28 +26186,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q3419213-BDBCFD43-D7D9-432E-98F0-460E104E36EC"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Raphaël Mahaim",
-          "person_qid": "Q110634549",
-          "person_number": 4327,
-          "qid_source": "identifier",
-          "canton": "VD",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2022-03-01, but parlament.ch gives 2022-02-28. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q110634549"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2022-02-28",
-            "wikidata_start": "2022-03-01",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q110634549-8E9B7AB5-4929-4975-B801-94EC143070C9",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4327"
           }
         },
         {
@@ -31795,28 +31729,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Daniel Fässler",
-          "person_qid": "Q1160790",
-          "person_number": 4056,
-          "qid_source": "identifier",
-          "canton": "AI",
-          "parl_group": "M-E",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q1160790"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-06-03",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1160790-45E540ED-3166-436E-960C-0E336540585E",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4056"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "David Legler",
@@ -34733,28 +34645,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Matthias Michel",
-          "person_qid": "Q1910152",
-          "person_number": 4309,
-          "qid_source": "identifier",
-          "canton": "ZG",
-          "parl_group": "RL",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q1910152"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-12-03",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1910152-9FF85670-4171-4C02-8737-CA60F73EBC28",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4309"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Max Petitpierre",
@@ -34770,28 +34660,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q664453-4BD4CE8B-7BEA-4087-9836-413EA80D2AAE"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Maya Graf",
-          "person_qid": "Q119406",
-          "person_number": 806,
-          "qid_source": "identifier",
-          "canton": "BL",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-04. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q119406"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-12-04",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q119406-6066082B-EEA8-4999-9947-6755B4141DE2",
-            "biography": "https://www.parlament.ch/de/biografie/wd/806"
           }
         },
         {

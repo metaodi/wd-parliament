@@ -1,6 +1,6 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-08-02 18:39 UTC
+Generated: 2026-08-02 19:06 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
@@ -8,30 +8,11 @@ Generated: 2026-08-02 18:39 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 329
-- Suggested edits: 286
+- Suggested edits: 283
 
 ## By kind
 
 - Recorded as sitting, but the member has left: **283**
-- Start date (P580) disagrees with source: **3**
-
-## Canton: AI (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Daniel Fässler](https://www.wikidata.org/wiki/Q1160790)** ([#4056](https://www.parlament.ch/de/biografie/wd/4056)) — Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
-
-## Canton: BL (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Maya Graf](https://www.wikidata.org/wiki/Q119406)** ([#806](https://www.parlament.ch/de/biografie/wd/806)) — Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-04. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
-
-## Canton: ZG (1)
-
-### Start date (P580) disagrees with source (1)
-
-- **[Matthias Michel](https://www.wikidata.org/wiki/Q1910152)** ([#4309](https://www.parlament.ch/de/biografie/wd/4309)) — Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.
 
 ## Canton: Other (283)
 
