@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-02 12:20 UTC",
-  "total_suggestions": 1998,
+  "generated": "2026-08-02 12:59 UTC",
+  "total_suggestions": 1994,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -12,28 +12,10 @@
       "matched_by_identifier": 200,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 1904,
+      "wikidata_open": 1903,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Abraham Boivin",
-          "person_qid": "Q78058209",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q78058209",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q78058209-E39ABFCA-87B5-40AE-A0B1-BEA822296801"
-          }
-        },
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
@@ -3236,28 +3218,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q605206-A5D3A363-6543-4B2D-A35E-3E1278C06156"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Arbër Bullakaj",
-          "person_qid": "Q138611973",
-          "person_number": 16902,
-          "qid_source": "identifier",
-          "canton": "SG",
-          "parl_group": "S",
-          "detail": "Wikidata's start date (P580) is 2026-04-26, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q138611973"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2026-04-27",
-            "wikidata_start": "2026-04-26",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q138611973-d9820af1-4bd6-14fc-a939-926375cdca21",
-            "biography": "https://www.parlament.ch/de/biografie/wd/16902"
           }
         },
         {
@@ -21909,28 +21869,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Laura Gantenbein",
-          "person_qid": "Q61614229",
-          "person_number": 16804,
-          "qid_source": "identifier",
-          "canton": "SO",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2026-04-25, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q61614229"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2026-04-27",
-            "wikidata_start": "2026-04-25",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q61614229-4b42129c-4b86-206b-dc94-59ce58d4fba9",
-            "biography": "https://www.parlament.ch/de/biografie/wd/16804"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Laurent Butty",
@@ -22713,7 +22651,7 @@
           "qid_source": "identifier",
           "canton": "JU",
           "parl_group": "S",
-          "detail": "Wikidata's start date (P580) is 2026-03-20, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
+          "detail": "Wikidata's start date (P580) is 2026-03-27, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q138498177"
@@ -22721,7 +22659,7 @@
           "payload": {
             "position": "Q18510612",
             "start": "2026-04-27",
-            "wikidata_start": "2026-03-20",
+            "wikidata_start": "2026-03-27",
             "statement_id": "http://www.wikidata.org/entity/statement/Q138498177-304eb413-44f8-7cfd-51f8-48ed9a9106f1",
             "biography": "https://www.parlament.ch/de/biografie/wd/16905"
           }
@@ -24078,28 +24016,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q78068017-F395CE96-EF35-44FF-8565-770C091AF208"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Mike Egger",
-          "person_qid": "Q1933122",
-          "person_number": 4229,
-          "qid_source": "identifier",
-          "canton": "SG",
-          "parl_group": "V",
-          "detail": "Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-03-04. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q1933122"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2019-03-04",
-            "wikidata_start": "2019-03-01",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1933122-89FFC863-F671-4999-8A9C-B547DF174A51",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4229"
           }
         },
         {
