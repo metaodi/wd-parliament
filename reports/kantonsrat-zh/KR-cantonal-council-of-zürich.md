@@ -1,6 +1,6 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-02 12:21 UTC
+Generated: 2026-08-03 07:14 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (OpenParlData): 180
