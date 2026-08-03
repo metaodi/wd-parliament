@@ -1,22 +1,22 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-02 19:06 UTC
+Generated: 2026-08-03 07:14 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
 - Matched by P1307: 200 (100.0%)
 - Matched by name + birth date: 0
 - Not matched at all: 0
-- Open memberships on Wikidata: 1903
-- Suggested edits: 1705
+- Open memberships on Wikidata: 1902
+- Suggested edits: 1704
 
 ## By kind
 
-- Recorded as sitting, but the member has left: **1705**
+- Recorded as sitting, but the member has left: **1704**
 
-## Canton: Other (1705)
+## Canton: Other (1704)
 
-### Recorded as sitting, but the member has left (1705)
+### Recorded as sitting, but the member has left (1704)
 
 - **[Abraham Louis Tourte](https://www.wikidata.org/wiki/Q18683312)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Abraham Raschle](https://www.wikidata.org/wiki/Q18683295)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
@@ -36,7 +36,6 @@ Generated: 2026-08-02 19:06 UTC
 - **[Adolf Doswald](https://www.wikidata.org/wiki/Q96363019)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Adolf Fischer](https://www.wikidata.org/wiki/Q361553)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Adolf Friedrich Zürcher](https://www.wikidata.org/wiki/Q2327923)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Adolf Furrer](https://www.wikidata.org/wiki/Q361780)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Adolf Gloor](https://www.wikidata.org/wiki/Q361887)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Adolf Grubenmann](https://www.wikidata.org/wiki/Q361941)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Adolf Landolt](https://www.wikidata.org/wiki/Q363099)** — Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.

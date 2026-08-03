@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-02 19:06 UTC",
-  "total_suggestions": 1988,
+  "generated": "2026-08-03 07:14 UTC",
+  "total_suggestions": 1987,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -12,7 +12,7 @@
       "matched_by_identifier": 200,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 1903,
+      "wikidata_open": 1902,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
@@ -338,24 +338,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q2327923-F3AC5B85-7173-4B4A-89A7-4D8A8E7839C7"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Adolf Furrer",
-          "person_qid": "Q361780",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; add an end date (P582). parlament.ch gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q361780",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q361780-5FF71923-D27D-4C7B-9703-95A298789736"
           }
         },
         {
