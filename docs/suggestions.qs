@@ -1,8 +1,8 @@
 # wd-parliament — QuickStatements V1
 #
-# Generated: 2026-08-04 18:26 UTC
+# Generated: 2026-08-04 22:42 UTC
 # Statement model: tenure
-# 0 of 1991 suggestions are mechanical.
+# 0 of 2194 suggestions are mechanical.
 #
 # Only members matched by their Swiss parliament ID (P1307) are
 # emitted here; anything matched by name is report-only. Review the

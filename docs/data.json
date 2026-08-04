@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-04 18:26 UTC",
-  "total_suggestions": 1991,
+  "generated": "2026-08-04 22:42 UTC",
+  "total_suggestions": 2194,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -13,6 +13,7 @@
       "matched_by_name": 0,
       "unmatched": 0,
       "wikidata_open": 1900,
+      "identifier_mismatches": 0,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
@@ -37484,6 +37485,3755 @@
             "start": "1914-06-02",
             "end": "1922-12-03"
           }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Alois Huber",
+          "person_qid": "Q86914282",
+          "person_number": 4317,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Boswil (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q86914282"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Boswil (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4317"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Alois Huber",
+          "person_qid": "Q86914282",
+          "person_number": 4317,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q86914282"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "5"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4317"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andrea de Meuron",
+          "person_qid": "Q61944633",
+          "person_number": 17404,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "G",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Thun (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61944633"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Thun (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/17404"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andrea de Meuron",
+          "person_qid": "Q61944633",
+          "person_number": 17404,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61944633"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/17404"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andrea Zryd",
+          "person_qid": "Q123259454",
+          "person_number": 10851,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123259454"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10851"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Gafner",
+          "person_qid": "Q77074759",
+          "person_number": 4263,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074759"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4263"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Glarner",
+          "person_qid": "Q497462",
+          "person_number": 4161,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Diesbach GL (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q497462"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Diesbach GL (GL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4161"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Glarner",
+          "person_qid": "Q497462",
+          "person_number": 4161,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q497462"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4161"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Meier",
+          "person_qid": "Q116963195",
+          "person_number": 4333,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Leuggern (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q116963195"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Leuggern (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4333"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Meier",
+          "person_qid": "Q116963195",
+          "person_number": 4333,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Würenlingen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q116963195"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Würenlingen (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4333"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andreas Meier",
+          "person_qid": "Q116963195",
+          "person_number": 4333,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q116963195"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4333"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andri Silberschmidt",
+          "person_qid": "Q30017107",
+          "person_number": 4290,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q30017107"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Zürich (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4290"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Barbara Portmann",
+          "person_qid": "Q138767069",
+          "person_number": 17101,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "GL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Brugg (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138767069"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Brugg (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/17101"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Barbara Portmann",
+          "person_qid": "Q138767069",
+          "person_number": 17101,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "GL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138767069"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/17101"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Barbara Schaffner",
+          "person_qid": "Q66547307",
+          "person_number": 4287,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "GL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Hausen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q66547307"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Hausen (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4287"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Barbara Schaffner",
+          "person_qid": "Q66547307",
+          "person_number": 4287,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "GL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q66547307"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4287"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Barbara Steinemann",
+          "person_qid": "Q21180065",
+          "person_number": 4174,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Rümlang (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21180065"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Rümlang (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4174"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Beat Walti",
+          "person_qid": "Q18018671",
+          "person_number": 4142,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dürrenäsch (AG), Zollikon (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q18018671"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Dürrenäsch (AG)",
+              "Zollikon (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4142"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Fischer",
+          "person_qid": "Q20676035",
+          "person_number": 4326,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Volketswil (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q20676035"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Volketswil (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4326"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Fischer",
+          "person_qid": "Q20676035",
+          "person_number": 4326,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q20676035"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4326"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Giezendanner",
+          "person_qid": "Q61196213",
+          "person_number": 4266,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Wattwil (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61196213"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Wattwil (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4266"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Giezendanner",
+          "person_qid": "Q61196213",
+          "person_number": 4266,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61196213"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4266"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Roduit",
+          "person_qid": "Q46351629",
+          "person_number": 4220,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Saillon (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q46351629"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Saillon (VS)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4220"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Roduit",
+          "person_qid": "Q46351629",
+          "person_number": 4220,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q46351629"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4220"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benoît Gaillard",
+          "person_qid": "Q133730517",
+          "person_number": 15004,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q133730517"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Lausanne (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/15004"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Bettina Balmer",
+          "person_qid": "Q123183642",
+          "person_number": 10804,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123183642"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10804"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Brenda Tuosto",
+          "person_qid": "Q123172174",
+          "person_number": 10825,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Yverdon-les-Bains (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123172174"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Yverdon-les-Bains (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10825"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Brenda Tuosto",
+          "person_qid": "Q123172174",
+          "person_number": 10825,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123172174"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10825"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Brigitte Crottaz",
+          "person_qid": "Q45812562",
+          "person_number": 4219,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Saint-Barthélemy (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q45812562"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Saint-Barthélemy (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4219"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Bruno Storni",
+          "person_qid": "Q77073229",
+          "person_number": 4312,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77073229"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4312"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Bruno Walliser",
+          "person_qid": "Q21180045",
+          "person_number": 4177,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Mosnang (SG), Volketswil (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21180045"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Mosnang (SG)",
+              "Volketswil (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4177"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christian Dandrès",
+          "person_qid": "Q71799433",
+          "person_number": 4255,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Orsières (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71799433"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Orsières (VS)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4255"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christian Dandrès",
+          "person_qid": "Q71799433",
+          "person_number": 4255,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71799433"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4255"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christian Imark",
+          "person_qid": "Q21268794",
+          "person_number": 4164,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Himmelried (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21268794"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Himmelried (SO)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4164"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christian Imark",
+          "person_qid": "Q21268794",
+          "person_number": 4164,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21268794"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4164"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christian Lohr",
+          "person_qid": "Q1080853",
+          "person_number": 4118,
+          "qid_source": "identifier",
+          "canton": "TG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Kreuzlingen (TG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1080853"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Kreuzlingen (TG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4118"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Christine Bulliard-Marbach",
+          "person_qid": "Q1083465",
+          "person_number": 4101,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1083465"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4101"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Clarence Chollet",
+          "person_qid": "Q133699098",
+          "person_number": 15304,
+          "qid_source": "identifier",
+          "canton": "NE",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q133699098"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/15304"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Corina Gredig",
+          "person_qid": "Q59140652",
+          "person_number": 4267,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "GL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Schenkon (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q59140652"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Schenkon (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4267"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Cédric Wermuth",
+          "person_qid": "Q117904",
+          "person_number": 4057,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q117904"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4057"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Céline Weber",
+          "person_qid": "Q109801673",
+          "person_number": 4323,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "GL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q109801673"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4323"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Daniel Ruch",
+          "person_qid": "Q24698727",
+          "person_number": 4329,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "RL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q24698727"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Lausanne (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4329"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Daniel Ruch",
+          "person_qid": "Q24698727",
+          "person_number": 4329,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Lützelflüh (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q24698727"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Lützelflüh (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4329"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "David Roth",
+          "person_qid": "Q1176389",
+          "person_number": 10821,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Luzern (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1176389"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Luzern (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10821"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Delphine Klopfenstein Broggini",
+          "person_qid": "Q71792676",
+          "person_number": 4272,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71792676"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4272"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Didier Calame",
+          "person_qid": "Q123158457",
+          "person_number": 10850,
+          "qid_source": "identifier",
+          "canton": "NE",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Les Planchettes (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123158457"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Les Planchettes (NE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10850"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Dominik Blunschy",
+          "person_qid": "Q57550766",
+          "person_number": 10816,
+          "qid_source": "identifier",
+          "canton": "SZ",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q57550766"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10816"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Edgar Bischof",
+          "person_qid": "Q138608486",
+          "person_number": 16706,
+          "qid_source": "identifier",
+          "canton": "AR",
+          "parl_group": "V",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives - (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138608486"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "- (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/16706"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Edgar Bischof",
+          "person_qid": "Q138608486",
+          "person_number": 16706,
+          "qid_source": "identifier",
+          "canton": "AR",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138608486"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/16706"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Emmanuel Amoos",
+          "person_qid": "Q106240011",
+          "person_number": 4320,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q106240011"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4320"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Erich Vontobel",
+          "person_qid": "Q123682757",
+          "person_number": 10838,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Rüti (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123682757"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Rüti (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10838"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Ernst Wandfluh",
+          "person_qid": "Q123485137",
+          "person_number": 10834,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123485137"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10834"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Farah Rumy",
+          "person_qid": "Q107377457",
+          "person_number": 11506,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Grenchen (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q107377457"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Grenchen (SO)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/11506"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Florence Brenzikofer",
+          "person_qid": "Q76435729",
+          "person_number": 4315,
+          "qid_source": "identifier",
+          "canton": "BL",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q76435729"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4315"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Franz Grüter",
+          "person_qid": "Q21269511",
+          "person_number": 4162,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21269511"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4162"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Franziska Ryser",
+          "person_qid": "Q71957069",
+          "person_number": 4286,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71957069"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4286"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Gerhard Andrey",
+          "person_qid": "Q72012369",
+          "person_number": 4245,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Val-de-Charmey (Cerniat (FR)) (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q72012369"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Val-de-Charmey (Cerniat (FR)) (FR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4245"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Gerhard Andrey",
+          "person_qid": "Q72012369",
+          "person_number": 4245,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q72012369"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4245"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Giorgio Fonio",
+          "person_qid": "Q123939691",
+          "person_number": 11505,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123939691"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/11505"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Greta Gysin",
+          "person_qid": "Q72112238",
+          "person_number": 4268,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Oltingen (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q72112238"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Oltingen (BL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4268"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Greta Gysin",
+          "person_qid": "Q72112238",
+          "person_number": 4268,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q72112238"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4268"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Hans Jörg Rüegsegger",
+          "person_qid": "Q123734988",
+          "person_number": 10852,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123734988"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "5"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10852"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Hasan Candan",
+          "person_qid": "Q1231245",
+          "person_number": 10828,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Luzern (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1231245"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Luzern (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10828"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Heinz Theiler",
+          "person_qid": "Q123308341",
+          "person_number": 10808,
+          "qid_source": "identifier",
+          "canton": "SZ",
+          "parl_group": "RL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zug (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123308341"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Zug (ZG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10808"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Irène Kälin",
+          "person_qid": "Q19502656",
+          "person_number": 4218,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q19502656"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4218"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Isabelle Chappuis",
+          "person_qid": "Q123157373",
+          "person_number": 10817,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123157373"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10817"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Islam Alijaj",
+          "person_qid": "Q123159605",
+          "person_number": 10812,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Hereq (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123159605"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Hereq (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10812"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jacques Nicolet",
+          "person_qid": "Q21294778",
+          "person_number": 4168,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294778"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4168"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jean Tschopp",
+          "person_qid": "Q123156900",
+          "person_number": 10827,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123156900"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10827"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jean-Luc Addor",
+          "person_qid": "Q21294488",
+          "person_number": 4154,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294488"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4154"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jon Pult",
+          "person_qid": "Q19365452",
+          "person_number": 4281,
+          "qid_source": "identifier",
+          "canton": "GR",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q19365452"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4281"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Katharina Prelicz-Huber",
+          "person_qid": "Q125403",
+          "person_number": 3999,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q125403"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/3999"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Katja Christ",
+          "person_qid": "Q77074962",
+          "person_number": 4252,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "GL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS), Binningen (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074962"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Basel (BS)",
+              "Binningen (BL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4252"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Katja Christ",
+          "person_qid": "Q77074962",
+          "person_number": 4252,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "GL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074962"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4252"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Kilian Baumann",
+          "person_qid": "Q61807649",
+          "person_number": 4247,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61807649"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4247"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Kris Vietze",
+          "person_qid": "Q123270674",
+          "person_number": 10806,
+          "qid_source": "identifier",
+          "canton": "TG",
+          "parl_group": "RL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Mayen (D) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123270674"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Mayen (D) (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10806"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Kris Vietze",
+          "person_qid": "Q123270674",
+          "person_number": 10806,
+          "qid_source": "identifier",
+          "canton": "TG",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123270674"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10806"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Laura Gantenbein",
+          "person_qid": "Q61614229",
+          "person_number": 16804,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "G",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Solothurn (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61614229"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Solothurn (SO)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/16804"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Laurence Fehlmann Rielle",
+          "person_qid": "Q21694713",
+          "person_number": 4195,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Genf (GE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21694713"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Genf (GE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4195"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Laurent Wehrli",
+          "person_qid": "Q21294873",
+          "person_number": 4194,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Küttigen (AG), Montreux (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294873"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Küttigen (AG)",
+              "Montreux (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4194"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Laurent Wehrli",
+          "person_qid": "Q21294873",
+          "person_number": 4194,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294873"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "5"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4194"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Leo Müller",
+          "person_qid": "Q1345180",
+          "person_number": 4097,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Schüpfheim (LU), Ruswil (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1345180"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Schüpfheim (LU)",
+              "Ruswil (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4097"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Leo Müller",
+          "person_qid": "Q1345180",
+          "person_number": 4097,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1345180"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4097"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Loïc Dobler",
+          "person_qid": "Q138498177",
+          "person_number": 16905,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138498177"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/16905"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Lukas Reimann",
+          "person_qid": "Q116891",
+          "person_number": 3901,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Oberhof (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q116891"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Oberhof (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/3901"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Léonore Porchet",
+          "person_qid": "Q71795735",
+          "person_number": 4280,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Montilliez (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71795735"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Montilliez (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4280"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Magdalena Martullo-Blocher",
+          "person_qid": "Q1883801",
+          "person_number": 4167,
+          "qid_source": "identifier",
+          "canton": "GR",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH),Schattenhalb (BE),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1883801"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Meilen (ZH),Schattenhalb (BE),Zürich (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4167"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Manfred Bühler",
+          "person_qid": "Q21283173",
+          "person_number": 4157,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Aeschi b. Spiez (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21283173"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Aeschi b. Spiez (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4157"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marc Jost",
+          "person_qid": "Q64764966",
+          "person_number": 4331,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q64764966"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4331"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marcel Dettling",
+          "person_qid": "Q21180915",
+          "person_number": 4160,
+          "qid_source": "identifier",
+          "canton": "SZ",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Oberiberg (SZ). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21180915"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Oberiberg (SZ)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4160"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marcel Dobler",
+          "person_qid": "Q19840724",
+          "person_number": 4190,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Appenzell (AI), Rapperswil-Jona (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q19840724"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Appenzell (AI)",
+              "Rapperswil-Jona (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4190"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marcel Dobler",
+          "person_qid": "Q19840724",
+          "person_number": 4190,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q19840724"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4190"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marie-France Roth Pasquier",
+          "person_qid": "Q71813104",
+          "person_number": 4284,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Gruyères (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71813104"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Gruyères (FR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4284"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marie-France Roth Pasquier",
+          "person_qid": "Q71813104",
+          "person_number": 4284,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71813104"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4284"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marionna Schlatter",
+          "person_qid": "Q67942617",
+          "person_number": 4288,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q67942617"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4288"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Markus Ritter",
+          "person_qid": "Q1771134",
+          "person_number": 4052,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1771134"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4052"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Markus Schnyder",
+          "person_qid": "Q123155865",
+          "person_number": 10841,
+          "qid_source": "identifier",
+          "canton": "GL",
+          "parl_group": "V",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Glarus (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123155865"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Glarus (GL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10841"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Markus Schnyder",
+          "person_qid": "Q123155865",
+          "person_number": 10841,
+          "qid_source": "identifier",
+          "canton": "GL",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Netstal (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123155865"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Netstal (GL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10841"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Martin Bäumle",
+          "person_qid": "Q120934",
+          "person_number": 1138,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "GL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q120934"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/1138"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Martin Candinas",
+          "person_qid": "Q1447989",
+          "person_number": 4070,
+          "qid_source": "identifier",
+          "canton": "GR",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Sumvitg (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1447989"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Sumvitg (GR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4070"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Martin Candinas",
+          "person_qid": "Q1447989",
+          "person_number": 4070,
+          "qid_source": "identifier",
+          "canton": "GR",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1447989"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4070"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Martin Haab",
+          "person_qid": "Q64617510",
+          "person_number": 4236,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH), Mettmenstetten (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q64617510"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Meilen (ZH)",
+              "Mettmenstetten (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4236"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Martin Hübscher",
+          "person_qid": "Q64440993",
+          "person_number": 10831,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q64440993"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10831"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Matthias Samuel Jauslin",
+          "person_qid": "Q21693665",
+          "person_number": 4208,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "GL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21693665"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4208"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Maya Bally",
+          "person_qid": "Q123502804",
+          "person_number": 11508,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Boussens (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123502804"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Boussens (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/11508"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Meret Schneider",
+          "person_qid": "Q71974203",
+          "person_number": 4289,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Uster (ZH), Arni (BE) (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71974203"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Uster (ZH)",
+              "Arni (BE) (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4289"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Michael Götte",
+          "person_qid": "Q1528504",
+          "person_number": 4335,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1528504"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4335"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Michaël Buffat",
+          "person_qid": "Q21294587",
+          "person_number": 4156,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Vuarrens (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294587"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Vuarrens (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4156"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Mike Egger",
+          "person_qid": "Q1933122",
+          "person_number": 4229,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Berneck (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1933122"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Berneck (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4229"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Min Li Marti",
+          "person_qid": "Q20192072",
+          "person_number": 4197,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q20192072"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Zürich (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4197"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Monika Rüegger",
+          "person_qid": "Q73746500",
+          "person_number": 4285,
+          "qid_source": "identifier",
+          "canton": "OW",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Engelberg (OW). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q73746500"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Engelberg (OW)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4285"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Monika Rüegger",
+          "person_qid": "Q73746500",
+          "person_number": 4285,
+          "qid_source": "identifier",
+          "canton": "OW",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q73746500"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4285"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Nadine Gobet",
+          "person_qid": "Q123158072",
+          "person_number": 10809,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "RL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123158072"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Lausanne (VD)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10809"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Nicolas Kolly",
+          "person_qid": "Q123156342",
+          "person_number": 10836,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123156342"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10836"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Nicole Barandun",
+          "person_qid": "Q113636356",
+          "person_number": 10818,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "M-E",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q113636356"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Zürich (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10818"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Niklaus-Samuel Gugger",
+          "person_qid": "Q18132152",
+          "person_number": 4214,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Heimenschwand (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q18132152"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Heimenschwand (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4214"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Paolo Pamini",
+          "person_qid": "Q123485141",
+          "person_number": 10842,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123485141"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10842"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Patricia von Falkenstein",
+          "person_qid": "Q42301642",
+          "person_number": 4324,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS), Aarau (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q42301642"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Basel (BS)",
+              "Aarau (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4324"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Patricia von Falkenstein",
+          "person_qid": "Q42301642",
+          "person_number": 4324,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q42301642"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4324"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Peter Schilliger",
+          "person_qid": "Q120115",
+          "person_number": 4124,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q120115"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4124"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Philipp Kutter",
+          "person_qid": "Q1355143",
+          "person_number": 4225,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1355143"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4225"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Philipp Matthias Bregy",
+          "person_qid": "Q60485089",
+          "person_number": 4230,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q60485089"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4230"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Piero Marchesi",
+          "person_qid": "Q77073233",
+          "person_number": 4311,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77073233"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4311"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Pierre-André Page",
+          "person_qid": "Q21170951",
+          "person_number": 4169,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Châtonnaye (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21170951"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Châtonnaye (FR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4169"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Pierre-André Page",
+          "person_qid": "Q21170951",
+          "person_number": 4169,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21170951"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4169"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Priska Seiler Graf",
+          "person_qid": "Q23059252",
+          "person_number": 4199,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Kloten (ZH), Rafz (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q23059252"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Kloten (ZH)",
+              "Rafz (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4199"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Priska Seiler Graf",
+          "person_qid": "Q23059252",
+          "person_number": 4199,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q23059252"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4199"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Priska Wismer-Felder",
+          "person_qid": "Q21032279",
+          "person_number": 4305,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21032279"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "5"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4305"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Raphaël Mahaim",
+          "person_qid": "Q110634549",
+          "person_number": 4327,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q110634549"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4327"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Regina Durrer-Knobel",
+          "person_qid": "Q123154718",
+          "person_number": 10815,
+          "qid_source": "identifier",
+          "canton": "NW",
+          "parl_group": "M-E",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Stans (NW). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123154718"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Stans (NW)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10815"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Regine Sauter",
+          "person_qid": "Q23059257",
+          "person_number": 4202,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Arbon (TG), Küsnacht (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q23059257"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Arbon (TG)",
+              "Küsnacht (ZH)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4202"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Reto Nause",
+          "person_qid": "Q1497859",
+          "person_number": 10811,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Birmenstorf (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1497859"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Birmenstorf (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10811"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Reto Nause",
+          "person_qid": "Q1497859",
+          "person_number": 10811,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1497859"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10811"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Roland Rino Büchel",
+          "person_qid": "Q118502",
+          "person_number": 4025,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Rüthi (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q118502"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Rüthi (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4025"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Roland Rino Büchel",
+          "person_qid": "Q118502",
+          "person_number": 4025,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q118502"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "1"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4025"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Roman Bürgi",
+          "person_qid": "Q123235011",
+          "person_number": 10845,
+          "qid_source": "identifier",
+          "canton": "SZ",
+          "parl_group": "V",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zug (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123235011"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Zug (ZG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10845"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Roman Hug",
+          "person_qid": "Q123165852",
+          "person_number": 10844,
+          "qid_source": "identifier",
+          "canton": "GR",
+          "parl_group": "V",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Chur (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123165852"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Chur (GR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10844"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Rudi Berli",
+          "person_qid": "Q136540152",
+          "person_number": 16109,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "G",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q136540152"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/16109"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Samuel Bendahan",
+          "person_qid": "Q30118254",
+          "person_number": 4213,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Seengen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q30118254"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Seengen (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4213"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Sandra Sollberger",
+          "person_qid": "Q2221105",
+          "person_number": 4173,
+          "qid_source": "identifier",
+          "canton": "BL",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Bubendorf (BL), Rothenburg (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q2221105"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Bubendorf (BL)",
+              "Rothenburg (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4173"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Sandra Sollberger",
+          "person_qid": "Q2221105",
+          "person_number": 4173,
+          "qid_source": "identifier",
+          "canton": "BL",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q2221105"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4173"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Sarah Wyss",
+          "person_qid": "Q96283678",
+          "person_number": 4318,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q96283678"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Basel (BS)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4318"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Sidney Kamerzin",
+          "person_qid": "Q71794148",
+          "person_number": 4271,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71794148"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4271"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simon Michel",
+          "person_qid": "Q30150159",
+          "person_number": 10810,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Burgdorf (BE), Köniz (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q30150159"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Burgdorf (BE)",
+              "Köniz (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10810"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simon Michel",
+          "person_qid": "Q30150159",
+          "person_number": 10810,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q30150159"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10810"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simon Stadler",
+          "person_qid": "Q29803308",
+          "person_number": 4292,
+          "qid_source": "identifier",
+          "canton": "UR",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Altdorf (UR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q29803308"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Altdorf (UR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4292"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simona Brizzi",
+          "person_qid": "Q123183561",
+          "person_number": 10813,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123183561"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10813"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simone de Montmollin",
+          "person_qid": "Q71782088",
+          "person_number": 4256,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE), Auvernier (Milvignes) (NE), Sigriswil (BE), Provence (VD), Montmollin (Val-de-Ruz) (NE), Dombresson (Val-de-Ruz) (NE), La Brévine (NE), Corcelles-Cormondrèche (Neuchâ (NE), Valangin (Neuchâtel) (NE), Neuchâtel (NE), La Chaux-de-Fonds (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q71782088"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Les Geneveys-sur-Coffrane (Val (NE)",
+              "Auvernier (Milvignes) (NE)",
+              "Sigriswil (BE)",
+              "Provence (VD)",
+              "Montmollin (Val-de-Ruz) (NE)",
+              "Dombresson (Val-de-Ruz) (NE)",
+              "La Brévine (NE)",
+              "Corcelles-Cormondrèche (Neuchâ (NE)",
+              "Valangin (Neuchâtel) (NE)",
+              "Neuchâtel (NE)",
+              "La Chaux-de-Fonds (NE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4256"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simone Gianini",
+          "person_qid": "Q123917063",
+          "person_number": 10807,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "RL",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Faido (TI) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123917063"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Faido (TI) (--)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10807"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Simone Gianini",
+          "person_qid": "Q123917063",
+          "person_number": 10807,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123917063"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10807"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Stefan Müller-Altermatt",
+          "person_qid": "Q1307140",
+          "person_number": 4063,
+          "qid_source": "identifier",
+          "canton": "SO",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 6. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q1307140"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "6"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4063"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Stefanie Heimgartner",
+          "person_qid": "Q76468675",
+          "person_number": 4314,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q76468675"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Baden (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4314"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Susanne Vincenz-Stauffacher",
+          "person_qid": "Q61708598",
+          "person_number": 4296,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Glarus Süd (GL), Glarus Süd (GL), Trun (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61708598"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Glarus Süd (GL)",
+              "Glarus Süd (GL)",
+              "Trun (GR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4296"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Susanne Vincenz-Stauffacher",
+          "person_qid": "Q61708598",
+          "person_number": 4296,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q61708598"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4296"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Sylvain Freymond",
+          "person_qid": "Q123173100",
+          "person_number": 10835,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123173100"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10835"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Therese Schläpfer",
+          "person_qid": "Q66500771",
+          "person_number": 4234,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Ormalingen (BL), Wald (AR) (AR), Buus (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q66500771"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Ormalingen (BL)",
+              "Wald (AR) (AR)",
+              "Buus (BL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4234"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Burgherr",
+          "person_qid": "Q21181009",
+          "person_number": 4158,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Schmiedrued (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21181009"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Schmiedrued (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4158"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Knutti",
+          "person_qid": "Q123331877",
+          "person_number": 10832,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Därstetten (BE), Diemtigen (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123331877"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Därstetten (BE)",
+              "Diemtigen (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10832"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Matter",
+          "person_qid": "Q17305571",
+          "person_number": 4144,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Sissach (BL), Muhen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q17305571"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Sissach (BL)",
+              "Muhen (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4144"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Rechsteiner",
+          "person_qid": "Q77074965",
+          "person_number": 4282,
+          "qid_source": "identifier",
+          "canton": "AI",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Appenzell (AI). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074965"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Appenzell (AI)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4282"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Rechsteiner",
+          "person_qid": "Q77074965",
+          "person_number": 4282,
+          "qid_source": "identifier",
+          "canton": "AI",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074965"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4282"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thomas Stettler",
+          "person_qid": "Q123177558",
+          "person_number": 10847,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 6. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123177558"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "6"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10847"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Ueli Schmezer",
+          "person_qid": "Q2473617",
+          "person_number": 14809,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q2473617"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/14809"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Ursula Zybach",
+          "person_qid": "Q62103718",
+          "person_number": 10822,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Thun (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q62103718"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Thun (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10822"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Valérie Piller Carrard",
+          "person_qid": "Q18413490",
+          "person_number": 4109,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Rechthalten (FR), Font (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q18413490"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Rechthalten (FR)",
+              "Font (FR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4109"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Valérie Piller Carrard",
+          "person_qid": "Q18413490",
+          "person_number": 4109,
+          "qid_source": "identifier",
+          "canton": "FR",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q18413490"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4109"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Walter Gartmann",
+          "person_qid": "Q123165595",
+          "person_number": 10848,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Walenstadt (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123165595"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Walenstadt (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10848"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Yvonne Bürgin",
+          "person_qid": "Q47250749",
+          "person_number": 10819,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Wetzikon (ZH), Bubendorf (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q47250749"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Wetzikon (ZH)",
+              "Bubendorf (BL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10819"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Yvonne Bürgin",
+          "person_qid": "Q47250749",
+          "person_number": 10819,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q47250749"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10819"
+          }
         }
       ]
     },
@@ -37495,34 +41245,11 @@
       "matched_by_identifier": 46,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 329,
+      "wikidata_open": 327,
+      "identifier_mismatches": 0,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
-        {
-          "kind": "DUPLICATE_IDENTIFIER",
-          "priority": 1,
-          "member": "Paul Usteri (Q116119), Paul Emil Usteri (Q16832474)",
-          "person_qid": null,
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "P1307 '3469' is claimed by 2 Wikidata items that hold a 'Swiss Council of States' seat: Paul Usteri (Q116119), Paul Emil Usteri (Q16832474). The identifier should be unique, so either they are duplicates that need merging or one carries the wrong value. No *sitting* member has that number, so this is a conflict between items about people who have left — invisible to the rest of this report, which is why it is raised here.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "Q116119": "https://www.wikidata.org/wiki/Q116119",
-            "Q16832474": "https://www.wikidata.org/wiki/Q16832474"
-          },
-          "payload": {
-            "duplicate_qids": [
-              "Q116119",
-              "Q16832474"
-            ],
-            "parliament_id": "3469",
-            "biography": "https://www.parlament.ch/de/biografie/wd/3469"
-          }
-        },
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
@@ -42650,28 +46377,6 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
-          "member": "Paul Emil Usteri",
-          "person_qid": "Q16832474",
-          "person_number": 3469,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1900-06-05 to 1922-12-03, so add an end date (P582) of 1922-12-03, and the statement has no start date (P580) either — 1900-06-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q16832474",
-            "position": "https://www.wikidata.org/wiki/Q18510613"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q16832474-a3b01194-fd45-4b1a-96a8-a4f3b9902d47",
-            "parliament_id": "3469",
-            "biography": "https://www.parlament.ch/de/biografie/wd/3469",
-            "start": "1900-06-05",
-            "end": "1922-12-03"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
           "member": "Paul Hofmann",
           "person_qid": "Q2060236",
           "person_number": 2340,
@@ -42733,28 +46438,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/3141",
             "start": "1896-12-07",
             "end": "1919-11-01"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Paul Usteri",
-          "person_qid": "Q116119",
-          "person_number": 3469,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1900-06-05 to 1922-12-03, so add an end date (P582) of 1922-12-03, and the statement has no start date (P580) either — 1900-06-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q116119",
-            "position": "https://www.wikidata.org/wiki/Q18510613"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q116119-2fd11c5c-26a5-445e-8460-ab751c978031",
-            "parliament_id": "3469",
-            "biography": "https://www.parlament.ch/de/biografie/wd/3469",
-            "start": "1900-06-05",
-            "end": "1922-12-03"
           }
         },
         {
@@ -43787,6 +47470,830 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/1742",
             "start": "1872-12-02",
             "end": "1875-12-05"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andrea Caroni",
+          "person_qid": "Q493598",
+          "person_number": 4075,
+          "qid_source": "identifier",
+          "canton": "AR",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q493598"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4075"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Andrea Gmür-Schönenberger",
+          "person_qid": "Q21032118",
+          "person_number": 4181,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21032118"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4181"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Baptiste Hurni",
+          "person_qid": "Q71822599",
+          "person_number": 4270,
+          "qid_source": "identifier",
+          "canton": "NE",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Neuchâtel (NE), Ferenbalm (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q71822599"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Neuchâtel (NE)",
+              "Ferenbalm (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4270"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Baptiste Hurni",
+          "person_qid": "Q71822599",
+          "person_number": 4270,
+          "qid_source": "identifier",
+          "canton": "NE",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q71822599"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4270"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Beat Rieder",
+          "person_qid": "Q21061273",
+          "person_number": 4204,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Wiler (Lötschen) (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21061273"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Wiler (Lötschen) (VS)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4204"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Beat Rieder",
+          "person_qid": "Q21061273",
+          "person_number": 4204,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21061273"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4204"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benedikt Würth",
+          "person_qid": "Q817011",
+          "person_number": 4237,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Rapperswil-Jona (SG), Berg (SG) (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q817011"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Rapperswil-Jona (SG)",
+              "Berg (SG) (SG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4237"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Benjamin Mühlemann",
+          "person_qid": "Q118515875",
+          "person_number": 10802,
+          "qid_source": "identifier",
+          "canton": "GL",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Mollis (GL), Seeberg (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q118515875"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Mollis (GL)",
+              "Seeberg (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/10802"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Carlo Sommaruga",
+          "person_qid": "Q119393",
+          "person_number": 1120,
+          "qid_source": "identifier",
+          "canton": "GE",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q119393"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/1120"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Charles Juillard",
+          "person_qid": "Q1065124",
+          "person_number": 4240,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Damvant (Haute-Ajoie) (JU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1065124"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Damvant (Haute-Ajoie) (JU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4240"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Charles Juillard",
+          "person_qid": "Q1065124",
+          "person_number": 4240,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1065124"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4240"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Damian Müller",
+          "person_qid": "Q23060196",
+          "person_number": 4207,
+          "qid_source": "identifier",
+          "canton": "LU",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Ermensee (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q23060196"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Ermensee (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4207"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Daniel Fässler",
+          "person_qid": "Q1160790",
+          "person_number": 4056,
+          "qid_source": "identifier",
+          "canton": "AI",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1160790"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "3"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4056"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Erich Ettlin",
+          "person_qid": "Q23061004",
+          "person_number": 4206,
+          "qid_source": "identifier",
+          "canton": "OW",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q23061004"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4206"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Esther Friedli",
+          "person_qid": "Q73417223",
+          "person_number": 4261,
+          "qid_source": "identifier",
+          "canton": "SG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Lützelflüh (BE), Escholzmatt-Marbach (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q73417223"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Lützelflüh (BE)",
+              "Escholzmatt-Marbach (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4261"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Eva Herzog",
+          "person_qid": "Q117833",
+          "person_number": 4239,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q117833"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Basel (BS)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4239"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Eva Herzog",
+          "person_qid": "Q117833",
+          "person_number": 4239,
+          "qid_source": "identifier",
+          "canton": "BS",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q117833"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4239"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Flavia Wasserfallen",
+          "person_qid": "Q15809769",
+          "person_number": 4224,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "S",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Langnau im Emmental (BE), Ferenbalm (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q15809769"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Langnau im Emmental (BE)",
+              "Ferenbalm (BE)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4224"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Hans Wicki",
+          "person_qid": "Q15819575",
+          "person_number": 4152,
+          "qid_source": "identifier",
+          "canton": "NW",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Menznau (LU), Horw (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q15819575"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Menznau (LU)",
+              "Horw (LU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4152"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Hans Wicki",
+          "person_qid": "Q15819575",
+          "person_number": 4152,
+          "qid_source": "identifier",
+          "canton": "NW",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q15819575"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4152"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jakob Stark",
+          "person_qid": "Q119816",
+          "person_number": 4241,
+          "qid_source": "identifier",
+          "canton": "TG",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Hohentannen (TG), Teufen (AR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q119816"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Hohentannen (TG)",
+              "Teufen (AR)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4241"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Jakob Stark",
+          "person_qid": "Q119816",
+          "person_number": 4241,
+          "qid_source": "identifier",
+          "canton": "TG",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q119816"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4241"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Josef Dittli",
+          "person_qid": "Q1310215",
+          "person_number": 4151,
+          "qid_source": "identifier",
+          "canton": "UR",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1310215"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4151"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marco Chiesa",
+          "person_qid": "Q21294613",
+          "person_number": 4159,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "V",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Lugano (TI). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21294613"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Lugano (TI)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4159"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marco Chiesa",
+          "person_qid": "Q21294613",
+          "person_number": 4159,
+          "qid_source": "identifier",
+          "canton": "TI",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21294613"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4159"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marianne Binder-Keller",
+          "person_qid": "Q21032066",
+          "person_number": 4249,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG), Zurzach (Bad Zurzach) (AG), Untersiggenthal (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21032066"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Baden (AG)",
+              "Zurzach (Bad Zurzach) (AG)",
+              "Untersiggenthal (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4249"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marianne Binder-Keller",
+          "person_qid": "Q21032066",
+          "person_number": 4249,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21032066"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4249"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Marianne Maret",
+          "person_qid": "Q49316204",
+          "person_number": 4303,
+          "qid_source": "identifier",
+          "canton": "VS",
+          "parl_group": "M-E",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q49316204"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4303"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Mathias Zopfi",
+          "person_qid": "Q71860572",
+          "person_number": 4244,
+          "qid_source": "identifier",
+          "canton": "GL",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Schwanden GL (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q71860572"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Schwanden GL (GL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4244"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Mathilde Crevoisier Crelier",
+          "person_qid": "Q115650267",
+          "person_number": 4332,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "S",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Delémont (JU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q115650267"
+          },
+          "payload": {
+            "property": "P19",
+            "values": [
+              "Delémont (JU)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4332"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Mathilde Crevoisier Crelier",
+          "person_qid": "Q115650267",
+          "person_number": 4332,
+          "qid_source": "identifier",
+          "canton": "JU",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q115650267"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4332"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Matthias Michel",
+          "person_qid": "Q1910152",
+          "person_number": 4309,
+          "qid_source": "identifier",
+          "canton": "ZG",
+          "parl_group": "RL",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1910152"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4309"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Maya Graf",
+          "person_qid": "Q119406",
+          "person_number": 806,
+          "qid_source": "identifier",
+          "canton": "BL",
+          "parl_group": "G",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Sissach (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q119406"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Sissach (BL)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/806"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Peter Hegglin",
+          "person_qid": "Q1370309",
+          "person_number": 4153,
+          "qid_source": "identifier",
+          "canton": "ZG",
+          "parl_group": "M-E",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Menzingen (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q1370309"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Menzingen (ZG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4153"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Pierre-Yves Maillard",
+          "person_qid": "Q116923",
+          "person_number": 491,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q116923"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "2"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/491"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Thierry Burkart",
+          "person_qid": "Q23060472",
+          "person_number": 4189,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "RL",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG), Mühlau (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q23060472"
+          },
+          "payload": {
+            "property": "P1321",
+            "values": [
+              "Baden (AG)",
+              "Mühlau (AG)"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4189"
+          }
+        },
+        {
+          "kind": "ADD_PERSON_DATA",
+          "priority": 6,
+          "member": "Werner Salzmann",
+          "person_qid": "Q21294826",
+          "person_number": 4172,
+          "qid_source": "identifier",
+          "canton": "BE",
+          "parl_group": "V",
+          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "item": "https://www.wikidata.org/wiki/Q21294826"
+          },
+          "payload": {
+            "property": "P1971",
+            "values": [
+              "4"
+            ],
+            "biography": "https://www.parlament.ch/de/biografie/wd/4172"
           }
         }
       ]

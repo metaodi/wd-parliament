@@ -1,33 +1,166 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-08-04 18:26 UTC
+Generated: 2026-08-04 22:42 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
 - Matched by P1307: 46 (100.0%)
 - Matched by name + birth date: 0
 - Not matched at all: 0
-- Open memberships on Wikidata: 329
-- Suggested edits: 286
+- Open memberships on Wikidata: 327
+- Suggested edits: 320
 
 ## By kind
 
-- One identifier claimed by several Wikidata items: **1**
 - One Wikidata item claimed by several source records: **2**
-- Recorded as sitting, but the member has left: **283**
+- Recorded as sitting, but the member has left: **281**
+- Personal data the source publishes and Wikidata does not record: **37**
 
-## Canton: Other (286)
+## Canton: AG (3)
 
-### One identifier claimed by several Wikidata items (1)
+### Personal data the source publishes and Wikidata does not record (3)
 
-- **Paul Usteri (Q116119), Paul Emil Usteri (Q16832474)** — P1307 '3469' is claimed by 2 Wikidata items that hold a 'Swiss Council of States' seat: Paul Usteri (Q116119), Paul Emil Usteri (Q16832474). The identifier should be unique, so either they are duplicates that need merging or one carries the wrong value. No *sitting* member has that number, so this is a conflict between items about people who have left — invisible to the rest of this report, which is why it is raised here. — items: [Q116119](https://www.wikidata.org/wiki/Q116119), [Q16832474](https://www.wikidata.org/wiki/Q16832474)
+- **[Marianne Binder-Keller](https://www.wikidata.org/wiki/Q21032066)** ([#4249](https://www.parlament.ch/de/biografie/wd/4249)) — No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG), Zurzach (Bad Zurzach) (AG), Untersiggenthal (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marianne Binder-Keller](https://www.wikidata.org/wiki/Q21032066)** ([#4249](https://www.parlament.ch/de/biografie/wd/4249)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Thierry Burkart](https://www.wikidata.org/wiki/Q23060472)** ([#4189](https://www.parlament.ch/de/biografie/wd/4189)) — No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG), Mühlau (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: AI (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Daniel Fässler](https://www.wikidata.org/wiki/Q1160790)** ([#4056](https://www.parlament.ch/de/biografie/wd/4056)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: AR (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Andrea Caroni](https://www.wikidata.org/wiki/Q493598)** ([#4075](https://www.parlament.ch/de/biografie/wd/4075)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: BE (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Flavia Wasserfallen](https://www.wikidata.org/wiki/Q15809769)** ([#4224](https://www.parlament.ch/de/biografie/wd/4224)) — No 'place of origin' (P1321) statement, but parlament.ch gives Langnau im Emmental (BE), Ferenbalm (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Werner Salzmann](https://www.wikidata.org/wiki/Q21294826)** ([#4172](https://www.parlament.ch/de/biografie/wd/4172)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: BL (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Maya Graf](https://www.wikidata.org/wiki/Q119406)** ([#806](https://www.parlament.ch/de/biografie/wd/806)) — No 'place of origin' (P1321) statement, but parlament.ch gives Sissach (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: BS (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Eva Herzog](https://www.wikidata.org/wiki/Q117833)** ([#4239](https://www.parlament.ch/de/biografie/wd/4239)) — No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Eva Herzog](https://www.wikidata.org/wiki/Q117833)** ([#4239](https://www.parlament.ch/de/biografie/wd/4239)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: GE (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Carlo Sommaruga](https://www.wikidata.org/wiki/Q119393)** ([#1120](https://www.parlament.ch/de/biografie/wd/1120)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: GL (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Benjamin Mühlemann](https://www.wikidata.org/wiki/Q118515875)** ([#10802](https://www.parlament.ch/de/biografie/wd/10802)) — No 'place of origin' (P1321) statement, but parlament.ch gives Mollis (GL), Seeberg (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Mathias Zopfi](https://www.wikidata.org/wiki/Q71860572)** ([#4244](https://www.parlament.ch/de/biografie/wd/4244)) — No 'place of origin' (P1321) statement, but parlament.ch gives Schwanden GL (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: JU (4)
+
+### Personal data the source publishes and Wikidata does not record (4)
+
+- **[Charles Juillard](https://www.wikidata.org/wiki/Q1065124)** ([#4240](https://www.parlament.ch/de/biografie/wd/4240)) — No 'place of origin' (P1321) statement, but parlament.ch gives Damvant (Haute-Ajoie) (JU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Charles Juillard](https://www.wikidata.org/wiki/Q1065124)** ([#4240](https://www.parlament.ch/de/biografie/wd/4240)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Mathilde Crevoisier Crelier](https://www.wikidata.org/wiki/Q115650267)** ([#4332](https://www.parlament.ch/de/biografie/wd/4332)) — No 'place of birth' (P19) statement, but parlament.ch gives Delémont (JU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Mathilde Crevoisier Crelier](https://www.wikidata.org/wiki/Q115650267)** ([#4332](https://www.parlament.ch/de/biografie/wd/4332)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: LU (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Andrea Gmür-Schönenberger](https://www.wikidata.org/wiki/Q21032118)** ([#4181](https://www.parlament.ch/de/biografie/wd/4181)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Damian Müller](https://www.wikidata.org/wiki/Q23060196)** ([#4207](https://www.parlament.ch/de/biografie/wd/4207)) — No 'place of origin' (P1321) statement, but parlament.ch gives Ermensee (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: NE (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Baptiste Hurni](https://www.wikidata.org/wiki/Q71822599)** ([#4270](https://www.parlament.ch/de/biografie/wd/4270)) — No 'place of origin' (P1321) statement, but parlament.ch gives Neuchâtel (NE), Ferenbalm (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Baptiste Hurni](https://www.wikidata.org/wiki/Q71822599)** ([#4270](https://www.parlament.ch/de/biografie/wd/4270)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: NW (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Hans Wicki](https://www.wikidata.org/wiki/Q15819575)** ([#4152](https://www.parlament.ch/de/biografie/wd/4152)) — No 'place of origin' (P1321) statement, but parlament.ch gives Menznau (LU), Horw (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Hans Wicki](https://www.wikidata.org/wiki/Q15819575)** ([#4152](https://www.parlament.ch/de/biografie/wd/4152)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: OW (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Erich Ettlin](https://www.wikidata.org/wiki/Q23061004)** ([#4206](https://www.parlament.ch/de/biografie/wd/4206)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: SG (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Benedikt Würth](https://www.wikidata.org/wiki/Q817011)** ([#4237](https://www.parlament.ch/de/biografie/wd/4237)) — No 'place of origin' (P1321) statement, but parlament.ch gives Rapperswil-Jona (SG), Berg (SG) (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Esther Friedli](https://www.wikidata.org/wiki/Q73417223)** ([#4261](https://www.parlament.ch/de/biografie/wd/4261)) — No 'place of origin' (P1321) statement, but parlament.ch gives Lützelflüh (BE), Escholzmatt-Marbach (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: TG (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Jakob Stark](https://www.wikidata.org/wiki/Q119816)** ([#4241](https://www.parlament.ch/de/biografie/wd/4241)) — No 'place of origin' (P1321) statement, but parlament.ch gives Hohentannen (TG), Teufen (AR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Jakob Stark](https://www.wikidata.org/wiki/Q119816)** ([#4241](https://www.parlament.ch/de/biografie/wd/4241)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: TI (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Marco Chiesa](https://www.wikidata.org/wiki/Q21294613)** ([#4159](https://www.parlament.ch/de/biografie/wd/4159)) — No 'place of origin' (P1321) statement, but parlament.ch gives Lugano (TI). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marco Chiesa](https://www.wikidata.org/wiki/Q21294613)** ([#4159](https://www.parlament.ch/de/biografie/wd/4159)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: UR (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Josef Dittli](https://www.wikidata.org/wiki/Q1310215)** ([#4151](https://www.parlament.ch/de/biografie/wd/4151)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: VD (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Pierre-Yves Maillard](https://www.wikidata.org/wiki/Q116923)** ([#491](https://www.parlament.ch/de/biografie/wd/491)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: VS (3)
+
+### Personal data the source publishes and Wikidata does not record (3)
+
+- **[Beat Rieder](https://www.wikidata.org/wiki/Q21061273)** ([#4204](https://www.parlament.ch/de/biografie/wd/4204)) — No 'place of origin' (P1321) statement, but parlament.ch gives Wiler (Lötschen) (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Beat Rieder](https://www.wikidata.org/wiki/Q21061273)** ([#4204](https://www.parlament.ch/de/biografie/wd/4204)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Marianne Maret](https://www.wikidata.org/wiki/Q49316204)** ([#4303](https://www.parlament.ch/de/biografie/wd/4303)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: ZG (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Matthias Michel](https://www.wikidata.org/wiki/Q1910152)** ([#4309](https://www.parlament.ch/de/biografie/wd/4309)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Peter Hegglin](https://www.wikidata.org/wiki/Q1370309)** ([#4153](https://www.parlament.ch/de/biografie/wd/4153)) — No 'place of origin' (P1321) statement, but parlament.ch gives Menzingen (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: Other (283)
 
 ### One Wikidata item claimed by several source records (2)
 
 - **[Q1668723 (2 source records)](https://www.wikidata.org/wiki/Q1668723)** — parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 - **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 
-### Recorded as sitting, but the member has left (283)
+### Recorded as sitting, but the member has left (281)
 
 - **[Abraham Louis Tourte](https://www.wikidata.org/wiki/Q18683312)** ([#3432](https://www.parlament.ch/de/biografie/wd/3432)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1849-11-12 to 1851-10-01, so add an end date (P582) of 1851-10-01, and the statement has no start date (P580) either — 1849-11-12 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Abraham Stocker](https://www.wikidata.org/wiki/Q16146040)** ([#3342](https://www.parlament.ch/de/biografie/wd/3342)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1867-07-01 to 1871-06-01, so add an end date (P582) of 1871-06-01, and the statement has no start date (P580) either — 1867-07-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
@@ -260,11 +393,9 @@ Generated: 2026-08-04 18:26 UTC
 - **[Oskar Wettstein](https://www.wikidata.org/wiki/Q2466831)** ([#3629](https://www.parlament.ch/de/biografie/wd/3629)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1914-12-07 to 1939-12-03, so add an end date (P582) of 1939-12-03, and the statement has no start date (P580) either — 1914-12-07 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Othmar Andermatt](https://www.wikidata.org/wiki/Q96254770)** ([#638](https://www.parlament.ch/de/biografie/wd/638)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1971-01-25 to 1986-12-01, so add an end date (P582) of 1986-12-01, and the statement has no start date (P580) either — 1971-01-25 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Othmar Blumer](https://www.wikidata.org/wiki/Q16832471)** ([#1561](https://www.parlament.ch/de/biografie/wd/1561)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1890-06-02 to 1900-04-25, so add an end date (P582) of 1900-04-25, and the statement has no start date (P580) either — 1890-06-02 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
-- **[Paul Emil Usteri](https://www.wikidata.org/wiki/Q16832474)** ([#3469](https://www.parlament.ch/de/biografie/wd/3469)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1900-06-05 to 1922-12-03, so add an end date (P582) of 1922-12-03, and the statement has no start date (P580) either — 1900-06-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Paul Hofmann](https://www.wikidata.org/wiki/Q2060236)** ([#2340](https://www.parlament.ch/de/biografie/wd/2340)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1966-06-06 to 1979-11-25, so add an end date (P582) of 1979-11-25, and the statement has no start date (P580) either — 1966-06-06 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Paul Nagel](https://www.wikidata.org/wiki/Q16832467)** ([#2821](https://www.parlament.ch/de/biografie/wd/2821)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1869-07-05 to 1880-09-10, so add an end date (P582) of 1880-09-10, and the statement has no start date (P580) either — 1869-07-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Paul Scherrer](https://www.wikidata.org/wiki/Q2062215)** ([#3141](https://www.parlament.ch/de/biografie/wd/3141)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1896-12-07 to 1919-11-01, so add an end date (P582) of 1919-11-01, and the statement has no start date (P580) either — 1896-12-07 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
-- **[Paul Usteri](https://www.wikidata.org/wiki/Q116119)** ([#3469](https://www.parlament.ch/de/biografie/wd/3469)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1900-06-05 to 1922-12-03, so add an end date (P582) of 1922-12-03, and the statement has no start date (P580) either — 1900-06-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Peter Emil Isler](https://www.wikidata.org/wiki/Q2074697)** ([#2397](https://www.parlament.ch/de/biografie/wd/2397)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1890-12-01 to 1932-12-31, so add an end date (P582) of 1932-12-31, and the statement has no start date (P580) either — 1890-12-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Peter Hefti](https://www.wikidata.org/wiki/Q2075523)** ([#782](https://www.parlament.ch/de/biografie/wd/782)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1968-06-04 to 1990-05-01, so add an end date (P582) of 1990-05-01, and the statement has no start date (P580) either — 1968-06-04 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Peter Müller](https://www.wikidata.org/wiki/Q1231914)** ([#2804](https://www.parlament.ch/de/biografie/wd/2804)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1955-12-05 to 1965-11-20, so add an end date (P582) of 1965-11-20, and the statement has no start date (P580) either — 1955-12-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.

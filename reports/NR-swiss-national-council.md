@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-04 18:26 UTC
+Generated: 2026-08-04 22:42 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,12 +8,302 @@ Generated: 2026-08-04 18:26 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 1900
-- Suggested edits: 1705
+- Suggested edits: 1874
 
 ## By kind
 
 - One Wikidata item claimed by several source records: **3**
 - Recorded as sitting, but the member has left: **1702**
+- Personal data the source publishes and Wikidata does not record: **169**
+
+## Canton: AG (18)
+
+### Personal data the source publishes and Wikidata does not record (18)
+
+- **[Alois Huber](https://www.wikidata.org/wiki/Q86914282)** ([#4317](https://www.parlament.ch/de/biografie/wd/4317)) — No 'place of origin' (P1321) statement, but parlament.ch gives Boswil (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Alois Huber](https://www.wikidata.org/wiki/Q86914282)** ([#4317](https://www.parlament.ch/de/biografie/wd/4317)) — No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Andreas Glarner](https://www.wikidata.org/wiki/Q497462)** ([#4161](https://www.parlament.ch/de/biografie/wd/4161)) — No 'place of origin' (P1321) statement, but parlament.ch gives Diesbach GL (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Andreas Glarner](https://www.wikidata.org/wiki/Q497462)** ([#4161](https://www.parlament.ch/de/biografie/wd/4161)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'place of birth' (P19) statement, but parlament.ch gives Leuggern (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'place of origin' (P1321) statement, but parlament.ch gives Würenlingen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Barbara Portmann](https://www.wikidata.org/wiki/Q138767069)** ([#17101](https://www.parlament.ch/de/biografie/wd/17101)) — No 'place of birth' (P19) statement, but parlament.ch gives Brugg (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Barbara Portmann](https://www.wikidata.org/wiki/Q138767069)** ([#17101](https://www.parlament.ch/de/biografie/wd/17101)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Benjamin Giezendanner](https://www.wikidata.org/wiki/Q61196213)** ([#4266](https://www.parlament.ch/de/biografie/wd/4266)) — No 'place of origin' (P1321) statement, but parlament.ch gives Wattwil (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Benjamin Giezendanner](https://www.wikidata.org/wiki/Q61196213)** ([#4266](https://www.parlament.ch/de/biografie/wd/4266)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Cédric Wermuth](https://www.wikidata.org/wiki/Q117904)** ([#4057](https://www.parlament.ch/de/biografie/wd/4057)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Irène Kälin](https://www.wikidata.org/wiki/Q19502656)** ([#4218](https://www.parlament.ch/de/biografie/wd/4218)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Matthias Samuel Jauslin](https://www.wikidata.org/wiki/Q21693665)** ([#4208](https://www.parlament.ch/de/biografie/wd/4208)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Maya Bally](https://www.wikidata.org/wiki/Q123502804)** ([#11508](https://www.parlament.ch/de/biografie/wd/11508)) — No 'place of origin' (P1321) statement, but parlament.ch gives Boussens (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Simona Brizzi](https://www.wikidata.org/wiki/Q123183561)** ([#10813](https://www.parlament.ch/de/biografie/wd/10813)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Stefanie Heimgartner](https://www.wikidata.org/wiki/Q76468675)** ([#4314](https://www.parlament.ch/de/biografie/wd/4314)) — No 'place of origin' (P1321) statement, but parlament.ch gives Baden (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Thomas Burgherr](https://www.wikidata.org/wiki/Q21181009)** ([#4158](https://www.parlament.ch/de/biografie/wd/4158)) — No 'place of origin' (P1321) statement, but parlament.ch gives Schmiedrued (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: AI (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Thomas Rechsteiner](https://www.wikidata.org/wiki/Q77074965)** ([#4282](https://www.parlament.ch/de/biografie/wd/4282)) — No 'place of origin' (P1321) statement, but parlament.ch gives Appenzell (AI). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Thomas Rechsteiner](https://www.wikidata.org/wiki/Q77074965)** ([#4282](https://www.parlament.ch/de/biografie/wd/4282)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: AR (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Edgar Bischof](https://www.wikidata.org/wiki/Q138608486)** ([#16706](https://www.parlament.ch/de/biografie/wd/16706)) — No 'place of birth' (P19) statement, but parlament.ch gives - (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Edgar Bischof](https://www.wikidata.org/wiki/Q138608486)** ([#16706](https://www.parlament.ch/de/biografie/wd/16706)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: BE (14)
+
+### Personal data the source publishes and Wikidata does not record (14)
+
+- **[Andrea de Meuron](https://www.wikidata.org/wiki/Q61944633)** ([#17404](https://www.parlament.ch/de/biografie/wd/17404)) — No 'place of birth' (P19) statement, but parlament.ch gives Thun (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Andrea de Meuron](https://www.wikidata.org/wiki/Q61944633)** ([#17404](https://www.parlament.ch/de/biografie/wd/17404)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Andrea Zryd](https://www.wikidata.org/wiki/Q123259454)** ([#10851](https://www.parlament.ch/de/biografie/wd/10851)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Andreas Gafner](https://www.wikidata.org/wiki/Q77074759)** ([#4263](https://www.parlament.ch/de/biografie/wd/4263)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Ernst Wandfluh](https://www.wikidata.org/wiki/Q123485137)** ([#10834](https://www.parlament.ch/de/biografie/wd/10834)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Hans Jörg Rüegsegger](https://www.wikidata.org/wiki/Q123734988)** ([#10852](https://www.parlament.ch/de/biografie/wd/10852)) — No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Kilian Baumann](https://www.wikidata.org/wiki/Q61807649)** ([#4247](https://www.parlament.ch/de/biografie/wd/4247)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Manfred Bühler](https://www.wikidata.org/wiki/Q21283173)** ([#4157](https://www.parlament.ch/de/biografie/wd/4157)) — No 'place of origin' (P1321) statement, but parlament.ch gives Aeschi b. Spiez (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marc Jost](https://www.wikidata.org/wiki/Q64764966)** ([#4331](https://www.parlament.ch/de/biografie/wd/4331)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Reto Nause](https://www.wikidata.org/wiki/Q1497859)** ([#10811](https://www.parlament.ch/de/biografie/wd/10811)) — No 'place of origin' (P1321) statement, but parlament.ch gives Birmenstorf (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Reto Nause](https://www.wikidata.org/wiki/Q1497859)** ([#10811](https://www.parlament.ch/de/biografie/wd/10811)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Thomas Knutti](https://www.wikidata.org/wiki/Q123331877)** ([#10832](https://www.parlament.ch/de/biografie/wd/10832)) — No 'place of origin' (P1321) statement, but parlament.ch gives Därstetten (BE), Diemtigen (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Ueli Schmezer](https://www.wikidata.org/wiki/Q2473617)** ([#14809](https://www.parlament.ch/de/biografie/wd/14809)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Ursula Zybach](https://www.wikidata.org/wiki/Q62103718)** ([#10822](https://www.parlament.ch/de/biografie/wd/10822)) — No 'place of birth' (P19) statement, but parlament.ch gives Thun (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: BL (3)
+
+### Personal data the source publishes and Wikidata does not record (3)
+
+- **[Florence Brenzikofer](https://www.wikidata.org/wiki/Q76435729)** ([#4315](https://www.parlament.ch/de/biografie/wd/4315)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Sandra Sollberger](https://www.wikidata.org/wiki/Q2221105)** ([#4173](https://www.parlament.ch/de/biografie/wd/4173)) — No 'place of origin' (P1321) statement, but parlament.ch gives Bubendorf (BL), Rothenburg (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Sandra Sollberger](https://www.wikidata.org/wiki/Q2221105)** ([#4173](https://www.parlament.ch/de/biografie/wd/4173)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: BS (5)
+
+### Personal data the source publishes and Wikidata does not record (5)
+
+- **[Katja Christ](https://www.wikidata.org/wiki/Q77074962)** ([#4252](https://www.parlament.ch/de/biografie/wd/4252)) — No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS), Binningen (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Katja Christ](https://www.wikidata.org/wiki/Q77074962)** ([#4252](https://www.parlament.ch/de/biografie/wd/4252)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Patricia von Falkenstein](https://www.wikidata.org/wiki/Q42301642)** ([#4324](https://www.parlament.ch/de/biografie/wd/4324)) — No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS), Aarau (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Patricia von Falkenstein](https://www.wikidata.org/wiki/Q42301642)** ([#4324](https://www.parlament.ch/de/biografie/wd/4324)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Sarah Wyss](https://www.wikidata.org/wiki/Q96283678)** ([#4318](https://www.parlament.ch/de/biografie/wd/4318)) — No 'place of origin' (P1321) statement, but parlament.ch gives Basel (BS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: FR (11)
+
+### Personal data the source publishes and Wikidata does not record (11)
+
+- **[Christine Bulliard-Marbach](https://www.wikidata.org/wiki/Q1083465)** ([#4101](https://www.parlament.ch/de/biografie/wd/4101)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Gerhard Andrey](https://www.wikidata.org/wiki/Q72012369)** ([#4245](https://www.parlament.ch/de/biografie/wd/4245)) — No 'place of origin' (P1321) statement, but parlament.ch gives Val-de-Charmey (Cerniat (FR)) (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Gerhard Andrey](https://www.wikidata.org/wiki/Q72012369)** ([#4245](https://www.parlament.ch/de/biografie/wd/4245)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Marie-France Roth Pasquier](https://www.wikidata.org/wiki/Q71813104)** ([#4284](https://www.parlament.ch/de/biografie/wd/4284)) — No 'place of origin' (P1321) statement, but parlament.ch gives Gruyères (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marie-France Roth Pasquier](https://www.wikidata.org/wiki/Q71813104)** ([#4284](https://www.parlament.ch/de/biografie/wd/4284)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Nadine Gobet](https://www.wikidata.org/wiki/Q123158072)** ([#10809](https://www.parlament.ch/de/biografie/wd/10809)) — No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Nicolas Kolly](https://www.wikidata.org/wiki/Q123156342)** ([#10836](https://www.parlament.ch/de/biografie/wd/10836)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Pierre-André Page](https://www.wikidata.org/wiki/Q21170951)** ([#4169](https://www.parlament.ch/de/biografie/wd/4169)) — No 'place of origin' (P1321) statement, but parlament.ch gives Châtonnaye (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Pierre-André Page](https://www.wikidata.org/wiki/Q21170951)** ([#4169](https://www.parlament.ch/de/biografie/wd/4169)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Valérie Piller Carrard](https://www.wikidata.org/wiki/Q18413490)** ([#4109](https://www.parlament.ch/de/biografie/wd/4109)) — No 'place of origin' (P1321) statement, but parlament.ch gives Rechthalten (FR), Font (FR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Valérie Piller Carrard](https://www.wikidata.org/wiki/Q18413490)** ([#4109](https://www.parlament.ch/de/biografie/wd/4109)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: GE (6)
+
+### Personal data the source publishes and Wikidata does not record (6)
+
+- **[Christian Dandrès](https://www.wikidata.org/wiki/Q71799433)** ([#4255](https://www.parlament.ch/de/biografie/wd/4255)) — No 'place of origin' (P1321) statement, but parlament.ch gives Orsières (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Christian Dandrès](https://www.wikidata.org/wiki/Q71799433)** ([#4255](https://www.parlament.ch/de/biografie/wd/4255)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Delphine Klopfenstein Broggini](https://www.wikidata.org/wiki/Q71792676)** ([#4272](https://www.parlament.ch/de/biografie/wd/4272)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Laurence Fehlmann Rielle](https://www.wikidata.org/wiki/Q21694713)** ([#4195](https://www.parlament.ch/de/biografie/wd/4195)) — No 'place of origin' (P1321) statement, but parlament.ch gives Genf (GE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Rudi Berli](https://www.wikidata.org/wiki/Q136540152)** ([#16109](https://www.parlament.ch/de/biografie/wd/16109)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Simone de Montmollin](https://www.wikidata.org/wiki/Q71782088)** ([#4256](https://www.parlament.ch/de/biografie/wd/4256)) — No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE), Auvernier (Milvignes) (NE), Sigriswil (BE), Provence (VD), Montmollin (Val-de-Ruz) (NE), Dombresson (Val-de-Ruz) (NE), La Brévine (NE), Corcelles-Cormondrèche (Neuchâ (NE), Valangin (Neuchâtel) (NE), Neuchâtel (NE), La Chaux-de-Fonds (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: GL (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Markus Schnyder](https://www.wikidata.org/wiki/Q123155865)** ([#10841](https://www.parlament.ch/de/biografie/wd/10841)) — No 'place of birth' (P19) statement, but parlament.ch gives Glarus (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Markus Schnyder](https://www.wikidata.org/wiki/Q123155865)** ([#10841](https://www.parlament.ch/de/biografie/wd/10841)) — No 'place of origin' (P1321) statement, but parlament.ch gives Netstal (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: GR (5)
+
+### Personal data the source publishes and Wikidata does not record (5)
+
+- **[Jon Pult](https://www.wikidata.org/wiki/Q19365452)** ([#4281](https://www.parlament.ch/de/biografie/wd/4281)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Magdalena Martullo-Blocher](https://www.wikidata.org/wiki/Q1883801)** ([#4167](https://www.parlament.ch/de/biografie/wd/4167)) — No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH),Schattenhalb (BE),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Martin Candinas](https://www.wikidata.org/wiki/Q1447989)** ([#4070](https://www.parlament.ch/de/biografie/wd/4070)) — No 'place of origin' (P1321) statement, but parlament.ch gives Sumvitg (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Martin Candinas](https://www.wikidata.org/wiki/Q1447989)** ([#4070](https://www.parlament.ch/de/biografie/wd/4070)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Roman Hug](https://www.wikidata.org/wiki/Q123165852)** ([#10844](https://www.parlament.ch/de/biografie/wd/10844)) — No 'place of birth' (P19) statement, but parlament.ch gives Chur (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: JU (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Loïc Dobler](https://www.wikidata.org/wiki/Q138498177)** ([#16905](https://www.parlament.ch/de/biografie/wd/16905)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Thomas Stettler](https://www.wikidata.org/wiki/Q123177558)** ([#10847](https://www.parlament.ch/de/biografie/wd/10847)) — No 'number of children' (P1971) statement, but parlament.ch gives 6. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: LU (7)
+
+### Personal data the source publishes and Wikidata does not record (7)
+
+- **[David Roth](https://www.wikidata.org/wiki/Q1176389)** ([#10821](https://www.parlament.ch/de/biografie/wd/10821)) — No 'place of birth' (P19) statement, but parlament.ch gives Luzern (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Franz Grüter](https://www.wikidata.org/wiki/Q21269511)** ([#4162](https://www.parlament.ch/de/biografie/wd/4162)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Hasan Candan](https://www.wikidata.org/wiki/Q1231245)** ([#10828](https://www.parlament.ch/de/biografie/wd/10828)) — No 'place of birth' (P19) statement, but parlament.ch gives Luzern (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Leo Müller](https://www.wikidata.org/wiki/Q1345180)** ([#4097](https://www.parlament.ch/de/biografie/wd/4097)) — No 'place of origin' (P1321) statement, but parlament.ch gives Schüpfheim (LU), Ruswil (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Leo Müller](https://www.wikidata.org/wiki/Q1345180)** ([#4097](https://www.parlament.ch/de/biografie/wd/4097)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Peter Schilliger](https://www.wikidata.org/wiki/Q120115)** ([#4124](https://www.parlament.ch/de/biografie/wd/4124)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Priska Wismer-Felder](https://www.wikidata.org/wiki/Q21032279)** ([#4305](https://www.parlament.ch/de/biografie/wd/4305)) — No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: NE (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Clarence Chollet](https://www.wikidata.org/wiki/Q133699098)** ([#15304](https://www.parlament.ch/de/biografie/wd/15304)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Didier Calame](https://www.wikidata.org/wiki/Q123158457)** ([#10850](https://www.parlament.ch/de/biografie/wd/10850)) — No 'place of origin' (P1321) statement, but parlament.ch gives Les Planchettes (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: NW (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Regina Durrer-Knobel](https://www.wikidata.org/wiki/Q123154718)** ([#10815](https://www.parlament.ch/de/biografie/wd/10815)) — No 'place of birth' (P19) statement, but parlament.ch gives Stans (NW). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: OW (2)
+
+### Personal data the source publishes and Wikidata does not record (2)
+
+- **[Monika Rüegger](https://www.wikidata.org/wiki/Q73746500)** ([#4285](https://www.parlament.ch/de/biografie/wd/4285)) — No 'place of origin' (P1321) statement, but parlament.ch gives Engelberg (OW). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Monika Rüegger](https://www.wikidata.org/wiki/Q73746500)** ([#4285](https://www.parlament.ch/de/biografie/wd/4285)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: SG (12)
+
+### Personal data the source publishes and Wikidata does not record (12)
+
+- **[Franziska Ryser](https://www.wikidata.org/wiki/Q71957069)** ([#4286](https://www.parlament.ch/de/biografie/wd/4286)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Lukas Reimann](https://www.wikidata.org/wiki/Q116891)** ([#3901](https://www.parlament.ch/de/biografie/wd/3901)) — No 'place of origin' (P1321) statement, but parlament.ch gives Oberhof (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marcel Dobler](https://www.wikidata.org/wiki/Q19840724)** ([#4190](https://www.parlament.ch/de/biografie/wd/4190)) — No 'place of origin' (P1321) statement, but parlament.ch gives Appenzell (AI), Rapperswil-Jona (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marcel Dobler](https://www.wikidata.org/wiki/Q19840724)** ([#4190](https://www.parlament.ch/de/biografie/wd/4190)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Markus Ritter](https://www.wikidata.org/wiki/Q1771134)** ([#4052](https://www.parlament.ch/de/biografie/wd/4052)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Michael Götte](https://www.wikidata.org/wiki/Q1528504)** ([#4335](https://www.parlament.ch/de/biografie/wd/4335)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Mike Egger](https://www.wikidata.org/wiki/Q1933122)** ([#4229](https://www.parlament.ch/de/biografie/wd/4229)) — No 'place of origin' (P1321) statement, but parlament.ch gives Berneck (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Roland Rino Büchel](https://www.wikidata.org/wiki/Q118502)** ([#4025](https://www.parlament.ch/de/biografie/wd/4025)) — No 'place of origin' (P1321) statement, but parlament.ch gives Rüthi (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Roland Rino Büchel](https://www.wikidata.org/wiki/Q118502)** ([#4025](https://www.parlament.ch/de/biografie/wd/4025)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Susanne Vincenz-Stauffacher](https://www.wikidata.org/wiki/Q61708598)** ([#4296](https://www.parlament.ch/de/biografie/wd/4296)) — No 'place of origin' (P1321) statement, but parlament.ch gives Glarus Süd (GL), Glarus Süd (GL), Trun (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Susanne Vincenz-Stauffacher](https://www.wikidata.org/wiki/Q61708598)** ([#4296](https://www.parlament.ch/de/biografie/wd/4296)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Walter Gartmann](https://www.wikidata.org/wiki/Q123165595)** ([#10848](https://www.parlament.ch/de/biografie/wd/10848)) — No 'place of birth' (P19) statement, but parlament.ch gives Walenstadt (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: SO (7)
+
+### Personal data the source publishes and Wikidata does not record (7)
+
+- **[Christian Imark](https://www.wikidata.org/wiki/Q21268794)** ([#4164](https://www.parlament.ch/de/biografie/wd/4164)) — No 'place of origin' (P1321) statement, but parlament.ch gives Himmelried (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Christian Imark](https://www.wikidata.org/wiki/Q21268794)** ([#4164](https://www.parlament.ch/de/biografie/wd/4164)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Farah Rumy](https://www.wikidata.org/wiki/Q107377457)** ([#11506](https://www.parlament.ch/de/biografie/wd/11506)) — No 'place of origin' (P1321) statement, but parlament.ch gives Grenchen (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Laura Gantenbein](https://www.wikidata.org/wiki/Q61614229)** ([#16804](https://www.parlament.ch/de/biografie/wd/16804)) — No 'place of birth' (P19) statement, but parlament.ch gives Solothurn (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Simon Michel](https://www.wikidata.org/wiki/Q30150159)** ([#10810](https://www.parlament.ch/de/biografie/wd/10810)) — No 'place of origin' (P1321) statement, but parlament.ch gives Burgdorf (BE), Köniz (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Simon Michel](https://www.wikidata.org/wiki/Q30150159)** ([#10810](https://www.parlament.ch/de/biografie/wd/10810)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Stefan Müller-Altermatt](https://www.wikidata.org/wiki/Q1307140)** ([#4063](https://www.parlament.ch/de/biografie/wd/4063)) — No 'number of children' (P1971) statement, but parlament.ch gives 6. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: SZ (4)
+
+### Personal data the source publishes and Wikidata does not record (4)
+
+- **[Dominik Blunschy](https://www.wikidata.org/wiki/Q57550766)** ([#10816](https://www.parlament.ch/de/biografie/wd/10816)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Heinz Theiler](https://www.wikidata.org/wiki/Q123308341)** ([#10808](https://www.parlament.ch/de/biografie/wd/10808)) — No 'place of birth' (P19) statement, but parlament.ch gives Zug (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Marcel Dettling](https://www.wikidata.org/wiki/Q21180915)** ([#4160](https://www.parlament.ch/de/biografie/wd/4160)) — No 'place of origin' (P1321) statement, but parlament.ch gives Oberiberg (SZ). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Roman Bürgi](https://www.wikidata.org/wiki/Q123235011)** ([#10845](https://www.parlament.ch/de/biografie/wd/10845)) — No 'place of birth' (P19) statement, but parlament.ch gives Zug (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: TG (3)
+
+### Personal data the source publishes and Wikidata does not record (3)
+
+- **[Christian Lohr](https://www.wikidata.org/wiki/Q1080853)** ([#4118](https://www.parlament.ch/de/biografie/wd/4118)) — No 'place of origin' (P1321) statement, but parlament.ch gives Kreuzlingen (TG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Kris Vietze](https://www.wikidata.org/wiki/Q123270674)** ([#10806](https://www.parlament.ch/de/biografie/wd/10806)) — No 'place of birth' (P19) statement, but parlament.ch gives Mayen (D) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Kris Vietze](https://www.wikidata.org/wiki/Q123270674)** ([#10806](https://www.parlament.ch/de/biografie/wd/10806)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: TI (8)
+
+### Personal data the source publishes and Wikidata does not record (8)
+
+- **[Bruno Storni](https://www.wikidata.org/wiki/Q77073229)** ([#4312](https://www.parlament.ch/de/biografie/wd/4312)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Giorgio Fonio](https://www.wikidata.org/wiki/Q123939691)** ([#11505](https://www.parlament.ch/de/biografie/wd/11505)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Greta Gysin](https://www.wikidata.org/wiki/Q72112238)** ([#4268](https://www.parlament.ch/de/biografie/wd/4268)) — No 'place of origin' (P1321) statement, but parlament.ch gives Oltingen (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Greta Gysin](https://www.wikidata.org/wiki/Q72112238)** ([#4268](https://www.parlament.ch/de/biografie/wd/4268)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Paolo Pamini](https://www.wikidata.org/wiki/Q123485141)** ([#10842](https://www.parlament.ch/de/biografie/wd/10842)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Piero Marchesi](https://www.wikidata.org/wiki/Q77073233)** ([#4311](https://www.parlament.ch/de/biografie/wd/4311)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Simone Gianini](https://www.wikidata.org/wiki/Q123917063)** ([#10807](https://www.parlament.ch/de/biografie/wd/10807)) — No 'place of birth' (P19) statement, but parlament.ch gives Faido (TI) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Simone Gianini](https://www.wikidata.org/wiki/Q123917063)** ([#10807](https://www.parlament.ch/de/biografie/wd/10807)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: UR (1)
+
+### Personal data the source publishes and Wikidata does not record (1)
+
+- **[Simon Stadler](https://www.wikidata.org/wiki/Q29803308)** ([#4292](https://www.parlament.ch/de/biografie/wd/4292)) — No 'place of origin' (P1321) statement, but parlament.ch gives Altdorf (UR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+
+## Canton: VD (17)
+
+### Personal data the source publishes and Wikidata does not record (17)
+
+- **[Benoît Gaillard](https://www.wikidata.org/wiki/Q133730517)** ([#15004](https://www.parlament.ch/de/biografie/wd/15004)) — No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Brenda Tuosto](https://www.wikidata.org/wiki/Q123172174)** ([#10825](https://www.parlament.ch/de/biografie/wd/10825)) — No 'place of birth' (P19) statement, but parlament.ch gives Yverdon-les-Bains (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Brenda Tuosto](https://www.wikidata.org/wiki/Q123172174)** ([#10825](https://www.parlament.ch/de/biografie/wd/10825)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Brigitte Crottaz](https://www.wikidata.org/wiki/Q45812562)** ([#4219](https://www.parlament.ch/de/biografie/wd/4219)) — No 'place of origin' (P1321) statement, but parlament.ch gives Saint-Barthélemy (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Céline Weber](https://www.wikidata.org/wiki/Q109801673)** ([#4323](https://www.parlament.ch/de/biografie/wd/4323)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Daniel Ruch](https://www.wikidata.org/wiki/Q24698727)** ([#4329](https://www.parlament.ch/de/biografie/wd/4329)) — No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Daniel Ruch](https://www.wikidata.org/wiki/Q24698727)** ([#4329](https://www.parlament.ch/de/biografie/wd/4329)) — No 'place of origin' (P1321) statement, but parlament.ch gives Lützelflüh (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Isabelle Chappuis](https://www.wikidata.org/wiki/Q123157373)** ([#10817](https://www.parlament.ch/de/biografie/wd/10817)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Jacques Nicolet](https://www.wikidata.org/wiki/Q21294778)** ([#4168](https://www.parlament.ch/de/biografie/wd/4168)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Jean Tschopp](https://www.wikidata.org/wiki/Q123156900)** ([#10827](https://www.parlament.ch/de/biografie/wd/10827)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Laurent Wehrli](https://www.wikidata.org/wiki/Q21294873)** ([#4194](https://www.parlament.ch/de/biografie/wd/4194)) — No 'place of origin' (P1321) statement, but parlament.ch gives Küttigen (AG), Montreux (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Laurent Wehrli](https://www.wikidata.org/wiki/Q21294873)** ([#4194](https://www.parlament.ch/de/biografie/wd/4194)) — No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Léonore Porchet](https://www.wikidata.org/wiki/Q71795735)** ([#4280](https://www.parlament.ch/de/biografie/wd/4280)) — No 'place of origin' (P1321) statement, but parlament.ch gives Montilliez (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Michaël Buffat](https://www.wikidata.org/wiki/Q21294587)** ([#4156](https://www.parlament.ch/de/biografie/wd/4156)) — No 'place of origin' (P1321) statement, but parlament.ch gives Vuarrens (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Raphaël Mahaim](https://www.wikidata.org/wiki/Q110634549)** ([#4327](https://www.parlament.ch/de/biografie/wd/4327)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Samuel Bendahan](https://www.wikidata.org/wiki/Q30118254)** ([#4213](https://www.parlament.ch/de/biografie/wd/4213)) — No 'place of origin' (P1321) statement, but parlament.ch gives Seengen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Sylvain Freymond](https://www.wikidata.org/wiki/Q123173100)** ([#10835](https://www.parlament.ch/de/biografie/wd/10835)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: VS (6)
+
+### Personal data the source publishes and Wikidata does not record (6)
+
+- **[Benjamin Roduit](https://www.wikidata.org/wiki/Q46351629)** ([#4220](https://www.parlament.ch/de/biografie/wd/4220)) — No 'place of origin' (P1321) statement, but parlament.ch gives Saillon (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Benjamin Roduit](https://www.wikidata.org/wiki/Q46351629)** ([#4220](https://www.parlament.ch/de/biografie/wd/4220)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Emmanuel Amoos](https://www.wikidata.org/wiki/Q106240011)** ([#4320](https://www.parlament.ch/de/biografie/wd/4320)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Jean-Luc Addor](https://www.wikidata.org/wiki/Q21294488)** ([#4154](https://www.parlament.ch/de/biografie/wd/4154)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Philipp Matthias Bregy](https://www.wikidata.org/wiki/Q60485089)** ([#4230](https://www.parlament.ch/de/biografie/wd/4230)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Sidney Kamerzin](https://www.wikidata.org/wiki/Q71794148)** ([#4271](https://www.parlament.ch/de/biografie/wd/4271)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+
+## Canton: ZH (29)
+
+### Personal data the source publishes and Wikidata does not record (29)
+
+- **[Andri Silberschmidt](https://www.wikidata.org/wiki/Q30017107)** ([#4290](https://www.parlament.ch/de/biografie/wd/4290)) — No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Barbara Schaffner](https://www.wikidata.org/wiki/Q66547307)** ([#4287](https://www.parlament.ch/de/biografie/wd/4287)) — No 'place of origin' (P1321) statement, but parlament.ch gives Hausen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Barbara Schaffner](https://www.wikidata.org/wiki/Q66547307)** ([#4287](https://www.parlament.ch/de/biografie/wd/4287)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Barbara Steinemann](https://www.wikidata.org/wiki/Q21180065)** ([#4174](https://www.parlament.ch/de/biografie/wd/4174)) — No 'place of origin' (P1321) statement, but parlament.ch gives Rümlang (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Beat Walti](https://www.wikidata.org/wiki/Q18018671)** ([#4142](https://www.parlament.ch/de/biografie/wd/4142)) — No 'place of origin' (P1321) statement, but parlament.ch gives Dürrenäsch (AG), Zollikon (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Benjamin Fischer](https://www.wikidata.org/wiki/Q20676035)** ([#4326](https://www.parlament.ch/de/biografie/wd/4326)) — No 'place of origin' (P1321) statement, but parlament.ch gives Volketswil (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Benjamin Fischer](https://www.wikidata.org/wiki/Q20676035)** ([#4326](https://www.parlament.ch/de/biografie/wd/4326)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Bettina Balmer](https://www.wikidata.org/wiki/Q123183642)** ([#10804](https://www.parlament.ch/de/biografie/wd/10804)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Bruno Walliser](https://www.wikidata.org/wiki/Q21180045)** ([#4177](https://www.parlament.ch/de/biografie/wd/4177)) — No 'place of origin' (P1321) statement, but parlament.ch gives Mosnang (SG), Volketswil (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Corina Gredig](https://www.wikidata.org/wiki/Q59140652)** ([#4267](https://www.parlament.ch/de/biografie/wd/4267)) — No 'place of origin' (P1321) statement, but parlament.ch gives Schenkon (LU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Erich Vontobel](https://www.wikidata.org/wiki/Q123682757)** ([#10838](https://www.parlament.ch/de/biografie/wd/10838)) — No 'place of origin' (P1321) statement, but parlament.ch gives Rüti (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Islam Alijaj](https://www.wikidata.org/wiki/Q123159605)** ([#10812](https://www.parlament.ch/de/biografie/wd/10812)) — No 'place of birth' (P19) statement, but parlament.ch gives Hereq (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Katharina Prelicz-Huber](https://www.wikidata.org/wiki/Q125403)** ([#3999](https://www.parlament.ch/de/biografie/wd/3999)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Marionna Schlatter](https://www.wikidata.org/wiki/Q67942617)** ([#4288](https://www.parlament.ch/de/biografie/wd/4288)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Martin Bäumle](https://www.wikidata.org/wiki/Q120934)** ([#1138](https://www.parlament.ch/de/biografie/wd/1138)) — No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Martin Haab](https://www.wikidata.org/wiki/Q64617510)** ([#4236](https://www.parlament.ch/de/biografie/wd/4236)) — No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH), Mettmenstetten (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Martin Hübscher](https://www.wikidata.org/wiki/Q64440993)** ([#10831](https://www.parlament.ch/de/biografie/wd/10831)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Meret Schneider](https://www.wikidata.org/wiki/Q71974203)** ([#4289](https://www.parlament.ch/de/biografie/wd/4289)) — No 'place of origin' (P1321) statement, but parlament.ch gives Uster (ZH), Arni (BE) (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Min Li Marti](https://www.wikidata.org/wiki/Q20192072)** ([#4197](https://www.parlament.ch/de/biografie/wd/4197)) — No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Nicole Barandun](https://www.wikidata.org/wiki/Q113636356)** ([#10818](https://www.parlament.ch/de/biografie/wd/10818)) — No 'place of birth' (P19) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Niklaus-Samuel Gugger](https://www.wikidata.org/wiki/Q18132152)** ([#4214](https://www.parlament.ch/de/biografie/wd/4214)) — No 'place of origin' (P1321) statement, but parlament.ch gives Heimenschwand (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Philipp Kutter](https://www.wikidata.org/wiki/Q1355143)** ([#4225](https://www.parlament.ch/de/biografie/wd/4225)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Priska Seiler Graf](https://www.wikidata.org/wiki/Q23059252)** ([#4199](https://www.parlament.ch/de/biografie/wd/4199)) — No 'place of origin' (P1321) statement, but parlament.ch gives Kloten (ZH), Rafz (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Priska Seiler Graf](https://www.wikidata.org/wiki/Q23059252)** ([#4199](https://www.parlament.ch/de/biografie/wd/4199)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
+- **[Regine Sauter](https://www.wikidata.org/wiki/Q23059257)** ([#4202](https://www.parlament.ch/de/biografie/wd/4202)) — No 'place of origin' (P1321) statement, but parlament.ch gives Arbon (TG), Küsnacht (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Therese Schläpfer](https://www.wikidata.org/wiki/Q66500771)** ([#4234](https://www.parlament.ch/de/biografie/wd/4234)) — No 'place of origin' (P1321) statement, but parlament.ch gives Ormalingen (BL), Wald (AR) (AR), Buus (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Thomas Matter](https://www.wikidata.org/wiki/Q17305571)** ([#4144](https://www.parlament.ch/de/biografie/wd/4144)) — No 'place of origin' (P1321) statement, but parlament.ch gives Sissach (BL), Muhen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'place of origin' (P1321) statement, but parlament.ch gives Wetzikon (ZH), Bubendorf (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
 ## Canton: Other (1705)
 
