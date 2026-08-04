@@ -197,7 +197,11 @@ selected by `config.source` in `app.build_source`, joined on
 - **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
   purpose.** No period table exists (so no P2937 is ever suggested), and the
   rows are per-tenure so `begin_date` is already the date P580 wants. Do not
-  "fix" either by inventing data.
+  "fix" either by inventing data. `get_tenures` is *not* in that category and
+  does return rows: it answers a different question — when did somebody hold
+  this seat, including people who have left — off the ended `memberships` rows
+  `get_members` filters away. Same cached fetch, role allowlist applied, no
+  `today` filter.
 - **user-facing strings are parameters.** `report` and `diff` take
   `source_name` / `identifier_property` / `district_label`; a cantonal report
   saying "parlament.ch" or "P1307" sends a reader to a service that has never
@@ -275,6 +279,8 @@ A straight line, wired in `app.py::run` → `app.py::process`:
 config.load_config
   → parliament.get_periods()          # LegislativePeriod (~52 rows), one request
   → parliament.get_members()          # MemberCouncil, Active=True, ~246 rows
+  → parliament.get_member_segments()  # MemberCouncilHistory -> the P580 start
+  → parliament.get_tenures()          # the same rows -> dates for people who left
   → wikidata.get_position_holders()   # 3 SPARQL queries, merged into one map
   → resolve.resolve_members()         # P1307 join, then the name fallback
   → for each chamber: diff.compute_suggestions()
@@ -291,7 +297,11 @@ expensive one.
   `KIND_*` constants, `PRIORITY` sort weights (lower = more urgent) and
   `KIND_LABEL` human strings. Adding a kind means touching all three maps plus
   `diff.py`. `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
-  was established, and that provenance is what gates QuickStatements.
+  was established, and that provenance is what gates QuickStatements. `Member`
+  is "who sits today"; `Tenure` is "when did this person hold this seat", asked
+  about people the members table does not contain, and keyed
+  `(person_number, council)` for the same reason `seats_by_seat` is — a person
+  is not a seat.
 - **`config.py`** — loads/validates `config/parliament.yaml`. Enforces a real
   `user_agent` (rejects placeholders) and validates every Q-ID map. A key
   mapped to a blank value is a deliberate "not known yet" and is dropped, not
@@ -304,7 +314,10 @@ expensive one.
   `periods_from_rows`) are module-level and pure, and that is how
   `get_members` is tested — by feeding fixture rows, never by mocking OData.
   The client is constructed lazily because building it fetches the metadata
-  document over the network.
+  document over the network. `MemberCouncilHistory` is read **once per client**
+  and answers two questions off the same rows: the tenure *start* P580 comes
+  from (`tenure_start`), and the tenure *end* the reverse walk reports for
+  departed members (`latest_tenure` / `tenures_from_segments`).
 - **`period_overlap.py`** — pure interval arithmetic, and **the most
   consequential logic in the tool**: it decides a P2937 qualifier on every
   statement emitted. Both intervals are **closed**. A member with no
@@ -324,8 +337,15 @@ expensive one.
 - **`diff.py`** — pure. `expected_statements` is the **single place** the
   `tenure` vs `period` statement model lives; the rest of the diff works off
   whatever it returns. Walks members → Wikidata, then Wikidata's open
-  memberships → members (catching people Wikidata still lists as sitting; those
-  carry no leaving date, so they are report-only). Sorted by priority then name.
+  memberships → members (catching people Wikidata still lists as sitting).
+  Sorted by priority then name. That second walk is about people the
+  *current-members* table does not contain, so `_departed_suggestion` reaches
+  the source through the identifier **Wikidata** asserts — `config.biography_url`
+  for the link, `Tenure` from the source's historic record for the dates it
+  suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
+  `position` in the payload. Removing either would turn it into a P582 backfill
+  across every open membership on Wikidata, off a table no probe has measured
+  for departed members. Both gates have a test naming them.
 - **`quickstatements.py`** — pure renderer. `is_mechanical` is the **one place**
   the safety rule lives; keep it that way. Review/correction kinds are excluded
   because QuickStatements can only add, so applying them would create a second

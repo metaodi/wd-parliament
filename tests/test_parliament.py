@@ -13,10 +13,12 @@ from wd_parliament.parliament import (
     _as_bool,
     _as_date,
     apply_tenure_starts,
+    latest_tenure,
     member_from_row,
     members_from_rows,
     segments_from_rows,
     tenure_start,
+    tenures_from_segments,
     period_from_row,
     periods_from_rows,
 )
@@ -310,3 +312,53 @@ def test_a_member_with_no_history_keeps_the_raw_field():
     assert apply_tenure_starts([member], {}) == 0
     assert member.tenure_start is None
     assert member.start_date == date(2025, 9, 16)
+
+
+# --- tenure dates for people who have already left ---------------------------
+# The same history rows, read for the other end of the span: MemberCouncil
+# carries only today's ~246 members, so a member Wikidata still records as
+# sitting has no leaving date anywhere else.
+DEPARTED = [
+    history_row("2011-12-05T00:00:00", "2015-11-29T00:00:00"),
+    history_row("2015-11-30T00:00:00", "2019-12-01T00:00:00"),
+]
+
+
+def test_a_departed_member_gets_both_ends_of_their_tenure():
+    segments = segments_from_rows(DEPARTED, councils=["NR"])
+    tenure = latest_tenure(segments[(4230, "NR")])
+    assert (tenure.start, tenure.end) == (date(2011, 12, 5), date(2019, 12, 1))
+    assert tenure.key == (4230, "NR")
+
+
+def test_a_sitting_members_tenure_has_no_end():
+    """The sentinel leaving date is absence, not 1753 — so: no date to add."""
+    segments = segments_from_rows(BREGY, councils=["NR"])
+    tenure = latest_tenure(segments[(4230, "NR")])
+    assert tenure.start == date(2019, 3, 4)
+    assert tenure.end is None
+
+
+def test_the_end_is_the_newest_segments_leaving_date_not_an_earlier_one():
+    """A break means the current spell's end, never the first spell's."""
+    rows = [
+        history_row("2003-12-01T00:00:00", "2007-12-02T00:00:00"),
+        history_row("2015-11-30T00:00:00", "2019-12-01T00:00:00"),
+    ]
+    tenure = latest_tenure(segments_from_rows(rows, councils=["NR"])[(4230, "NR")])
+    assert (tenure.start, tenure.end) == (date(2015, 11, 30), date(2019, 12, 1))
+
+
+def test_undated_segments_give_no_tenure_rather_than_a_guess():
+    assert latest_tenure([]) is None
+
+
+def test_tenures_are_keyed_by_person_and_council():
+    """A person is not a seat: a chamber change is two tenures, not one."""
+    rows = DEPARTED + [
+        history_row("2019-12-02T00:00:00", "1753-01-01T00:00:00", abbr="SR", active=True)
+    ]
+    tenures = tenures_from_segments(segments_from_rows(rows))
+    assert set(tenures) == {(4230, "NR"), (4230, "SR")}
+    assert tenures[(4230, "NR")].end == date(2019, 12, 1)
+    assert tenures[(4230, "SR")].end is None

@@ -11,12 +11,12 @@ from __future__ import annotations
 import logging
 from datetime import date
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from .config import SOURCE_OPENPARLDATA, Config, load_config
 from .diff import compute_suggestions
 from .http_client import HttpClient
-from .models import QID_FROM_IDENTIFIER, QID_FROM_NAME, Member, Period
+from .models import QID_FROM_IDENTIFIER, QID_FROM_NAME, Member, Period, Tenure
 from .parliament import (
     HISTORIC_MEMBER_TABLE,
     ParliamentClient,
@@ -170,6 +170,23 @@ def process(
             f"'python {probe}' to see what the source actually has."
         )
 
+    # Dates for people the members table has never heard of. The diff's second
+    # pass finds members Wikidata still records as sitting, and until now could
+    # only say "look the leaving date up by hand" — the source knows it, in the
+    # historic table this pipeline already reads. Optional in the same way the
+    # tenure starts are: a source that cannot answer leaves the report saying
+    # what it said before, which is worse than the dates and better than a
+    # guess.
+    tenures: Dict[tuple, Tenure] = {}
+    try:
+        tenures = parliament.get_tenures(councils=config.councils)
+    except Exception:  # noqa: BLE001 - degrade, do not abort
+        log.warning(
+            "Could not read tenure dates from the source; members recorded as "
+            "sitting on Wikidata will be reported without a leaving date",
+            exc_info=True,
+        )
+
     people = wikidata.get_position_holders(
         config.position_qids, config.language, config.identifier_property
     )
@@ -193,7 +210,7 @@ def process(
         try:
             _fill_counts(result, chamber_members, people, body.position_qid)
             result.suggestions = compute_suggestions(
-                body, chamber_members, people, periods, config
+                body, chamber_members, people, periods, config, tenures=tenures
             )
         except Exception as exc:  # keep going even if one chamber fails
             log.exception("Failed to process %s", body.label)

@@ -200,6 +200,40 @@ class Period:
 
 
 @dataclass
+class Tenure:
+    """One continuous spell in one chamber, as the **source** records it.
+
+    ``Member`` answers "who sits today"; this answers "when did this person
+    hold this seat", and it is asked about people who are *not* in the
+    current-members set — the ones the diff's second pass finds still recorded
+    as sitting on Wikidata. Their dates live in the source's historic tables
+    (``MemberCouncilHistory`` federally, the ended ``memberships`` rows in
+    OpenParlData), which the pipeline already reads for
+    :func:`parliament.tenure_start`.
+
+    ``start`` is a chained tenure start, not a mandate-segment start, for the
+    same reason :attr:`Member.start_date` is; ``end`` is ``None`` for a spell
+    the source has not closed, which is a "look it up by hand", never a
+    licence to guess.
+    """
+
+    person_number: int
+    council: str = ""
+    start: Optional[date] = None
+    end: Optional[date] = None
+
+    @property
+    def key(self) -> tuple:
+        """``(person_number, council)`` — how the tenure maps are keyed.
+
+        A person is not a seat: someone who moved from the National Council to
+        the Council of States has two tenures, and keying on the person alone
+        would let one chamber's dates be reported for the other's statement.
+        """
+        return (self.person_number, self.council.upper())
+
+
+@dataclass
 class PositionStatement:
     """One P39 statement on a Wikidata item, with the qualifiers we care about.
 

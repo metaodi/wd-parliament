@@ -15,7 +15,7 @@ import logging
 from datetime import date, datetime
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
-from .models import Member, Period
+from .models import Member, Period, Tenure
 
 log = logging.getLogger(__name__)
 
@@ -280,6 +280,49 @@ def tenure_start(segments: Sequence[Member]) -> Optional[date]:
     return start
 
 
+def latest_tenure(segments: Sequence[Member]) -> Optional[Tenure]:
+    """The most recent continuous run through ``segments``, dated. Pure.
+
+    :func:`tenure_start` says where that run began; the newest segment says
+    where it ended, and its ``date_leaving`` is ``None`` exactly when the spell
+    is still open. That combination is what the diff's second pass needs about
+    somebody who is **not** in the current-members set: ``MemberCouncil`` only
+    carries today's ~246 people, but ``MemberCouncilHistory`` carries everyone
+    since 1848, so a member Wikidata still records as sitting has their leaving
+    date here even though the members table has never heard of them.
+
+    ``None`` when no segment carries a start, matching :func:`tenure_start`:
+    the honest answer is then "the source does not say", which the report
+    prints as such rather than filling in.
+    """
+    dated = [s for s in segments if s.date_joining is not None]
+    if not dated:
+        return None
+    newest = max(dated, key=lambda m: m.date_joining)  # type: ignore[arg-type,return-value]
+    return Tenure(
+        person_number=newest.person_number,
+        council=newest.council.upper(),
+        start=tenure_start(dated),
+        end=newest.date_leaving,
+    )
+
+
+def tenures_from_segments(
+    segments: Dict[tuple, List[Member]]
+) -> Dict[tuple, Tenure]:
+    """``(person_number, council)`` → their latest :class:`Tenure`. Pure.
+
+    Keyed by the segment map's own key rather than by the person, because a
+    person is not a seat — see :attr:`models.Tenure.key`.
+    """
+    out: Dict[tuple, Tenure] = {}
+    for key, group in segments.items():
+        tenure = latest_tenure(group)
+        if tenure is not None:
+            out[key] = tenure
+    return out
+
+
 def apply_tenure_starts(
     members: Iterable[Member], segments: Dict[tuple, List[Member]]
 ) -> int:
@@ -348,6 +391,11 @@ class ParliamentClient:
         self.language = (language or DEFAULT_LANGUAGE).upper()
         self._client = client
         self._session = session
+        # ``MemberCouncilHistory`` is the largest read the pipeline makes —
+        # every member since 1848 — and two callers now want it: the tenure
+        # *start* correction and the tenure *end* the reverse walk reports.
+        # Cached so asking twice costs one fetch.
+        self._history_rows: Optional[List[Dict[str, Any]]] = None
 
     @property
     def client(self) -> Any:
@@ -407,10 +455,11 @@ class ParliamentClient:
         way to get it: the table has no filter that selects "the segments of
         these 246 people", and a per-person fetch would be 246 round trips.
         It is the largest read the pipeline makes — every member since 1848 —
-        and it exists solely so P580 comes from a tenure start rather than a
-        segment start (README step 0c).
+        and it is what P580 comes from, so that the start is a tenure start
+        rather than a segment start (README step 0c). :meth:`get_tenures` reads
+        the same rows for the leaving dates of people who have already gone.
         """
-        rows = self._rows(HISTORIC_MEMBER_TABLE, Language=self.language)
+        rows = self._history()
         segments = segments_from_rows(rows, councils=councils)
         log.info(
             "Fetched %d history rows covering %d (person, council) pair(s)",
@@ -418,6 +467,28 @@ class ParliamentClient:
             len(segments),
         )
         return segments
+
+    def _history(self) -> List[Dict[str, Any]]:
+        """The whole ``MemberCouncilHistory``, fetched at most once per client."""
+        if self._history_rows is None:
+            self._history_rows = self._rows(
+                HISTORIC_MEMBER_TABLE, Language=self.language
+            )
+        return self._history_rows
+
+    def get_tenures(
+        self, councils: Optional[Sequence[str]] = None
+    ) -> Dict[tuple, Tenure]:
+        """``(PersonNumber, council)`` → their latest spell in that chamber.
+
+        Everyone the history knows, not just today's members — which is the
+        whole point: it is the *departed* members the reverse walk has no dates
+        for, because ``MemberCouncil`` lists only those still in office. Costs
+        no extra request beyond :meth:`get_member_segments`.
+        """
+        tenures = tenures_from_segments(self.get_member_segments(councils=councils))
+        log.info("Tenure dates available for %d (person, council) pair(s)", len(tenures))
+        return tenures
 
     def get_periods(self) -> List[Period]:
         """Every ``LegislativePeriod`` row (~52), as dataclasses."""

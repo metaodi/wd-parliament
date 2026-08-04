@@ -869,6 +869,42 @@ Historic members are a later extension — `MemberCouncilHistory` has an identic
 shape, so it is a table swap plus following `IdPredecessor` chains for members
 who left and returned.
 
+### The one suggestion that is about somebody the source does not list
+
+**Add end date** fires twice, from opposite directions, and the second is the
+odd one out. Walking Wikidata's open memberships back finds people the source
+does not list as sitting at all — they have left, and the source's
+*current-members* table has therefore never heard of them. There is no `Member`
+to read anything off, so both of the things that suggestion needs come from
+elsewhere:
+
+- **the link to the source's database** — built from the identifier *Wikidata
+  itself* asserts (P1307 federally, P14527 cantonally) through the
+  `biography_url` template in the config, which is why the template is
+  configuration rather than a constant: a cantonal report pointing at
+  parlament.ch sends a reader to a service that has never heard of these
+  members;
+- **the start and end date to add** — from the source's *historic* record,
+  which the pipeline already reads: `MemberCouncilHistory` federally (the same
+  rows P580's tenure start comes from, so it costs no extra request) and the
+  ended `memberships` rows in OpenParlData. The end date is the newest
+  segment's `DateLeaving`; the start is the chained tenure start, the same one
+  `Member.start_date` uses.
+
+Both degrade rather than guess: an item with no identifier value gets no link
+and no dates, a source that cannot answer leaves the report saying the date has
+to be looked up by hand, and a tenure the source has not closed offers no end
+date at all.
+
+These suggestions are **report-only by construction**, and stay that way until
+somebody measures the historic table for departed members the way step 1
+measured `PersonNumber` for sitting ones. `is_mechanical` refuses them twice
+over: the member carries no `qid_source` (the identifier came from Wikidata,
+not from a resolved member) and the payload carries no `position`. Do not
+remove either gate to "unlock" them — a P582 backfill across everyone Wikidata
+records as sitting is exactly the class of bulk edit the rest of this README is
+about not making by accident.
+
 ## How members are matched
 
 1. **P1307 join** — `MemberCouncil.PersonNumber` against Wikidata's Swiss

@@ -26,6 +26,7 @@ from wd_parliament.openparldata import (
     is_seat_row,
     member_from_rows,
     members_from_rows,
+    tenures_from_rows,
 )
 
 from conftest import FIXTURES
@@ -261,3 +262,34 @@ def test_there_are_no_periods_and_that_is_deliberate():
 def test_there_are_no_segments_to_correct():
     """begin_date is already the tenure start — see the module docstring."""
     assert OpenParlDataClient(client=object()).get_member_segments() == {}
+
+
+# --- tenure dates, ended rows included --------------------------------------
+# What `members_from_rows` filters away is exactly what the report needs for
+# somebody Wikidata still records as sitting: the row that says when they left.
+def test_an_ended_membership_yields_both_of_its_dates():
+    rows = [row(person_id=777, begin_date="2011-05-09", end_date="2019-05-05")]
+    tenure = tenures_from_rows(rows, ZH, seat_roles=DEFAULT_SEAT_ROLES)[(777, "KR")]
+    assert (tenure.start, tenure.end) == (date(2011, 5, 9), date(2019, 5, 5))
+
+
+def test_the_latest_row_wins_for_someone_who_left_and_returned(memberships):
+    """Person 18759 sat 2011-2019 and came back in 2023; the seat is open."""
+    tenure = tenures_from_rows(memberships, ZH, seat_roles=DEFAULT_SEAT_ROLES)[
+        (18759, "KR")
+    ]
+    assert tenure.start == date(2023, 5, 8)
+    assert tenure.end is None
+
+
+def test_a_guest_row_is_not_a_tenure(memberships):
+    """It was never a seat, so its dates are not this seat's dates."""
+    tenures = tenures_from_rows(memberships, ZH, seat_roles=DEFAULT_SEAT_ROLES)
+    assert (17728, "KR") not in tenures  # Gast
+    assert (24011, "KR") not in tenures  # no role at all
+
+
+def test_a_future_start_is_still_a_tenure(memberships):
+    """Not sitting *today*, which is `is_seat_row`'s question, not this one."""
+    tenures = tenures_from_rows(memberships, ZH, seat_roles=DEFAULT_SEAT_ROLES)
+    assert tenures[(17860, "KR")].start == date(2026, 8, 17)

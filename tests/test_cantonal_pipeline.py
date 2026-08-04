@@ -235,3 +235,43 @@ def test_the_seat_roles_default_is_what_the_probe_measured():
         "1. Vizepräsidium",
         "2. Vizepräsidium",
     )
+
+
+# --- the departed member's dates, from the cantonal source -------------------
+def test_a_departed_cantonal_member_gets_their_dates_and_the_cantonal_link(config):
+    """Same report, other source: the ended `memberships` row carries both dates.
+
+    And the link is the Kantonsrat's own page — the federal biography URL would
+    send a reader to a service that has never heard of this member, which is
+    why the template is configuration.
+    """
+    class DepartedApi(FakeApi):
+        """Person 18759's 2023 return is removed: they left in 2019 and stayed."""
+
+        def __init__(self):
+            super().__init__()
+            self.memberships = [m for m in self.memberships if m["id"] != 900006]
+
+    source = OpenParlDataClient(
+        body_key="ZH", bodies=config.bodies, client=DepartedApi()
+    )
+    people = {
+        "Q999": WikidataPerson(
+            qid="Q999",
+            label="Departed Kantonsrätin",
+            parliament_id="18759",
+            statements=[
+                PositionStatement(
+                    person_qid="Q999", statement_id="s9",
+                    position_qid="Q21518678", start=date(2011, 5, 9),
+                )
+            ],
+        )
+    }
+    results = process(config, source, FakeWikidata(people))
+    suggestion = next(s for s in results[0].suggestions if s.person_qid == "Q999")
+    assert suggestion.payload["start"] == date(2011, 5, 9)
+    assert suggestion.payload["end"] == date(2019, 5, 5)
+    assert suggestion.payload["biography"] == "https://www.kantonsrat.zh.ch/mitglieder/"
+    assert "OpenParlData records the seat as held" in suggestion.detail
+    assert "parlament.ch" not in suggestion.detail

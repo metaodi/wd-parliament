@@ -6,6 +6,7 @@ from datetime import date
 import pytest
 
 from wd_parliament.models import (
+    KIND_ADD_END_DATE,
     KIND_ADD_MEMBERSHIP,
     KIND_NO_WIKIDATA_ITEM,
     QID_FROM_IDENTIFIER,
@@ -109,6 +110,55 @@ def test_body_markdown_links_members_and_biographies(result):
     md = render_body_markdown(result, GENERATED, "canton")
     assert "[Anna Muster](https://www.wikidata.org/wiki/Q7)" in md
     assert "[#1101](https://www.parlament.ch/de/biografie/wd/1101)" in md
+
+
+def _departed():
+    """A reverse-walk suggestion: no qid_source, but an identifier and dates."""
+    return BodyResult(
+        body=BODY,
+        suggestions=[
+            make_suggestion(
+                kind=KIND_ADD_END_DATE,
+                label="Departed Member",
+                canton=None,
+                person_qid="Q3432",
+                person_number=3432,
+                qid_source=None,
+                detail="parlament.ch records the seat as held from "
+                       "2011-12-05 to 2019-12-01.",
+                payload={
+                    "biography": "https://www.parlament.ch/de/biografie/wd/3432",
+                    "start": date(2011, 12, 5),
+                    "end": date(2019, 12, 1),
+                },
+            )
+        ],
+        member_count=200,
+        matched_by_identifier=200,
+    )
+
+
+def test_the_departed_section_links_to_the_source_database():
+    """The section names a person the members table does not contain.
+
+    Their identifier and biography come from Wikidata's own P1307 value, so the
+    reader can check the dates on the page the suggestion took them from.
+    """
+    md = render_body_markdown(_departed(), GENERATED, "canton")
+    assert "Recorded as sitting, but the member has left" in md
+    assert "[#3432](https://www.parlament.ch/de/biografie/wd/3432)" in md
+    assert "2011-12-05 to 2019-12-01" in md
+
+
+def test_the_departed_members_dates_reach_the_dashboard_and_the_json():
+    result = _departed()
+    html = render_html([result], GENERATED)
+    assert "https://www.parlament.ch/de/biografie/wd/3432" in html
+    assert "2011-12-05 to 2019-12-01" in html
+
+    payload = to_json([result], GENERATED)["bodies"][0]["suggestions"][0]["payload"]
+    assert payload["start"] == "2011-12-05"
+    assert payload["end"] == "2019-12-01"
 
 
 def test_name_matched_members_are_flagged_in_markdown():
