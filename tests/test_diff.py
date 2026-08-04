@@ -19,6 +19,7 @@ from wd_parliament.models import (
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
+    KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
     MODEL_TENURE,
     QID_FROM_IDENTIFIER,
@@ -919,3 +920,105 @@ def test_a_source_that_asserts_no_wikidata_link_raises_nothing(periods):
         BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE)
     )
     assert KIND_DUPLICATE_SOURCE_LINK not in kinds(suggestions)
+
+
+# --- the two sources disagreeing ---------------------------------------------
+# The check the tool could not make while it read one source. It does not say
+# which side is right; it says the value Wikidata would be given is disputed,
+# which is exactly the condition for not writing it unreviewed.
+def _span(start="2019-12-02", end=None):
+    from wd_parliament.models import SourceSpan
+
+    return SourceSpan(
+        council="N",
+        start=date.fromisoformat(start) if start else None,
+        end=date.fromisoformat(end) if end else None,
+        rows=1,
+        person_ids=[42],
+    )
+
+
+def test_a_disagreement_is_reported(periods):
+    member = make_member()  # parlament.ch: joined 2019-12-02
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    disagreement = next(s for s in suggestions if s.kind == KIND_SOURCES_DISAGREE)
+    assert disagreement.payload["start"] == date(2019, 12, 2)
+    assert disagreement.payload["other_start"] == date(2015, 11, 30)
+    assert disagreement.payload["other_person_ids"] == [42]
+    assert "2019-12-02" in disagreement.detail and "2015-11-30" in disagreement.detail
+
+
+def test_agreeing_sources_add_nothing(periods):
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span()},
+    )
+    assert suggestions == []
+
+
+def test_a_disagreement_withholds_the_mechanical_edit(periods):
+    """The point of the check. A disputed P580 must not be written unreviewed."""
+    from wd_parliament.quickstatements import is_mechanical, render
+
+    member = make_member()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert add.payload["sources_disagree"] is True
+    assert is_mechanical(add, MODEL_TENURE) is False
+    assert render(suggestions, date(2026, 8, 4), MODEL_TENURE) == []
+
+
+def test_without_a_disagreement_the_edit_is_still_emitted(periods):
+    """The suppression must be caused by the disagreement, not by the lookup."""
+    from wd_parliament.quickstatements import is_mechanical
+
+    member = make_member()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span()},
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert "sources_disagree" not in add.payload
+    assert is_mechanical(add, MODEL_TENURE) is True
+
+
+def test_the_disagreement_itself_is_never_mechanical(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    disagreement = next(s for s in suggestions if s.kind == KIND_SOURCES_DISAGREE)
+    assert is_mechanical(disagreement, MODEL_TENURE) is False
+
+
+def test_another_chambers_span_is_not_compared(periods):
+    """A person is not a seat: an SR span says nothing about an NR tenure."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "S"): _span(start="1990-01-01")},
+    )
+    assert KIND_SOURCES_DISAGREE not in kinds(suggestions)
+
+
+def test_no_second_source_leaves_the_run_exactly_as_it_was(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_SOURCES_DISAGREE not in kinds(suggestions)
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert is_mechanical(add, MODEL_TENURE) is True

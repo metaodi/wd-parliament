@@ -20,6 +20,7 @@ from typing import Dict, List, Optional
 KIND_ADD_IDENTIFIER = "ADD_IDENTIFIER"
 KIND_DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
 KIND_DUPLICATE_SOURCE_LINK = "DUPLICATE_SOURCE_LINK"
+KIND_SOURCES_DISAGREE = "SOURCES_DISAGREE"
 KIND_REVIEW_ENDED = "REVIEW_ENDED"
 KIND_ADD_END_DATE = "ADD_END_DATE"
 KIND_ADD_MEMBERSHIP = "ADD_MEMBERSHIP"
@@ -44,6 +45,11 @@ PRIORITY = {
     # through that field, and there are never many.
     KIND_DUPLICATE_SOURCE_LINK: 1,
     KIND_REVIEW_ENDED: 1,
+    # Ranked with FIX_START_DATE because it is the same question — is this date
+    # right? — asked by a second source instead of by Wikidata. It also
+    # *withholds* the mechanical edit for that member, so it is not merely a
+    # note: it changes what the run emits.
+    KIND_SOURCES_DISAGREE: 2,
     KIND_ADD_END_DATE: 2,
     KIND_ADD_MEMBERSHIP: 2,
     KIND_FIX_START_DATE: 2,
@@ -58,6 +64,7 @@ KIND_LABEL = {
     KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (P1307/P14527)",
     KIND_DUPLICATE_IDENTIFIER: "One identifier claimed by several Wikidata items",
     KIND_DUPLICATE_SOURCE_LINK: "One Wikidata item claimed by several source records",
+    KIND_SOURCES_DISAGREE: "The two sources disagree about this member",
     KIND_REVIEW_ENDED: "Membership recorded as ended, but the member is still sitting",
     KIND_ADD_END_DATE: "Recorded as sitting, but the member has left",
     KIND_ADD_MEMBERSHIP: "Sitting member, but no position held (P39) statement",
@@ -249,6 +256,26 @@ class Tenure:
         would let one chamber's dates be reported for the other's statement.
         """
         return (self.person_number, self.council.upper())
+
+
+@dataclass
+class SourceSpan:
+    """What a *second*, independent source says about one seat.
+
+    Not a :class:`Member` and deliberately not convertible into one: enrichment
+    exists to contradict the first source, never to replace it. The only thing
+    a disagreement may do is *withhold* a mechanical edit — see
+    :mod:`enrich`.
+
+    ``person_ids`` records which of the second source's records the span came
+    from, so a disagreement can be traced back without a second query.
+    """
+
+    council: str = ""
+    start: Optional[date] = None
+    end: Optional[date] = None
+    rows: int = 0
+    person_ids: List[int] = field(default_factory=list)
 
 
 @dataclass

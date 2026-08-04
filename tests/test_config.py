@@ -125,3 +125,47 @@ def test_biography_url_substitution(tmp_path):
 def test_quickstatements_can_be_disabled(tmp_path):
     cfg = load_config(write(tmp_path, MINIMAL + "quickstatements: false\n"))
     assert cfg.quickstatements is False
+
+
+# --- the second source ------------------------------------------------------
+def test_a_config_without_an_enrich_block_reads_one_source(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL))
+    assert cfg.enrich.enabled is False
+    assert cfg.enrich.source == ""
+
+
+def test_the_enrich_block_is_read(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL + """
+enrich:
+  source: openparldata
+  body_key: CHE
+  groups:
+    NR: Nationalrat
+    SR: Ständerat
+"""))
+    assert cfg.enrich.enabled is True
+    assert cfg.enrich.body_key == "CHE"
+    assert cfg.enrich.groups == {"NR": "Nationalrat", "SR": "Ständerat"}
+    assert cfg.enrich.source_name == "OpenParlData"
+
+
+def test_an_unknown_enrich_source_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match="enrich.source must be one of"):
+        load_config(write(tmp_path, MINIMAL + "\nenrich:\n  source: wikipedia\n"))
+
+
+def test_an_enrich_source_without_groups_is_rejected(tmp_path):
+    """Without them there is no chamber to compare, and a substring match on
+    'Nationalrat' would take a committee of the chamber for the chamber."""
+    with pytest.raises(ValueError, match="needs 'groups'"):
+        load_config(write(tmp_path, MINIMAL + "\nenrich:\n  source: openparldata\n"))
+
+
+def test_a_source_cannot_corroborate_itself(tmp_path):
+    with pytest.raises(ValueError, match="cannot corroborate itself"):
+        load_config(write(tmp_path, MINIMAL + """
+enrich:
+  source: parlament
+  groups:
+    NR: Nationalrat
+"""))

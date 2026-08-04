@@ -104,6 +104,12 @@ def is_mechanical(suggestion: Suggestion, statement_model: str = MODEL_PERIOD) -
         return False
     if not suggestion.payload.get("biography"):
         return False
+    # A second, independent source contradicts the first about this member.
+    # Which side is right is not decided here and does not need to be: a value
+    # two sources dispute is exactly the value that must not be written without
+    # a human looking. Set by ``diff`` on every suggestion for that member.
+    if suggestion.payload.get("sources_disagree"):
+        return False
 
     payload = suggestion.payload
     if not payload.get("position"):

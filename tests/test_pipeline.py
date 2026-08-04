@@ -17,6 +17,7 @@ from wd_parliament.models import (
     KIND_ADD_MEMBERSHIP,
     KIND_DUPLICATE_SOURCE_LINK,
     KIND_NO_WIKIDATA_ITEM,
+    KIND_SOURCES_DISAGREE,
     MODEL_TENURE,
     QID_FROM_IDENTIFIER,
     Body,
@@ -493,3 +494,95 @@ def test_a_source_with_no_wikidata_links_is_not_a_degradation(
     assert all(
         s.kind != KIND_DUPLICATE_SOURCE_LINK for r in results for s in r.suggestions
     )
+
+
+# --- the second source, end to end -------------------------------------------
+class FakeEnricher:
+    """Stands in for the OpenParlData cross-check."""
+
+    def __init__(self, spans=None, conflicts=None, explode=False):
+        self._spans = spans or {}
+        self._conflicts = conflicts or {}
+        self._explode = explode
+
+    def fetch(self, councils=None):
+        if self._explode:
+            raise RuntimeError("OpenParlData unavailable")
+        from wd_parliament.enrich import Enrichment
+
+        return Enrichment(
+            spans=self._spans,
+            link_conflicts=self._conflicts,
+            people_with_links=len(self._spans),
+        )
+
+
+def _bachmann():
+    return {
+        "Q1101": WikidataPerson(qid="Q1101", label="Andrea Bachmann",
+                                parliament_id="1101")
+    }
+
+
+def test_a_second_source_that_agrees_changes_nothing(
+    member_rows, period_rows, config
+):
+    from wd_parliament.models import SourceSpan
+
+    spans = {("Q1101", "NR"): SourceSpan(council="NR", start=date(2015, 11, 30))}
+    results = process(
+        config, FakeParliament(member_rows, period_rows), FakeWikidata(_bachmann()),
+        enricher=FakeEnricher(spans),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q1101"
+    )
+    assert suggestion.kind == KIND_ADD_MEMBERSHIP
+    assert "sources_disagree" not in suggestion.payload
+
+
+def test_a_second_source_that_disagrees_withholds_the_quickstatement(
+    member_rows, period_rows, config
+):
+    """parlament.ch says 2015-11-30; the other source says 2019-12-02."""
+    from wd_parliament.models import SourceSpan
+
+    spans = {("Q1101", "NR"): SourceSpan(council="NR", start=date(2019, 12, 2))}
+    results = process(
+        config, FakeParliament(member_rows, period_rows), FakeWikidata(_bachmann()),
+        enricher=FakeEnricher(spans),
+    )
+    all_suggestions = [s for r in results for s in r.suggestions]
+    assert any(s.kind == KIND_SOURCES_DISAGREE for s in all_suggestions)
+
+    qs = render_file(all_suggestions, date(2026, 8, 4), config.statement_model)
+    assert "Q1101" not in qs
+
+
+def test_the_second_sources_link_conflicts_reach_the_report(
+    member_rows, period_rows, config
+):
+    results = process(
+        config, FakeParliament(member_rows, period_rows), FakeWikidata(),
+        enricher=FakeEnricher(conflicts={("NR", "Q999"): [42, 43]}),
+    )
+    conflict = next(
+        s for r in results for s in r.suggestions
+        if s.kind == KIND_DUPLICATE_SOURCE_LINK
+    )
+    assert conflict.payload["source_person_ids"] == [42, 43]
+
+
+def test_a_broken_second_source_degrades_to_a_single_source_run(
+    member_rows, period_rows, config
+):
+    """A worse report beats no report — and the loss must not be silent."""
+    results = process(
+        config, FakeParliament(member_rows, period_rows), FakeWikidata(_bachmann()),
+        enricher=FakeEnricher(explode=True),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q1101"
+    )
+    assert suggestion.kind == KIND_ADD_MEMBERSHIP
+    assert "sources_disagree" not in suggestion.payload

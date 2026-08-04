@@ -35,6 +35,12 @@ from datetime import date
 from typing import Dict, List, Optional, Sequence
 
 from .config import Config
+from .enrich import (
+    DISAGREE_START,
+    DISAGREE_STILL_SITTING,
+    Disagreement,
+    disagreements,
+)
 from .models import (
     KIND_ADD_END_DATE,
     KIND_ADD_IDENTIFIER,
@@ -48,12 +54,14 @@ from .models import (
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
+    KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
     QID_FROM_NAME,
     Body,
     Member,
     Period,
     PositionStatement,
+    SourceSpan,
     Suggestion,
     Tenure,
     WikidataPerson,
@@ -226,6 +234,7 @@ def compute_suggestions(
     today: Optional[date] = None,
     tenures: Optional[Dict[tuple, Tenure]] = None,
     link_conflicts: Optional[Dict[tuple, List[str]]] = None,
+    enrichment: Optional[Dict[tuple, SourceSpan]] = None,
 ) -> List[Suggestion]:
     """Produce the suggested edits for one chamber. Pure.
 
@@ -282,7 +291,10 @@ def compute_suggestions(
         seen_qids.add(member.qid)
         person = people.get(member.qid) or WikidataPerson(qid=member.qid)
         suggestions.extend(
-            _member_suggestions(body, member, person, periods, config, today)
+            _member_suggestions(
+                body, member, person, periods, config, today,
+                span=(enrichment or {}).get((member.qid, body.council.upper())),
+            )
         )
 
     # 2) Wikidata -> parlament.ch: people Wikidata still lists as sitting.
@@ -605,8 +617,15 @@ def _member_suggestions(
     periods: Sequence[Period],
     config: Config,
     today: date,
+    span: Optional[SourceSpan] = None,
 ) -> List[Suggestion]:
-    """Every suggestion arising from one matched member."""
+    """Every suggestion arising from one matched member.
+
+    ``span`` is what a second source says about the same seat, when one was
+    read. A disagreement is raised **and** stamped onto every other suggestion
+    for this member, which is what stops the disputed value being written: see
+    ``quickstatements.is_mechanical``.
+    """
     out: List[Suggestion] = []
     verify = _verify_note(member)
     biography = config.biography_url_for(member.person_number)
@@ -690,7 +709,71 @@ def _member_suggestions(
         )
 
     out.extend(_party_suggestions(body, member, person, config, verify))
+
+    # A second source contradicting the first. Stamped onto every suggestion
+    # above *before* it is added to the list, so the disagreement itself does
+    # not carry the flag — it is the finding, not a casualty of it.
+    found = disagreements(member, span)
+    if found:
+        for suggestion in out:
+            suggestion.payload["sources_disagree"] = True
+        out.append(
+            _sources_disagree_suggestion(body, member, span, found, config, verify)
+        )
     return out
+
+
+def _sources_disagree_suggestion(
+    body: Body,
+    member: Member,
+    span: Optional[SourceSpan],
+    found: Sequence[Disagreement],
+    config: Config,
+    verify: str,
+) -> Suggestion:
+    """Two independent sources describe this seat differently.
+
+    The check the tool could not make while it read one source. It is not a
+    Wikidata edit and does not say which side is right — it says the value
+    Wikidata would be given is disputed, which is precisely the condition under
+    which it must not be written unreviewed.
+    """
+    other = config.enrich.source_name or "the second source"
+    parts: List[str] = []
+    for item in found:
+        if item.kind == DISAGREE_START:
+            parts.append(
+                f"the tenure starts {_date_str(item.ours)} per "
+                f"{config.source_name} and {_date_str(item.theirs)} per {other}"
+            )
+        elif item.kind == DISAGREE_STILL_SITTING:
+            parts.append(
+                f"{config.source_name} lists them as sitting, while {other} "
+                f"closed the seat on {_date_str(item.theirs)}"
+            )
+        else:
+            parts.append(
+                f"{config.source_name} gives a leaving date of "
+                f"{_date_str(item.ours)}, while {other} still has the seat open"
+            )
+
+    return _base_suggestion(
+        KIND_SOURCES_DISAGREE,
+        body,
+        member,
+        f"The two sources disagree: {'; '.join(parts)}. Nothing is emitted "
+        "mechanically for this member while they do — the value Wikidata would "
+        f"be given is disputed. {other} is not authoritative here, so this is a "
+        "prompt to check the biography, not a correction." + verify,
+        payload={
+            "sources_disagree": True,
+            "start": member.start_date,
+            "other_start": span.start if span else None,
+            "other_end": span.end if span else None,
+            "other_person_ids": list(span.person_ids) if span else [],
+            "biography": config.biography_url_for(member.person_number),
+        },
+    )
 
 
 def _statement_suggestions(

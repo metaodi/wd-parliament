@@ -11,10 +11,11 @@ from __future__ import annotations
 import logging
 from datetime import date
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from .config import SOURCE_OPENPARLDATA, Config, load_config
 from .diff import compute_suggestions
+from .enrich import Enrichment
 from .http_client import HttpClient
 from .models import QID_FROM_IDENTIFIER, QID_FROM_NAME, Member, Period, Tenure
 from .parliament import (
@@ -56,6 +57,36 @@ def build_source(config: Config, http: HttpClient):
     return ParliamentClient(session=http.session, language=config.language)
 
 
+def build_enrichment(config: Config, http: HttpClient):
+    """The *second* source this config asks for, or ``None``.
+
+    Absent by default. A run reads one source unless a config says otherwise,
+    and what a second one may do is bounded by :mod:`enrich`: it produces no
+    members, and a disagreement can only withhold a mechanical edit, never
+    supply a value.
+    """
+    if not config.enrich.enabled:
+        return None
+    if config.enrich.source != SOURCE_OPENPARLDATA:
+        log.warning(
+            "No enrichment client for source %r; the cross-check is skipped",
+            config.enrich.source,
+        )
+        return None
+    from .enrich import OpenParlDataEnricher
+
+    log.info(
+        "Cross-checking against %s, body %r",
+        config.enrich.source_name,
+        config.enrich.body_key,
+    )
+    return OpenParlDataEnricher(
+        session=http.session,
+        body_key=config.enrich.body_key,
+        groups=config.enrich.groups,
+    )
+
+
 def run(
     config_path: str | Path,
     reports_dir: str | Path = "reports",
@@ -68,7 +99,13 @@ def run(
     parliament = build_source(config, http)
     wikidata = WikidataClient(http)
 
-    results = process(config, parliament, wikidata, limit=limit)
+    results = process(
+        config,
+        parliament,
+        wikidata,
+        limit=limit,
+        enricher=build_enrichment(config, http),
+    )
 
     generated_at = now_iso()
     all_suggestions = [s for r in results for s in r.suggestions]
@@ -113,6 +150,7 @@ def process(
     parliament: ParliamentClient,
     wikidata: WikidataClient,
     limit: Optional[int] = None,
+    enricher: Any = None,
 ) -> List[BodyResult]:
     """Fetch everything once, then build a :class:`BodyResult` per chamber.
 
@@ -202,6 +240,29 @@ def process(
                 exc_info=True,
             )
 
+    # The second source, when one is configured. Its failure degrades the run
+    # to a single-source one and says so out loud: a *silent* loss of the
+    # cross-check would leave the report looking as though the two agreed.
+    enrichment = Enrichment()
+    if enricher is not None:
+        try:
+            enrichment = enricher.fetch(councils=config.councils)
+            log.info(
+                "Cross-check: %d seat(s) from %d linked person record(s); "
+                "%d item(s) claimed by several records and skipped",
+                len(enrichment.spans),
+                enrichment.people_with_links,
+                enrichment.skipped_conflicted,
+            )
+        except Exception:  # noqa: BLE001 - degrade, do not abort
+            log.warning(
+                "Could not read the cross-check source; this run compares "
+                "against nothing and no disagreement can be reported",
+                exc_info=True,
+            )
+    if enrichment.link_conflicts:
+        link_conflicts.update(enrichment.link_conflicts)
+
     people = wikidata.get_position_holders(
         config.position_qids, config.language, config.identifier_property
     )
@@ -232,6 +293,7 @@ def process(
                 config,
                 tenures=tenures,
                 link_conflicts=link_conflicts,
+                enrichment=enrichment.spans,
             )
         except Exception as exc:  # keep going even if one chamber fails
             log.exception("Failed to process %s", body.label)
