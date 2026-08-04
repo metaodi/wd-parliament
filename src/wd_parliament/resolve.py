@@ -86,14 +86,18 @@ def match_by_identifier(
 
     Sets ``qid``/``qid_source`` on each matched member in place and returns the
     ``PersonNumber`` → item map. An identifier claimed by more than one item is
-    skipped and logged: the member falls through to the name fallback and, if
-    that also declines, gets reported rather than guessed at.
+    skipped — never arbitrated — and the claiming items are **recorded on the
+    member** so the run can say so out loud. Logging it was not enough: the
+    member then looks simply unmatched, and an unmatched member draws
+    "no item was found, they may need a new one", which is the worst possible
+    advice about somebody who already has two.
     """
     index = index_by_identifier(people)
     matched: Dict[int, WikidataPerson] = {}
     for member in members:
         candidates = index.get(str(member.person_number), [])
         if len(candidates) > 1:
+            member.duplicate_identifier_qids = sorted(c.qid for c in candidates)
             log.warning(
                 "P1307 '%s' (%s) is claimed by %d items: %s — skipping the join",
                 member.person_number,

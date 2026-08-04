@@ -18,6 +18,7 @@ from typing import Dict, List, Optional
 # a sort weight (lower = more urgent), ``KIND_LABEL`` to a human string used in
 # the reports. Adding a kind means touching all three maps plus ``diff.py``.
 KIND_ADD_IDENTIFIER = "ADD_IDENTIFIER"
+KIND_DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
 KIND_REVIEW_ENDED = "REVIEW_ENDED"
 KIND_ADD_END_DATE = "ADD_END_DATE"
 KIND_ADD_MEMBERSHIP = "ADD_MEMBERSHIP"
@@ -32,6 +33,10 @@ PRIORITY = {
     # Adding the identifier is the highest-leverage edit there is: it turns
     # every future run's fuzzy name match into an exact join.
     KIND_ADD_IDENTIFIER: 1,
+    # A conflict rather than a gap, and it poisons everything downstream: the
+    # join is skipped, so the member looks unmatched, and the advice they would
+    # otherwise draw is "create an item" — which would make a third duplicate.
+    KIND_DUPLICATE_IDENTIFIER: 1,
     KIND_REVIEW_ENDED: 1,
     KIND_ADD_END_DATE: 2,
     KIND_ADD_MEMBERSHIP: 2,
@@ -45,6 +50,7 @@ PRIORITY = {
 
 KIND_LABEL = {
     KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (P1307/P14527)",
+    KIND_DUPLICATE_IDENTIFIER: "One identifier claimed by several Wikidata items",
     KIND_REVIEW_ENDED: "Membership recorded as ended, but the member is still sitting",
     KIND_ADD_END_DATE: "Recorded as sitting, but the member has left",
     KIND_ADD_MEMBERSHIP: "Sitting member, but no position held (P39) statement",
@@ -153,6 +159,11 @@ class Member:
     # Filled in by ``resolve.match_members``.
     qid: Optional[str] = None
     qid_source: Optional[str] = None  # one of the QID_FROM_* constants
+    # Every item claiming this member's identifier, when more than one does.
+    # The identifier join refuses to arbitrate between them, so this records
+    # *why* the member went unmatched — without it the run says "no item was
+    # found" about somebody who has two.
+    duplicate_identifier_qids: List[str] = field(default_factory=list)
 
     @property
     def full_name(self) -> str:
