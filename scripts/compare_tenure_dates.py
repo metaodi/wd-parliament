@@ -454,12 +454,31 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     opd = spp.SwissParlClient(session=http.session, backend="openparldata")
     people, _ = fetch(opd, "persons", body_key=args.body_key)
-    qid_by_person: Dict[Any, str] = {
-        r.get("id"): str(r["wikidata_id"]).strip()
-        for r in people
-        if str(r.get("wikidata_id") or "").strip()
-    }
-    print(f"OpenParlData: {len(qid_by_person)} federal person(s) carry a wikidata_id")
+    qid_by_person: Dict[Any, str] = {}
+    people_by_qid: Dict[str, List[Any]] = {}
+    for row in people:
+        qid = str(row.get("wikidata_id") or "").strip()
+        if not qid:
+            continue
+        qid_by_person[row.get("id")] = qid
+        people_by_qid.setdefault(qid, []).append(row.get("id"))
+
+    # Nothing makes ``wikidata_id`` unique, and two person records naming the
+    # same item pool their memberships under one key — after which the "latest"
+    # row can belong to the other person. ``verify_departures`` run 17 found
+    # exactly that (Alfred Gehrig, who left in 1971, compared against a 2014
+    # leaving date). Skipped rather than arbitrated, the same rule
+    # ``resolve.match_by_identifier`` applies to a P1307 claimed by two items.
+    # This comparison licenses a *bulk* apply of P580, so it must not rest on
+    # a row that might be somebody else's.
+    claimed_twice = {q for q, ids in people_by_qid.items() if len(ids) > 1}
+    for qid in claimed_twice:
+        qid_by_person = {p: q for p, q in qid_by_person.items() if q != qid}
+    print(
+        f"OpenParlData: {len(qid_by_person)} federal person(s) carry a usable "
+        f"wikidata_id ({len(claimed_twice)} Q-ID(s) claimed by several records "
+        "and skipped)"
+    )
 
     groups, _ = fetch(opd, "groups", body_key=args.body_key)
     chambers = {}

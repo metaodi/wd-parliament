@@ -91,7 +91,7 @@ import argparse
 import re
 import sys
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -160,6 +160,12 @@ class Departure:
     # From OpenParlData, the independent second source.
     opd_end: Optional[date] = None
     opd_rows: int = 0
+    # The person record(s) those rows came from, and whether several of them
+    # claim this Q-ID. Printed on every disagreement: run 17's single dissenter
+    # was not a date dispute at all but rows belonging to somebody else, and
+    # the person id is what says so at a glance.
+    opd_person_ids: List[int] = field(default_factory=list)
+    opd_ambiguous: bool = False
 
     @property
     def reachable(self) -> bool:
@@ -173,7 +179,19 @@ class Departure:
 
     @property
     def comparable(self) -> bool:
-        return self.source_end is not None and self.opd_end is not None
+        """Both sources dated it, and they are talking about the same person.
+
+        A Q-ID several OpenParlData person records claim is **not** comparable:
+        its rows are two people's pooled together, so the date is whichever of
+        them has the later membership. That is a broken join, not a dispute
+        about when somebody left, and scoring it as a disagreement blames the
+        source for the probe's arithmetic.
+        """
+        return (
+            self.source_end is not None
+            and self.opd_end is not None
+            and not self.opd_ambiguous
+        )
 
     @property
     def agrees(self) -> bool:
@@ -481,11 +499,13 @@ def classify_leaving_dates(
     # itself the finding.
     unjoined = [d for d in dated if not d.opd_rows]
     still_open = [d for d in dated if d.opd_rows and d.opd_end is None]
+    pooled = [d for d in dated if d.opd_ambiguous]
 
     lines.append(f"leaving dates from the source:    {len(dated)}")
     lines.append(f"  also dated by OpenParlData:     {len(comparable)}")
     lines.append(f"  not in OpenParlData at all:     {len(unjoined)}")
     lines.append(f"  OpenParlData still shows open:  {len(still_open)}")
+    lines.append(f"  Q-ID claimed by several people: {len(pooled)} (skipped)")
     lines.append(f"  null-date sentinel (1753):      {len(sentinels)}")
     lines.append(f"  end before start:               {len(reversed_spans)}")
 
@@ -528,7 +548,9 @@ def classify_leaving_dates(
     for d in differ[:_MAX_ROWS]:
         lines.append(
             f"  #{d.person_number} {d.label} ({d.council}): "
-            f"source {d.source_end}, OpenParlData {d.opd_end}"
+            f"source {d.source_end}, OpenParlData {d.opd_end} "
+            f"(from {d.opd_rows} row(s), person id(s) "
+            f"{', '.join(str(i) for i in d.opd_person_ids) or '?'})"
         )
 
     if not differ:
@@ -734,7 +756,10 @@ def collect(
     tenures = tenures_from_segments(segments)
     print(f"parlament.ch: tenure dates for {len(tenures)} (person, council) pair(s)")
 
-    seats_by_seat = _openparldata_seats(opd_client, body_key) if opd_client else {}
+    seats_by_seat: Dict[tuple, List[Dict[str, Any]]] = {}
+    claimed_twice: set = set()
+    if opd_client:
+        seats_by_seat, claimed_twice = _openparldata_seats(opd_client, body_key)
 
     departures: List[Departure] = []
     for body in config.bodies:
@@ -765,6 +790,10 @@ def collect(
                     source_end=tenure.end if tenure else None,
                     opd_end=chained_end(rows),
                     opd_rows=len(rows),
+                    opd_person_ids=sorted(
+                        {r["person_id"] for r in rows if r.get("person_id") is not None}
+                    ),
+                    opd_ambiguous=qid in claimed_twice,
                 )
             )
     return departures, len(seat_statements), with_start
@@ -785,21 +814,49 @@ def surname_in_history(
     return (rows[0].last_name or None) if rows else None
 
 
-def _openparldata_seats(client: Any, body_key: str) -> Dict[tuple, List[Dict[str, Any]]]:
+def _openparldata_seats(
+    client: Any, body_key: str
+) -> Tuple[Dict[tuple, List[Dict[str, Any]]], set]:
     """``(Q-ID, council)`` → the seat rows OpenParlData has for it.
 
     Keyed by seat and never by person, for the reason recorded in
     ``compare_tenure_dates``: a member who moved NR→SR chains one chamber's
     years onto the other's statement if the two are pooled, and every one of
     run 11's 22 "disagreements" was that.
+
+    Also returns the Q-IDs that **more than one person record claims**. The
+    join runs person → ``wikidata_id`` → Q-ID, and nothing makes that field
+    unique: two records naming the same item pool their memberships under one
+    key, so ``chained_end`` then answers with whichever of the two people has
+    the later row. Run 17 is what found it — Alfred Gehrig, who left in 1971,
+    was reported against a leaving date of 2014. Skipped and reported rather
+    than arbitrated, the same rule ``resolve.match_by_identifier`` applies to a
+    P1307 claimed by two items: a source contradicting itself about who
+    somebody is cannot be resolved by picking one.
     """
     people, _ = fetch(client, "persons", body_key=body_key)
-    qid_by_person = {
-        r.get("id"): str(r["wikidata_id"]).strip()
-        for r in people
-        if str(r.get("wikidata_id") or "").strip()
-    }
-    print(f"OpenParlData: {len(qid_by_person)} person(s) carry a wikidata_id")
+    qid_by_person: Dict[Any, str] = {}
+    people_by_qid: Dict[str, List[Any]] = {}
+    for row in people:
+        qid = str(row.get("wikidata_id") or "").strip()
+        if not qid:
+            continue
+        qid_by_person[row.get("id")] = qid
+        people_by_qid.setdefault(qid, []).append(row.get("id"))
+
+    claimed_twice = {q for q, ids in people_by_qid.items() if len(ids) > 1}
+    print(
+        f"OpenParlData: {len(qid_by_person)} person(s) carry a wikidata_id, "
+        f"naming {len(people_by_qid)} distinct Q-ID(s)"
+    )
+    if claimed_twice:
+        print(
+            f"OpenParlData: {len(claimed_twice)} Q-ID(s) are claimed by several "
+            "person records — their rows are pooled and cannot be compared, so "
+            "they are skipped:"
+        )
+        for qid in sorted(claimed_twice)[:_MAX_ROWS]:
+            print(f"    {qid} <- person ids {people_by_qid[qid]}")
 
     groups, _ = fetch(client, "groups", body_key=body_key)
     chambers: Dict[str, Dict[str, Any]] = {}
@@ -817,7 +874,7 @@ def _openparldata_seats(client: Any, body_key: str) -> Dict[tuple, List[Dict[str
             if qid:
                 seats.setdefault((qid, council), []).append(row)
     print(f"OpenParlData: seat rows for {len(seats)} (Q-ID, council) pair(s)")
-    return seats
+    return seats, claimed_twice
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

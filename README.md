@@ -902,17 +902,41 @@ tractable than the gates assumed:
 | --- | --- |
 | Reach | **CONFIRMED** — 1,977 carry an identifier, 1,969 resolve into `MemberCouncilHistory`, and **all 1,969** have a closed tenure, i.e. a date to suggest |
 | Identity | **CONFIRMED** — every checkable value reaches a person whose surname is the item's (see below) |
-| Leaving dates | **CONTRADICTED** — 1,961 of 1,962 agree with OpenParlData (**99.9%**); one row disputes |
+| Leaving dates | **CONTRADICTED** — 1,961 of 1,962 agree with OpenParlData (**99.9%**); the one dissenter turned out to be the probe's own join, see below |
 | Which statement | **CONFIRMED** — 3 people hold several P39 for the seat and are excluded by the existing `ambiguous_statement` rule; none starts on the wrong date |
 
-So the answer is *no*, and it rests on **one person**: `#2126 Alfred Gehrig
-(NR)`, where parlament.ch says 1971-11-28 and OpenParlData says 2014-05-31.
-That is not a systemic disagreement — 43 years apart on a single row reads as a
-bad row in one source — but a P582 cannot be un-written by QuickStatements, and
-nothing excludes that person today. Resolving him by hand is what stands
-between this and a `CONFIRMED`.
+⚠️ **Nothing above licenses an apply yet.** The one disagreement was a bug in
+this probe, not a bad date; a re-run with that bug fixed is what would say
+whether *any* real disagreement remains, and it has not been done. Do not read
+"1,961 of 1,962" as 1,962 of 1,962.
 
-Two things the first run got wrong about *itself*, both now fixed:
+The single dissenting row was reported as `#2126 Alfred Gehrig (NR)`,
+parlament.ch 1971-11-28 against OpenParlData 2014-05-31. **It was not a
+disagreement at all — it was this probe's join, and checking it by hand is what
+found that out.** OpenParlData's `Nationalrat` memberships for Gehrig carry
+exactly the parlament.ch date; the 2014 row belongs to somebody else.
+
+The join runs person → `wikidata_id` → Q-ID, and **nothing makes
+`wikidata_id` unique**. Two person records naming the same item pool their
+memberships under one key, after which `chained_end` answers with whichever of
+the two has the later row. A Q-ID claimed by more than one record is now
+**skipped and reported**, never arbitrated — the same rule
+`resolve.match_by_identifier` applies to a P1307 claimed by two items, and for
+the same reason: a source contradicting itself about who somebody is cannot be
+resolved by picking a side. Every disagreement now prints the row count and the
+OpenParlData person id(s) behind it, which is what would have shown this at a
+glance instead of costing a manual lookup.
+
+**`compare_tenure_dates.py` has the identical join and was exposed to the
+identical bug**; the same skip is now applied there. Its recorded 244-of-244
+verdict was measured over sitting members only, where the collision did not
+bite — but that was luck, not design, and that comparison licenses a *bulk*
+apply of P580.
+
+Three things the first runs got wrong about *themselves*, all now fixed — this
+probe has so far found more wrong with its own arithmetic than with the data,
+which is the expected shape of a first measurement and the reason its verdicts
+are read rather than wired into a gate:
 
 - **the identity check cried wolf 29 times.** All 29 "wrong person" hits were
   the same person spelt differently: `Börlin`/`Boerlin`, `Ettlin`/`Etlin`,
@@ -927,6 +951,10 @@ Two things the first run got wrong about *itself*, both now fixed:
   except it did not exist for *these* suggestions: `diff` only stamped
   `ambiguous_statement` on sitting members. It now stamps departed ones too,
   which is right whatever happens to the gates.
+- **the one leaving-date disagreement was a Q-ID two people claimed**, as above.
+  A probe whose single finding is its own join is a probe that has not yet
+  measured anything; the fix is a skip, and the diagnostic that would have
+  caught it — printing the person ids behind a row — is now always on.
 
 One number is still open and the probe now carries its own control for it:
 **every one of the 1,969 open statements has no P580 at all.** Zero out of

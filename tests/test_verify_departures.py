@@ -304,6 +304,36 @@ def test_undated_people_are_not_compared():
     assert "also dated by OpenParlData:     5" in "\n".join(lines)
 
 
+def test_a_q_id_two_people_claim_is_skipped_not_scored_as_a_disagreement():
+    """Run 17's only 'disagreement' was this, and it was not one.
+
+    Alfred Gehrig left in 1971; the probe reported OpenParlData saying
+    2014-05-31. The join runs person -> wikidata_id -> Q-ID and nothing makes
+    that field unique, so two person records naming one item pool their
+    memberships and `chained_end` answers with whichever has the later row.
+    That is the probe's arithmetic, not the source's date.
+    """
+    pooled = departure(
+        qid="Q9", source_start="1967-12-04", source_end="1971-11-28",
+        opd_end="2014-05-31",
+    )
+    pooled.opd_ambiguous = True
+    pooled.opd_rows = 9
+    verdict, _, lines = classify_leaving_dates(agreeing(MIN_COMPARABLE) + [pooled])
+    assert verdict == CONFIRMED
+    text = "\n".join(lines)
+    assert "Q-ID claimed by several people: 1 (skipped)" in text
+    assert "2014-05-31" not in text
+
+
+def test_a_disagreement_names_the_rows_it_came_from():
+    """The person id is what would have shown run 17's bug at a glance."""
+    odd = departure(qid="Q9", source_end="2019-12-01", opd_end="2019-11-30")
+    odd.opd_person_ids = [4242]
+    _, _, lines = classify_leaving_dates(agreeing(MIN_COMPARABLE) + [odd])
+    assert "person id(s) 4242" in "\n".join(lines)
+
+
 def test_not_in_openparldata_is_counted_apart_from_still_open_there():
     """Opposite findings: a gap in the join, versus 'they have not left'."""
     unjoined = departure(qid="Q8", opd_end=None)

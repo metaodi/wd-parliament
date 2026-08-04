@@ -94,6 +94,18 @@ start equals OpenParlData's independent per-term start for every sitting
 member, so P580 may be applied in bulk. Step 4 came back clean in the same run
 — 183 of 183 voting members assigned in the current legislature.
 
+**`wikidata_id` is not unique, and both scripts that join through it assumed
+it was.** OpenParlData's person → `wikidata_id` → Q-ID join has no uniqueness
+constraint: two person records naming one item pool their memberships under a
+single key, and whatever reads "the latest row" then reads the *other* person's.
+Run 17 reported Alfred Gehrig — who left in 1971 — against a leaving date of
+2014 because of it. `verify_departures` and `compare_tenure_dates` both now
+**skip** a Q-ID claimed by more than one record and say how many they skipped,
+the same rule `resolve.match_by_identifier` applies to a P1307 claimed by two
+items. Never arbitrate one: a source contradicting itself about who somebody is
+cannot be resolved by picking a side. Any new join through that field needs the
+same guard.
+
 **A person is not a seat, and both new checks got that wrong first.** Run 11
 had comparison 2 keying OpenParlData rows by Q-ID alone, so a member who moved
 NR→SR chained their National Council years onto their Council of States seat —
@@ -345,10 +357,11 @@ expensive one.
   suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
   `position` in the payload. Removing either would turn it into a P582 backfill
   across every open membership on Wikidata. `scripts/verify_departures.py`
-  (README step 8) is the probe that would license removing them; **run 16
-  (2026-08-04) says not yet** — 1,961 of 1,962 leaving dates agree with
-  OpenParlData and the single dissenter (`#2126 Alfred Gehrig`) has nothing
-  excluding it. Both gates have a test naming them. `_departed_suggestion` also
+  (README step 8) is the probe that would license removing them; **runs 16-17
+  (2026-08-04) say not yet, and have so far found more wrong with the probe
+  than with the data** — 1,961 of 1,962 leaving dates agree with OpenParlData,
+  and the single dissenter turned out to be the probe's own join, not a
+  disputed date. Both gates have a test naming them. `_departed_suggestion` also
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
