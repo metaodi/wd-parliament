@@ -30,6 +30,7 @@ from verify_departures import (  # noqa: E402
     MIN_COMPARABLE,
     NAME_DIFFERENT,
     NAME_EXACT,
+    NAME_NEAR,
     NAME_VARIANT,
     Departure,
     chained_end,
@@ -163,6 +164,48 @@ def test_a_q_id_label_is_unknown_rather_than_a_mismatch():
 )
 def test_run_16s_false_alarms_are_recognised_as_variants(label, history_name):
     assert name_relation(label, history_name) == NAME_VARIANT
+
+
+# Run 18's five survivors, after the variant folding. Every one is the same
+# person one character apart: a trailing consonant, a y for an i, an inserted
+# n. They are reported, never accepted — see `_near`.
+@pytest.mark.parametrize(
+    "label, history_name",
+    [
+        ("Johann Zünd", "Zündt"),                    # trailing consonant
+        ("Maurice Despland", "Desplands"),           # trailing s
+        ("Camille Desfayes", "Défayes"),             # an s inside
+        ("Hans Wunderly-von Muralt", "Wunderli"),    # y for i
+        ("Jeannot de Crousaz", "Decrousnaz"),        # an inserted n
+    ],
+)
+def test_run_18s_survivors_are_near_misses_not_wrong_people(label, history_name):
+    assert name_relation(label, history_name) == NAME_NEAR
+
+
+def test_a_near_miss_is_reported_and_blocks_but_never_accepted():
+    """The bucket exists to stop the probe calling somebody a different person
+    on one character. It must not become a way of agreeing with them."""
+    people = agreeing(3) + [
+        departure(qid="Q9", label="Johann Zünd", history_name="Zündt")
+    ]
+    verdict, detail, lines = classify_identity(people)
+    assert verdict == INCONCLUSIVE          # not CONFIRMED: still unsettled
+    assert verdict != CONTRADICTED          # not a wrong person either
+    assert "one character apart" in detail
+    text = "\n".join(lines)
+    assert "one character apart:            1 (unsettled)" in text
+    assert "Zündt" in text
+
+
+def test_a_genuinely_different_surname_still_contradicts_over_a_near_miss():
+    people = agreeing(3) + [
+        departure(qid="Q8", label="Johann Zünd", history_name="Zündt"),
+        departure(qid="Q9", label="Ruth Beispiel", history_name="Andereleute"),
+    ]
+    verdict, detail, _ = classify_identity(people)
+    assert verdict == CONTRADICTED
+    assert "1 of 5" in detail
 
 
 def test_folding_does_not_merge_two_different_families():

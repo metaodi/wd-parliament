@@ -229,6 +229,7 @@ class Departure:
 # work has stopped checking.
 NAME_EXACT = "exact"
 NAME_VARIANT = "variant"
+NAME_NEAR = "near"
 NAME_DIFFERENT = "different"
 
 _PARENTHESISED = re.compile(r"\(.*?\)")
@@ -317,7 +318,55 @@ def name_relation(label: Optional[str], last_name: Optional[str]) -> Optional[st
     label_parts = set(_name_parts(label))
     if label_parts & set(_name_parts(wanted)):
         return NAME_VARIANT
+
+    if _near(folded_label, folded_wanted):
+        return NAME_NEAR
     return NAME_DIFFERENT
+
+
+def _within_one_edit(a: str, b: str) -> bool:
+    """Are these one insertion, deletion or substitution apart? Pure."""
+    if abs(len(a) - len(b)) > 1:
+        return False
+    if a == b:
+        return True
+    i = 0
+    while i < min(len(a), len(b)) and a[i] == b[i]:
+        i += 1
+    if len(a) == len(b):
+        return a[i + 1:] == b[i + 1:]
+    longer, shorter = (a, b) if len(a) > len(b) else (b, a)
+    return longer[i + 1:] == shorter[i:]
+
+
+def _near(folded_label: str, folded_wanted: str) -> bool:
+    """Is the surname one character away from somewhere in the label? Pure.
+
+    Run 18's five survivors, and every one of them is the same person:
+    ``Zünd``/``Zündt``, ``Despland``/``Desplands``, ``Desfayes``/``Défayes``,
+    ``Wunderly``/``Wunderli``, ``de Crousaz``/``Decrousnaz`` — a trailing
+    consonant, a y for an i, an inserted n. Nineteenth-century names, two
+    sources, one letter.
+
+    Windowed rather than whole-string because the label carries the forenames
+    too, and the surname can sit anywhere in it.
+
+    **This bucket accepts nothing.** It is a reporting refinement, not a
+    loosening: a near miss still stops the section returning CONFIRMED, it just
+    stops the probe calling somebody a different person on the strength of one
+    character. That is why widening it cannot cost safety — the worst it can do
+    is move a row from "wrong person" to "check this one".
+    """
+    if not folded_wanted or not folded_label:
+        return False
+    wanted_len = len(folded_wanted)
+    for size in (wanted_len - 1, wanted_len, wanted_len + 1):
+        if size <= 0:
+            continue
+        for start in range(0, max(0, len(folded_label) - size) + 1):
+            if _within_one_edit(folded_label[start:start + size], folded_wanted):
+                return True
+    return False
 
 
 def chained_end(rows: Sequence[Dict[str, Any]]) -> Optional[date]:
@@ -416,14 +465,24 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
     relations = [(d, name_relation(d.label, d.history_name)) for d in judged]
     agree = [d for d, r in relations if r == NAME_EXACT]
     variants = [d for d, r in relations if r == NAME_VARIANT]
+    near = [d for d, r in relations if r == NAME_NEAR]
     differ = [d for d, r in relations if r == NAME_DIFFERENT]
     unknown = [d for d, r in relations if r is None]
 
     lines.append(f"identities checked:               {len(judged)}")
     lines.append(f"  surname matches the label:      {len(agree)}")
     lines.append(f"  same name, spelt differently:   {len(variants)}")
+    lines.append(f"  one character apart:            {len(near)} (unsettled)")
     lines.append(f"  surname contradicts the label:  {len(differ)}")
     lines.append(f"  one side has no name:           {len(unknown)}")
+    if near:
+        lines.append("")
+        lines.append("  one character apart — settle these by hand:")
+        for d in near[:_MAX_ROWS]:
+            lines.append(
+                f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
+                f"'{d.history_name}'"
+            )
     if variants:
         lines.append("")
         lines.append("  accepted as spelling variants — read them:")
@@ -453,10 +512,23 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
             CONTRADICTED,
             f"{len(differ)} of {len(judged)} identifier values reach a person "
             "whose surname is not the item's, even after folding umlauts, "
-            "accents, particles, married names and doubled letters. Each one is "
-            "a date that would be written to the wrong person's item. This "
-            "alone blocks a bulk apply; check them by hand on the biography "
-            "pages.",
+            "accents, particles, married names and doubled letters, and is not "
+            "within one character of it either. Each one is a date that would "
+            "be written to the wrong person's item. This alone blocks a bulk "
+            "apply; check them by hand on the biography pages.",
+            lines,
+        )
+    if near:
+        return (
+            INCONCLUSIVE,
+            f"No identifier value reaches a different surname, but {len(near)} "
+            f"of {len(judged)} are one character apart and this comparison "
+            "cannot settle them — a nineteenth-century name spelt two ways and "
+            "a wrong person one letter away look identical from here. They are "
+            "listed above and a human can settle all of them in a sitting; "
+            "until somebody does, the population is not clean enough to apply "
+            "in bulk. Note what this is *not*: not one case of the identifier "
+            "reaching a plainly different person.",
             lines,
         )
     return (

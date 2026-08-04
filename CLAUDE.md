@@ -357,11 +357,12 @@ expensive one.
   suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
   `position` in the payload. Removing either would turn it into a P582 backfill
   across every open membership on Wikidata. `scripts/verify_departures.py`
-  (README step 8) is the probe that would license removing them; **runs 16-17
-  (2026-08-04) say not yet, and have so far found more wrong with the probe
-  than with the data** — 1,961 of 1,962 leaving dates agree with OpenParlData,
-  and the single dissenter turned out to be the probe's own join, not a
-  disputed date. Both gates have a test naming them. `_departed_suggestion` also
+  (README step 8) is the probe that would license removing them; **runs 16-18
+  (2026-08-04) say not yet, and have found more wrong with the probe than with
+  the data** — run 18 has the leaving dates agreeing **1,960 of 1,960**, and
+  what is left is five identities one character apart (`Zünd`/`Zündt`), which a
+  name comparison cannot settle and so reports as `near` without accepting.
+  Both gates have a test naming them. `_departed_suggestion` also
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
