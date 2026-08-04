@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-03 07:14 UTC",
+  "generated": "2026-08-04 15:41 UTC",
   "total_suggestions": 335,
   "total_members": 180,
   "quickstatements": 0,
@@ -3476,7 +3476,7 @@
           "priority": 2,
           "member": "Samuel Zbinden",
           "person_qid": "Q65070742",
-          "person_number": null,
+          "person_number": 10088,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
@@ -3486,7 +3486,9 @@
             "position": "https://www.wikidata.org/wiki/Q21518678"
           },
           "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q65070742-9e56e43f-4e85-566e-fe4c-70f3916b2d68"
+            "statement_id": "http://www.wikidata.org/entity/statement/Q65070742-9e56e43f-4e85-566e-fe4c-70f3916b2d68",
+            "parliament_id": "10088",
+            "biography": "https://www.kantonsrat.zh.ch/mitglieder/"
           }
         },
         {
@@ -3578,17 +3580,21 @@
           "priority": 2,
           "member": "Stefan Feldmann",
           "person_qid": "Q2336270",
-          "person_number": null,
+          "person_number": 17913,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582). OpenParlData gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
+          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; OpenParlData records the seat as held from 2011-05-09 to 2026-02-03, so add an end date (P582) of 2026-02-03, and the statement has no start date (P580) either — 2011-05-09 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
           "links": {
             "item": "https://www.wikidata.org/wiki/Q2336270",
             "position": "https://www.wikidata.org/wiki/Q21518678"
           },
           "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/q2336270-c74dd236-4654-d970-983f-e7d2f8467de2"
+            "statement_id": "http://www.wikidata.org/entity/statement/q2336270-c74dd236-4654-d970-983f-e7d2f8467de2",
+            "parliament_id": "17913",
+            "biography": "https://www.kantonsrat.zh.ch/mitglieder/",
+            "start": "2011-05-09",
+            "end": "2026-02-03"
           }
         },
         {
