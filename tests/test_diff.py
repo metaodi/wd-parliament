@@ -13,6 +13,7 @@ from wd_parliament.models import (
     KIND_ADD_QUALIFIER,
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
+    KIND_DUPLICATE_IDENTIFIER,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
@@ -710,3 +711,154 @@ def test_suggestions_carry_grouping_keys(periods):
     )
     assert suggestions[0].canton == "ZH"
     assert suggestions[0].parl_group == "V"
+
+
+# --- one identifier, several items ------------------------------------------
+# A conflict rather than a gap, and the one finding this tool makes that is an
+# outright contradiction in Wikidata's own data. Before it was reported, the
+# join skipped the member silently and they drew "no item was found, they may
+# need a new item" — advice that would have created a third duplicate.
+def _twins(identifier="1101", qids=("Q11", "Q12"), start=date(2019, 12, 2)):
+    return {
+        qid: WikidataPerson(
+            qid=qid,
+            label="Anna Muster",
+            parliament_id=identifier,
+            statements=[
+                PositionStatement(
+                    person_qid=qid, statement_id=f"S{qid}",
+                    position_qid=POSITION, start=start,
+                )
+            ],
+        )
+        for qid in qids
+    }
+
+
+def _resolved(members, people):
+    from wd_parliament.resolve import match_by_identifier
+
+    match_by_identifier(members, people.values())
+    return members
+
+
+def test_a_duplicated_identifier_is_reported_rather_than_swallowed(periods):
+    member = make_member(qid=None, qid_source=None)
+    people = _twins()
+    _resolved([member], people)
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER)
+    assert conflict.payload["duplicate_qids"] == ["Q11", "Q12"]
+    assert "claimed by 2 Wikidata items" in conflict.detail
+    assert conflict.priority == 1  # ahead of everything else about this member
+
+
+def test_a_conflicted_member_is_not_told_to_create_a_new_item(periods):
+    """The advice that would have made a third duplicate."""
+    member = make_member(qid=None, qid_source=None)
+    people = _twins()
+    _resolved([member], people)
+    kinds_seen = kinds(
+        compute_suggestions(BODY, [member], people, periods, make_config(MODEL_TENURE))
+    )
+    assert KIND_DUPLICATE_IDENTIFIER in kinds_seen
+    assert KIND_NO_WIKIDATA_ITEM not in kinds_seen
+
+
+def test_neither_claimant_is_reported_as_having_left(periods):
+    """Both items are open, and the member is sitting. The reverse walk keys on
+    the Q-ID, which the skipped join never set — so without the identifier
+    guard each claimant draws a confident, wrong 'they have left'."""
+    member = make_member(qid=None, qid_source=None)
+    people = _twins()
+    _resolved([member], people)
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_ADD_END_DATE not in kinds(suggestions)
+
+
+def test_a_collision_between_two_departed_items_is_still_raised(periods):
+    """No sitting member carries the number, so pass 1 cannot see it at all."""
+    member = make_member()  # a different, cleanly matched member
+    people = {"Q7": person([make_statement(start=date(2019, 12, 2),
+                                           districts=["Q11943"])])}
+    people.update(_twins(identifier="999", qids=("Q90", "Q91")))
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER)
+    assert conflict.payload["duplicate_qids"] == ["Q90", "Q91"]
+    assert conflict.links["Q90"] == "https://www.wikidata.org/wiki/Q90"
+
+
+def test_a_collision_is_raised_once_not_once_per_item(periods):
+    member = make_member()
+    people = {"Q7": person([make_statement(start=date(2019, 12, 2),
+                                           districts=["Q11943"])])}
+    people.update(_twins(identifier="999", qids=("Q90", "Q91", "Q92")))
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    conflicts = [s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER]
+    assert len(conflicts) == 1
+    assert conflicts[0].payload["duplicate_qids"] == ["Q90", "Q91", "Q92"]
+
+
+def test_a_sitting_members_conflict_is_not_reported_twice(periods):
+    """Pass 1 raises it for the member; pass 2 must not raise it again."""
+    member = make_member(qid=None, qid_source=None)
+    people = _twins()
+    _resolved([member], people)
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    assert len([s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER]) == 1
+
+
+def test_items_claiming_one_id_for_another_seat_are_not_this_chambers_problem(periods):
+    member = make_member()
+    people = {"Q7": person([make_statement(start=date(2019, 12, 2),
+                                           districts=["Q11943"])])}
+    for qid in ("Q90", "Q91"):
+        people[qid] = WikidataPerson(
+            qid=qid, label="Elsewhere", parliament_id="999",
+            statements=[PositionStatement(
+                person_qid=qid, statement_id=f"S{qid}",
+                position_qid="Q18510613", start=date(1950, 1, 1),
+            )],
+        )
+    suggestions = compute_suggestions(
+        BODY, [member], people, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_DUPLICATE_IDENTIFIER not in kinds(suggestions)
+
+
+def test_a_conflict_is_never_mechanical(periods):
+    """Every repair is destructive in a way QuickStatements cannot express."""
+    from wd_parliament.quickstatements import is_mechanical
+
+    member = make_member(qid=None, qid_source=None)
+    people = _twins()
+    _resolved([member], people)
+    conflict = next(
+        s for s in compute_suggestions(
+            BODY, [member], people, periods, make_config(MODEL_TENURE)
+        )
+        if s.kind == KIND_DUPLICATE_IDENTIFIER
+    )
+    assert is_mechanical(conflict, MODEL_TENURE) is False
+
+
+def test_a_name_match_onto_one_claimant_still_raises_the_conflict(periods):
+    """The fallback can land on one of them; that is a guess, not a resolution."""
+    member = make_member(qid="Q11", qid_source=QID_FROM_NAME)
+    member.duplicate_identifier_qids = ["Q11", "Q12"]
+    suggestions = compute_suggestions(
+        BODY, [member], _twins(), periods, make_config(MODEL_TENURE)
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER)
+    assert "uses Q11" in conflict.detail
+    assert "not an answer" in conflict.detail

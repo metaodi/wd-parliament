@@ -8,6 +8,7 @@ import pytest
 from wd_parliament.models import (
     KIND_ADD_END_DATE,
     KIND_ADD_MEMBERSHIP,
+    KIND_DUPLICATE_IDENTIFIER,
     KIND_NO_WIKIDATA_ITEM,
     QID_FROM_IDENTIFIER,
     QID_FROM_NAME,
@@ -259,3 +260,42 @@ def test_write_reports_without_quickstatements(tmp_path, result):
     docs = tmp_path / "docs"
     write_reports([result], tmp_path / "reports", docs, generated_at=GENERATED)
     assert not (docs / "suggestions.qs").exists()
+
+
+# --- a conflict is only actionable if both items are clickable ---------------
+def _conflict_result():
+    return BodyResult(
+        body=BODY,
+        suggestions=[
+            make_suggestion(
+                kind=KIND_DUPLICATE_IDENTIFIER,
+                label="Old One (Q90), Old Two (Q91)",
+                canton=None,
+                person_qid=None,
+                person_number=None,
+                qid_source=None,
+                detail="P1307 '999' is claimed by 2 Wikidata items.",
+                payload={"duplicate_qids": ["Q90", "Q91"], "parliament_id": "999"},
+            )
+        ],
+        member_count=200,
+        matched_by_identifier=200,
+    )
+
+
+def test_the_conflicting_items_are_linked_in_markdown():
+    md = render_body_markdown(_conflict_result(), GENERATED, "canton")
+    assert "One identifier claimed by several Wikidata items" in md
+    assert "[Q90](https://www.wikidata.org/wiki/Q90)" in md
+    assert "[Q91](https://www.wikidata.org/wiki/Q91)" in md
+
+
+def test_the_conflicting_items_are_linked_in_the_dashboard():
+    html = render_html([_conflict_result()], GENERATED)
+    assert 'href="https://www.wikidata.org/wiki/Q90"' in html
+    assert 'href="https://www.wikidata.org/wiki/Q91"' in html
+
+
+def test_an_ordinary_suggestion_grows_no_item_list(result):
+    """The links belong to the conflict kind, not to every line."""
+    assert "— items:" not in render_body_markdown(result, GENERATED, "canton")

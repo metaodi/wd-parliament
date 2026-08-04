@@ -1022,6 +1022,7 @@ well-maintained chamber would return.)
 | Suggestion | Priority | Trigger |
 | --- | :---: | --- |
 | **Add Swiss parliament ID** | 1 | Item matched by name but has no P1307. Highest leverage — it makes every future run exact. |
+| **One identifier, several items** | 1 | Two or more Wikidata items claim the same P1307. A contradiction in Wikidata's own data — see below. |
 | **Review ended membership** | 1 | P39 closed with P582, but parlament.ch says `Active`. |
 | **Add end date** | 2 | P39 open, but the member is no longer `Active`. |
 | **Add membership** | 2 | Sitting member, no P39 for this council. |
@@ -1036,6 +1037,38 @@ Scope for v1: **both chambers, currently sitting members only** (~246 people).
 Historic members are a later extension — `MemberCouncilHistory` has an identical
 shape, so it is a table swap plus following `IdPredecessor` chains for members
 who left and returned.
+
+### The one suggestion that is about Wikidata contradicting itself
+
+P1307 should identify one person. When two items claim the same value, the
+identifier join **refuses to arbitrate** — picking one would attach every
+subsequent edit to a coin flip. That refusal used to be a log line and nothing
+more, which made the conflict worse than invisible:
+
+- the member came out of the join unmatched, so the run's headline health
+  number (the P1307 hit rate) counted them as a coverage gap rather than a
+  data conflict;
+- and an unmatched member draws **"no Wikidata item was found… they may need a
+  new item"** — the one piece of advice guaranteed to make things worse, since
+  acting on it would create a third duplicate.
+
+Both are fixed. `resolve.match_by_identifier` records the claiming items on the
+member, `diff` raises `DUPLICATE_IDENTIFIER` at priority 1 and suppresses the
+"create an item" advice for that member, and the report links every claimant so
+the two can be opened side by side. A second pass raises the same conflict
+between items about people who have **left**, which no sitting member's number
+would ever surface.
+
+It is report-only, and not for want of evidence — this is the strongest finding
+the tool makes. Every repair (merging two items, or removing an identifier from
+one) is destructive in a way QuickStatements cannot express, and *which* item is
+the real person is exactly the judgement the join declined to make.
+
+One consequence worth knowing: a member whose identifier is duplicated has no
+Q-ID, so the reverse walk below cannot recognise them by item and would report
+**both** claimants as having left — a confident, wrong claim about somebody
+sitting today. That pass therefore also skips any item whose identifier belongs
+to a sitting member, not just any item whose Q-ID does.
 
 ### The one suggestion that is about somebody the source does not list
 

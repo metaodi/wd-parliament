@@ -97,6 +97,21 @@ def _markdown_member(s: Suggestion) -> str:
     return name
 
 
+def _markdown_conflict_links(s: Suggestion) -> str:
+    """Clickable links to the items claiming one identifier.
+
+    A conflict is only actionable if the reader can open both items side by
+    side, and the two Q-IDs are the whole content of the finding — for the
+    orphan case there is no ``person_qid`` to link, because the point is that
+    there is more than one.
+    """
+    qids = s.payload.get("duplicate_qids") or []
+    if not qids:
+        return ""
+    links = ", ".join(f"[{q}](https://www.wikidata.org/wiki/{q})" for q in qids)
+    return f" — items: {links}"
+
+
 def render_body_markdown(
     result: BodyResult,
     generated_at: str,
@@ -149,7 +164,10 @@ def render_body_markdown(
             lines.append(f"### {KIND_LABEL.get(kind, kind)} ({len(kind_items)})")
             lines.append("")
             for s in kind_items:
-                lines.append(f"- {_markdown_member(s)} — {s.detail}")
+                lines.append(
+                    f"- {_markdown_member(s)} — {s.detail}"
+                    f"{_markdown_conflict_links(s)}"
+                )
             lines.append("")
     return "\n".join(lines)
 
@@ -377,6 +395,11 @@ _HTML_TEMPLATE = """<!doctype html>
               {% if s.payload.biography %}(<a href="{{ s.payload.biography }}">#{{ s.person_number }}</a>){% endif %}
               {% if s.qid_source == 'name' %}<span class="byname" title="matched by name, not by the identifier">&#9888;</span>{% endif %}
               <span class="detail">&mdash; {{ s.detail }}</span>
+              {% if s.payload.duplicate_qids %}
+              <span class="detail">&mdash; items:
+                {% for q in s.payload.duplicate_qids %}<a href="https://www.wikidata.org/wiki/{{ q }}">{{ q }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+              </span>
+              {% endif %}
             </li>
             {% endfor %}
           </ul>

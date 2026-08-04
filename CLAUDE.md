@@ -343,14 +343,25 @@ expensive one.
   people who are *not* in the current-members set. Query builders are static
   methods so they are unit-testable.
 - **`resolve.py`** — the P1307 join first (exact). An identifier claimed by two
-  items is **skipped and logged**, not arbitrated. The name fallback rejects any
-  candidate whose *known* birth date contradicts the member's, and never hands
-  one Q-ID to two members.
+  items is **skipped, logged and recorded on the member**
+  (`Member.duplicate_identifier_qids`), never arbitrated. Recording it is what
+  makes the conflict reportable: logging alone left the member looking merely
+  unmatched, and an unmatched member draws "they may need a new item" — which
+  would create a third duplicate. The name fallback rejects any candidate whose
+  *known* birth date contradicts the member's, and never hands one Q-ID to two
+  members.
 - **`diff.py`** — pure. `expected_statements` is the **single place** the
   `tenure` vs `period` statement model lives; the rest of the diff works off
   whatever it returns. Walks members → Wikidata, then Wikidata's open
   memberships → members (catching people Wikidata still lists as sitting).
-  Sorted by priority then name. That second walk is about people the
+  Sorted by priority then name. `DUPLICATE_IDENTIFIER` is raised from **two**
+  places — once per conflicted sitting member, and once per identifier that
+  several *seat-holding items* claim without any sitting member carrying it —
+  deduplicated on the identifier value. The reverse walk skips items whose
+  identifier belongs to a sitting member as well as items whose Q-ID does: a
+  conflicted member has no Q-ID, so keying on that alone reports both claimants
+  as departed, which is a wrong claim about somebody in office.
+  That second walk is about people the
   *current-members* table does not contain, so `_departed_suggestion` reaches
   the source through the identifier **Wikidata** asserts — `config.biography_url`
   for the link, `Tenure` from the source's historic record for the dates it

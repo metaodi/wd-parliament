@@ -42,6 +42,7 @@ from .models import (
     KIND_ADD_QUALIFIER,
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
+    KIND_DUPLICATE_IDENTIFIER,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
@@ -239,9 +240,22 @@ def compute_suggestions(
     today = today or date.today()
     suggestions: List[Suggestion] = []
     seen_qids: set = set()
+    reported_conflicts: set = set()
 
     # 1) parlament.ch -> Wikidata.
     for member in members:
+        # A conflict, not a gap. Raised before anything else about this member,
+        # and *instead of* NO_WIKIDATA_ITEM: the identifier join refused to
+        # arbitrate, so they may look unmatched, and telling somebody to create
+        # an item for a person who already has two would make a third.
+        if member.duplicate_identifier_qids:
+            reported_conflicts.add(str(member.person_number))
+            suggestions.append(
+                _duplicate_identifier_suggestion(body, member, config)
+            )
+            if not member.qid:
+                continue
+
         if not member.qid:
             suggestions.append(
                 _base_suggestion(
@@ -274,9 +288,31 @@ def compute_suggestions(
         suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
         return suggestions
 
+    # 2a) One identifier, several items — among the seat holders themselves.
+    # The pass above only sees identifiers a *sitting* member carries; a
+    # collision between two items about departed people is the same data
+    # problem and would otherwise never be said out loud.
+    for identifier, claimants in sorted(
+        _identifier_collisions(people, body.position_qid).items()
+    ):
+        if identifier in reported_conflicts:
+            continue
+        suggestions.append(
+            _orphan_conflict_suggestion(body, identifier, claimants, config)
+        )
+
     active_qids = {m.qid for m in members if m.qid and m.active}
+    # The identifiers sitting members carry, whether or not the join could use
+    # them. A member with a duplicated identifier has **no** ``qid`` — the join
+    # refused to pick one — so ``active_qids`` misses both claimants and the
+    # walk below would report each of them as having left. That is a confident,
+    # wrong claim about somebody who is in office today, and it is the failure
+    # mode this whole pass was already once guilty of at scale.
+    active_identifiers = {str(m.person_number) for m in members if m.active}
     for qid, person in sorted(people.items()):
         if qid in active_qids:
+            continue
+        if (person.parliament_id or "").strip() in active_identifiers:
             continue
         open_statements = [
             s for s in person.statements_for(body.position_qid) if s.is_open
@@ -291,6 +327,110 @@ def compute_suggestions(
 
     suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
     return suggestions
+
+
+def _identifier_collisions(
+    people: Dict[str, WikidataPerson], position_qid: str
+) -> Dict[str, List[WikidataPerson]]:
+    """Identifier → the items holding this seat that claim it, when several do.
+
+    Pure. Restricted to items holding ``position_qid`` so a chamber's report
+    only raises conflicts about that chamber's seats; the same collision seen
+    from the other chamber is that chamber's to report.
+    """
+    by_identifier: Dict[str, List[WikidataPerson]] = {}
+    for person in people.values():
+        identifier = (person.parliament_id or "").strip()
+        if not identifier or not person.statements_for(position_qid):
+            continue
+        by_identifier.setdefault(identifier, []).append(person)
+    return {k: v for k, v in by_identifier.items() if len(v) > 1}
+
+
+def _duplicate_identifier_suggestion(
+    body: Body, member: Member, config: Config
+) -> Suggestion:
+    """One identifier, several Wikidata items — a conflict a human must resolve.
+
+    Report-only, and not because the evidence is weak: it is the strongest
+    finding this tool makes, an outright contradiction in Wikidata's own data.
+    It is report-only because **every** repair is destructive in a way
+    QuickStatements cannot express — merging two items, or removing an
+    identifier from one of them — and because which item is the real person is
+    exactly the judgement the join refused to make.
+
+    The member may still carry a ``qid`` here: the name fallback runs after the
+    identifier join gives up, and can land on one of the claimants. That does
+    not settle the conflict, so it is raised either way and the detail says
+    which item the rest of the run went on to use.
+    """
+    qids = list(member.duplicate_identifier_qids)
+    used = (
+        f" The rest of this report uses {member.qid}, matched by name and birth "
+        "date — that is a guess about which of them is this person, not an "
+        "answer."
+        if member.qid
+        else " No other suggestion is made for this member: until the conflict "
+        "is resolved there is no item to make one about."
+    )
+    return _base_suggestion(
+        KIND_DUPLICATE_IDENTIFIER,
+        body,
+        member,
+        f"{config.identifier_property} '{member.person_number}' is claimed by "
+        f"{len(qids)} Wikidata items: {', '.join(qids)}. The identifier should "
+        "be unique, so either they are duplicates that need merging or one "
+        f"carries the wrong value. {config.source_name} lists a single person "
+        f"under that number. The identifier join skips this member rather than "
+        f"picking one of the items.{used}",
+        payload={
+            "duplicate_qids": qids,
+            "parliament_id": str(member.person_number),
+            "biography": config.biography_url_for(member.person_number),
+        },
+    )
+
+
+def _orphan_conflict_suggestion(
+    body: Body,
+    identifier: str,
+    people: Sequence[WikidataPerson],
+    config: Config,
+) -> Suggestion:
+    """The same conflict, for an identifier no *sitting* member carries.
+
+    Two items claiming one identifier is a data problem whether or not the
+    person is still in office, and the members table only covers today's ~246.
+    Without this pass a collision between two historic items would go unsaid
+    for as long as nobody happens to be elected with that number.
+    """
+    qids = sorted(p.qid for p in people)
+    labels = ", ".join(f"{p.label or p.qid} ({p.qid})" for p in sorted(
+        people, key=lambda p: p.qid
+    ))
+    return Suggestion(
+        kind=KIND_DUPLICATE_IDENTIFIER,
+        body=body,
+        member_label=labels,
+        detail=(
+            f"{config.identifier_property} '{identifier}' is claimed by "
+            f"{len(qids)} Wikidata items that hold a '{body.label}' seat: "
+            f"{labels}. The identifier should be unique, so either they are "
+            "duplicates that need merging or one carries the wrong value. No "
+            f"*sitting* member has that number, so this is a conflict between "
+            "items about people who have left — invisible to the rest of this "
+            "report, which is why it is raised here."
+        ),
+        links={
+            "position": _item_url(body.position_qid),
+            **{qid: _item_url(qid) for qid in qids},
+        },
+        payload={
+            "duplicate_qids": qids,
+            "parliament_id": identifier,
+            "biography": config.biography_url_for(identifier),
+        },
+    )
 
 
 def _departed_suggestion(
