@@ -19,6 +19,12 @@ Python costs one extra request and keeps every result set predictable.
 :meth:`WikidataClient.search_people` is the name-based fallback, restricted to
 humans who are politicians or already hold one of the positions, and returning
 birth dates so ``resolve`` can pick between namesakes.
+
+:meth:`WikidataClient.get_name_variants` answers the opposite question — given
+items already identified, what *else* are they called? Aliases and the P1810
+"subject named as" qualifier on the identifier statement, for a caller
+comparing a label against a name in the source. It is bounded by the Q-IDs it
+is handed and asks for nothing else.
 """
 
 from __future__ import annotations
@@ -29,7 +35,16 @@ from datetime import date
 from typing import Dict, Iterable, Iterator, List, Optional, Sequence
 
 from .http_client import HttpClient
-from .models import P_PARLIAMENT_ID, PersonMatch, PositionStatement, WikidataPerson
+from .models import (
+    NAME_FROM_ALIAS,
+    NAME_FROM_NAMED_AS,
+    P_PARLIAMENT_ID,
+    P_SUBJECT_NAMED_AS,
+    NameVariant,
+    PersonMatch,
+    PositionStatement,
+    WikidataPerson,
+)
 
 log = logging.getLogger(__name__)
 
@@ -51,6 +66,10 @@ LABEL_LANGUAGES = ("de", "fr", "it", "en", "mul")
 # Names per name-search query; the query travels in the URL of a GET, so this
 # keeps the request comfortably under the usual ~8 KB header limit.
 SEARCH_BATCH_SIZE = 25
+
+# Q-IDs per name-variant query. Same URL-length constraint, but a Q-ID costs
+# ~12 characters against a name's five language-tagged literals.
+NAME_VARIANT_BATCH_SIZE = 200
 
 # A name needs at least two words to be worth searching — a single token is far
 # more likely to collide with an unrelated person.
@@ -134,9 +153,9 @@ class WikidataClient:
         The property is configuration because the join key is not the same at
         every level of government: federally it is P1307 against
         ``MemberCouncil.PersonNumber``, but **no cantonal parliament has a
-        P1307**, and for the Kantonsrat Zürich the Wikidata-asserted identifier
-        is P14527 (OpenParlData ID) — carried by 35 of the 35 members
-        OpenParlData links, where federally it adds nobody.
+        P1307**, and for the Kantonsrat Zürich it is P13468, the canton's own
+        member id. (P14527, the OpenParlData ID, is Wikidata-asserted too and
+        was the first cantonal choice; it reached 0 of the 180 sitting members.)
         """
         return f"""
 SELECT ?person ?personLabel ?parliamentId ?birth ?death WHERE {{
@@ -269,6 +288,50 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
   OPTIONAL {{ ?person wdt:P569 ?birth . }}
   OPTIONAL {{ ?person wdt:{identifier_property} ?parliamentId . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},de,fr,it,en". }}
+}}
+""".strip()
+
+    @staticmethod
+    def name_variant_query(
+        qids: Sequence[str],
+        language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
+    ) -> str:
+        """The names these items carry besides their label.
+
+        Two kinds, and the query keeps them apart with a UNION rather than two
+        OPTIONALs for the reason this module keeps its queries bounded
+        everywhere else: an item with four aliases and a P1810 would otherwise
+        come back as four rows carrying the same qualifier, and the "kinds
+        multiply" bug is exactly what the three-query split exists to avoid.
+
+        - ``skos:altLabel`` — Wikidata's "also known as", restricted to the
+          label languages so a Cyrillic or Chinese transliteration of a Swiss
+          politician cannot end up being compared against a German surname;
+        - ``pq:P1810`` on the **identifier statement** — "subject named as",
+          i.e. how the person is written *in the database the identifier points
+          at*. That is the strongest name evidence available here, because it is
+          a claim about this very source rather than about the person in
+          general.
+
+        The identifier property is a parameter for the same reason it is one on
+        every other query: P1307 federally, P14527 for a cantonal parliament.
+        """
+        languages = ", ".join(
+            f'"{lang}"' for lang in dict.fromkeys((language,) + LABEL_LANGUAGES)
+        )
+        return f"""
+SELECT ?person ?name ?origin WHERE {{
+  VALUES ?person {{ {_values_clause(qids)} }}
+  {{
+    ?person skos:altLabel ?name .
+    FILTER ( lang(?name) IN ( {languages} ) )
+    BIND ( "{NAME_FROM_ALIAS}" AS ?origin )
+  }} UNION {{
+    ?person p:{identifier_property} ?idStatement .
+    ?idStatement pq:{P_SUBJECT_NAMED_AS} ?name .
+    BIND ( "{NAME_FROM_NAMED_AS}" AS ?origin )
+  }}
 }}
 """.strip()
 
@@ -442,6 +505,53 @@ SELECT ?item ?itemLabel ?itemDescription ?instanceLabel WHERE {{
                     instances.append(instance)
         for qid in unique:
             out.setdefault(qid, {"label": None, "description": None, "instance_of": []})
+        return out
+
+    def get_name_variants(
+        self,
+        qids: Sequence[str],
+        language: str = "de",
+        identifier_property: str = P_PARLIAMENT_ID,
+    ) -> Dict[str, List[NameVariant]]:
+        """Map Q-ID → the aliases and P1810 values those items carry.
+
+        Bounded by the caller's list: this answers "what else is this person
+        called?" for a population somebody has already narrowed down, not for
+        Wikidata at large. Items with no variant are simply absent from the
+        result, which is a fact about them and not a failure — a caller must
+        treat a missing entry as "nothing more to compare", never as a
+        mismatch.
+
+        Read-only by construction. Nothing in this tool ever writes P1810 or an
+        alias; both are read to corroborate that an identifier reached the
+        person the item is about.
+        """
+        out: Dict[str, List[NameVariant]] = {}
+        unique = list(dict.fromkeys(q for q in qids if q))
+        for batch in _chunks(unique, NAME_VARIANT_BATCH_SIZE):
+            sparql = self.name_variant_query(batch, language, identifier_property)
+            for row in self.run_query(sparql):
+                qid = qid_from_uri(row.get("person", {}).get("value", ""))
+                name = _literal(row.get("name"))
+                origin = _literal(row.get("origin"))
+                if not qid or not name or not origin:
+                    continue
+                found = out.setdefault(qid, [])
+                if any(v.name == name and v.origin == origin for v in found):
+                    continue
+                found.append(
+                    NameVariant(
+                        name=name,
+                        origin=origin,
+                        language=row.get("name", {}).get("xml:lang") or None,
+                    )
+                )
+        log.info(
+            "Wikidata: %d of %d item(s) carry an alias or a %s value",
+            len(out),
+            len(unique),
+            P_SUBJECT_NAMED_AS,
+        )
         return out
 
     def search_people(

@@ -7,6 +7,15 @@ Wikidata's P1307 ("Swiss parliament ID") against
 ``MemberCouncil.PersonNumber``. That match is a fact, and it is the only
 provenance :mod:`quickstatements` will emit an edit from.
 
+Which property that is, is configuration: P1307 federally, and the canton's own
+member id (P13468 for the Kantonsrat Zürich) cantonally. A property whose value
+has not been *measured* against the source's person id is joined on under
+``identifier_verified: false``, and then every match must be corroborated by
+the item's own name or birth date — see :func:`corroborates`. Two id spaces
+that overlap numerically would otherwise match confidently and match the wrong
+people, which is the one failure an exact join can produce that a missing one
+cannot.
+
 The name search is a fallback for members whose item does not carry P1307 yet,
 and it is corroborated rather than guessed: ``MemberCouncil.DateOfBirth``
 upgrades "refuse to guess between namesakes" into "pick the one born on the
@@ -79,10 +88,41 @@ def index_by_identifier(
     return dict(index)
 
 
+def corroborates(member: Member, person: WikidataPerson) -> bool:
+    """Does the item look like this member, *ignoring* the identifier? Pure.
+
+    Asked only when the config declares the identifier property unverified, and
+    it exists because of what an unverified property can do that an unknown one
+    cannot. If the property's values come from a different id space than the
+    source's person ids, the join does not fail — it succeeds, on whoever
+    happens to carry the same number, and reports the wrong person confidently
+    under ``QID_FROM_IDENTIFIER``.
+
+    The rules, in order, and deliberately in the fail-safe direction:
+
+    1. two known birth dates decide it, agreeing or not. This is the strongest
+       evidence available and it is the same test
+       :func:`select_person_match` applies to a name candidate;
+    2. otherwise the member's surname must appear in the item's label;
+    3. an item with neither — no usable label, no birth date — is **rejected**.
+       Nothing corroborates it, and the member falls through to the name
+       search, which corroborates what it finds.
+    """
+    if member.date_of_birth and person.birth_date:
+        return member.date_of_birth == person.birth_date
+    label = _normalise_name(person.label)
+    if not label or label == _normalise_name(person.qid):
+        return False
+    last = _normalise_name(member.last_name)
+    return bool(last) and last in label
+
+
 def match_by_identifier(
-    members: Sequence[Member], people: Iterable[WikidataPerson]
+    members: Sequence[Member],
+    people: Iterable[WikidataPerson],
+    corroborate: bool = False,
 ) -> Dict[int, WikidataPerson]:
-    """Join members to items on P1307 == ``PersonNumber``. Pure.
+    """Join members to items on the identifier == the source's person id. Pure.
 
     Sets ``qid``/``qid_source`` on each matched member in place and returns the
     ``PersonNumber`` → item map. An identifier claimed by more than one item is
@@ -91,11 +131,31 @@ def match_by_identifier(
     member then looks simply unmatched, and an unmatched member draws
     "no item was found, they may need a new one", which is the worst possible
     advice about somebody who already has two.
+
+    ``corroborate`` turns on :func:`corroborates` for every candidate, and is
+    what a config sets with ``identifier_verified: false``. A rejected match is
+    recorded on the member too, for the same reason a duplicate is: a count of
+    them is how a run says "these two id spaces are not the same one".
     """
     index = index_by_identifier(people)
     matched: Dict[int, WikidataPerson] = {}
     for member in members:
         candidates = index.get(str(member.person_number), [])
+        if corroborate and len(candidates) == 1:
+            person = candidates[0]
+            if not corroborates(member, person):
+                member.identifier_mismatch_qids = [person.qid]
+                log.warning(
+                    "Identifier '%s' points at %s (%r), whose own name and "
+                    "birth date say it is somebody other than %s — skipping "
+                    "the join. If this happens to most members, the property's "
+                    "values are not the source's person ids at all.",
+                    member.person_number,
+                    person.qid,
+                    person.label,
+                    member.full_name,
+                )
+                continue
         if len(candidates) > 1:
             member.duplicate_identifier_qids = sorted(c.qid for c in candidates)
             log.warning(
@@ -201,6 +261,7 @@ def match_members(
     members: Sequence[Member],
     people: Iterable[WikidataPerson],
     matches: Optional[Dict[str, List[PersonMatch]]] = None,
+    corroborate: bool = False,
 ) -> Dict[int, WikidataPerson]:
     """Resolve every member to a Wikidata item. Pure — the tests' entry point.
 
@@ -210,7 +271,7 @@ def match_members(
     re-indexing.
     """
     people = list(people)
-    matched = match_by_identifier(members, people)
+    matched = match_by_identifier(members, people, corroborate=corroborate)
     if matches:
         apply_person_matches(members, matches)
         by_qid = {p.qid: p for p in people}
@@ -229,15 +290,19 @@ def resolve_members(
     position_qids: Sequence[str],
     language: str = "de",
     identifier_property: str = P_PARLIAMENT_ID,
+    corroborate: bool = False,
 ) -> Dict[int, WikidataPerson]:
     """Wire :func:`match_members` around the one name-search network call.
 
     The search is a best-effort extra: if WDQS refuses it (a timeout on a large
     batch, say), the members it would have resolved simply stay unresolved and
     get reported as ``NO_WIKIDATA_ITEM`` instead of failing the whole run.
+
+    ``corroborate`` is ``config.identifier_verified`` inverted — see
+    :func:`corroborates`.
     """
     people = list(people)
-    matched = match_by_identifier(members, people)
+    matched = match_by_identifier(members, people, corroborate=corroborate)
     hit_rate = (len(matched) / len(members) * 100) if members else 0.0
     log.info(
         "%s join: %d/%d members matched by identifier (%.1f%%)",
@@ -246,6 +311,18 @@ def resolve_members(
         len(members),
         hit_rate,
     )
+    rejected = sum(1 for m in members if m.identifier_mismatch_qids)
+    if rejected:
+        log.warning(
+            "%s: %d/%d match(es) rejected because the item they point at names "
+            "somebody else. %s is joined on unverified — if that share is "
+            "large, its values are a different id space from the source's "
+            "person ids and the config must not join on it.",
+            identifier_property,
+            rejected,
+            len(members),
+            identifier_property,
+        )
 
     names = unresolved_names(members)
     if not names:

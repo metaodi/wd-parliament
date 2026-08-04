@@ -153,15 +153,64 @@ Three things about it that cost a wrong answer each, and are now guarded:
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
   P1307 join stays whatever happens to the source. **That is a fact about the
   *federal* overlap and it inverts cantonally** (README step 7): the Kantonsrat
-  Zürich has no P1307, so P14527 may be the only Wikidata-asserted identifier
-  that reaches those people. `scripts/verify_kantonsrat.py` measures it.
+  Zürich has no P1307, so P14527 is the cantonal join despite reaching 0 of the
+  180 sitting members — it is the only identifier OpenParlData can supply a
+  value for. `scripts/verify_kantonsrat.py` measures it, P13468 and P1307 on
+  every dispatch, values as well as coverage.
 
 Runs 13 and 14 (2026-07-30) measured the cantonal source and it is sound: body
 `ZH`, group **5077** `Kantonsrat Zürich`, 913 memberships, 912 with a
 `begin_date`, `electoral_district_de/fr/it` on the *person* records. **The
-position is `Q21518678`** "Mitglied des Zürcher Kantonsrat" and **P14527 is the
-join** — 35 of the 35 linked ZH members carry it, so it needs no change to
-`is_mechanical`. Three traps paid for along the way, all now enforced in
+position is `Q21518678`** "Mitglied des Zürcher Kantonsrat".
+
+**The join is `P14527`, and `P13468` is the property that proves why coverage
+is not a join.** P13468 "Zurich Kantonsrat and Regierungsrat member ID" is the
+canton's own member id — the cantonal analogue of P1307, carried by 28 of the
+35 linked ZH items. Run 20 (2026-08-04) then compared its *values*: **0 of 28**
+equal OpenParlData's person id (Ruth Genner: 22518 against 9532), and the
+column report found them in **no column** of the person record. An identifier
+needs a value on **both** sides; P13468's lives in the canton's own dataset,
+which this tool does not read. `config.load_config` **refuses**
+`identifier_property: P13468` with `source: openparldata` — measured and
+falsified, so it is refused rather than documented. Never re-pair them; the way
+to P13468 is a source that supplies it.
+
+Two more findings from the same run, both load-bearing:
+
+- **P14527 identifies a person *record*, not a person.** 34 of 35 values are
+  the ZH person id; `Q131948095` carries 1411 where this body's record is
+  17436, because OpenParlData holds one record per person **per body**. So it
+  misfires on exactly the members who also sat elsewhere — the federal bias in
+  miniature — and it is out of `VERIFIED_IDENTIFIER_PROPERTIES`, which now
+  holds P1307 alone. **Membership costs a measurement; losing it costs one
+  disagreement.**
+- **P14527 still ships as the join** because it is the only identifier this
+  source can supply a value for, even though it matched **0 of the 180 sitting
+  members** on the first real run — the 35 linked people are mostly members
+  notable enough to have gone federal. **A coverage rate measured over a linked
+  sample is not a coverage rate over the chamber**, the same sampling trap that
+  put the National Council at the top of the position ranking one level up.
+
+**Provenance and value are two separate measurements**, and the config records
+the second with `identifier_verified: false`. That flag is load-bearing, not
+documentation:
+`resolve.corroborates` then checks every identifier match against the item's own
+name and birth date, `Member.identifier_mismatch_qids` records the rejects,
+`report` prints the count, `diff` stamps `identifier_unverified` on every
+suggestion and `is_mechanical` refuses it. The reason is the one failure an
+exact join has that a missing one does not: **two id spaces that overlap
+numerically match confidently and match the wrong people** — correct data
+written onto somebody else's item, which no later run can detect. Never set
+`identifier_verified: true` for a property outside
+`models.VERIFIED_IDENTIFIER_PROPERTIES`; `config.load_config` refuses it, and
+the way through is `verify_kantonsrat.py` section C reading CONFIRMED — 35 of
+35, not 34 — first.
+Section C also reports **which person column** does carry the values when the
+person id does not — "the source keeps it elsewhere" and "the source has never
+heard of it" mean opposite things for the config, and only the second forbids
+the join outright.
+
+Three traps paid for along the way, all now enforced in
 `verify_kantonsrat.py`:
 
 - **`Q19479543` is `Kategorie:Kantonsrat (Zürich, Person)`** — a Wikimedia
@@ -206,6 +255,15 @@ selected by `config.source` in `app.build_source`, joined on
 - **`Member.active` is computed, not read.** The source has no usable flag, and
   `is_seat_row` — open, already begun, in a seat role — is the entire
   difference between 186 rows and 180 members.
+- **`get_link_conflicts` reports a data error in the *source*.** Two person
+  records naming one `wikidata_id` is one item claimed as two people — the
+  mirror image of `DUPLICATE_IDENTIFIER`, and the only finding in the report
+  that is **not** repaired on Wikidata. Read only for collisions, never joined
+  on: a Q-ID a third party asserts *about* Wikidata still needs its own
+  `QID_FROM_*` constant. Keyed `(council, Q-ID)` so a chamber raises its own.
+  `ParliamentClient` deliberately has no such method — parlament.ch asserts
+  nothing about Wikidata — and `app.process` treats its absence as ordinary
+  rather than as a degradation.
 - **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
   purpose.** No period table exists (so no P2937 is ever suggested), and the
   rows are per-tenure so `begin_date` is already the date P580 wants. Do not
@@ -218,10 +276,13 @@ selected by `config.source` in `app.build_source`, joined on
   `source_name` / `identifier_property` / `district_label`; a cantonal report
   saying "parlament.ch" or "P1307" sends a reader to a service that has never
   heard of these members.
-- **it ships `quickstatements: false`.** P14527 coverage is proven; P14527's
-  *value* being the person id is not. `verify_kantonsrat`'s
-  `compare_identifier_values` checks it — the cantonal twin of the Parmelin
-  check — and that must read CONFIRMED before anything is emitted.
+- **it ships `quickstatements: false` *and* `identifier_verified: false`,**
+  which are two different gates. The first is an operator switch; the second is
+  the claim that the identifier's value is the source's person id — measured at
+  34 of 35 by run 20 — and it refuses every command on its own. `verify_kantonsrat`'s
+  `compare_identifier_values` (now per-property) and
+  `discover_identifier_columns` check it — the cantonal twin of the Parmelin
+  check — and that must read CONFIRMED before either is flipped.
 
 Three more rules follow from step 7 and hold before any cantonal code is written.
 **Never join a cantonal seat on P1307** — it is the federal service, so it
@@ -336,6 +397,7 @@ config.load_config
   → parliament.get_members()          # MemberCouncil, Active=True, ~246 rows
   → parliament.get_member_segments()  # MemberCouncilHistory -> the P580 start
   → parliament.get_tenures()          # the same rows -> dates for people who left
+  → enrich.fetch()                    # OPTIONAL 2nd source: spans to contradict
   → wikidata.get_position_holders()   # 3 SPARQL queries, merged into one map
   → resolve.resolve_members()         # P1307 join, then the name fallback
   → for each chamber: diff.compute_suggestions()
@@ -361,7 +423,10 @@ expensive one.
   `(person_number, council)` for the same reason `seats_by_seat` is — a person
   is not a seat.
 - **`config.py`** — loads/validates `config/parliament.yaml`. Enforces a real
-  `user_agent` (rejects placeholders) and validates every Q-ID map. A key
+  `user_agent` (rejects placeholders) and validates every Q-ID map.
+  `identifier_verified` defaults from `models.VERIFIED_IDENTIFIER_PROPERTIES`
+  and **may not be claimed true** for a property outside it: that claim is what
+  `is_mechanical` writes edits off, so it costs a measurement, not an edit. A key
   mapped to a blank value is a deliberate "not known yet" and is dropped, not
   an error. `person_data` is the exception to that leniency: an unknown
   property id there is an **error**, because it selects a code path rather than
@@ -391,8 +456,15 @@ expensive one.
   one (person, property) pair — a union, not a product. The P39 query deliberately fetches statements for **everyone** with
   those positions, not just P1307 holders, because the diff's second pass needs
   people who are *not* in the current-members set. Query builders are static
-  methods so they are unit-testable.
-- **`resolve.py`** — the P1307 join first (exact). An identifier claimed by two
+ methods so they are unit-testable. `get_name_variants` is **not** one of the
+ three: it is asked on demand, by the step 8 probe only, for a Q-ID list the
+ caller has already narrowed — the pipeline's own path is unchanged.
+- **`resolve.py`** — the identifier join first (exact; P1307 federally, P13468
+ for the Kantonsrat). Under `identifier_verified: false` every match must also
+ be corroborated by the item's own birth date or label (`corroborates`), and
+ the rejects are recorded and counted — that is the guard against two id
+ spaces overlapping numerically, which is how an *exact* join matches the
+ wrong person. An identifier claimed by two
   items is **skipped, logged and recorded on the member**
   (`Member.duplicate_identifier_qids`), never arbitrated. Recording it is what
   makes the conflict reportable: logging alone left the member looking merely
@@ -418,7 +490,9 @@ expensive one.
   *current-members* table does not contain, so `_departed_suggestion` reaches
   the source through the identifier **Wikidata** asserts — `config.biography_url`
   for the link, `Tenure` from the source's historic record for the dates it
-  suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
+  suggests. That bridge *is* the claim `identifier_verified` records, so under
+  `false` the dates are withheld and the finding still reported: a wrong bridge
+  does not fail, it prints another person's spell under this name. It stays **report-only** and is gated twice: no `qid_source`, and no
   `position` in the payload. Removing either would turn it into a P582 backfill
   across every open membership on Wikidata. `scripts/verify_departures.py`
   (README step 8) is the probe that would license removing them; **runs 16-18
@@ -426,12 +500,36 @@ expensive one.
   the data** — run 18 has the leaving dates agreeing **1,960 of 1,960**, and
   what is left is five identities one character apart (`Zünd`/`Zündt`), which a
   name comparison cannot settle and so reports as `near` without accepting.
-  Both gates have a test naming them. `_departed_suggestion` also
+  **Its identity check compares every name Wikidata gives the item, not the
+  label alone**: aliases and the P1810 `subject named as` qualifier on the
+  identifier statement, fetched by `WikidataClient.get_name_variants` (a fourth
+  bounded query, asked only for the people section B judges, `UNION` rather than
+  two `OPTIONAL`s so aliases and P1810 cannot multiply). The **strongest**
+  reading wins, which is what makes the widening safe: an extra name can only
+  move a row towards agreement, never produce the `CONTRADICTED` that blocks a
+  bulk apply. It stays corroboration — an alias is asserted by whoever wrote the
+  item — so which name settled a row is counted and printed, never folded into
+  the total. Both gates have a test naming them. `_departed_suggestion` also
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
+- **`enrich.py`** — a **second** source, read only to contradict the first, and
+  the one module that is not about Wikidata. Opt-in via `enrich:` in the
+  config; absent, nothing changes. Bounded **structurally**: it produces no
+  `Member`, so it cannot become a source, and a disagreement can only
+  *withhold* — `diff` stamps `sources_disagree` and `is_mechanical` refuses.
+  Three rules, each already paid for: keyed `(Q-ID, council)` never by Q-ID
+  alone; a Q-ID several person records claim is skipped and reported, never
+  arbitrated; and both sides chained by the same `MAX_SEGMENT_GAP_DAYS` rule,
+  because a chained tenure against a single term reports every re-elected
+  member as a disagreement. Silence is never a contradiction: only facts both
+  sources state are compared.
 - **`quickstatements.py`** — pure renderer. `is_mechanical` is the **one place**
-  the safety rule lives; keep it that way. Review/correction kinds are excluded
+  the safety rule lives; keep it that way. It gates on *provenance*
+  (`qid_source`) and, since P13468, on the other half of the same claim: a
+  suggestion stamped `identifier_unverified` is refused, because a property
+  whose value has not been measured against the source's person id can match
+  exactly and match somebody else. Review/correction kinds are excluded
   because QuickStatements can only add, so applying them would create a second
   contradictory value.
 - **`report.py`** — per-chamber Markdown, an index, `docs/data.json` and the

@@ -95,6 +95,11 @@ PARTY_NAME_FIELDS = (
 )
 BIRTH_FIELDS = ("birthday", "birthdate", "birth_date", "date_of_birth")
 DEATH_FIELDS = ("deathday", "deathdate", "death_date", "date_of_death")
+# The Q-ID a person record asserts *about* Wikidata. Read only to check it for
+# collisions — never to join on: a Q-ID a third party asserts about Wikidata is
+# a different class of claim from one Wikidata asserts about itself, and would
+# need its own ``QID_FROM_*`` constant before anything could be emitted from it.
+WIKIDATA_ID_FIELDS = ("wikidata_id", "wikidata_qid", "wikidata")
 
 # Person columns the personal-data checks read (README step 9). **Measured** on
 # 2026-08-04 (run 19), which changed two of them and settled the rest:
@@ -354,6 +359,52 @@ def members_from_rows(
     return sorted(best.values(), key=lambda m: (m.council, m.sort_name.casefold()))
 
 
+def as_qid(value: Any) -> Optional[str]:
+    """A ``Q``-prefixed item id, or ``None``. Pure.
+
+    Anything that is not a Q-ID is not one: the field is free text as far as
+    this tool is concerned, and a malformed value must not become a link to
+    some other item.
+    """
+    text = _tidy(value)
+    return text if text.startswith("Q") and text[1:].isdigit() else None
+
+
+def link_conflicts_from_rows(
+    persons: Iterable[Dict[str, Any]],
+    seat_person_ids: Optional[set] = None,
+) -> Dict[str, List[int]]:
+    """Q-ID → the person ids claiming it, when several do. Pure.
+
+    A data error **in the source**, not on Wikidata: one Wikidata item cannot
+    be two people. It is worth reporting because of what it does to anyone
+    joining through the field — ``verify_departures`` run 17 reported Alfred
+    Gehrig, who left in 1971, against a leaving date of 2014, because a second
+    person record named his item and their memberships pooled.
+
+    ``seat_person_ids`` restricts the result to conflicts where at least one
+    claimant holds a seat in the chamber being reported, so a chamber's report
+    raises its own conflicts and not another body's.
+    """
+    by_qid: Dict[str, List[int]] = {}
+    for row in persons:
+        person_id = _as_int(row.get("id"))
+        qid = as_qid(_first(row, WIKIDATA_ID_FIELDS))
+        if person_id is None or qid is None:
+            continue
+        by_qid.setdefault(qid, []).append(person_id)
+
+    out: Dict[str, List[int]] = {}
+    for qid, ids in by_qid.items():
+        unique = sorted(set(ids))
+        if len(unique) < 2:
+            continue
+        if seat_person_ids is not None and not set(unique) & seat_person_ids:
+            continue
+        out[qid] = unique
+    return out
+
+
 def tenures_from_rows(
     memberships: Iterable[Dict[str, Any]],
     body: Body,
@@ -422,6 +473,7 @@ class OpenParlDataClient:
         # read the same rows for different questions ("who sits today" and
         # "when did they hold it"), so the fetch is cached rather than repeated.
         self._memberships: Dict[int, List[Dict[str, Any]]] = {}
+        self._persons: Optional[List[Dict[str, Any]]] = None
 
     @property
     def client(self) -> Any:
@@ -489,9 +541,7 @@ class OpenParlDataClient:
         """Sitting members of the configured groups, as dataclasses."""
         wanted = {c.strip().upper() for c in councils} if councils else None
         group_ids = self.resolve_group_ids()
-        persons = self._rows(PERSON_TABLE, body_key=self.body_key)
-        log.info("OpenParlData: %d person record(s) for body %r",
-                 len(persons), self.body_key)
+        persons = self._person_rows()
 
         out: List[Member] = []
         for body in self.bodies:
@@ -517,6 +567,58 @@ class OpenParlDataClient:
                 len(rows),
             )
             out.extend(members)
+        return out
+
+    def _person_rows(self) -> List[Dict[str, Any]]:
+        """Every person record of this body, fetched at most once."""
+        if self._persons is None:
+            self._persons = self._rows(PERSON_TABLE, body_key=self.body_key)
+            log.info(
+                "OpenParlData: %d person record(s) for body %r",
+                len(self._persons),
+                self.body_key,
+            )
+        return self._persons
+
+    def get_link_conflicts(
+        self, councils: Optional[Sequence[str]] = None
+    ) -> Dict[tuple, List[int]]:
+        """``(council, Q-ID)`` → the person ids claiming that item.
+
+        One Wikidata item named by two person records is a data error in
+        **this** source, and unlike everything else this client reports it is
+        not fixable on Wikidata. It is surfaced anyway because the report is the
+        only place anybody looks, and because it silently corrupts any join
+        through the field — which is how it was found (README step 8, run 17).
+
+        Costs no extra request: the person rows are the ones ``get_members``
+        already reads, and the membership rows the ones ``get_tenures`` does.
+        """
+        wanted = {c.strip().upper() for c in councils} if councils else None
+        group_ids = self.resolve_group_ids()
+        persons = self._person_rows()
+
+        out: Dict[tuple, List[int]] = {}
+        for body in self.bodies:
+            if wanted is not None and body.council.upper() not in wanted:
+                continue
+            group_id = group_ids.get(body.council)
+            if group_id is None:
+                continue
+            seat_ids = {
+                _as_int(r.get("person_id"))
+                for r in self._membership_rows(group_id)
+                if has_seat_role(r, self.seat_roles)
+            }
+            seat_ids.discard(None)
+            for qid, ids in link_conflicts_from_rows(persons, seat_ids).items():
+                out[(body.council.upper(), qid)] = ids
+        if out:
+            log.warning(
+                "OpenParlData: %d Wikidata item(s) are claimed by several person "
+                "records — a data error in the source; see the report",
+                len(out),
+            )
         return out
 
     def _membership_rows(self, group_id: int) -> List[Dict[str, Any]]:

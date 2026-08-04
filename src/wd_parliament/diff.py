@@ -45,6 +45,12 @@ from datetime import date
 from typing import Dict, List, Optional, Sequence
 
 from .config import Config
+from .enrich import (
+    DISAGREE_START,
+    DISAGREE_STILL_SITTING,
+    Disagreement,
+    disagreements,
+)
 from .models import (
     KIND_ADD_END_DATE,
     KIND_ADD_IDENTIFIER,
@@ -54,11 +60,14 @@ from .models import (
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
     KIND_DUPLICATE_IDENTIFIER,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
+    KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
+    P_PARLIAMENT_ID,
     P_POLITICAL_PARTY,
     QID_FROM_NAME,
     Body,
@@ -66,6 +75,7 @@ from .models import (
     Period,
     PersonDataCheck,
     PositionStatement,
+    SourceSpan,
     Suggestion,
     Tenure,
     WikidataPerson,
@@ -196,12 +206,17 @@ def _base_suggestion(
     )
 
 
-def _verify_note(member: Member) -> str:
-    """Ask the reader to check an identity that was established by name."""
+def _verify_note(member: Member, identifier_property: str = P_PARLIAMENT_ID) -> str:
+    """Ask the reader to check an identity that was established by name.
+
+    The property is named rather than described, because "the Swiss parliament
+    ID" is the wrong thing to send a cantonal reader looking for: the Kantonsrat
+    is joined on P13468 and none of its members has a P1307 at all.
+    """
     if member.qid_source == QID_FROM_NAME:
         return (
-            " The item was matched by name and birth date, not by the Swiss "
-            "parliament ID, so please confirm it is the right person."
+            f" The item was matched by name and birth date, not by "
+            f"{identifier_property}, so please confirm it is the right person."
         )
     return ""
 
@@ -237,6 +252,8 @@ def compute_suggestions(
     config: Config,
     today: Optional[date] = None,
     tenures: Optional[Dict[tuple, Tenure]] = None,
+    link_conflicts: Optional[Dict[tuple, List[str]]] = None,
+    enrichment: Optional[Dict[tuple, SourceSpan]] = None,
 ) -> List[Suggestion]:
     """Produce the suggested edits for one chamber. Pure.
 
@@ -249,6 +266,12 @@ def compute_suggestions(
     a member who has already left, instead of telling the reader to look them
     up by hand. Optional: left out, that pass degrades to exactly the text it
     printed before.
+
+    ``link_conflicts`` maps ``(council, Q-ID)`` → the source record ids naming
+    that item, for sources that assert a Wikidata link of their own. It is the
+    mirror image of ``DUPLICATE_IDENTIFIER`` and the only finding here that is
+    **not** fixed on Wikidata; a source that asserts nothing about Wikidata
+    simply passes nothing.
     """
     today = today or date.today()
     suggestions: List[Suggestion] = []
@@ -287,7 +310,10 @@ def compute_suggestions(
         seen_qids.add(member.qid)
         person = people.get(member.qid) or WikidataPerson(qid=member.qid)
         suggestions.extend(
-            _member_suggestions(body, member, person, periods, config, today)
+            _member_suggestions(
+                body, member, person, periods, config, today,
+                span=(enrichment or {}).get((member.qid, body.council.upper())),
+            )
         )
 
     # 2) Wikidata -> parlament.ch: people Wikidata still lists as sitting.
@@ -300,6 +326,16 @@ def compute_suggestions(
     if not members:
         suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
         return suggestions
+
+    # 1a) The mirror image: one Wikidata item, several source records. Raised
+    # from the source's own view rather than from Wikidata's, so it does not
+    # depend on the member list or on anything Wikidata says.
+    for (council, qid), person_ids in sorted((link_conflicts or {}).items()):
+        if council.upper() != body.council.upper():
+            continue
+        suggestions.append(
+            _source_link_conflict_suggestion(body, qid, person_ids, config)
+        )
 
     # 2a) One identifier, several items — among the seat holders themselves.
     # The pass above only sees identifiers a *sitting* member carries; a
@@ -404,6 +440,51 @@ def _duplicate_identifier_suggestion(
     )
 
 
+def _source_link_conflict_suggestion(
+    body: Body,
+    qid: str,
+    person_ids: Sequence[int],
+    config: Config,
+) -> Suggestion:
+    """Several source records name one Wikidata item.
+
+    The mirror image of :func:`_duplicate_identifier_suggestion`, and the only
+    finding in this report that is **not** repaired on Wikidata: the wrong
+    assertion is the source's. It is raised anyway for two reasons — the report
+    is the only place anybody looks, and a link like this silently corrupts any
+    join made through it, which is precisely how it was found (README step 8:
+    a member who left in 1971 reported against a leaving date of 2014, because
+    a second person record named his item and the two sets of memberships
+    pooled).
+
+    Never mechanical, and for a plainer reason than the rest: there is no
+    Wikidata edit to make. Both the Q-ID and the record ids go into the payload
+    so the report can be handed to the source's maintainers as it stands.
+    """
+    ids = ", ".join(f"#{i}" for i in person_ids)
+    return Suggestion(
+        kind=KIND_DUPLICATE_SOURCE_LINK,
+        body=body,
+        member_label=f"{qid} ({len(person_ids)} source records)",
+        person_qid=qid,
+        detail=(
+            f"{config.source_name} has {len(person_ids)} person records "
+            f"pointing at the same Wikidata item {qid}: {ids}. One item cannot "
+            "be two people, so either the records are duplicates or one carries "
+            "the wrong Q-ID. **This is fixed in "
+            f"{config.source_name}, not on Wikidata** — nothing here is a "
+            "Wikidata edit. It is reported because a link like this silently "
+            "corrupts anything joined through it: whoever reads 'the latest "
+            "row' for this item gets the other person's."
+        ),
+        links={"item": _item_url(qid), "position": _item_url(body.position_qid)},
+        payload={
+            "wikidata_qid": qid,
+            "source_person_ids": [int(i) for i in person_ids],
+        },
+    )
+
+
 def _orphan_conflict_suggestion(
     body: Body,
     identifier: str,
@@ -474,7 +555,18 @@ def _departed_suggestion(
     probe exists.
     """
     number = _person_number(person.parliament_id)
-    tenure = tenures.get((number, body.council.upper())) if number is not None else None
+    # The bridge back to the source is the identifier's *value*, so it holds
+    # only while that value is the source's person id. Under
+    # ``identifier_verified: false`` nothing has shown it is, and a wrong bridge
+    # here does not fail — it lands on some other person's spell and prints
+    # their dates under this person's name. The finding itself stands (Wikidata
+    # records an open seat the source does not), so it is still reported; only
+    # the dates it would offer are withheld.
+    tenure = (
+        tenures.get((number, body.council.upper()))
+        if number is not None and config.identifier_verified
+        else None
+    )
     statements = person.statements_for(body.position_qid)
 
     detail = (
@@ -529,6 +621,14 @@ def _departed_suggestion(
             "the end has to be looked up by hand on the biography page."
         )
         payload["start"] = tenure.start
+    elif not config.identifier_verified:
+        detail += (
+            f"add an end date (P582), looked up by hand. The dates "
+            f"{config.source_name} holds are not offered here: reaching them "
+            f"means reading {config.identifier_property}'s value as this "
+            "source's person id, which has not been measured — a wrong reading "
+            "would print somebody else's dates under this name."
+        )
     else:
         detail += (
             f"add an end date (P582). {config.source_name} gives no leaving "
@@ -555,15 +655,37 @@ def _member_suggestions(
     periods: Sequence[Period],
     config: Config,
     today: date,
+    span: Optional[SourceSpan] = None,
 ) -> List[Suggestion]:
-    """Every suggestion arising from one matched member."""
+    """Every suggestion arising from one matched member.
+
+    ``span`` is what a second source says about the same seat, when one was
+    read. A disagreement is raised **and** stamped onto every other suggestion
+    for this member, which is what stops the disputed value being written: see
+    ``quickstatements.is_mechanical``.
+    """
     out: List[Suggestion] = []
-    verify = _verify_note(member)
+    verify = _verify_note(member, config.identifier_property)
     biography = config.biography_url_for(member.person_number)
 
     # The highest-leverage edit: give the item its identifier so that every
     # future run joins exactly instead of guessing from a name.
+    #
+    # The value is the source's person id, which is the whole claim behind the
+    # identifier property. Under ``identifier_verified: false`` that claim is
+    # the one thing no probe has checked yet, and the suggestion says so
+    # rather than being withheld: a reader who confirms it gets the most
+    # valuable edit in the report, and one who does not must not paste a
+    # number from a different id space onto an item.
     if member.qid_source == QID_FROM_NAME and not person.parliament_id:
+        caveat = (
+            ""
+            if config.identifier_verified
+            else f" ⚠️ That {config.identifier_property} values equal "
+            f"{config.source_name}'s person ids is asserted by this config and "
+            "not yet measured (scripts/verify_kantonsrat.py section C) — check "
+            "one by hand before applying these in bulk."
+        )
         out.append(
             _base_suggestion(
                 KIND_ADD_IDENTIFIER,
@@ -572,7 +694,7 @@ def _member_suggestions(
                 f"Add {config.identifier_property} "
                 f"'{member.person_number}'. The item was found by name and "
                 "birth date; recording the identifier makes every future "
-                "comparison exact." + verify,
+                "comparison exact." + caveat + verify,
                 payload={
                     "parliament_id": str(member.person_number),
                     "biography": biography,
@@ -641,6 +763,27 @@ def _member_suggestions(
 
     out.extend(_party_suggestions(body, member, person, config, verify))
     out.extend(_person_data_suggestions(body, member, person, config, verify))
+
+    # The join rests on a property whose values nothing has yet shown to be
+    # the source's person ids. Stamped on every suggestion for this member, and
+    # refused by ``quickstatements.is_mechanical`` for the same reason
+    # ``sources_disagree`` is: the identity behind the edit is disputed, and a
+    # wrong identity does not write a wrong value — it writes a right value
+    # onto the wrong person, which no later run can detect.
+    if not config.identifier_verified:
+        for suggestion in out:
+            suggestion.payload["identifier_unverified"] = True
+
+    # A second source contradicting the first. Stamped onto every suggestion
+    # above *before* it is added to the list, so the disagreement itself does
+    # not carry the flag — it is the finding, not a casualty of it.
+    found = disagreements(member, span)
+    if found:
+        for suggestion in out:
+            suggestion.payload["sources_disagree"] = True
+        out.append(
+            _sources_disagree_suggestion(body, member, span, found, config, verify)
+        )
     return out
 
 
@@ -757,6 +900,59 @@ def _person_data_advice(check: PersonDataCheck) -> str:
     return (
         "Confirm the figure is current on the biography page before adding it; "
         "the source states it as of the member's last update."
+    )
+
+
+def _sources_disagree_suggestion(
+    body: Body,
+    member: Member,
+    span: Optional[SourceSpan],
+    found: Sequence[Disagreement],
+    config: Config,
+    verify: str,
+) -> Suggestion:
+    """Two independent sources describe this seat differently.
+
+    The check the tool could not make while it read one source. It is not a
+    Wikidata edit and does not say which side is right — it says the value
+    Wikidata would be given is disputed, which is precisely the condition under
+    which it must not be written unreviewed.
+    """
+    other = config.enrich.source_name or "the second source"
+    parts: List[str] = []
+    for item in found:
+        if item.kind == DISAGREE_START:
+            parts.append(
+                f"the tenure starts {_date_str(item.ours)} per "
+                f"{config.source_name} and {_date_str(item.theirs)} per {other}"
+            )
+        elif item.kind == DISAGREE_STILL_SITTING:
+            parts.append(
+                f"{config.source_name} lists them as sitting, while {other} "
+                f"closed the seat on {_date_str(item.theirs)}"
+            )
+        else:
+            parts.append(
+                f"{config.source_name} gives a leaving date of "
+                f"{_date_str(item.ours)}, while {other} still has the seat open"
+            )
+
+    return _base_suggestion(
+        KIND_SOURCES_DISAGREE,
+        body,
+        member,
+        f"The two sources disagree: {'; '.join(parts)}. Nothing is emitted "
+        "mechanically for this member while they do — the value Wikidata would "
+        f"be given is disputed. {other} is not authoritative here, so this is a "
+        "prompt to check the biography, not a correction." + verify,
+        payload={
+            "sources_disagree": True,
+            "start": member.start_date,
+            "other_start": span.start if span else None,
+            "other_end": span.end if span else None,
+            "other_person_ids": list(span.person_ids) if span else [],
+            "biography": config.biography_url_for(member.person_number),
+        },
     )
 
 

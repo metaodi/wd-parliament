@@ -38,8 +38,26 @@ date to emit. Reach is not correctness; it bounds how much the rest can say.
 **B. Identity** — is the person the history returns the same human as the
 Wikidata item? The departed twin of the Parmelin check, done the only way it
 can be done without a second identifier: the surname on the history row against
-the item's label. A disagreement here is the worst finding available, because
-it means the number points at somebody else and the date is another person's.
+the names the item carries. A disagreement here is the worst finding available,
+because it means the number points at somebody else and the date is another
+person's.
+
+Three names are compared, not one, because an item's label is not the whole of
+what Wikidata says a person is called:
+
+- the **label**, as before;
+- its **aliases** ("also known as"), where a second spelling of a
+  nineteenth-century name usually lives — ``Johann Zünd`` carries
+  ``Johannes Zündt``;
+- **P1810 "subject named as"** as a qualifier on the identifier statement,
+  which is not a spelling in general but a statement about *this source*: the
+  person is written thus in the parlament.ch council-member database. Where it
+  exists it settles the question outright.
+
+The strongest reading wins, so the extra names can only move a row towards
+agreement — they cannot manufacture the CONTRADICTED that would block a bulk
+apply. Which name settled a row is counted and printed, because a match found
+only in an alias is weaker evidence than one the label gives.
 
 **C. Agreement** — does the source's leaving date agree with an independent
 one? Same join ``compare_tenure_dates.py`` uses, for the same reason::
@@ -103,6 +121,12 @@ if str(SRC) not in sys.path:
 
 from wd_parliament.config import load_config  # noqa: E402
 from wd_parliament.http_client import HttpClient  # noqa: E402
+from wd_parliament.models import (  # noqa: E402
+    NAME_FROM_ALIAS,
+    NAME_FROM_NAMED_AS,
+    P_SUBJECT_NAMED_AS,
+    NameVariant,
+)
 from wd_parliament.parliament import (  # noqa: E402
     NULL_DATE,
     ParliamentClient,
@@ -149,6 +173,10 @@ class Departure:
     council: str
     # From Wikidata: the identifier value, and the open statement being judged.
     identifier: Optional[str] = None
+    # The other names the item carries: aliases, and the P1810 "subject named
+    # as" qualifier on the identifier statement. Empty is ordinary — most items
+    # have neither — and must read as "nothing more to compare".
+    name_variants: List[NameVariant] = field(default_factory=list)
     person_number: Optional[int] = None
     statement_start: Optional[date] = None
     statements_for_seat: int = 0
@@ -369,6 +397,93 @@ def _near(folded_label: str, folded_wanted: str) -> bool:
     return False
 
 
+# How conclusive each relation is, best first. Only used to pick the *strongest*
+# reading among the names an item carries; the buckets themselves are unchanged.
+NAME_RANK = {NAME_EXACT: 0, NAME_VARIANT: 1, NAME_NEAR: 2, NAME_DIFFERENT: 3}
+
+# Where the name that produced the verdict came from. ``ORIGIN_LABEL`` is the
+# item's label, the only one this check read before; the other two come from
+# ``models`` because ``WikidataClient.get_name_variants`` stamps them.
+ORIGIN_LABEL = "label"
+
+
+@dataclass(frozen=True)
+class NameCheck:
+    """The strongest reading of an item's names against the source's surname."""
+
+    relation: Optional[str] = None
+    origin: Optional[str] = None  # ORIGIN_LABEL, NAME_FROM_ALIAS, NAME_FROM_NAMED_AS
+    matched: Optional[str] = None  # the name that produced ``relation``
+
+    @property
+    def from_variant(self) -> bool:
+        """Did a name other than the label settle this?"""
+        return self.origin is not None and self.origin != ORIGIN_LABEL
+
+
+def check_name(
+    label: Optional[str],
+    variants: Sequence[NameVariant],
+    last_name: Optional[str],
+) -> NameCheck:
+    """Judge every name the item carries and keep the strongest. Pure.
+
+    The label alone was never the whole of what Wikidata says a person is
+    called. Two other assertions exist and both are about *this item*:
+
+    - an **alias** ("also known as"), which is where a second spelling of a
+      nineteenth-century name usually lives;
+    - **P1810 "subject named as"** on the identifier statement, which records
+      how the person is written in the very database the identifier points at.
+      Run 18's ``Johann Zünd`` / ``Zündt`` is the shape it exists for: the item
+      is labelled one way and states, on the P1307 statement itself, that
+      parlament.ch spells it the other.
+
+    Trying all of them can only move a row *towards* agreement, never away from
+    it — the best relation wins, and a candidate that reads DIFFERENT cannot
+    displace one that reads EXACT. So this cannot manufacture a CONTRADICTED,
+    which is the finding that would block a bulk apply; it can only stop the
+    probe reporting a name it already had the answer to.
+
+    What it is not: proof. An alias is asserted by whoever wrote the item, so
+    matching one is corroboration of the same kind the label gives. P1810 is
+    stronger — it is a claim about the source — but it is still a claim on
+    Wikidata rather than a second identifier. That is why agreement here is
+    reported as corroboration and only a *disagreement* is treated as
+    conclusive.
+
+    The label is tried first so that the ordinary case keeps saying "the label
+    matches" rather than crediting an alias that happens to say the same thing.
+    """
+    best = NameCheck()
+    candidates = [(ORIGIN_LABEL, label)] + [(v.origin, v.name) for v in variants]
+    for origin, text in candidates:
+        relation = name_relation(text, last_name)
+        if relation is None:
+            continue
+        if best.relation is None or NAME_RANK[relation] < NAME_RANK[best.relation]:
+            best = NameCheck(relation=relation, origin=origin, matched=text)
+        if best.relation == NAME_EXACT:
+            break
+    return best
+
+
+def _variants_seen(departure: "Departure") -> str:
+    """What else was compared, for a row the names did not settle. Pure.
+
+    A near miss reads differently depending on whether the item had other names
+    that also failed or had none at all: the first says the sources really do
+    spell this person differently everywhere, the second says nobody has
+    recorded the source's spelling yet — and *that* one is fixable by adding a
+    P1810, which is a job a reader can do.
+    """
+    if not departure.name_variants:
+        return "no alias or P1810 to check"
+    return "also checked: " + ", ".join(
+        f"{v.origin} '{v.name}'" for v in departure.name_variants[:4]
+    )
+
+
 def chained_end(rows: Sequence[Dict[str, Any]]) -> Optional[date]:
     """OpenParlData's end of the **current continuous run**. Pure.
 
@@ -459,15 +574,31 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
     two identifiers, this compares a name against a label, so agreement is
     corroboration rather than proof. A *disagreement*, though, is conclusive in
     the direction that matters — the number is somebody else's.
+
+    "A name against a label" is now "a name against every name Wikidata gives
+    the item": its label, its aliases, and the P1810 "subject named as"
+    qualifier on the identifier statement, which states outright how the source
+    spells this person. Those are counted and printed separately from the label
+    matches, because a check that stops showing its work has stopped checking —
+    and because a match found only in an alias is a weaker reading than one the
+    label gives, even though both are the same item's own assertions.
     """
     lines: List[str] = []
     judged = [d for d in departures if d.reachable]
-    relations = [(d, name_relation(d.label, d.history_name)) for d in judged]
-    agree = [d for d, r in relations if r == NAME_EXACT]
-    variants = [d for d, r in relations if r == NAME_VARIANT]
-    near = [d for d, r in relations if r == NAME_NEAR]
-    differ = [d for d, r in relations if r == NAME_DIFFERENT]
-    unknown = [d for d, r in relations if r is None]
+    checks = [(d, check_name(d.label, d.name_variants, d.history_name)) for d in judged]
+    agree = [d for d, c in checks if c.relation == NAME_EXACT]
+    variants = [(d, c) for d, c in checks if c.relation == NAME_VARIANT]
+    near = [d for d, c in checks if c.relation == NAME_NEAR]
+    differ = [d for d, c in checks if c.relation == NAME_DIFFERENT]
+    unknown = [d for d, c in checks if c.relation is None]
+
+    # Settled by a name the label does not carry. Split by origin because the
+    # two are different strengths of evidence: an alias is any spelling anybody
+    # recorded, P1810 is the spelling *this source* uses.
+    settled = [(d, c) for d, c in checks if c.from_variant and c.relation != NAME_DIFFERENT]
+    by_alias = [(d, c) for d, c in settled if c.origin == NAME_FROM_ALIAS]
+    by_named_as = [(d, c) for d, c in settled if c.origin == NAME_FROM_NAMED_AS]
+    carry_variants = [d for d in judged if d.name_variants]
 
     lines.append(f"identities checked:               {len(judged)}")
     lines.append(f"  surname matches the label:      {len(agree)}")
@@ -475,21 +606,34 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
     lines.append(f"  one character apart:            {len(near)} (unsettled)")
     lines.append(f"  surname contradicts the label:  {len(differ)}")
     lines.append(f"  one side has no name:           {len(unknown)}")
+    lines.append("")
+    lines.append(f"  items carrying another name:    {len(carry_variants)}")
+    lines.append(f"    settled by an alias:          {len(by_alias)}")
+    lines.append(f"    settled by P1810 'named as':  {len(by_named_as)}")
+    if settled:
+        lines.append("")
+        lines.append("  settled by a name the label does not carry — read them:")
+        for d, c in settled[:_MAX_ROWS]:
+            lines.append(
+                f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
+                f"'{d.history_name}' via {c.origin} '{c.matched}' ({c.relation})"
+            )
     if near:
         lines.append("")
         lines.append("  one character apart — settle these by hand:")
         for d in near[:_MAX_ROWS]:
             lines.append(
                 f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
-                f"'{d.history_name}'"
+                f"'{d.history_name}' [{_variants_seen(d)}]"
             )
     if variants:
         lines.append("")
         lines.append("  accepted as spelling variants — read them:")
-        for d in variants[:_MAX_ROWS]:
+        for d, c in variants[:_MAX_ROWS]:
+            source = f" via {c.origin} '{c.matched}'" if c.from_variant else ""
             lines.append(
                 f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
-                f"'{d.history_name}'"
+                f"'{d.history_name}'{source}"
             )
     if differ:
         lines.append("")
@@ -497,7 +641,7 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
         for d in differ[:_MAX_ROWS]:
             lines.append(
                 f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
-                f"'{d.history_name}'"
+                f"'{d.history_name}' [{_variants_seen(d)}]"
             )
 
     if not judged:
@@ -511,10 +655,12 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
         return (
             CONTRADICTED,
             f"{len(differ)} of {len(judged)} identifier values reach a person "
-            "whose surname is not the item's, even after folding umlauts, "
-            "accents, particles, married names and doubled letters, and is not "
-            "within one character of it either. Each one is a date that would "
-            "be written to the wrong person's item. This alone blocks a bulk "
+            "whose surname is none of the names the item carries — not its "
+            "label, not an alias, not the P1810 'subject named as' on the "
+            "identifier statement — even after folding umlauts, accents, "
+            "particles, married names and doubled letters, and not within one "
+            "character of any of them either. Each one is a date that would be "
+            "written to the wrong person's item. This alone blocks a bulk "
             "apply; check them by hand on the biography pages.",
             lines,
         )
@@ -522,24 +668,28 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
         return (
             INCONCLUSIVE,
             f"No identifier value reaches a different surname, but {len(near)} "
-            f"of {len(judged)} are one character apart and this comparison "
-            "cannot settle them — a nineteenth-century name spelt two ways and "
-            "a wrong person one letter away look identical from here. They are "
-            "listed above and a human can settle all of them in a sitting; "
-            "until somebody does, the population is not clean enough to apply "
-            "in bulk. Note what this is *not*: not one case of the identifier "
-            "reaching a plainly different person.",
+            f"of {len(judged)} are one character apart from every name the item "
+            "carries and this comparison cannot settle them — a "
+            "nineteenth-century name spelt two ways and a wrong person one "
+            "letter away look identical from here. Each row above says whether "
+            "the item offered any other name at all: where it says 'no alias or "
+            "P1810 to check', adding the source's spelling as a P1810 qualifier "
+            "on the identifier statement both records the finding on Wikidata "
+            "and settles it here. Until somebody does, the population is not "
+            "clean enough to apply in bulk. Note what this is *not*: not one "
+            "case of the identifier reaching a plainly different person.",
             lines,
         )
     return (
         CONFIRMED,
         f"All {len(judged) - len(unknown)} checkable identifier values reach a "
-        f"person whose surname is the item's — {len(agree)} exactly and "
-        f"{len(variants)} after folding a spelling difference "
-        f"({len(unknown)} unknown). Corroboration, not proof: it is a name "
-        "check, not the two-identifier comparison README step 1 could do for "
-        "sitting members. Read the variants above rather than trusting the "
-        "count.",
+        f"person whose surname is one the item carries — {len(agree)} matching "
+        f"exactly and {len(variants)} after folding a spelling difference, "
+        f"{len(settled)} of them found in an alias or a P1810 rather than in "
+        f"the label ({len(unknown)} unknown). Corroboration, not proof: it is a "
+        "name check, not the two-identifier comparison README step 1 could do "
+        "for sitting members, and an alias is asserted by whoever wrote the "
+        "item. Read the rows above rather than trusting the count.",
         lines,
     )
 
@@ -868,7 +1018,49 @@ def collect(
                     opd_ambiguous=qid in claimed_twice,
                 )
             )
+
+    _attach_name_variants(wikidata, config, departures)
     return departures, len(seat_statements), with_start
+
+
+def _attach_name_variants(
+    wikidata: WikidataClient, config: Any, departures: List[Departure]
+) -> None:
+    """Read the other names Wikidata gives these items, for section B. Network.
+
+    Asked only for the people whose identity is actually judged — those the
+    identifier reached a history row for — because that is the population
+    section B draws a verdict from, and a query is bounded by the list it is
+    handed. Everyone else is already counted as unreachable by section A.
+
+    A failure here is **not** fatal and does not abort the run: without the
+    variants the check is exactly the label comparison it was before, which
+    reports more near misses rather than fewer. Losing evidence that can only
+    settle rows must never cost the four verdicts.
+    """
+    qids = sorted({d.qid for d in departures if d.reachable})
+    if not qids:
+        return
+    try:
+        variants = wikidata.get_name_variants(
+            qids, config.language, config.identifier_property
+        )
+    except Exception as exc:
+        print(f"  ! aliases/{P_SUBJECT_NAMED_AS}: {exc}")
+        print("  -> section B falls back to comparing the label alone.")
+        return
+    for d in departures:
+        d.name_variants = variants.get(d.qid, [])
+    named_as = sum(
+        1
+        for names in variants.values()
+        if any(v.origin == NAME_FROM_NAMED_AS for v in names)
+    )
+    print(
+        f"Wikidata: {len(variants)} of {len(qids)} judged item(s) carry an "
+        f"alias or a {P_SUBJECT_NAMED_AS} value ({named_as} with "
+        f"{P_SUBJECT_NAMED_AS} on the {config.identifier_property} statement)"
+    )
 
 
 def surname_in_history(

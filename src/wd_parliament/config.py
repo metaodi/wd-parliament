@@ -20,7 +20,9 @@ from .models import (
     PERSON_DATA_BY_PROPERTY,
     PERSON_DATA_PROPERTIES,
     P_PARLIAMENT_ID,
+    P_ZH_MEMBER_ID,
     STATEMENT_MODELS,
+    VERIFIED_IDENTIFIER_PROPERTIES,
     Body,
     PersonDataCheck,
 )
@@ -41,16 +43,63 @@ _PLACEHOLDER_AGENTS = ("example.com", "example.org", "you@", "your@", "changeme"
 
 
 @dataclass
+class EnrichmentConfig:
+    """A *second* source, read only to contradict the first.
+
+    Opt-in and absent by default: a run reads one source unless a config says
+    otherwise, and that stays the plain reading of every other module. What it
+    can do is bounded by :mod:`enrich` — it produces no members, and a
+    disagreement can only withhold a mechanical edit, never supply a value.
+    """
+
+    source: str = ""  # "" disables it
+    body_key: str = ""
+    # ``council`` -> the group name that **is** that chamber in the second
+    # source. Matched by equality, so it must be exact; "Nationalrat" is the
+    # chamber and "Büro NR" is not.
+    groups: Dict[str, str] = field(default_factory=dict)
+
+    @property
+    def enabled(self) -> bool:
+        return bool(self.source and self.groups)
+
+    @property
+    def source_name(self) -> str:
+        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else self.source
+
+
+@dataclass
 class Config:
     language: str = "de"  # source content language, and label preference
     source: str = SOURCE_PARLAMENT
     # OpenParlData only: the body (level of parliament) the chambers sit under.
     body_key: str = ""
     # The Wikidata property whose value equals the source's person identifier.
-    # Federally P1307 == MemberCouncil.PersonNumber; cantonally there is no
-    # P1307 at all and P14527 (OpenParlData ID) is the only Wikidata-asserted
-    # identifier that reaches those people.
+    # Federally P1307 == MemberCouncil.PersonNumber. Cantonally there is no
+    # P1307 at all: the Kantonsrat is joined on P14527 (the OpenParlData ID),
+    # which is the only identifier this source can actually supply a value for
+    # — P13468, the canton's own member id, is the property Wikidata uses for
+    # these people, but run 20 found its values in no column of OpenParlData.
     identifier_property: str = P_PARLIAMENT_ID
+    # Has the property's **value** been shown to equal the source's person id?
+    #
+    # Provenance and value are two different questions, and only the first one
+    # ``quickstatements.is_mechanical`` can see. A Wikidata-asserted identifier
+    # whose value belongs to a *different* id space joins exactly and joins the
+    # wrong people — the failure an unverified property can produce that an
+    # unmatched member cannot. So a config naming a property outside
+    # ``VERIFIED_IDENTIFIER_PROPERTIES`` must set this to false, which:
+    #
+    #   * makes ``resolve`` corroborate every identifier match against the
+    #     item's own name and birth date, and count the ones it rejects;
+    #   * stamps ``identifier_unverified`` on every suggestion, which
+    #     ``is_mechanical`` refuses — nothing is written off an unproven join;
+    #   * says so in the ADD_IDENTIFIER suggestion, whose value would be the
+    #     wrong number if the id spaces differ.
+    #
+    # Flipping it to true is a measurement, not an opinion: run the probe named
+    # in the config comments and read CONFIRMED first.
+    identifier_verified: bool = True
     user_agent: str = DEFAULT_USER_AGENT
     request_delay: float = 1.0
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
@@ -77,6 +126,7 @@ class Config:
     # lets an operator turn it off entirely while the statement model is still
     # being confirmed against live Wikidata.
     quickstatements: bool = True
+    enrich: EnrichmentConfig = field(default_factory=EnrichmentConfig)
 
     @property
     def source_name(self) -> str:
@@ -269,8 +319,79 @@ def load_config(path: str | Path) -> Config:
             f"{', '.join(sorted(IDENTIFIER_PROPERTIES))}; got "
             f"'{identifier_property}'. It is the property whose value equals "
             "the source's person id, and quickstatements.is_mechanical trusts "
-            "a match made through it — so an unmeasured property must not be "
-            "added here without a probe confirming the values are equal."
+            "a match made through it — so a property nothing on Wikidata "
+            "asserts must not be added here at all, and one whose value has "
+            "not been measured against the source's person id must be joined "
+            "on with 'identifier_verified: false'."
+        )
+
+    # Default: true for a property whose value has been measured against the
+    # source's person id, false for one that has not. Stating it explicitly is
+    # allowed and is how a config records the day a probe confirms it; claiming
+    # true for an unmeasured property is not, because that claim is exactly
+    # what ``is_mechanical`` would write edits off the back of.
+    # Measured and falsified, so it is refused rather than documented. Run 20
+    # (2026-08-04) compared P13468 against every column of OpenParlData's ZH
+    # person records: its values are the canton's own member ids and appear in
+    # **no** column of this source. Joining on it here would compare a person id
+    # to a different id space — matching nobody at best, and the wrong people at
+    # worst — and every ADD_IDENTIFIER suggestion would offer a number that is
+    # not this property's. The right source for it is the canton's own dataset
+    # (README step 7); the wrong fix is to try this pairing again.
+    if (
+        identifier_property == P_ZH_MEMBER_ID
+        and source == SOURCE_OPENPARLDATA
+    ):
+        raise ValueError(
+            f"{P_ZH_MEMBER_ID} cannot be joined on from source "
+            f"'{SOURCE_OPENPARLDATA}': its values are the canton of Zürich's "
+            "own member ids, and run 20 found them in no column of that "
+            "source's person records (0 of 28 compared). Join on a property "
+            "this source supplies, or read the canton's dataset — see README "
+            "step 7."
+        )
+
+    identifier_verified = bool(
+        data.get(
+            "identifier_verified",
+            identifier_property in VERIFIED_IDENTIFIER_PROPERTIES,
+        )
+    )
+    if identifier_verified and identifier_property not in VERIFIED_IDENTIFIER_PROPERTIES:
+        raise ValueError(
+            f"identifier_verified: true claims that {identifier_property}'s "
+            "value equals the source's person id, which has not been measured. "
+            "Run the probe (scripts/verify_kantonsrat.py section C for a "
+            "cantonal config, scripts/verify_source.py section B federally), "
+            "read CONFIRMED, and add the property to "
+            "models.VERIFIED_IDENTIFIER_PROPERTIES in the same commit as the "
+            "evidence."
+        )
+
+    enrich_raw = data.get("enrich") or {}
+    if not isinstance(enrich_raw, dict):
+        raise ValueError("'enrich' must be a mapping.")
+    enrich_source = str(enrich_raw.get("source", "") or "").strip()
+    if enrich_source and enrich_source not in SOURCES:
+        raise ValueError(
+            f"enrich.source must be one of {', '.join(SOURCES)}; "
+            f"got '{enrich_source}'."
+        )
+    enrich = EnrichmentConfig(
+        source=enrich_source,
+        body_key=str(enrich_raw.get("body_key", "") or "").strip(),
+        groups={
+            str(k).strip(): str(v).strip()
+            for k, v in (enrich_raw.get("groups") or {}).items()
+            if str(v or "").strip()
+        },
+    )
+    if enrich_source and not enrich.groups:
+        raise ValueError(
+            "enrich.source needs 'groups' mapping each council to the group "
+            "name that IS that chamber in the second source (e.g. NR: "
+            "Nationalrat). It is matched by exact name, because a substring "
+            "match would take a committee of the chamber for the chamber."
         )
 
     cfg = Config(
@@ -278,6 +399,7 @@ def load_config(path: str | Path) -> Config:
         source=source,
         body_key=str(data.get("body_key", "") or "").strip(),
         identifier_property=identifier_property,
+        identifier_verified=identifier_verified,
         user_agent=str(data.get("user_agent", DEFAULT_USER_AGENT)),
         request_delay=float(data.get("request_delay", 1.0)),
         statement_model=statement_model,
@@ -290,7 +412,13 @@ def load_config(path: str | Path) -> Config:
         terms=_as_term_map(data.get("terms")),
         person_data=_as_person_data(data.get("person_data")),
         quickstatements=bool(data.get("quickstatements", True)),
+        enrich=enrich,
     )
+    if enrich.enabled and enrich.source == cfg.source and enrich.body_key == cfg.body_key:
+        raise ValueError(
+            "enrich must name a *different* source from the one members are "
+            "read from; a source cannot corroborate itself."
+        )
 
     if not cfg.bodies:
         raise ValueError("Config must define at least one entry under 'bodies'.")

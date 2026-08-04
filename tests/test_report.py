@@ -107,6 +107,25 @@ def test_body_markdown_reports_the_hit_rate(result):
     assert "## Canton: ZH (1)" in md
 
 
+def test_rejected_identifier_matches_are_reported_not_only_logged(result):
+    """Only possible under ``identifier_verified: false``, and then it is the
+    number that says whether the property's values are this source's person
+    ids at all — a fact about the config, not a Wikidata edit, so it belongs in
+    the header rather than in the suggestion list."""
+    result.identifier_mismatches = 42
+    md = render_body_markdown(result, GENERATED, "canton", identifier_property="P13468")
+    assert "42" in md
+    assert "names a different person" in md
+
+    html = render_html([result], GENERATED, "canton", identifier_property="P13468")
+    assert "42" in html
+
+
+def test_a_verified_run_says_nothing_about_rejected_matches(result):
+    md = render_body_markdown(result, GENERATED, "canton")
+    assert "names a different person" not in md
+
+
 def test_body_markdown_links_members_and_biographies(result):
     md = render_body_markdown(result, GENERATED, "canton")
     assert "[Anna Muster](https://www.wikidata.org/wiki/Q7)" in md

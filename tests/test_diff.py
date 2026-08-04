@@ -14,10 +14,12 @@ from wd_parliament.models import (
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
     KIND_DUPLICATE_IDENTIFIER,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
+    KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
     MODEL_TENURE,
     QID_FROM_IDENTIFIER,
@@ -280,6 +282,37 @@ def test_name_matched_item_without_the_identifier(periods):
     assert suggestions[0].payload["parliament_id"] == "1101"
 
 
+def test_an_unverified_identifier_says_so_in_the_suggestion(periods):
+    """The number offered is only right if the two id spaces are the same one.
+
+    ADD_IDENTIFIER is the highest-leverage edit in the report, so it is not
+    withheld while a config joins on an unmeasured property — but a reader who
+    pastes it in bulk without checking one would write the source's own person
+    id into a property that is not it.
+    """
+    member = make_member(qid_source=QID_FROM_NAME)
+    config = make_config(MODEL_TENURE)
+    config.identifier_property = "P13468"
+    config.identifier_verified = False
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id=None)}, periods, config
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_IDENTIFIER)
+    assert "not yet measured" in add.detail
+    assert all(s.payload.get("identifier_unverified") for s in suggestions)
+
+
+def test_a_verified_identifier_adds_no_caveat(periods):
+    member = make_member(qid_source=QID_FROM_NAME)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id=None)}, periods,
+        make_config(MODEL_TENURE),
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_IDENTIFIER)
+    assert "not yet measured" not in add.detail
+    assert "identifier_unverified" not in add.payload
+
+
 def test_identifier_matched_item_never_gets_add_identifier(periods):
     member = make_member(qid_source=QID_FROM_IDENTIFIER)
     statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
@@ -429,6 +462,34 @@ def _departed(tenures=None, start=date(2015, 11, 30), wikidata_start=date(2015, 
         make_config(MODEL_TENURE),
         tenures=tenures,
     )[0]
+
+
+def test_an_unverified_identifier_withholds_the_departed_dates(periods):
+    """The reverse walk reaches the source *through Wikidata's own value*.
+
+    That bridge holds only while the value is the source's person id. Unmeasured,
+    a wrong bridge does not fail — it lands on another person's spell and prints
+    their dates under this name, so the finding stands and the dates do not.
+    """
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    config = make_config(MODEL_TENURE)
+    config.identifier_property = "P13468"
+    config.identifier_verified = False
+    suggestion = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, [], config,
+        tenures={
+            (3432, "N"): Tenure(
+                person_number=3432, council="N",
+                start=date(2011, 12, 5), end=date(2019, 12, 1),
+            )
+        },
+    )[0]
+    assert "start" not in suggestion.payload
+    assert "end" not in suggestion.payload
+    assert "2019-12-01" not in suggestion.detail
+    assert "looked up by hand" in suggestion.detail
 
 
 def test_the_source_supplies_the_start_and_end_date_to_add(periods):
@@ -862,3 +923,161 @@ def test_a_name_match_onto_one_claimant_still_raises_the_conflict(periods):
     conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER)
     assert "uses Q11" in conflict.detail
     assert "not an answer" in conflict.detail
+
+
+# --- one Wikidata item, several source records -------------------------------
+# The mirror image of DUPLICATE_IDENTIFIER, and the only finding in this report
+# that is not repaired on Wikidata. Raised anyway: the report is the only place
+# anybody looks, and such a link silently corrupts any join made through it.
+def test_a_duplicated_source_link_is_reported(periods):
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q117716"): [9532, 99999]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert conflict.payload["wikidata_qid"] == "Q117716"
+    assert conflict.payload["source_person_ids"] == [9532, 99999]
+    assert "#9532, #99999" in conflict.detail
+    assert conflict.links["item"] == "https://www.wikidata.org/wiki/Q117716"
+
+
+def test_the_source_link_conflict_says_where_it_is_fixed(periods):
+    """Nothing here is a Wikidata edit, and the report must not imply one."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q1"): [1, 2]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert "not on Wikidata" in conflict.detail
+
+
+def test_a_source_link_conflict_is_never_mechanical(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q1"): [1, 2]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert is_mechanical(conflict, MODEL_TENURE) is False
+
+
+def test_another_chambers_link_conflict_is_not_reported_here(periods):
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("S", "Q1"): [1, 2]},
+    )
+    assert KIND_DUPLICATE_SOURCE_LINK not in kinds(suggestions)
+
+
+def test_a_source_that_asserts_no_wikidata_link_raises_nothing(periods):
+    """parlament.ch says nothing about Wikidata; that is not a degradation."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_DUPLICATE_SOURCE_LINK not in kinds(suggestions)
+
+
+# --- the two sources disagreeing ---------------------------------------------
+# The check the tool could not make while it read one source. It does not say
+# which side is right; it says the value Wikidata would be given is disputed,
+# which is exactly the condition for not writing it unreviewed.
+def _span(start="2019-12-02", end=None):
+    from wd_parliament.models import SourceSpan
+
+    return SourceSpan(
+        council="N",
+        start=date.fromisoformat(start) if start else None,
+        end=date.fromisoformat(end) if end else None,
+        rows=1,
+        person_ids=[42],
+    )
+
+
+def test_a_disagreement_is_reported(periods):
+    member = make_member()  # parlament.ch: joined 2019-12-02
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    disagreement = next(s for s in suggestions if s.kind == KIND_SOURCES_DISAGREE)
+    assert disagreement.payload["start"] == date(2019, 12, 2)
+    assert disagreement.payload["other_start"] == date(2015, 11, 30)
+    assert disagreement.payload["other_person_ids"] == [42]
+    assert "2019-12-02" in disagreement.detail and "2015-11-30" in disagreement.detail
+
+
+def test_agreeing_sources_add_nothing(periods):
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span()},
+    )
+    assert suggestions == []
+
+
+def test_a_disagreement_withholds_the_mechanical_edit(periods):
+    """The point of the check. A disputed P580 must not be written unreviewed."""
+    from wd_parliament.quickstatements import is_mechanical, render
+
+    member = make_member()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert add.payload["sources_disagree"] is True
+    assert is_mechanical(add, MODEL_TENURE) is False
+    assert render(suggestions, date(2026, 8, 4), MODEL_TENURE) == []
+
+
+def test_without_a_disagreement_the_edit_is_still_emitted(periods):
+    """The suppression must be caused by the disagreement, not by the lookup."""
+    from wd_parliament.quickstatements import is_mechanical
+
+    member = make_member()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span()},
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert "sources_disagree" not in add.payload
+    assert is_mechanical(add, MODEL_TENURE) is True
+
+
+def test_the_disagreement_itself_is_never_mechanical(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "N"): _span(start="2015-11-30")},
+    )
+    disagreement = next(s for s in suggestions if s.kind == KIND_SOURCES_DISAGREE)
+    assert is_mechanical(disagreement, MODEL_TENURE) is False
+
+
+def test_another_chambers_span_is_not_compared(periods):
+    """A person is not a seat: an SR span says nothing about an NR tenure."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        enrichment={("Q7", "S"): _span(start="1990-01-01")},
+    )
+    assert KIND_SOURCES_DISAGREE not in kinds(suggestions)
+
+
+def test_no_second_source_leaves_the_run_exactly_as_it_was(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_SOURCES_DISAGREE not in kinds(suggestions)
+    add = next(s for s in suggestions if s.kind == KIND_ADD_MEMBERSHIP)
+    assert is_mechanical(add, MODEL_TENURE) is True

@@ -96,7 +96,9 @@ def is_mechanical(suggestion: Suggestion, statement_model: str = MODEL_PERIOD) -
 
     The one place the safety rule lives. All of the following must hold:
 
-    - the member was matched by **P1307**, not by name;
+    - the member was matched by the **identifier**, not by name;
+    - the identifier property's value is one a probe has confirmed to be the
+      source's person id (``identifier_verified``);
     - a target Q-ID is known;
     - the kind adds information rather than contradicting an existing value;
     - the payload carries everything the command needs;
@@ -111,6 +113,21 @@ def is_mechanical(suggestion: Suggestion, statement_model: str = MODEL_PERIOD) -
     if suggestion.kind not in MECHANICAL_KINDS:
         return False
     if not suggestion.payload.get("biography"):
+        return False
+    # A second, independent source contradicts the first about this member.
+    # Which side is right is not decided here and does not need to be: a value
+    # two sources dispute is exactly the value that must not be written without
+    # a human looking. Set by ``diff`` on every suggestion for that member.
+    if suggestion.payload.get("sources_disagree"):
+        return False
+    # The identifier the match was made through is Wikidata-asserted, but that
+    # its *value* is the source's person id has not been measured — the config
+    # says so with ``identifier_verified: false``. Provenance is what the gate
+    # above tests and it is only half the claim: an identifier from a different
+    # id space matches exactly and matches the wrong person, so the edit would
+    # be correct data on the wrong item. Set by ``diff`` on every suggestion for
+    # such a member.
+    if suggestion.payload.get("identifier_unverified"):
         return False
 
     payload = suggestion.payload

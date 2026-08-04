@@ -74,6 +74,41 @@ biography_url: "https://www.parlament.ch/{language}/biografie/wd/{person_number}
 # then — taken from the OData docs, matching nothing, which is what made the
 # first run fetch zero members. Do not change them without re-running
 # `scripts/verify_source.py`, which prints the values the service actually has.
+# ---------------------------------------------------------------------------
+# The cross-check  --  a SECOND source, read only to contradict the first
+# ---------------------------------------------------------------------------
+# parlament.ch is authoritative, and that is exactly why a claim it makes alone
+# cannot be checked: P580 is emitted mechanically from it, so a wrong value is
+# written unreviewed. OpenParlData carries the same seats, harmonised from the
+# same official record but assembled independently.
+#
+# What this may do is deliberately bounded (see src/wd_parliament/enrich.py):
+#
+#   * it produces NO members. The member list, the dates and every emitted
+#     value still come from parlament.ch alone.
+#   * a disagreement can only WITHHOLD. It raises SOURCES_DISAGREE and
+#     suppresses the mechanical edit for that member; it never supplies a
+#     value, and it never says which side is right.
+#   * a Q-ID claimed by several person records is skipped and reported as
+#     DUPLICATE_SOURCE_LINK. `wikidata_id` is not unique, and pooling two
+#     people's memberships is how run 17 reported a member who left in 1971
+#     against a leaving date of 2014.
+#
+# `groups` names the group that IS each chamber, matched by EXACT name: a
+# substring match on "Nationalrat" also takes "Büro NR" and every committee of
+# the chamber, and comparing the chamber against a committee of eight would
+# report the whole chamber as a disagreement.
+#
+# Remove this block to go back to a single-source run; nothing else depends on
+# it. Run 12 measured the two sources agreeing on 244 of 244 sitting members,
+# so a large number here means something changed, not that they always differ.
+enrich:
+  source: openparldata
+  body_key: CHE
+  groups:
+    NR: Nationalrat
+    SR: Ständerat
+
 bodies:
   - council: NR
     label: Swiss National Council
