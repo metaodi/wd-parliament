@@ -302,6 +302,7 @@ config.load_config
   → parliament.get_members()          # MemberCouncil, Active=True, ~246 rows
   → parliament.get_member_segments()  # MemberCouncilHistory -> the P580 start
   → parliament.get_tenures()          # the same rows -> dates for people who left
+  → enrich.fetch()                    # OPTIONAL 2nd source: spans to contradict
   → wikidata.get_position_holders()   # 3 SPARQL queries, merged into one map
   → resolve.resolve_members()         # P1307 join, then the name fallback
   → for each chamber: diff.compute_suggestions()
@@ -386,6 +387,17 @@ expensive one.
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
+- **`enrich.py`** — a **second** source, read only to contradict the first, and
+  the one module that is not about Wikidata. Opt-in via `enrich:` in the
+  config; absent, nothing changes. Bounded **structurally**: it produces no
+  `Member`, so it cannot become a source, and a disagreement can only
+  *withhold* — `diff` stamps `sources_disagree` and `is_mechanical` refuses.
+  Three rules, each already paid for: keyed `(Q-ID, council)` never by Q-ID
+  alone; a Q-ID several person records claim is skipped and reported, never
+  arbitrated; and both sides chained by the same `MAX_SEGMENT_GAP_DAYS` rule,
+  because a chained tenure against a single term reports every re-elected
+  member as a disagreement. Silence is never a contradiction: only facts both
+  sources state are compared.
 - **`quickstatements.py`** — pure renderer. `is_mechanical` is the **one place**
   the safety rule lives; keep it that way. Review/correction kinds are excluded
   because QuickStatements can only add, so applying them would create a second

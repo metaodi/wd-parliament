@@ -1024,6 +1024,7 @@ well-maintained chamber would return.)
 | **Add Swiss parliament ID** | 1 | Item matched by name but has no P1307. Highest leverage — it makes every future run exact. |
 | **One identifier, several items** | 1 | Two or more Wikidata items claim the same P1307. A contradiction in Wikidata's own data — see below. |
 | **One item, several source records** | 1 | Two or more *source* records point at one Wikidata item. The mirror image, and the only finding here that is fixed in the source rather than on Wikidata. |
+| **The two sources disagree** | 2 | parlament.ch and OpenParlData describe the same seat differently. Withholds the mechanical edit for that member — see below. |
 | **Review ended membership** | 1 | P39 closed with P582, but parlament.ch says `Active`. |
 | **Add end date** | 2 | P39 open, but the member is no longer `Active`. |
 | **Add membership** | 2 | Sitting member, no P39 for this council. |
@@ -1070,6 +1071,56 @@ Q-ID, so the reverse walk below cannot recognise them by item and would report
 **both** claimants as having left — a confident, wrong claim about somebody
 sitting today. That pass therefore also skips any item whose identifier belongs
 to a sitting member, not just any item whose Q-ID does.
+
+### Reading a second source, to be contradicted by it
+
+parlament.ch is authoritative, and that is precisely why a claim it makes alone
+cannot be checked: P580 is emitted **mechanically** from it, so a wrong value
+reaches Wikidata unreviewed. OpenParlData carries the same seats, harmonised
+from the same official record but assembled independently — so the federal run
+now reads it too, as a `enrich:` block in
+[`config/parliament.yaml`](config/parliament.yaml).
+
+The join has no shared key and goes through Wikidata, exactly as step 0c's
+probe does:
+
+```
+MemberCouncil.PersonNumber ──P1307──▶ Q-ID ◀──wikidata_id── OpenParlData
+```
+
+**What the second source may do is deliberately bounded**, and the bounds are
+structural rather than a matter of discipline — `enrich.py` produces no
+`Member` at all:
+
+- **it supplies nothing.** The member list, every date and every emitted value
+  still come from parlament.ch alone. Enrichment can only *withhold*.
+- **a disagreement withholds the edit.** `SOURCES_DISAGREE` is raised and
+  `sources_disagree` is stamped on every other suggestion for that member, so
+  `is_mechanical` refuses them. Which side is right is not decided and does not
+  need to be: a value two sources dispute is exactly the value not to write
+  unreviewed.
+- **it never says who is right.** OpenParlData is not authoritative about the
+  Federal Assembly. The suggestion is a prompt to read the biography page, not
+  a correction.
+- **silence is not disagreement.** Only facts *both* sources state are
+  compared, the same rule the tool applies to unmapped cantons and parties.
+
+Three traps, each already paid for by a wrong answer elsewhere in this file and
+each now enforced in `enrich.py`:
+
+- **keyed `(Q-ID, council)`, never by Q-ID alone.** An NR→SR mover's two rows
+  chain into one span across a chamber change if pooled; run 11 scored 22
+  members that way.
+- **a Q-ID claimed by several person records is skipped**, never arbitrated,
+  and reported (below). Run 17's phantom came from exactly that.
+- **both sides chained by the same rule.** Comparing a chained tenure against a
+  single term reports every re-elected member as a disagreement.
+
+Run 12 measured the two sources agreeing on **244 of 244** sitting members, so
+a long list here means something changed — not that they always differ. Losing
+the cross-check degrades the run to a single-source one and says so in the log;
+deleting the `enrich:` block turns it off entirely, and nothing else depends
+on it.
 
 ### …and its mirror image, which is not a Wikidata edit at all
 
