@@ -59,10 +59,12 @@ is the adapter itself. Step 8 asks whether the *departed* members' leaving
 dates could be applied mechanically; run 18 (2026-08-04) measured **1,960 of
 1,960 agreeing exactly** with an independent source, and what keeps those
 suggestions report-only is now five identities that are one character apart —
-a morning's work on the biography pages, not a data problem. Step 9 — whether
-the source really carries the personal data the presence checks ask for — is
-open and has never been run; it gates nothing, since none of those suggestions
-can ever be mechanical.
+a morning's work on the biography pages, not a data problem. **Step 9 is done**:
+run 19 (2026-08-04) measured which personal data each source actually carries
+— four of six properties federally, three cantonally, 206 suggestions in the
+federal report — and found two long-standing bugs in the *cantonal adapter*
+along the way. It gates nothing, since none of those suggestions can ever be
+mechanical.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -1018,30 +1020,69 @@ so this is not the federal run's situation — it is what a cantonal or
 well-maintained chamber would return.)
 
 
-### 9. ⬜ Do the personal-data checks have a source? — *not measured; two of six have no known column*
+### 9. ✅ Do the personal-data checks have a source? — *measured: four of six federally, three cantonally, and it found two adapter bugs*
 
 The checks described under [The suggestions that are about the person rather
 than the seat](#the-suggestions-that-are-about-the-person-rather-than-the-seat)
 are safe however this comes out — a source with nothing to say produces no
-suggestion — but "safe" is not "useful", and two things are unmeasured.
+suggestion — but "safe" is not "useful". **Run 19 (2026-08-04)** measured both
+halves.
 
-**Which columns the source actually has.** Three are certain federally, read
-from the OData `$metadata`: `BirthPlace_City`/`BirthPlace_Canton` (P19),
-`Citizenship` (P1321) and `NumberOfChildren` (P1971). **An occupation and a
-personal website are not.** No `MemberCouncil` column this project has ever
-seen carries either, so `parliament.OCCUPATION_FIELDS` and `WEBSITE_FIELDS` are
-*candidate* names rather than measured ones — as is every OpenParlData column
-the cantonal adapter reads for these. A name that matches nothing yields no
-value and therefore no suggestion, which is why guessing is allowed to stand
-here where guessing a Q-ID is not. `Mandates`, `AdditionalMandate` and
+**Federally, four of the six have a column and two do not.** Coverage over the
+246 sitting members, and what each check would suggest against Wikidata today:
+
+| Property | Column | Source coverage | Suggestions |
+| --- | --- | ---: | ---: |
+| P19 place of birth | `BirthPlace_City` + `BirthPlace_Canton` | 245 (99.6%) | **23** |
+| P1321 place of origin | `Citizenship` | 244 (99.2%) | **82** |
+| P102 member of party | `PartyName` | 246 (100%) | **0** |
+| P1971 number of children | `NumberOfChildren` | 105 (42.7%) | **101** |
+| P106 occupation | — **no such column** | — | — |
+| P856 official website | — **no such column** | — | — |
+
+206 suggestions in total, none of them mechanical. Every one of the 246 members
+matched an item and every one was reached by the personal-data query, so the
+zeroes are real answers rather than gaps. P102's zero is the good kind — every
+matched item already carries one — and the check is kept listed because it is
+what would notice a newly elected member without one.
+
+`config/parliament.yaml` therefore ships `person_data: [P19, P1321, P102,
+P1971]`. `parliament.OCCUPATION_FIELDS` / `WEBSITE_FIELDS` stay as the hook a
+future column would be read through. `Mandates`, `AdditionalMandate` and
 `AdditionalActivity` are deliberately **not** candidates for P106: they are the
 register of interests, and filing a board seat as an occupation would put a
 wrong statement on a real person.
 
-**How many suggestions each check would make.** These are *coverage* checks
-across the whole chamber rather than exceptions, so a property Wikidata records
-for half the members produces of the order of a hundred rows. That is a
-legitimate worklist and it is also a number to see before switching a check on.
+**Cantonally it inverts, exactly as the identifier did.** The ZH `persons`
+table *does* carry `occupation_de` and `website_personal` — so P106 and P856
+are answerable there and not here — and carries no birthplace, no Bürgerort and
+no children. `config/kantonsrat-zh.yaml` ships `person_data: [P102, P106,
+P856]`. Note `website_parliament_url_de` is the member's page on the chamber's
+own site rather than a website *of the person*, and is deliberately not read as
+P856.
+
+**And the probe found more wrong with the adapter than with the checks.**
+Printing the real column list showed `openparldata.py` reading the party from
+`party_name_de` and the birth date from `birthdate`, neither of which
+OpenParlData uses — the real names are **`party_de`** and **`birthday`**. So
+every cantonal member had been coming out with no party and no birth date since
+the adapter was written. Neither failure was visible from inside the pipeline:
+an unmapped party makes no suggestion (`parties:` ships empty), and a missing
+birth date silently downgrades the name fallback from "pick the one born on the
+right day" to a bare label match. Both names are fixed, the wrong ones kept as
+trailing aliases, and `tests/fixtures/zh_persons.json` now carries the columns
+the API really returns.
+
+Two smaller findings from the same listing: `MemberCouncil` has a `Nationality`
+column that is not in the fixtures — a country rather than a Bürgerort, so a
+possible P27 source and a separate check nobody has asked for — and 13 of the
+138 matched ZH members were *not* reached by the personal-data query, which is
+precisely the population `person_data_known` exists to keep quiet about.
+
+**Re-run it after touching any of this**, and know the volume before adding to
+`person_data:`. These are coverage checks across a whole chamber rather than
+exceptions: P1971 alone is 41% of the National Council and the Council of
+States.
 
 ```bash
 uv run python scripts/verify_person_data.py
@@ -1067,11 +1108,12 @@ the strongest of this file's several reasons for that: `ADD_PERSON_DATA` is not
 in `MECHANICAL_KINDS` at all, so nothing this probe measures can reach
 `suggestions.qs` under any verdict.
 
-⚠️ **This has never been run.** The environment the checks were written in had
-no egress to `ws.parlament.ch`, `api.openparldata.ch` or `query.wikidata.org`
-— the same block that produced the hand-built fixtures — so the column names
-above are from the schema and the coverage numbers do not exist yet. Dispatch
-the workflow before reading anything into an empty P106 section.
+One thing run 19 got wrong about *itself*, now fixed: a check with **no source
+column** printed "nothing to do — every matched item already records it",
+which is the message for the opposite situation. A zero has two causes — the
+source said nothing, or Wikidata already has it — and reading the first as the
+second is how a missing column comes to look like a well-maintained property.
+`volume_note` now takes the source coverage and says which it is.
 
 ---
 
@@ -1139,14 +1181,19 @@ The personal-data checks are the exception, and they are deliberately weaker.
 The source publishes facts *about the member* alongside the mandate, and
 Wikidata has properties for them:
 
-| Property | Source | Value |
+| Property | Source (federal / cantonal) | Value |
 | --- | --- | --- |
-| [P19](https://www.wikidata.org/wiki/Property:P19) place of birth | `BirthPlace_City` + `BirthPlace_Canton` | "Bern (BE)" |
-| [P1321](https://www.wikidata.org/wiki/Property:P1321) place of origin | `Citizenship` — the *Bürgerort* | "Zürich (ZH), Chur (GR)" |
-| [P106](https://www.wikidata.org/wiki/Property:P106) occupation | no measured column — see step 9 | |
-| [P102](https://www.wikidata.org/wiki/Property:P102) member of political party | `PartyName` | "Schweizerische Volkspartei" |
-| [P856](https://www.wikidata.org/wiki/Property:P856) official website | no measured column — see step 9 | |
-| [P1971](https://www.wikidata.org/wiki/Property:P1971) number of children | `NumberOfChildren` | 2 |
+| [P19](https://www.wikidata.org/wiki/Property:P19) place of birth | `BirthPlace_City` + `BirthPlace_Canton` / — | "Bern (BE)" |
+| [P1321](https://www.wikidata.org/wiki/Property:P1321) place of origin | `Citizenship`, the *Bürgerort* / — | "Zürich (ZH), Chur (GR)" |
+| [P106](https://www.wikidata.org/wiki/Property:P106) occupation | — / `occupation_de` | "Architektin" |
+| [P102](https://www.wikidata.org/wiki/Property:P102) member of political party | `PartyName` / `party_de` | "Schweizerische Volkspartei" |
+| [P856](https://www.wikidata.org/wiki/Property:P856) official website | — / `website_personal` | "https://example.ch/anna" |
+| [P1971](https://www.wikidata.org/wiki/Property:P1971) number of children | `NumberOfChildren` / — | 2 |
+
+The two sources answer **different** halves of that list, which is why the
+enabled checks are per-config: parlament.ch has a birthplace, a Bürgerort and a
+number of children but no occupation and no website, and OpenParlData's ZH
+records have exactly the reverse (step 9).
 
 **They compare presence, not value.** The source gives free text and the
 property wants an item; matching "Bern (BE)" to

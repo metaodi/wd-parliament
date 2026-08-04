@@ -212,17 +212,59 @@ def test_openparldata_reads_whichever_column_the_source_uses():
     assert member.website == "https://example.ch/ruth"
 
 
-def test_openparldata_person_without_those_columns_yields_nothing(zh_person_rows):
+def test_openparldata_reads_the_columns_run_19_measured(zh_person_rows):
+    """What the ZH ``persons`` table really carries, and what it does not.
+
+    Measured 2026-08-04: an ``occupation_de`` and a ``website_personal``, but
+    no birthplace, no Bürgerort and no children — so those three checks make no
+    suggestion for this source however they are configured.
+    """
     member = opd_member_from_rows(
         {"person_id": 9532, "begin_date": "2023-05-08", "role_name_de": "Mitglied"},
         zh_person_rows[0],
         BODY,
         today=date(2026, 8, 4),
     )
+    assert member.occupations == ["Architektin"]
+    assert member.website == "https://example.ch/genner"
     assert member.place_of_birth is None
-    assert member.occupations == []
-    assert member.website is None
+    assert member.places_of_origin == []
     assert member.number_of_children is None
+
+
+def test_the_parliaments_own_page_is_never_read_as_an_official_website(zh_person_rows):
+    """``website_parliament_url_de`` is the member's page on the chamber's site.
+
+    Every ZH person record carries one, and P856 is the person's *own* site —
+    filing one as the other would put a wrong statement on 180 people.
+    """
+    row = dict(zh_person_rows[1])
+    assert row["website_parliament_url_de"]  # the fixture carries it, as the API does
+    assert "website_personal" not in row
+    member = opd_member_from_rows(
+        {"person_id": row["id"], "begin_date": "2023-05-08", "role_name_de": "Mitglied"},
+        row,
+        BODY,
+        today=date(2026, 8, 4),
+    )
+    assert member.website is None
+
+
+def test_openparldata_reads_the_party_and_birthday_columns(zh_person_rows):
+    """The two names run 19 corrected: ``party_de`` and ``birthday``.
+
+    Both were wrong before it, and neither failure was visible from inside the
+    pipeline — an unmapped party makes no suggestion, and a missing birth date
+    quietly weakens the name fallback instead of breaking it.
+    """
+    member = opd_member_from_rows(
+        {"person_id": 9532, "begin_date": "2023-05-08", "role_name_de": "Mitglied"},
+        zh_person_rows[0],
+        BODY,
+        today=date(2026, 8, 4),
+    )
+    assert member.party_name == "Grüne"
+    assert member.date_of_birth == date(1956, 8, 30)
 
 
 # --- what counts as a value -------------------------------------------------
@@ -393,9 +435,29 @@ def test_an_unknown_property_is_an_error_not_a_skip(tmp_path):
         load_config(path)
 
 
-def test_the_shipped_configs_agree_with_their_sources():
+def test_each_shipped_config_asks_only_what_its_source_answers():
+    """Run 19 (2026-08-04) measured both, and they answer opposite halves.
+
+    parlament.ch has a birthplace, a Bürgerort and a number of children but no
+    occupation and no website column; OpenParlData's ZH records have exactly
+    the reverse. A property listed against a source that cannot answer it would
+    cost nothing — it simply never fires — but it would also assert a check
+    that does not exist, which is what this pins down.
+    """
     federal = load_config("config/parliament.yaml")
-    assert federal.person_data == list(PERSON_DATA_PROPERTIES)
-    # The cantonal one asks only what OpenParlData is known to answer.
+    assert federal.person_data == [
+        P_PLACE_OF_BIRTH,
+        P_PLACE_OF_ORIGIN,
+        P_POLITICAL_PARTY,
+        P_NUMBER_OF_CHILDREN,
+    ]
+    assert P_OCCUPATION not in federal.person_data
+    assert P_OFFICIAL_WEBSITE not in federal.person_data
+
     cantonal = load_config("config/kantonsrat-zh.yaml")
-    assert cantonal.person_data == [P_POLITICAL_PARTY]
+    assert cantonal.person_data == [
+        P_POLITICAL_PARTY,
+        P_OCCUPATION,
+        P_OFFICIAL_WEBSITE,
+    ]
+    assert P_PLACE_OF_BIRTH not in cantonal.person_data

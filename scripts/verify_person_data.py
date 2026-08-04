@@ -2,15 +2,15 @@
 
 README step 9. The checks themselves (P19, P1321, P106, P102, P856, P1971) are
 safe by construction — a source that has nothing to say produces no suggestion
-— but "safe" is not "useful", and two things about them are unmeasured:
+— but "safe" is not "useful", and this answers two questions about them.
 
-**A. Which columns the source really has.** Three are certain federally:
-``BirthPlace_City``/``BirthPlace_Canton``, ``Citizenship`` and
-``NumberOfChildren`` are in the OData ``$metadata``. **An occupation and a
-website are not** — ``parliament.OCCUPATION_FIELDS`` and ``WEBSITE_FIELDS`` are
-candidate names, and every OpenParlData column the cantonal adapter reads for
-these is a guess too. This section prints the columns the service actually
-returns, so a guessed name can be replaced by a measured one. It is the same
+**A. Which columns the source really has.** Run 19 (2026-08-04) settled it, and
+found more wrong with the *adapters* than with the checks: federally there is
+no occupation and no website column at all, while cantonally the party and the
+birth date were being read from names OpenParlData does not use
+(``party_name_de`` for ``party_de``, ``birthdate`` for ``birthday``) — two
+silent failures nothing else would have shown. This section prints the columns
+the service actually returns, which is what made that visible. It is the same
 discipline ``openparldata.classify_seat_memberships`` follows: "no such column"
 and "column full of nulls" are indistinguishable through ``.get()`` and mean
 opposite things, so the column list is printed rather than inferred.
@@ -179,9 +179,21 @@ def count_by_property(suggestions: Sequence[Any]) -> Dict[str, int]:
     return out
 
 
-def volume_note(count: int, members: int) -> str:
-    """One line putting a suggestion count in proportion. Pure."""
+def volume_note(count: int, members: int, covered: Optional[int] = None) -> str:
+    """One line putting a suggestion count in proportion. Pure.
+
+    A zero has two entirely different causes and run 19 printed the wrong one
+    for three of seven checks: with ``covered=0`` the *source* said nothing, so
+    there was never anything to compare, while with ``covered>0`` Wikidata
+    genuinely already records it. Reading the first as the second is how a
+    missing column comes to look like a well-maintained property.
+    """
     if not count:
+        if covered == 0:
+            return (
+                "no comparison was made — the source has no value for any "
+                "member (see section A)."
+            )
         return "nothing to do — every matched item already records it."
     share = count / members * 100 if members else 0.0
     scale = "a bulk worklist" if share >= 50 else "a clean-up"
@@ -250,10 +262,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
 
     verdicts: Dict[str, str] = {}
+    covered_by_property: Dict[str, int] = {}
     for check in checks:
         candidates = columns_for.get(check.property_id, ())
         found = present_columns(columns, candidates)
         covered = source_coverage(members, check)
+        covered_by_property[check.property_id] = covered
         verdict, message = classify_source(
             check, covered, len(members), found, candidates
         )
@@ -313,7 +327,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     for check in checks:
         print(f"{check.property_id} {check.label}")
-        print(f"    {volume_note(counts.get(check.property_id, 0), len(matched))}")
+        print(
+            "    "
+            + volume_note(
+                counts.get(check.property_id, 0),
+                len(matched),
+                covered_by_property.get(check.property_id),
+            )
+        )
 
     total = sum(counts.values())
     print()

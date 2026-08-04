@@ -37,19 +37,22 @@ VOTE_ID_FIELDS = ("IdVote", "ID", "Id")
 
 DEFAULT_LANGUAGE = "DE"
 
-# Columns the personal-data checks read (README step 9). Three of them are in
-# the ``$metadata`` document and are certain: ``BirthPlace_City`` /
-# ``BirthPlace_Canton`` (P19), ``Citizenship`` (P1321) and ``NumberOfChildren``
-# (P1971). The other two are **candidate names, not measured ones**:
-# ``MemberCouncil`` has no column this project has ever seen carrying an
-# occupation or a personal website, so the tuples below are what such a column
-# would plausibly be called if one is added or was missed.
+# Columns the personal-data checks read (README step 9). Three are certain and
+# measured: ``BirthPlace_City`` / ``BirthPlace_Canton`` (P19, filled in for 245
+# of 246 sitting members), ``Citizenship`` (P1321, 244 of 246) and
+# ``NumberOfChildren`` (P1971, 105 of 246).
 #
-# That guess costs nothing, which is why it is allowed to stand: a name that
-# matches no column yields ``None``, an empty ``Member`` field and therefore no
-# suggestion at all — the same "skip unknown values" rule the Q-ID maps follow.
-# ``scripts/verify_person_data.py`` prints the columns the service really has,
-# so a real name can replace a guessed one the day somebody runs it.
+# **The other two do not exist.** Run 19 (2026-08-04) listed every column
+# ``MemberCouncil`` returns and there is no occupation and no website among
+# them, so ``config/parliament.yaml`` no longer asks for P106 or P856. The
+# tuples stay as the hook a future column would be read through, and they cost
+# nothing meanwhile: a name that matches no column yields ``None``, an empty
+# ``Member`` field and therefore no suggestion at all — the same "skip unknown
+# values" rule the Q-ID maps follow. Re-run the probe before adding a name.
+#
+# The same listing turned up ``Nationality``, which is not in the fixtures and
+# is a country rather than a Bürgerort — a possible P27 source, and a separate
+# check nobody has asked for. ``Citizenship`` remains the P1321 field.
 #
 # Deliberately **not** candidates for the occupation: ``Mandates``,
 # ``AdditionalMandate`` and ``AdditionalActivity``. Those are the register of

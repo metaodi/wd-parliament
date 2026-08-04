@@ -76,25 +76,48 @@ DISTRICT_FIELDS = (
     "district_de",
     "district",
 )
-PARTY_NAME_FIELDS = ("party_name_de", "party_name", "party_harmonized", "party")
-BIRTH_FIELDS = ("birthdate", "birth_date", "date_of_birth")
-DEATH_FIELDS = ("deathdate", "death_date", "date_of_death")
+# ⚠️ The first name in each of the next three tuples was WRONG until run 19
+# (2026-08-04) printed the `persons` columns the API really returns. The party
+# is `party_de` (harmonised: `party_harmonized_de`), not `party_name_de`, and
+# the dates are `birthday` / `deathday`, not `birthdate` / `deathdate` — so
+# every cantonal member was coming out with **no party and no birth date**.
+# Neither failure was visible from inside the pipeline: an unmapped party makes
+# no suggestion (`parties:` ships empty), and a missing birth date silently
+# downgrades the name fallback from "pick the one born on the right day" to a
+# bare label match. The wrong names are kept as trailing aliases because they
+# cost nothing and another body may yet use them.
+PARTY_NAME_FIELDS = (
+    "party_de",
+    "party_harmonized_de",
+    "party_name_de",
+    "party_name",
+    "party",
+)
+BIRTH_FIELDS = ("birthday", "birthdate", "birth_date", "date_of_birth")
+DEATH_FIELDS = ("deathday", "deathdate", "death_date", "date_of_death")
 
-# Person columns the personal-data checks read (README step 9). **None of these
-# has been measured**: the ZH person records this project has seen carry a
-# name, a district, a party and a birth date, and whether the API also
-# publishes a birthplace, an occupation or a website is exactly what
-# ``scripts/verify_person_data.py`` exists to find out.
+# Person columns the personal-data checks read (README step 9). **Measured** on
+# 2026-08-04 (run 19), which changed two of them and settled the rest:
 #
-# Guessing here is safe in a way guessing a Q-ID is not — a name that matches
-# no column yields no value and therefore no suggestion — but it is still a
-# guess, and the probe prints the real column list so it need not stay one.
+#   occupation  -> `occupation_de` (also _fr, _it). Present, and the first
+#                  candidate already guessed it.
+#   website     -> `website_personal`. The guesses all missed it. Note
+#                  `website_parliament_url_de` is the member's page on the
+#                  *parliament's* site, which is not an official website of the
+#                  person and must never be filed as P856.
+#   birthplace  -> no such column. `city`/`street`/`postal_code` are a postal
+#                  address, not a place of birth, and must not be read as one.
+#   origin      -> no such column: OpenParlData carries no Bürgerort.
+#   children    -> no such column.
+#
+# The names that matched nothing are kept: they cost nothing (a missing column
+# yields no value and so no suggestion) and another body may use them. What
+# they must not do is grow by guesswork — re-run the probe instead.
 BIRTHPLACE_FIELDS = (
     "birthplace",
     "birth_place",
     "place_of_birth",
     "birthplace_de",
-    "hometown_de",
 )
 ORIGIN_FIELDS = ("place_of_origin", "origin", "citizenship", "hometown")
 OCCUPATION_FIELDS = (
@@ -104,7 +127,7 @@ OCCUPATION_FIELDS = (
     "profession",
     "job_title",
 )
-WEBSITE_FIELDS = ("website", "url", "homepage", "website_url")
+WEBSITE_FIELDS = ("website_personal", "website", "url", "homepage", "website_url")
 CHILDREN_FIELDS = ("number_of_children", "children")
 
 

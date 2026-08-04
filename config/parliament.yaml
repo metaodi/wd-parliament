@@ -163,30 +163,36 @@ parties: {}
 #
 # None of them is ever emitted as QuickStatements. There is no Q-ID to render.
 #
-#   P19    place of birth      <- BirthPlace_City (+ BirthPlace_Canton)
-#   P1321  place of origin     <- Citizenship, the Bürgerort
-#   P106   occupation          <- no known MemberCouncil column (see below)
-#   P102   member of party     <- PartyName; only fires while `parties:` is
-#                                 empty, since a mapped party is compared by
-#                                 value as REVIEW_PARTY instead
-#   P856   official website    <- no known MemberCouncil column (see below)
-#   P1971  number of children  <- NumberOfChildren
+# MEASURED against the live service on 2026-08-04 (run 19,
+# scripts/verify_person_data.py). Source coverage over the 246 sitting members,
+# and the suggestions each check would make against Wikidata today:
 #
-# ⚠️ TWO OF THESE HAVE NO MEASURED SOURCE COLUMN. `MemberCouncil` carries a
-# birthplace, a Citizenship and a NumberOfChildren in its $metadata, but
-# nothing this project has seen holds an occupation or a personal website —
-# `parliament.OCCUPATION_FIELDS` / `WEBSITE_FIELDS` are candidate names, not
-# measured ones. Leaving them listed costs nothing: a column that does not
-# exist yields no value and therefore no suggestion. Run
-# `scripts/verify_person_data.py` to see which columns the service really has,
-# and how many members each one is filled in for.
+#   P19    place of birth      <- BirthPlace_City (+ _Canton)  245/246 ->  23
+#   P1321  place of origin     <- Citizenship, the Bürgerort   244/246 ->  82
+#   P102   member of party     <- PartyName                    246/246 ->   0
+#   P1971  number of children  <- NumberOfChildren             105/246 -> 101
 #
-# ⚠️ AND KNOW THE VOLUME. This is a *coverage* check across ~246 members, so a
-# property that Wikidata records for half the chamber produces of the order of
-# a hundred suggestions. They sit at priority 6, below everything about the
-# seat, so they cannot bury the findings that matter — but if a report should
-# only be about the mandate, shorten this list or set it to [].
-person_data: [P19, P1321, P106, P102, P856, P1971]
+# 206 suggestions in total, none of them mechanical.
+#
+# P102 finds nothing today because every matched item already carries one —
+# which is worth keeping listed rather than removing: it is what would notice a
+# newly elected member without a party statement. It only fires while `parties:`
+# above is empty; a mapped party is compared by value as REVIEW_PARTY instead.
+#
+# ⚠️ P106 AND P856 ARE NOT LISTED BECAUSE THE SOURCE HAS NO SUCH COLUMN. Run 19
+# printed every column MemberCouncil returns and there is no occupation and no
+# website among them. Listing them would cost nothing — a missing column yields
+# no value and so no suggestion — but it would also imply a check that can
+# never fire. Add them back when (and only when) the probe names a real column.
+# Do NOT point them at Mandates / AdditionalMandate / AdditionalActivity: that
+# is the register of interests, not what somebody does for a living.
+#
+# ⚠️ AND KNOW THE VOLUME before adding to this list. These are *coverage*
+# checks across ~246 members, not exceptions: P1971 alone is 41% of the
+# chamber. They sit at priority 6, below everything about the seat, so they
+# cannot bury the findings that matter — but if a report should only be about
+# the mandate, shorten this list or set it to [].
+person_data: [P19, P1321, P102, P1971]
 
 # ---------------------------------------------------------------------------
 # Legislative terms  ->  P2937 parliamentary term (qualifier)

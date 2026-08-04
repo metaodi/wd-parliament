@@ -265,14 +265,27 @@ the code. Four rules hold them together and none is optional:
 - **`ADD_PERSON_DATA` is never mechanical**, and is refused twice: the kind is
   not in `MECHANICAL_KINDS`, and the payload carries no `position`. There is no
   Q-ID to render, so there is nothing to emit.
-- **an unmeasured source column costs nothing.** `parliament.OCCUPATION_FIELDS`
-  / `WEBSITE_FIELDS` and every `openparldata` personal-data tuple are *guesses*
-  — no `MemberCouncil` column this project has seen carries an occupation or a
-  website — and a name matching nothing yields no value and no suggestion.
-  `scripts/verify_person_data.py` is what turns a guess into a measurement; it
-  has never been run. Never add `Mandates` / `AdditionalMandate` /
-  `AdditionalActivity` as P106 candidates: that is the register of interests,
-  not what somebody does for a living.
+- **an unmeasured source column costs nothing**, and `verify_person_data.py`
+  run 19 (2026-08-04) turned the guesses into measurements. **The two sources
+  answer different halves of the list**, so the enabled checks are per-config:
+  parlament.ch has `BirthPlace_City`/`_Canton` (245/246), `Citizenship`
+  (244/246), `PartyName` (246/246) and `NumberOfChildren` (105/246) but **no
+  occupation and no website column at all**; OpenParlData's ZH `persons` has
+  `occupation_de` and `website_personal` and none of the other three. Never add
+  `Mandates` / `AdditionalMandate` / `AdditionalActivity` as P106 candidates —
+  that is the register of interests, not a living — and never read
+  `website_parliament_url_de` as P856: it is the member's page on the chamber's
+  site, not a website of the person.
+
+**The same run found two bugs in the cantonal adapter that nothing else could
+have.** `openparldata` was reading the party from `party_name_de` and the birth
+date from `birthdate`; OpenParlData calls them **`party_de`** and
+**`birthday`**, so every cantonal member had no party and no birth date. Both
+failures are invisible from inside the pipeline — an unmapped party makes no
+suggestion, and a missing birth date silently downgrades the name fallback to a
+bare label match rather than breaking it. That is the argument for a probe that
+prints the source's real column list instead of trusting `.get()`. The
+fixtures now carry the live column names.
 
 A zero in `NumberOfChildren` is treated as no value: in a nullable integer
 column a zero and an unstated value are the same shape.
