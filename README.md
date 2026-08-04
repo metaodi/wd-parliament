@@ -1023,6 +1023,7 @@ well-maintained chamber would return.)
 | --- | :---: | --- |
 | **Add Swiss parliament ID** | 1 | Item matched by name but has no P1307. Highest leverage — it makes every future run exact. |
 | **One identifier, several items** | 1 | Two or more Wikidata items claim the same P1307. A contradiction in Wikidata's own data — see below. |
+| **One item, several source records** | 1 | Two or more *source* records point at one Wikidata item. The mirror image, and the only finding here that is fixed in the source rather than on Wikidata. |
 | **Review ended membership** | 1 | P39 closed with P582, but parlament.ch says `Active`. |
 | **Add end date** | 2 | P39 open, but the member is no longer `Active`. |
 | **Add membership** | 2 | Sitting member, no P39 for this council. |
@@ -1069,6 +1070,31 @@ Q-ID, so the reverse walk below cannot recognise them by item and would report
 **both** claimants as having left — a confident, wrong claim about somebody
 sitting today. That pass therefore also skips any item whose identifier belongs
 to a sitting member, not just any item whose Q-ID does.
+
+### …and its mirror image, which is not a Wikidata edit at all
+
+Some sources assert a Wikidata link of their own: OpenParlData's person records
+carry a `wikidata_id`. When two of them name the same item, one item is being
+claimed as two people — the same conflict as above, pointing the other way.
+
+Nothing about it is repaired on Wikidata, and the report says so in as many
+words. It is raised because **a link like this silently corrupts anything
+joined through it**, which is exactly how it was found: run 17 of the
+departures probe reported Alfred Gehrig, who left in 1971, against a leaving
+date of 2014, because a second person record named his item and the two sets of
+memberships pooled under one key. Both the Q-ID and the source record ids go
+into the report and into `docs/data.json`, so the finding can be handed to the
+source's maintainers as it stands.
+
+Only a source that asserts such links can produce any: `parlament.ch` says
+nothing about Wikidata, so `ParliamentClient` has no `get_link_conflicts` at
+all and the federal run raises none. That is the ordinary case, not a
+degradation.
+
+The two probes that join through the field — `verify_departures.py` and
+`compare_tenure_dates.py` — **skip** a Q-ID claimed twice rather than
+arbitrating, which is what keeps their verdicts honest; this suggestion is how
+the same fact reaches somebody who can fix it.
 
 ### The one suggestion that is about somebody the source does not list
 

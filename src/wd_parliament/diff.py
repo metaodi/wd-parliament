@@ -43,6 +43,7 @@ from .models import (
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
     KIND_DUPLICATE_IDENTIFIER,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
@@ -224,6 +225,7 @@ def compute_suggestions(
     config: Config,
     today: Optional[date] = None,
     tenures: Optional[Dict[tuple, Tenure]] = None,
+    link_conflicts: Optional[Dict[tuple, List[str]]] = None,
 ) -> List[Suggestion]:
     """Produce the suggested edits for one chamber. Pure.
 
@@ -236,6 +238,12 @@ def compute_suggestions(
     a member who has already left, instead of telling the reader to look them
     up by hand. Optional: left out, that pass degrades to exactly the text it
     printed before.
+
+    ``link_conflicts`` maps ``(council, Q-ID)`` → the source record ids naming
+    that item, for sources that assert a Wikidata link of their own. It is the
+    mirror image of ``DUPLICATE_IDENTIFIER`` and the only finding here that is
+    **not** fixed on Wikidata; a source that asserts nothing about Wikidata
+    simply passes nothing.
     """
     today = today or date.today()
     suggestions: List[Suggestion] = []
@@ -287,6 +295,16 @@ def compute_suggestions(
     if not members:
         suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
         return suggestions
+
+    # 1a) The mirror image: one Wikidata item, several source records. Raised
+    # from the source's own view rather than from Wikidata's, so it does not
+    # depend on the member list or on anything Wikidata says.
+    for (council, qid), person_ids in sorted((link_conflicts or {}).items()):
+        if council.upper() != body.council.upper():
+            continue
+        suggestions.append(
+            _source_link_conflict_suggestion(body, qid, person_ids, config)
+        )
 
     # 2a) One identifier, several items — among the seat holders themselves.
     # The pass above only sees identifiers a *sitting* member carries; a
@@ -387,6 +405,51 @@ def _duplicate_identifier_suggestion(
             "duplicate_qids": qids,
             "parliament_id": str(member.person_number),
             "biography": config.biography_url_for(member.person_number),
+        },
+    )
+
+
+def _source_link_conflict_suggestion(
+    body: Body,
+    qid: str,
+    person_ids: Sequence[int],
+    config: Config,
+) -> Suggestion:
+    """Several source records name one Wikidata item.
+
+    The mirror image of :func:`_duplicate_identifier_suggestion`, and the only
+    finding in this report that is **not** repaired on Wikidata: the wrong
+    assertion is the source's. It is raised anyway for two reasons — the report
+    is the only place anybody looks, and a link like this silently corrupts any
+    join made through it, which is precisely how it was found (README step 8:
+    a member who left in 1971 reported against a leaving date of 2014, because
+    a second person record named his item and the two sets of memberships
+    pooled).
+
+    Never mechanical, and for a plainer reason than the rest: there is no
+    Wikidata edit to make. Both the Q-ID and the record ids go into the payload
+    so the report can be handed to the source's maintainers as it stands.
+    """
+    ids = ", ".join(f"#{i}" for i in person_ids)
+    return Suggestion(
+        kind=KIND_DUPLICATE_SOURCE_LINK,
+        body=body,
+        member_label=f"{qid} ({len(person_ids)} source records)",
+        person_qid=qid,
+        detail=(
+            f"{config.source_name} has {len(person_ids)} person records "
+            f"pointing at the same Wikidata item {qid}: {ids}. One item cannot "
+            "be two people, so either the records are duplicates or one carries "
+            "the wrong Q-ID. **This is fixed in "
+            f"{config.source_name}, not on Wikidata** — nothing here is a "
+            "Wikidata edit. It is reported because a link like this silently "
+            "corrupts anything joined through it: whoever reads 'the latest "
+            "row' for this item gets the other person's."
+        ),
+        links={"item": _item_url(qid), "position": _item_url(body.position_qid)},
+        payload={
+            "wikidata_qid": qid,
+            "source_person_ids": [int(i) for i in person_ids],
         },
     )
 

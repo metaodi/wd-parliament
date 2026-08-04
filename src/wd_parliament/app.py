@@ -187,6 +187,21 @@ def process(
             exc_info=True,
         )
 
+    # Data errors in the *source's* own Wikidata links. Only a source that
+    # asserts such links has any, so a missing method is the ordinary case and
+    # not a degradation: parlament.ch says nothing about Wikidata at all.
+    link_conflicts: Dict[tuple, List[int]] = {}
+    reader = getattr(parliament, "get_link_conflicts", None)
+    if reader is not None:
+        try:
+            link_conflicts = reader(councils=config.councils)
+        except Exception:  # noqa: BLE001 - degrade, do not abort
+            log.warning(
+                "Could not read the source's Wikidata links; duplicated links "
+                "will not be reported",
+                exc_info=True,
+            )
+
     people = wikidata.get_position_holders(
         config.position_qids, config.language, config.identifier_property
     )
@@ -210,7 +225,13 @@ def process(
         try:
             _fill_counts(result, chamber_members, people, body.position_qid)
             result.suggestions = compute_suggestions(
-                body, chamber_members, people, periods, config, tenures=tenures
+                body,
+                chamber_members,
+                people,
+                periods,
+                config,
+                tenures=tenures,
+                link_conflicts=link_conflicts,
             )
         except Exception as exc:  # keep going even if one chamber fails
             log.exception("Failed to process %s", body.label)

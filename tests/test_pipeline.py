@@ -15,6 +15,7 @@ from wd_parliament.config import Config
 from wd_parliament.models import (
     KIND_ADD_END_DATE,
     KIND_ADD_MEMBERSHIP,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_NO_WIKIDATA_ITEM,
     MODEL_TENURE,
     QID_FROM_IDENTIFIER,
@@ -476,3 +477,19 @@ def test_without_the_history_the_report_says_so_instead_of_guessing(
     assert "looked up by hand" in suggestion.detail
     # The link does not depend on the history: it comes from the identifier.
     assert suggestion.payload["biography"].endswith("/3432")
+
+
+def test_a_source_with_no_wikidata_links_is_not_a_degradation(
+    member_rows, period_rows, config
+):
+    """parlament.ch asserts nothing about Wikidata, so there is nothing to read.
+
+    FakeParliament has no `get_link_conflicts` at all — the ordinary case for
+    that source, and it must not be logged as a failure or crash the run.
+    """
+    results = process(
+        config, FakeParliament(member_rows, period_rows), FakeWikidata()
+    )
+    assert all(
+        s.kind != KIND_DUPLICATE_SOURCE_LINK for r in results for s in r.suggestions
+    )

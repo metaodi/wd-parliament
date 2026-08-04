@@ -19,6 +19,7 @@ from typing import Dict, List, Optional
 # the reports. Adding a kind means touching all three maps plus ``diff.py``.
 KIND_ADD_IDENTIFIER = "ADD_IDENTIFIER"
 KIND_DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
+KIND_DUPLICATE_SOURCE_LINK = "DUPLICATE_SOURCE_LINK"
 KIND_REVIEW_ENDED = "REVIEW_ENDED"
 KIND_ADD_END_DATE = "ADD_END_DATE"
 KIND_ADD_MEMBERSHIP = "ADD_MEMBERSHIP"
@@ -37,6 +38,11 @@ PRIORITY = {
     # join is skipped, so the member looks unmatched, and the advice they would
     # otherwise draw is "create an item" — which would make a third duplicate.
     KIND_DUPLICATE_IDENTIFIER: 1,
+    # The mirror image, and the one finding here that is **not** fixed on
+    # Wikidata: the source names one item from two person records. Ranked with
+    # the other identity conflicts because it silently corrupts any join
+    # through that field, and there are never many.
+    KIND_DUPLICATE_SOURCE_LINK: 1,
     KIND_REVIEW_ENDED: 1,
     KIND_ADD_END_DATE: 2,
     KIND_ADD_MEMBERSHIP: 2,
@@ -51,6 +57,7 @@ PRIORITY = {
 KIND_LABEL = {
     KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (P1307/P14527)",
     KIND_DUPLICATE_IDENTIFIER: "One identifier claimed by several Wikidata items",
+    KIND_DUPLICATE_SOURCE_LINK: "One Wikidata item claimed by several source records",
     KIND_REVIEW_ENDED: "Membership recorded as ended, but the member is still sitting",
     KIND_ADD_END_DATE: "Recorded as sitting, but the member has left",
     KIND_ADD_MEMBERSHIP: "Sitting member, but no position held (P39) statement",

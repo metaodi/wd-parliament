@@ -19,6 +19,7 @@ from wd_parliament.app import build_source, process
 from wd_parliament.config import SOURCE_OPENPARLDATA, load_config
 from wd_parliament.models import (
     KIND_ADD_MEMBERSHIP,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_NO_WIKIDATA_ITEM,
     QID_FROM_IDENTIFIER,
     PositionStatement,
@@ -275,3 +276,40 @@ def test_a_departed_cantonal_member_gets_their_dates_and_the_cantonal_link(confi
     assert suggestion.payload["biography"] == "https://www.kantonsrat.zh.ch/mitglieder/"
     assert "OpenParlData records the seat as held" in suggestion.detail
     assert "parlament.ch" not in suggestion.detail
+
+
+# --- a data error in the source, surfaced in the source's own report ----------
+def test_two_person_records_naming_one_item_reach_the_report(config):
+    """The Gehrig shape, cantonally: one item, two person records.
+
+    Nothing about it is a Wikidata edit — it is reported so it can be raised
+    with OpenParlData, and because a link like this silently corrupts anything
+    joined through it.
+    """
+    class ConflictedApi(FakeApi):
+        def __init__(self):
+            super().__init__()
+            self.persons = self.persons + [
+                {"id": 99999, "fullname": "Duplicate Genner",
+                 "wikidata_id": "Q117716", "body_key": "ZH"}
+            ]
+
+    source = OpenParlDataClient(
+        body_key="ZH", bodies=config.bodies, client=ConflictedApi()
+    )
+    results = process(config, source, FakeWikidata())
+    conflict = next(
+        s for s in results[0].suggestions
+        if s.kind == KIND_DUPLICATE_SOURCE_LINK
+    )
+    assert conflict.payload["wikidata_qid"] == "Q117716"
+    assert conflict.payload["source_person_ids"] == [9532, 99999]
+    assert "OpenParlData" in conflict.detail
+    assert conflict.priority == 1
+
+
+def test_clean_source_links_raise_nothing(config, source):
+    """The committed fixture has five distinct Q-IDs, which is the normal case."""
+    results = process(config, source, FakeWikidata())
+    kinds = [s.kind for s in results[0].suggestions]
+    assert KIND_DUPLICATE_SOURCE_LINK not in kinds
