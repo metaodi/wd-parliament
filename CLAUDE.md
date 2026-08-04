@@ -247,6 +247,36 @@ Two facts from the same census shape the diff's behaviour:
   `quickstatements.is_mechanical` refuses qualifier-only commands for them,
   because QuickStatements matches on property + main value alone.
 
+**The personal-data checks are the one class that compares presence, not
+value** (README step 9): P19, P1321, P106, P102, P856 and P1971, listed in
+`config.person_data` and defined once in `models.PERSON_DATA_CHECKS`. The
+source publishes them as free text and the properties want items, so resolving
+"Bern (BE)" to a Q-ID is the judgement the config's maps exist to keep out of
+the code. Four rules hold them together and none is optional:
+
+- **a suggestion needs the source to have a value *and* Wikidata to have no
+  statement for the property at all.** The tool never says a recorded value is
+  wrong here — that is `REVIEW_PARTY`'s job, and only for a mapped party.
+- **`WikidataPerson.person_data_known` is not the same as an empty
+  `properties`.** The fourth SPARQL query wraps its `VALUES ?prop` in an
+  `OPTIONAL` precisely so a person carrying none of the properties still comes
+  back; without that flag every name-matched item outside the query's
+  population — no identifier, no seat — becomes a false positive.
+- **`ADD_PERSON_DATA` is never mechanical**, and is refused twice: the kind is
+  not in `MECHANICAL_KINDS`, and the payload carries no `position`. There is no
+  Q-ID to render, so there is nothing to emit.
+- **an unmeasured source column costs nothing.** `parliament.OCCUPATION_FIELDS`
+  / `WEBSITE_FIELDS` and every `openparldata` personal-data tuple are *guesses*
+  — no `MemberCouncil` column this project has seen carries an occupation or a
+  website — and a name matching nothing yields no value and no suggestion.
+  `scripts/verify_person_data.py` is what turns a guess into a measurement; it
+  has never been run. Never add `Mandates` / `AdditionalMandate` /
+  `AdditionalActivity` as P106 candidates: that is the register of interests,
+  not what somebody does for a living.
+
+A zero in `NumberOfChildren` is treated as no value: in a nullable integer
+column a zero and an unstated value are the same shape.
+
 Do not remove the warnings in the README, `config/parliament.yaml` or
 `tests/fixtures/README.md` until the corresponding step has actually been
 carried out.
@@ -308,7 +338,10 @@ expensive one.
 - **`models.py`** — shared dataclasses plus the **suggestion taxonomy**:
   `KIND_*` constants, `PRIORITY` sort weights (lower = more urgent) and
   `KIND_LABEL` human strings. Adding a kind means touching all three maps plus
-  `diff.py`. `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
+  `diff.py`. `PERSON_DATA_CHECKS` is the single place the presence checks live
+  — property, label, the `Member` field the source's value arrives in, and
+  what a reader has to do with it; adding one means adding a source field for
+  it, not just a line in a config. `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
   was established, and that provenance is what gates QuickStatements. `Member`
   is "who sits today"; `Tenure` is "when did this person hold this seat", asked
   about people the members table does not contain, and keyed
@@ -317,7 +350,9 @@ expensive one.
 - **`config.py`** — loads/validates `config/parliament.yaml`. Enforces a real
   `user_agent` (rejects placeholders) and validates every Q-ID map. A key
   mapped to a blank value is a deliberate "not known yet" and is dropped, not
-  an error.
+  an error. `person_data` is the exception to that leniency: an unknown
+  property id there is an **error**, because it selects a code path rather than
+  supplying a value, and a typo would silently drop a check somebody asked for.
 - **`http_client.py`** — the single shared HTTP layer: required User-Agent,
   `request_delay` throttle, 429/5xx exponential backoff. Its `requests.Session`
   is also handed to `SwissParlClient`, so parlament.ch sees the same UA.
@@ -335,10 +370,12 @@ expensive one.
   statement emitted. Both intervals are **closed**. A member with no
   `DateJoining` gets **no** periods — the fail-safe that stops an unknown start
   from silently meaning "all ~52 periods". Tested exhaustively.
-- **`wikidata.py`** — SPARQL against WDQS. **Three bounded queries**, not one
-  wide one: P768/P4100/P2937/P102 are all repeatable, so a single SELECT would
+- **`wikidata.py`** — SPARQL against WDQS. **Bounded queries**, not one wide
+  one: P768/P4100/P2937/P102 are all repeatable, so a single SELECT would
   produce a cartesian product per statement. They are joined on the Q-ID in
-  Python. The P39 query deliberately fetches statements for **everyone** with
+  Python. A fourth query answers the personal-data checks and runs only when a
+  config asks for them; `?prop` is bound from a `VALUES` list so each row is
+  one (person, property) pair — a union, not a product. The P39 query deliberately fetches statements for **everyone** with
   those positions, not just P1307 holders, because the diff's second pass needs
   people who are *not* in the current-members set. Query builders are static
   methods so they are unit-testable.
@@ -350,7 +387,10 @@ expensive one.
   would create a third duplicate. The name fallback rejects any candidate whose
   *known* birth date contradicts the member's, and never hands one Q-ID to two
   members.
-- **`diff.py`** — pure. `expected_statements` is the **single place** the
+- **`diff.py`** — pure. Seat checks compare *values*; `_person_data_suggestions`
+  compares *presence* only, and is the one part of the diff that is about the
+  person rather than the mandate (see above).
+  `expected_statements` is the **single place** the
   `tenure` vs `period` statement model lives; the rest of the diff works off
   whatever it returns. Walks members → Wikidata, then Wikidata's open
   memberships → members (catching people Wikidata still lists as sitting).
@@ -425,19 +465,22 @@ no run has happened yet.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
   `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
-  `--validate-periods`, `scripts/verify_departures.py` and
-  `scripts/verify_kantonsrat.py`, writes all seven to
+  `--validate-periods`, `scripts/verify_departures.py`,
+  `scripts/verify_kantonsrat.py` and `scripts/verify_person_data.py`, writes
+  all eight to
   the run summary, and writes nothing to the repo. Keep it read-only: it is
   the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other five report without gating and are deliberately
+  first two gate**; the other six report without gating and are deliberately
   excluded from the job's pass/fail — do not wire their outcomes into the
   gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
   `--validate-periods` answer whether a *bulk apply* is safe,
   `verify_departures` answers whether the departed members' report-only gates
   could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
-  never wire it into a gate), and
+  never wire it into a gate),
   `verify_kantonsrat` measures a parliament no config here processes, so it
-  cannot bear on the federal run by construction. The file must be on the
+  cannot bear on the federal run by construction, and `verify_person_data`
+  measures checks that are never mechanical, so no verdict it returns can
+  change what reaches `suggestions.qs`. The file must be on the
   default branch to appear in the dispatch UI, though a dispatch then runs the
   selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits

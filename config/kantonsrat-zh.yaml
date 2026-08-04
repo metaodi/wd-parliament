@@ -136,6 +136,28 @@ parl_groups: {}
 # anyway.
 parties: {}
 
+# ---------------------------------------------------------------------------
+# Personal data -> presence checks (README step 9)
+# ---------------------------------------------------------------------------
+# Which properties to report as missing when the source publishes them and the
+# item carries no statement. Presence only, never a value comparison, and never
+# emitted as QuickStatements — see config/parliament.yaml for the reasoning.
+#
+# Kept to the one that this source is *known* to answer. The ZH person records
+# carry a name, an electoral district, a party and a birth date; whether they
+# also carry a birthplace, an occupation or a website is unmeasured, and
+# `openparldata.BIRTHPLACE_FIELDS` and friends are candidate column names
+# rather than measured ones. Listing an unmeasured property would cost nothing
+# — a column that does not exist yields no value and no suggestion — but the
+# honest default for a source nobody has probed is to ask only what it answers.
+#
+# P102 is the one worth having here: OpenParlData names every member's party,
+# `parties:` above is empty, and so REVIEW_PARTY (which needs a mapped Q-ID)
+# never fires. This is the only check that notices a cantonal member with no
+# P102 at all. Widen the list once scripts/verify_person_data.py has said what
+# else the persons table holds.
+person_data: [P102]
+
 # Legislative terms -> P2937. Empty, and there is nothing to fill it from yet:
 # OpenParlData exposes no period table for ZH, so `get_periods` returns none and
 # no P2937 is suggested at all. Run 15 also found P2937 on *no* statement for

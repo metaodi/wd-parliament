@@ -17,9 +17,12 @@ import yaml
 from .models import (
     IDENTIFIER_PROPERTIES,
     MODEL_PERIOD,
+    PERSON_DATA_BY_PROPERTY,
+    PERSON_DATA_PROPERTIES,
     P_PARLIAMENT_ID,
     STATEMENT_MODELS,
     Body,
+    PersonDataCheck,
 )
 
 # Which source a config reads its members from. "parlament" is the parlament.ch
@@ -63,6 +66,13 @@ class Config:
     # i.e. the value a P2937 qualifier takes. Periods missing from this map
     # simply produce no P2937 suggestion; see ``diff._term_qids``.
     terms: Dict[int, str] = field(default_factory=dict)  # 52 -> "Q..."
+    # Which personal-data properties to check for presence (README step 9).
+    # A list of property ids from ``models.PERSON_DATA_PROPERTIES``; an empty
+    # list turns the whole class of check off, including the SPARQL query it
+    # needs. Defaults to all of them, which is what asking for the check means.
+    person_data: List[str] = field(
+        default_factory=lambda: list(PERSON_DATA_PROPERTIES)
+    )
     # Emitting QuickStatements is opt-out: the file is always written, but this
     # lets an operator turn it off entirely while the statement model is still
     # being confirmed against live Wikidata.
@@ -123,6 +133,12 @@ class Config:
     def position_qids(self) -> List[str]:
         return [b.position_qid for b in self.bodies]
 
+    @property
+    def person_data_checks(self) -> List[PersonDataCheck]:
+        """The enabled personal-data checks, in the canonical order."""
+        enabled = set(self.person_data)
+        return [c for c in PERSON_DATA_BY_PROPERTY.values() if c.property_id in enabled]
+
 
 def _as_qid_map(raw: Optional[dict], what: str) -> Dict[str, str]:
     """Normalise a ``key: Qnnn`` mapping, dropping empty values.
@@ -158,6 +174,38 @@ def _as_term_map(raw: Optional[dict]) -> Dict[int, str]:
         if not qid.startswith("Q") or not qid[1:].isdigit():
             raise ValueError(f"terms: '{key}' maps to '{qid}', which is not a Q-ID.")
         out[number] = qid
+    return out
+
+
+def _as_person_data(raw: object) -> List[str]:
+    """Normalise the ``person_data`` list of property ids.
+
+    Absent means "all of them" — a config that says nothing about these checks
+    gets them, because they need no per-parliament data to be safe. An explicit
+    empty list means "none", which is how a config turns them off. An unknown
+    property is an error rather than a skip: unlike a Q-ID map, where a missing
+    key is a value nobody has established yet, a property id here is a *code*
+    path, and a typo would silently drop a check the operator asked for.
+    """
+    if raw is None:
+        return list(PERSON_DATA_PROPERTIES)
+    if isinstance(raw, str) or not isinstance(raw, (list, tuple)):
+        raise ValueError(
+            "person_data must be a list of property ids, e.g. [P19, P106]; "
+            f"got {raw!r}."
+        )
+    out: List[str] = []
+    for item in raw:
+        prop = str(item).strip().upper()
+        if prop not in PERSON_DATA_BY_PROPERTY:
+            raise ValueError(
+                f"person_data: '{prop}' is not a supported personal-data "
+                f"property. Supported: {', '.join(PERSON_DATA_PROPERTIES)}. "
+                "Adding one means adding a PersonDataCheck in models.py and a "
+                "source field for it, not just a line here."
+            )
+        if prop not in out:
+            out.append(prop)
     return out
 
 
@@ -240,6 +288,7 @@ def load_config(path: str | Path) -> Config:
         parties=_as_qid_map(data.get("parties"), "parties"),
         parl_groups=_as_qid_map(data.get("parl_groups"), "parl_groups"),
         terms=_as_term_map(data.get("terms")),
+        person_data=_as_person_data(data.get("person_data")),
         quickstatements=bool(data.get("quickstatements", True)),
     )
 

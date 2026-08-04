@@ -28,6 +28,7 @@ KIND_ADD_TERM = "ADD_TERM"
 KIND_ADD_QUALIFIER = "ADD_QUALIFIER"
 KIND_REVIEW_PARTY = "REVIEW_PARTY"
 KIND_NO_WIKIDATA_ITEM = "NO_WIKIDATA_ITEM"
+KIND_ADD_PERSON_DATA = "ADD_PERSON_DATA"
 
 PRIORITY = {
     # Adding the identifier is the highest-leverage edit there is: it turns
@@ -46,6 +47,11 @@ PRIORITY = {
     KIND_ADD_QUALIFIER: 4,
     KIND_REVIEW_PARTY: 4,
     KIND_NO_WIKIDATA_ITEM: 5,
+    # Last, deliberately. Biographical enrichment is worth having, but nothing
+    # here affects the question the tool exists to answer — who sits today —
+    # and there is potentially one of these per member per property, so a
+    # higher priority would bury the seat findings under them.
+    KIND_ADD_PERSON_DATA: 6,
 }
 
 KIND_LABEL = {
@@ -60,6 +66,7 @@ KIND_LABEL = {
     KIND_ADD_QUALIFIER: "Membership missing an electoral district (P768) or group (P4100)",
     KIND_REVIEW_PARTY: "Political party (P102) missing or disagreeing with source",
     KIND_NO_WIKIDATA_ITEM: "Sitting member, but no Wikidata item could be found",
+    KIND_ADD_PERSON_DATA: "Personal data the source publishes and Wikidata does not record",
 }
 
 # How a member's Q-ID was established (see ``resolve``).
@@ -94,6 +101,64 @@ P_PARLIAMENTARY_TERM = "P2937"
 P_POLITICAL_PARTY = "P102"
 P_DATE_OF_BIRTH = "P569"
 P_DATE_OF_DEATH = "P570"
+P_PLACE_OF_BIRTH = "P19"
+P_PLACE_OF_ORIGIN = "P1321"  # "Bürgerort", the municipality of origin
+P_OCCUPATION = "P106"
+P_OFFICIAL_WEBSITE = "P856"
+P_NUMBER_OF_CHILDREN = "P1971"
+
+
+# --- Personal-data checks ---------------------------------------------------
+# The properties that are *about the person* rather than about the seat, and
+# that the source publishes alongside the mandate. Unlike every other check in
+# this tool these compare **presence, not value**: the source gives a place or
+# an occupation as free text, and turning "Bern (BE)" into an item is a
+# judgement — the same one ``config``'s Q-ID maps exist to keep out of the code.
+#
+# So a check fires only when the *source* has a value and Wikidata has **no**
+# statement for the property at all. That asymmetry is what makes it safe: the
+# tool never claims a recorded value is wrong, only that a published fact is
+# missing, and it says so with the source's own string for a human to resolve.
+
+
+@dataclass(frozen=True)
+class PersonDataCheck:
+    """One "the source knows this, Wikidata does not record it" comparison.
+
+    ``attribute`` is the :class:`Member` field holding the source's value(s);
+    ``value_kind`` is what a Wikidata editor has to do with it, which is the
+    difference between "resolve this string to an item" and "use it as it
+    stands" and is the only per-property guidance the suggestion carries.
+    """
+
+    property_id: str
+    label: str  # the property's English name, as it appears in the report
+    attribute: str  # the Member field carrying the source's value(s)
+    value_kind: str = "item"  # "item", "url" or "quantity"
+
+    @property
+    def needs_item(self) -> bool:
+        return self.value_kind == "item"
+
+
+PERSON_DATA_CHECKS = (
+    PersonDataCheck(P_PLACE_OF_BIRTH, "place of birth", "place_of_birth"),
+    PersonDataCheck(P_PLACE_OF_ORIGIN, "place of origin", "places_of_origin"),
+    PersonDataCheck(P_OCCUPATION, "occupation", "occupations"),
+    PersonDataCheck(P_POLITICAL_PARTY, "member of political party", "party_name"),
+    PersonDataCheck(
+        P_OFFICIAL_WEBSITE, "official website", "website", value_kind="url"
+    ),
+    PersonDataCheck(
+        P_NUMBER_OF_CHILDREN,
+        "number of children",
+        "number_of_children",
+        value_kind="quantity",
+    ),
+)
+
+PERSON_DATA_BY_PROPERTY = {c.property_id: c for c in PERSON_DATA_CHECKS}
+PERSON_DATA_PROPERTIES = tuple(c.property_id for c in PERSON_DATA_CHECKS)
 
 # The two statement models this tool can target; see ``config.Config`` and the
 # ``statement_model`` key in config/parliament.yaml.
@@ -151,6 +216,15 @@ class Member:
     date_resignation: Optional[date] = None  # context for P1534
     date_of_birth: Optional[date] = None  # -> P569, and the name-match tiebreak
     date_of_death: Optional[date] = None  # -> P570
+    # Personal data the source publishes about the member, as the source's own
+    # free text. Read only by the presence checks in :data:`PERSON_DATA_CHECKS`
+    # — never resolved to a Q-ID here, and never emitted mechanically. Absent
+    # from a source (or from a row) they stay empty, which makes no suggestion.
+    place_of_birth: Optional[str] = None  # -> P19
+    places_of_origin: List[str] = field(default_factory=list)  # -> P1321
+    occupations: List[str] = field(default_factory=list)  # -> P106
+    website: Optional[str] = None  # -> P856
+    number_of_children: Optional[int] = None  # -> P1971
     person_id_code: Optional[int] = None
     id: Optional[int] = None
     # Filled in from MemberCouncilHistory by ``parliament.tenure_start``; see
@@ -280,9 +354,20 @@ class WikidataPerson:
     death_date: Optional[date] = None  # P570
     parties: List[str] = field(default_factory=list)  # open P102 Q-ids
     statements: List[PositionStatement] = field(default_factory=list)
+    # Which of the :data:`PERSON_DATA_CHECKS` properties this item already
+    # carries, and whether it was asked about at all. The two are separate on
+    # purpose: an empty ``properties`` on an item nobody queried means "unknown"
+    # and must produce no suggestion, while on a queried item it means "carries
+    # none of them" and is exactly the finding. Collapsing them would turn
+    # every item outside the query's population into a false positive.
+    properties: List[str] = field(default_factory=list)
+    person_data_known: bool = False
 
     def statements_for(self, position_qid: str) -> List[PositionStatement]:
         return [s for s in self.statements if s.position_qid == position_qid]
+
+    def has_property(self, property_id: str) -> bool:
+        return property_id in self.properties
 
 
 @dataclass

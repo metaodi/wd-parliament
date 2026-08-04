@@ -87,6 +87,22 @@ def test_party_query_excludes_closed_statements():
     assert "FILTER NOT EXISTS" in q and "pq:P582" in q
 
 
+def test_person_data_query_asks_one_question_per_person_and_property():
+    q = WikidataClient.person_data_query(POSITIONS, ["P19", "P106"])
+    assert "VALUES ?prop { wdt:P19 wdt:P106 }" in q
+    # The population is both halves of the diff's view of Wikidata: everyone
+    # with the identifier, and everyone holding one of the seats.
+    assert "wdt:P1307" in q and "wd:Q18510612" in q
+    # And it must be OPTIONAL, or a person carrying none of the properties
+    # would be indistinguishable from a person nobody asked about.
+    assert "OPTIONAL" in q
+
+
+def test_person_data_query_follows_the_configured_identifier():
+    q = WikidataClient.person_data_query(POSITIONS, ["P19"], "P14527")
+    assert "wdt:P14527" in q
+
+
 def test_people_search_query_is_narrow():
     q = WikidataClient.people_search_query(["Anna Muster"], POSITIONS)
     assert "wdt:P31 wd:Q5" in q  # humans only
@@ -164,6 +180,31 @@ def test_position_holders_collects_parties():
     client = FakeClient([[], [], parties])
     people = client.get_position_holders(POSITIONS)
     assert people["Q7"].parties == ["Q35591"]
+
+
+def test_person_data_records_both_what_is_there_and_that_it_was_asked():
+    prop = "http://www.wikidata.org/prop/direct/"
+    rows = [
+        {"person": uri("Q7"), "prop": lit(prop + "P19")},
+        {"person": uri("Q7"), "prop": lit(prop + "P106")},
+        {"person": uri("Q8")},  # queried, carries none of them
+    ]
+    client = FakeClient([[], [], [], rows])
+    people = client.get_position_holders(POSITIONS, person_data_properties=["P19", "P106"])
+
+    assert people["Q7"].properties == ["P19", "P106"]
+    assert people["Q7"].has_property("P19") is True
+    # The OPTIONAL row: no property, but the item *was* looked at, which is the
+    # difference between "carries none" (a finding) and "unknown" (silence).
+    assert people["Q8"].properties == []
+    assert people["Q8"].person_data_known is True
+
+
+def test_no_person_data_query_runs_when_none_is_configured():
+    client = FakeClient([[], [], []])
+    people = client.get_position_holders(POSITIONS)
+    assert len(client.queries) == 3
+    assert all(not p.person_data_known for p in people.values())
 
 
 def test_statements_for_filters_by_position():

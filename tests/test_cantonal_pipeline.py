@@ -69,8 +69,9 @@ class FakeWikidata:
         return {"Q117716": genner}
 
     def get_position_holders(self, position_qids, language="de",
-                             identifier_property="P1307"):
+                             identifier_property="P1307", person_data_properties=()):
         self.identifier_properties.append(identifier_property)
+        self.person_data_properties = list(person_data_properties)
         return self.people
 
     def search_people(self, names, position_qids, language="de",

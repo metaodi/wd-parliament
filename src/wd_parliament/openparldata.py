@@ -80,6 +80,33 @@ PARTY_NAME_FIELDS = ("party_name_de", "party_name", "party_harmonized", "party")
 BIRTH_FIELDS = ("birthdate", "birth_date", "date_of_birth")
 DEATH_FIELDS = ("deathdate", "death_date", "date_of_death")
 
+# Person columns the personal-data checks read (README step 9). **None of these
+# has been measured**: the ZH person records this project has seen carry a
+# name, a district, a party and a birth date, and whether the API also
+# publishes a birthplace, an occupation or a website is exactly what
+# ``scripts/verify_person_data.py`` exists to find out.
+#
+# Guessing here is safe in a way guessing a Q-ID is not — a name that matches
+# no column yields no value and therefore no suggestion — but it is still a
+# guess, and the probe prints the real column list so it need not stay one.
+BIRTHPLACE_FIELDS = (
+    "birthplace",
+    "birth_place",
+    "place_of_birth",
+    "birthplace_de",
+    "hometown_de",
+)
+ORIGIN_FIELDS = ("place_of_origin", "origin", "citizenship", "hometown")
+OCCUPATION_FIELDS = (
+    "occupation_de",
+    "occupation",
+    "profession_de",
+    "profession",
+    "job_title",
+)
+WEBSITE_FIELDS = ("website", "url", "homepage", "website_url")
+CHILDREN_FIELDS = ("number_of_children", "children")
+
 
 def _text(value: Any) -> str:
     return "" if value is None else str(value)
@@ -140,6 +167,21 @@ def _first(row: Dict[str, Any], candidates: Sequence[str]) -> Any:
         if row.get(name) not in (None, ""):
             return row[name]
     return None
+
+
+def _split_list(value: Any) -> List[str]:
+    """A multi-valued free-text field as a list. Pure.
+
+    Semicolons and JSON-style lists separate; a comma does not, because an
+    occupation or a place name may contain one and splitting on it would invent
+    values. Whitespace is tidied for the same reason it is on the districts.
+    """
+    if isinstance(value, (list, tuple)):
+        return [_tidy(v) for v in value if _tidy(v)]
+    text = _tidy(value)
+    if not text:
+        return []
+    return [p.strip() for p in text.split(";") if p.strip()]
 
 
 def _split_name(person: Dict[str, Any]) -> tuple:
@@ -238,6 +280,14 @@ def member_from_rows(
         date_leaving=_as_date(_first(membership, END_FIELDS)),
         date_of_birth=_as_date(_first(person, BIRTH_FIELDS)),
         date_of_death=_as_date(_first(person, DEATH_FIELDS)),
+        # Personal data for the presence checks, all of it optional and none of
+        # it measured on this source — see the field tuples above. A column
+        # this API does not have costs an empty value and no suggestion.
+        place_of_birth=_tidy(_first(person, BIRTHPLACE_FIELDS)) or None,
+        places_of_origin=_split_list(_first(person, ORIGIN_FIELDS)),
+        occupations=_split_list(_first(person, OCCUPATION_FIELDS)),
+        website=_tidy(_first(person, WEBSITE_FIELDS)) or None,
+        number_of_children=_as_int(_first(person, CHILDREN_FIELDS)),
         id=_as_int(membership.get("id")),
     )
 

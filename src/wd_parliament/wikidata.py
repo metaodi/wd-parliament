@@ -1,9 +1,9 @@
 """Query the Wikidata Query Service for P1307 holders and their P39 statements.
 
-Three bounded queries rather than one wide one. Qualifiers (P768, P4100, P2937)
-and P102 are all repeatable, so folding them into a single SELECT would produce
-a cartesian product per statement; keeping them apart and joining on the Q-ID
-in Python costs one extra request and keeps every result set predictable.
+Bounded queries rather than one wide one. Qualifiers (P768, P4100, P2937) and
+P102 are all repeatable, so folding them into a single SELECT would produce a
+cartesian product per statement; keeping them apart and joining on the Q-ID in
+Python costs one extra request and keeps every result set predictable.
 
 - :meth:`WikidataClient.get_identifier_index` — every item with P1307, plus its
   birth/death dates. This is the join key to ``MemberCouncil.PersonNumber``.
@@ -12,6 +12,9 @@ in Python costs one extra request and keeps every result set predictable.
   these unconditionally is what lets the diff walk Wikidata → parlament.ch and
   catch people Wikidata still lists as sitting.
 - :meth:`WikidataClient.get_parties` — open P102 statements for the same people.
+- :meth:`WikidataClient.person_data_query` — which personal-data properties
+  (P19, P1321, P106, P102, P856, P1971) each of those people already carries.
+  Presence only, and run only when a config asks for the checks.
 
 :meth:`WikidataClient.search_people` is the name-based fallback, restricted to
 humans who are politicians or already hold one of the positions, and returning
@@ -32,6 +35,10 @@ log = logging.getLogger(__name__)
 
 WDQS_ENDPOINT = "https://query.wikidata.org/sparql"
 ENTITY_RE = re.compile(r"/entity/(Q\d+)$")
+# A truthy predicate URI, "http://www.wikidata.org/prop/direct/P19". The
+# personal-data query binds ``?prop`` from a VALUES list and reads it back, so
+# this is how a bound predicate becomes "P19" again.
+PROPERTY_RE = re.compile(r"/(P\d+)$")
 
 # "politician" — the occupation the name-search fallback is restricted to, on
 # top of "already holds one of the configured positions".
@@ -52,6 +59,12 @@ _SEARCHABLE_NAME_RE = re.compile(r"\S+\s+\S+")
 
 def qid_from_uri(uri: str) -> Optional[str]:
     m = ENTITY_RE.search(uri or "")
+    return m.group(1) if m else None
+
+
+def property_from_uri(uri: str) -> Optional[str]:
+    """``"P19"`` from a truthy predicate URI, or ``None``."""
+    m = PROPERTY_RE.search(uri or "")
     return m.group(1) if m else None
 
 
@@ -182,6 +195,48 @@ SELECT ?person ?party WHERE {{
 """.strip()
 
     @staticmethod
+    def person_data_query(
+        position_qids: Sequence[str],
+        properties: Sequence[str],
+        identifier_property: str = P_PARLIAMENT_ID,
+    ) -> str:
+        """Which of ``properties`` each person already carries — presence only.
+
+        Two things about the shape are load-bearing.
+
+        **The population is stated, not implied.** The ``OPTIONAL`` means every
+        person in scope comes back even when they carry none of the properties,
+        which is what separates "queried, has none" (the finding) from "never
+        queried" (unknown). Without it an item outside this query's reach would
+        be indistinguishable from one missing every property, and the diff
+        would suggest adding data the item may well already have.
+
+        **It is one query, not one per property.** ``?prop`` is bound from a
+        VALUES list, so each row is one (person, property) pair — a union, not
+        the cartesian product that folding repeatable properties into a single
+        wide SELECT would produce. That is the same reasoning as the module
+        docstring's three queries; this is the fourth, and it costs one request
+        however many properties are checked.
+
+        No values are fetched. The checks compare presence, never content: the
+        source publishes free text and Wikidata holds items, so a comparison
+        would be a guess (see :data:`~.models.PERSON_DATA_CHECKS`).
+        """
+        values = _values_clause(position_qids)
+        props = " ".join(f"wdt:{p}" for p in properties)
+        return f"""
+SELECT DISTINCT ?person ?prop WHERE {{
+  {{ ?person wdt:{identifier_property} ?identifier . }}
+  UNION
+  {{ VALUES ?position {{ {values} }} ?person wdt:P39 ?position . }}
+  OPTIONAL {{
+    VALUES ?prop {{ {props} }}
+    ?person ?prop ?value .
+  }}
+}}
+""".strip()
+
+    @staticmethod
     def people_search_query(
         names: Sequence[str],
         position_qids: Sequence[str],
@@ -242,12 +297,19 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
         position_qids: Sequence[str],
         language: str = "de",
         identifier_property: str = P_PARLIAMENT_ID,
+        person_data_properties: Sequence[str] = (),
     ) -> Dict[str, WikidataPerson]:
         """Everyone holding one of ``position_qids``, with their P39 statements.
 
         Merges the P1307 index in, so the returned map is the single view of
         Wikidata the diff works from: people with an identifier but no seat,
         people with a seat but no identifier, and everyone in between.
+
+        ``person_data_properties`` adds the fourth query — which of the
+        personal-data properties each of those people already carries. Empty
+        (the default) it is not run at all, and every person is left
+        ``person_data_known=False``, which makes the diff suggest nothing about
+        them.
         """
         people = self.get_identifier_index(language, identifier_property)
         statements: Dict[str, PositionStatement] = {}
@@ -297,12 +359,48 @@ SELECT DISTINCT ?name ?person ?personLabel ?birth ?hasPosition ?parliamentId WHE
             if party not in person.parties:
                 person.parties.append(party)
 
+        if person_data_properties:
+            self._fill_person_data(
+                people, position_qids, person_data_properties, identifier_property
+            )
+
         log.info(
             "Wikidata: %d P39 statements across %d people",
             len(statements),
             sum(1 for p in people.values() if p.statements),
         )
         return people
+
+    def _fill_person_data(
+        self,
+        people: Dict[str, WikidataPerson],
+        position_qids: Sequence[str],
+        properties: Sequence[str],
+        identifier_property: str,
+    ) -> None:
+        """Record which personal-data properties each person already carries."""
+        for row in self.run_query(
+            self.person_data_query(position_qids, properties, identifier_property)
+        ):
+            qid = qid_from_uri(row.get("person", {}).get("value", ""))
+            if not qid:
+                continue
+            person = people.setdefault(qid, WikidataPerson(qid=qid))
+            # Reached by the query, so its absences mean something. Set even
+            # when the row carries no ``?prop``: that is the OPTIONAL saying
+            # "this person carries none of them", which is the finding.
+            person.person_data_known = True
+            prop = property_from_uri(row.get("prop", {}).get("value", ""))
+            if prop and prop not in person.properties:
+                person.properties.append(prop)
+        known = [p for p in people.values() if p.person_data_known]
+        log.info(
+            "Wikidata: personal data (%s) checked for %d people; %d carry none "
+            "of them",
+            ", ".join(properties),
+            len(known),
+            sum(1 for p in known if not p.properties),
+        )
 
     @staticmethod
     def label_query(qids: Sequence[str], language: str = "de") -> str:

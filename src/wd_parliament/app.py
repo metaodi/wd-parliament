@@ -188,7 +188,10 @@ def process(
         )
 
     people = wikidata.get_position_holders(
-        config.position_qids, config.language, config.identifier_property
+        config.position_qids,
+        config.language,
+        config.identifier_property,
+        config.person_data,
     )
     resolve_members(
         members,
