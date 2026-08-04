@@ -23,6 +23,11 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+from wd_parliament.models import (  # noqa: E402
+    NAME_FROM_ALIAS,
+    NAME_FROM_NAMED_AS,
+    NameVariant,
+)
 from verify_departures import (  # noqa: E402
     CONFIRMED,
     CONTRADICTED,
@@ -32,8 +37,10 @@ from verify_departures import (  # noqa: E402
     NAME_EXACT,
     NAME_NEAR,
     NAME_VARIANT,
+    ORIGIN_LABEL,
     Departure,
     chained_end,
+    check_name,
     classify_identity,
     classify_leaving_dates,
     classify_reach,
@@ -43,6 +50,15 @@ from verify_departures import (  # noqa: E402
     overall,
     surname_in_history,
 )
+
+
+def alias(name, language="de"):
+    return NameVariant(name=name, origin=NAME_FROM_ALIAS, language=language)
+
+
+def named_as(name):
+    """A P1810 qualifier on the identifier statement: the source's spelling."""
+    return NameVariant(name=name, origin=NAME_FROM_NAMED_AS)
 
 
 def departure(
@@ -56,6 +72,7 @@ def departure(
     statement_start="2011-12-05",
     statements=1,
     opd_rows=None,
+    variants=(),
 ):
     def d(value):
         return date.fromisoformat(value) if value else None
@@ -71,6 +88,7 @@ def departure(
         label=label,
         council="NR",
         identifier=str(number) if number else None,
+        name_variants=list(variants),
         person_number=number,
         statement_start=d(statement_start),
         statements_for_seat=statements,
@@ -208,6 +226,99 @@ def test_a_genuinely_different_surname_still_contradicts_over_a_near_miss():
     assert "1 of 5" in detail
 
 
+# --- the names beyond the label ----------------------------------------------
+def test_an_alias_settles_a_name_the_label_cannot():
+    """Run 18's Johann Zünd: the item's alias is the source's spelling."""
+    check = check_name("Johann Zünd", [alias("Johannes Zündt")], "Zündt")
+    assert check.relation == NAME_EXACT
+    assert check.origin == NAME_FROM_ALIAS
+    assert check.matched == "Johannes Zündt"
+    assert check.from_variant
+
+
+def test_subject_named_as_settles_it_too():
+    """P1810 states outright how this source spells the person."""
+    check = check_name("Johann Zünd", [named_as("Johannes Zündt")], "Zündt")
+    assert check.relation == NAME_EXACT
+    assert check.origin == NAME_FROM_NAMED_AS
+
+
+def test_the_label_is_credited_when_it_already_agrees():
+    """The ordinary case must keep reading as 'the label matches'."""
+    check = check_name("Ruth Beispiel", [alias("Ruth Beispiel-Muster")], "Beispiel")
+    assert check.relation == NAME_EXACT
+    assert check.origin == ORIGIN_LABEL
+    assert not check.from_variant
+
+
+def test_the_strongest_reading_wins_regardless_of_order():
+    """A variant may only improve a row, never spoil one."""
+    variants = [alias("Anna Andereleute"), named_as("Johannes Zündt")]
+    assert check_name("Johann Zünd", variants, "Zündt").relation == NAME_EXACT
+    assert check_name("Johann Zünd", list(reversed(variants)), "Zündt").relation == (
+        NAME_EXACT
+    )
+
+
+def test_a_variant_cannot_turn_agreement_into_a_contradiction():
+    """The bucket that blocks a bulk apply must be unreachable from here."""
+    check = check_name("Ruth Beispiel", [alias("Ganz Andereleute")], "Beispiel")
+    assert check.relation == NAME_EXACT
+
+
+def test_variants_that_help_nobody_leave_the_verdict_alone():
+    assert check_name("Ruth Beispiel", [alias("Ruth B.")], "Muster").relation == (
+        NAME_DIFFERENT
+    )
+    assert check_name("Ruth Beispiel", [], "Muster").relation == NAME_DIFFERENT
+
+
+def test_no_names_at_all_is_still_unknown_rather_than_a_mismatch():
+    assert check_name(None, [], "Muster").relation is None
+    assert check_name("Q42", [], "Muster").relation is None
+    # An item with no label in any queried language, but an alias that agrees.
+    assert check_name("Q42", [named_as("Johannes Zündt")], "Zündt").relation == (
+        NAME_EXACT
+    )
+
+
+def test_an_alias_lifts_a_near_miss_out_of_the_unsettled_bucket():
+    """The five survivors of run 18 are what this is for."""
+    people = agreeing(3) + [
+        departure(
+            qid="Q9",
+            label="Johann Zünd",
+            history_name="Zündt",
+            variants=[named_as("Johannes Zündt")],
+        )
+    ]
+    verdict, detail, lines = classify_identity(people)
+    assert verdict == CONFIRMED
+    text = "\n".join(lines)
+    assert "one character apart:            0 (unsettled)" in text
+    assert "settled by P1810 'named as':  1" in text
+    assert "via P1810 'Johannes Zündt'" in text
+    assert "1 of them found in an alias or a P1810" in detail
+
+
+def test_an_unsettled_row_says_whether_there_was_anything_to_check():
+    """'No P1810 yet' is fixable on Wikidata; 'the aliases disagree too' is not."""
+    people = agreeing(3) + [
+        departure(qid="Q8", label="Johann Zünd", history_name="Zündt"),
+        departure(
+            qid="Q7",
+            label="Maurice Despland",
+            history_name="Desplands",
+            variants=[alias("Maurice Despland-Muster")],
+        ),
+    ]
+    verdict, _, lines = classify_identity(people)
+    assert verdict == INCONCLUSIVE
+    text = "\n".join(lines)
+    assert "[no alias or P1810 to check]" in text
+    assert "also checked: alias 'Maurice Despland-Muster'" in text
+
+
 def test_folding_does_not_merge_two_different_families():
     """The loosening must not reach the case the check exists for."""
     assert name_relation("Ruth Beispiel", "Mascarin") == NAME_DIFFERENT
@@ -273,7 +384,7 @@ def test_variants_are_counted_and_printed_rather_than_swallowed():
     ]
     verdict, detail, lines = classify_identity(people)
     assert verdict == CONFIRMED
-    assert "3 exactly and 1 after folding" in detail
+    assert "3 matching exactly and 1 after folding" in detail
     text = "\n".join(lines)
     assert "same name, spelt differently:   1" in text
     assert "Boerlin" in text
