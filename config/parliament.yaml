@@ -53,6 +53,13 @@ quickstatements: true
 # The reference URL (S854) put on every emitted QuickStatement, and the link
 # shown next to each member in the reports. {language} and {person_number} are
 # substituted; person_number is MemberCouncil.PersonNumber, i.e. the P1307 value.
+#
+# It is a template, and belongs here rather than in code, because it is also the
+# link for the "Recorded as sitting, but the member has left" section — people
+# the members table does not contain, whose number is read off the identifier
+# Wikidata itself carries. A cantonal config sets its own; pointing those
+# readers at parlament.ch would send them to a service that has never heard of
+# the member. See config/kantonsrat-zh.yaml.
 biography_url: "https://www.parlament.ch/{language}/biografie/wd/{person_number}"
 
 # ---------------------------------------------------------------------------

@@ -26,6 +26,7 @@ from wd_parliament.parliament import (
     members_from_rows,
     periods_from_rows,
     segments_from_rows,
+    tenures_from_segments,
 )
 from wd_parliament.quickstatements import render_file
 from wd_parliament.report import write_reports
@@ -52,6 +53,9 @@ class FakeParliament:
 
     def get_member_segments(self, councils=None):
         return segments_from_rows(self._history_rows, councils=councils)
+
+    def get_tenures(self, councils=None):
+        return tenures_from_segments(self.get_member_segments(councils=councils))
 
 
 class HistorylessParliament(FakeParliament):
@@ -389,3 +393,86 @@ def test_a_real_break_in_the_history_does_not_backdate_p580(
         s for r in results for s in r.suggestions if s.person_qid == "Q1101"
     )
     assert suggestion.payload["start"] == date(2015, 11, 30)
+
+
+# --- the departed member's dates, end to end ---------------------------------
+# MemberCouncil carries only today's members, so somebody Wikidata still records
+# as sitting used to reach the report with no link and no dates. Both are in
+# MemberCouncilHistory, which the run already reads for the tenure starts.
+DEPARTED_HISTORY = _history(
+    3432,
+    [
+        ("2011-12-05T00:00:00", "2015-11-29T00:00:00"),
+        ("2015-11-30T00:00:00", "2019-12-01T00:00:00"),
+    ],
+)
+
+
+def _still_recorded_as_sitting():
+    return {
+        "Q3432": WikidataPerson(
+            qid="Q3432",
+            label="Departed Member",
+            parliament_id="3432",
+            statements=[
+                PositionStatement(
+                    person_qid="Q3432",
+                    statement_id="S3432",
+                    position_qid="Q18510612",
+                    start=date(2011, 12, 5),
+                )
+            ],
+        )
+    }
+
+
+def test_a_departed_member_reaches_the_report_with_a_link_and_both_dates(
+    member_rows, period_rows, config
+):
+    results = process(
+        config,
+        FakeParliament(member_rows, period_rows, DEPARTED_HISTORY),
+        FakeWikidata(_still_recorded_as_sitting()),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q3432"
+    )
+    assert suggestion.kind == KIND_ADD_END_DATE
+    assert suggestion.person_number == 3432
+    assert (
+        suggestion.payload["biography"]
+        == "https://www.parlament.ch/de/biografie/wd/3432"
+    )
+    assert suggestion.payload["start"] == date(2011, 12, 5)
+    assert suggestion.payload["end"] == date(2019, 12, 1)
+
+
+def test_the_departed_members_end_date_still_reaches_no_quickstatement(
+    member_rows, period_rows, config
+):
+    """A named date is for a human to apply, not a P582 backfill of the chamber."""
+    results = process(
+        config,
+        FakeParliament(member_rows, period_rows, DEPARTED_HISTORY),
+        FakeWikidata(_still_recorded_as_sitting()),
+    )
+    all_suggestions = [s for r in results for s in r.suggestions]
+    qs = render_file(all_suggestions, date(2026, 7, 29), config.statement_model)
+    assert "Q3432" not in qs
+
+
+def test_without_the_history_the_report_says_so_instead_of_guessing(
+    member_rows, period_rows, config
+):
+    results = process(
+        config,
+        HistorylessParliament(member_rows, period_rows),
+        FakeWikidata(_still_recorded_as_sitting()),
+    )
+    suggestion = next(
+        s for r in results for s in r.suggestions if s.person_qid == "Q3432"
+    )
+    assert "end" not in suggestion.payload
+    assert "looked up by hand" in suggestion.detail
+    # The link does not depend on the history: it comes from the identifier.
+    assert suggestion.payload["biography"].endswith("/3432")

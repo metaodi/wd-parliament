@@ -50,12 +50,16 @@ Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
   members, two sources sharing neither key nor publisher. P580 may be applied
   in bulk.
 
-**Step 5 is the only one left on the federal pipeline, and no workflow can do
-it:** a person has to paste one line into QuickStatements and look at what
-landed. Step 7 — extending the tool to a *cantonal* parliament, the Kantonsrat
-Zürich — is open too, but it gates nothing here: runs 13 and 14 settled the
-source, the position item and the identifier join, and what remains is the
-adapter itself.
+**Step 5 is the only one left that blocks the federal pipeline, and no workflow
+can do it:** a person has to paste one line into QuickStatements and look at
+what landed. Step 7 — extending the tool to a *cantonal* parliament, the
+Kantonsrat Zürich — is open too, but it gates nothing here: runs 13 and 14
+settled the source, the position item and the identifier join, and what remains
+is the adapter itself. Step 8 asks whether the *departed* members' leaving
+dates could be applied mechanically; run 18 (2026-08-04) measured **1,960 of
+1,960 agreeing exactly** with an independent source, and what keeps those
+suggestions report-only is now five identities that are one character apart —
+a morning's work on the biography pages, not a data problem.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -834,8 +838,8 @@ uv run python scripts/verify_kantonsrat.py \
   --body-key BE --expect-seats 160 --position ''
 ```
 
-Wired into `Verify assumptions` as section 6, and like step 6 it **never gates
-the job** — for the plainest reason of the three non-gating checks: it measures
+Wired into `Verify assumptions` as section 7, and like step 6 it **never gates
+the job** — for the plainest reason of the non-gating checks: it measures
 a parliament no config here processes, so nothing it finds can make the federal
 pipeline more or less safe to run.
 
@@ -845,6 +849,170 @@ Kanton Zürich ab 1803* (members with entry/exit dates, party and Wahlkreis — 
 direct `MemberCouncil` + `MemberCouncilHistory` analogue) and an XML web service
 for the Kantonsrat's business system. That is the *authoritative* source in the
 sense `diff` relies on; OpenParlData is a harmonised aggregator of it.
+
+### 8. 🔶 May the departed members' P582 be applied in bulk? — *the dates agree 1,960/1,960; five identities are one character apart*
+
+The diff's second pass finds people Wikidata still records as sitting whom the
+source does not list, and the report now names the leaving date to add (see
+[The one suggestion that is about somebody the source does not
+list](#the-one-suggestion-that-is-about-somebody-the-source-does-not-list)).
+Applying those dates mechanically is a *different* question from printing them,
+and it is the one nothing has answered. Three things about that population are
+unmeasured, and each is enough on its own:
+
+- **it is defined by Wikidata, not by the source.** Every other check in this
+  file starts from the ~246 people parlament.ch lists. This one starts from
+  whatever Wikidata has left open, which is precisely the set nobody has looked
+  at. `ADD_END_DATE` is mechanical, so ungating it writes P582 across all of
+  them unread.
+- **the person number comes from Wikidata's identifier value.** Step 1
+  confirmed P1307 == `PersonNumber` for a *sitting* member (Parmelin, two
+  identifiers compared directly). Nothing has checked it for somebody who left
+  in 1987, and the failure mode is a date written to another person's item.
+- **the date comes from a table read only for people still in office.**
+  `MemberCouncilHistory` is where P580's tenure start comes from — and step 0c
+  is the standing proof that "it is in the history" can mean something other
+  than it looks like.
+
+`scripts/verify_departures.py` measures all three plus a fourth nobody would
+think of until QuickStatements refused: **which statement the P582 would
+close.** An item with two P39 statements for one seat cannot be targeted by
+property + main value at all, and an open statement whose P580 is not this
+tenure's start is most likely about an earlier spell — closing it with this
+tenure's end puts a wrong span on a real statement out of two individually
+correct dates.
+
+```bash
+uv run python scripts/verify_departures.py
+
+# single-source run: section C then says INCONCLUSIVE by construction
+uv run python scripts/verify_departures.py --no-openparldata
+```
+
+It cross-checks the leaving date against OpenParlData through the same join
+step 0c uses — `PersonNumber` →P1307→ Q-ID ←`wikidata_id`— keyed by
+`(Q-ID, council)` and never by Q-ID alone, because a member who moved NR→SR
+reads as a contradiction if the two chambers are pooled.
+
+**Run 16 (2026-08-04)** measured it for the first time. Of 3,727 items holding
+one of the two seats, **1,986** are reported as departed — an open P39 whom
+parlament.ch does not list — and the population turns out to be far more
+tractable than the gates assumed:
+
+**Run 18 (2026-08-04)** is the current answer, after two rounds of fixing the
+probe rather than the data:
+
+| | Verdict |
+| --- | --- |
+| Reach | **CONFIRMED** — 1,968 of the population resolve into `MemberCouncilHistory` and **every one** has a closed tenure, i.e. a date to suggest |
+| Identity | **INCONCLUSIVE** — no identifier reaches a *different* surname; 5 of 1,968 are one character apart and a name comparison cannot settle those |
+| Leaving dates | **CONFIRMED** — **1,960 of 1,960 comparable dates agree exactly (100.0%)**; 7 are absent from OpenParlData and 1 Q-ID is claimed by two person records and skipped |
+| Which statement | **CONFIRMED** — 3 people hold several P39 for the seat and the existing `ambiguous_statement` rule already refuses them; none starts on the wrong date |
+
+**The dates are settled.** Two sources sharing neither key nor publisher agree
+on the leaving date of every one of 1,960 people the current-members table has
+never heard of. That is a stronger result than step 0c's 244 of 244, on a
+population fifteen times the size.
+
+**What is left is five names**, all nineteenth-century, all one letter apart:
+
+| Wikidata | parlament.ch | |
+| --- | --- | --- |
+| `Johann Zünd` | `Zündt` | a trailing consonant |
+| `Maurice Despland` | `Desplands` | a trailing s |
+| `Camille Desfayes` | `Défayes` | an s inside |
+| `Hans Wunderly-von Muralt` | `Wunderli` | y for i |
+| `Jeannot de Crousaz` | `Decrousnaz` | an inserted n |
+
+They are almost certainly the same people, and the probe deliberately does not
+say so: a name spelt two ways and a wrong person one letter away look identical
+from here. They are reported as **near misses** — a bucket that accepts
+nothing, so widening it cannot cost safety; the worst it can do is move a row
+from "wrong person" to "check this one". Somebody settling those five on the
+biography pages is what stands between step 8 and a `CONFIRMED`.
+
+⚠️ Even then, `CONFIRMED` licenses *considering* the removal of the gates, not
+the removal itself. Step 5 — pasting one line by hand — comes first.
+
+The single dissenting row was reported as `#2126 Alfred Gehrig (NR)`,
+parlament.ch 1971-11-28 against OpenParlData 2014-05-31. **It was not a
+disagreement at all — it was this probe's join, and checking it by hand is what
+found that out.** OpenParlData's `Nationalrat` memberships for Gehrig carry
+exactly the parlament.ch date; the 2014 row belongs to somebody else.
+
+The join runs person → `wikidata_id` → Q-ID, and **nothing makes
+`wikidata_id` unique**. Two person records naming the same item pool their
+memberships under one key, after which `chained_end` answers with whichever of
+the two has the later row. A Q-ID claimed by more than one record is now
+**skipped and reported**, never arbitrated — the same rule
+`resolve.match_by_identifier` applies to a P1307 claimed by two items, and for
+the same reason: a source contradicting itself about who somebody is cannot be
+resolved by picking a side. Every disagreement now prints the row count and the
+OpenParlData person id(s) behind it, which is what would have shown this at a
+glance instead of costing a manual lookup.
+
+**`compare_tenure_dates.py` has the identical join and was exposed to the
+identical bug**; the same skip is now applied there. Its recorded 244-of-244
+verdict was measured over sitting members only, where the collision did not
+bite — but that was luck, not design, and that comparison licenses a *bulk*
+apply of P580.
+
+**Four things the first runs got wrong about *themselves*, all now fixed.**
+Runs 16-18 found more wrong with this probe's arithmetic than with the data —
+every CONTRADICTED it has ever returned except the current one turned out to be
+its own, and it took a human checking a row by hand to catch the worst. That is
+the expected shape of a first measurement, and the reason its verdicts are read
+rather than wired into a gate:
+
+- **the identity check cried wolf 29 times.** All 29 "wrong person" hits were
+  the same person spelt differently: `Börlin`/`Boerlin`, `Ettlin`/`Etlin`,
+  `Bremi`/`Bremi-Forrer`, `Vonderweid`/`von der Weid`,
+  `Patocchi`/`Pattocchi`. `fold_name` now folds umlauts, accents, particles,
+  married names and doubled letters, and reports them as a **third bucket** —
+  counted and printed, never silently merged, because a check that stops
+  showing its work has stopped checking. 29 false alarms would have buried the
+  one real mismatch nobody would then look for.
+- **statement ambiguity is excludable, and was being read as a veto.** Three
+  people out of 1,969 is three people skipped by a rule that already exists —
+  except it did not exist for *these* suggestions: `diff` only stamped
+  `ambiguous_statement` on sitting members. It now stamps departed ones too,
+  which is right whatever happens to the gates.
+- **the one leaving-date disagreement was a Q-ID two people claimed**, as above.
+  A probe whose single finding is its own join is a probe that has not yet
+  measured anything; the fix is a skip, and the diagnostic that would have
+  caught it — printing the person ids behind a row — is now always on. With it
+  skipped, the remaining 1,960 agree **exactly**.
+- **and it cried wolf five more times**, at one character rather than five.
+  `Zünd`/`Zündt` is not evidence of a wrong person, and calling it one would
+  have repeated the first mistake in miniature. Those are now `near` misses:
+  reported, listed, and **not accepted** — the section returns INCONCLUSIVE
+  rather than either CONFIRMED or CONTRADICTED, because "unsettled" is what
+  they are.
+
+**The "no P580 anywhere" anomaly is settled, and it is real data.** Every one
+of the 1,968 open statements carries no start date — but the control run 18
+added says **1,844 of 3,829** statements for these seats (48.2%) do carry a
+P580, so the field is being read perfectly well. It is a selection effect: a
+statement with a P580 and no P582 is exactly what a *sitting* member's looks
+like, and sitting members are excluded from this population by construction.
+What is left is the undated bulk imports. Keep the control line: it is the only
+thing that distinguishes this from a broken read, and the two are
+indistinguishable from inside the subset.
+
+Wired into `Verify assumptions` as section 6, and it **never gates the job**
+for a third distinct reason: the suggestions it measures are report-only *by
+construction*. `diff._departed_suggestion` sets no `qid_source` and puts no
+`position` in the payload, so `is_mechanical` refuses them twice over and
+nothing this probe could falsify reaches `suggestions.qs` today. What a
+`CONFIRMED` would license is removing those two gates — a deliberate act, after
+step 5, not something a green run should imply.
+
+**`INCONCLUSIVE` is the expected answer on tidy data.** The population is
+however many open memberships Wikidata has for people who have gone; a small
+one is good news about the data and no news about the question. That is exactly
+why this must never be wired into a gate. (Federally the population is 1,986,
+so this is not the federal run's situation — it is what a cantonal or
+well-maintained chamber would return.)
 
 
 ---
@@ -868,6 +1036,43 @@ Scope for v1: **both chambers, currently sitting members only** (~246 people).
 Historic members are a later extension — `MemberCouncilHistory` has an identical
 shape, so it is a table swap plus following `IdPredecessor` chains for members
 who left and returned.
+
+### The one suggestion that is about somebody the source does not list
+
+**Add end date** fires twice, from opposite directions, and the second is the
+odd one out. Walking Wikidata's open memberships back finds people the source
+does not list as sitting at all — they have left, and the source's
+*current-members* table has therefore never heard of them. There is no `Member`
+to read anything off, so both of the things that suggestion needs come from
+elsewhere:
+
+- **the link to the source's database** — built from the identifier *Wikidata
+  itself* asserts (P1307 federally, P14527 cantonally) through the
+  `biography_url` template in the config, which is why the template is
+  configuration rather than a constant: a cantonal report pointing at
+  parlament.ch sends a reader to a service that has never heard of these
+  members;
+- **the start and end date to add** — from the source's *historic* record,
+  which the pipeline already reads: `MemberCouncilHistory` federally (the same
+  rows P580's tenure start comes from, so it costs no extra request) and the
+  ended `memberships` rows in OpenParlData. The end date is the newest
+  segment's `DateLeaving`; the start is the chained tenure start, the same one
+  `Member.start_date` uses.
+
+Both degrade rather than guess: an item with no identifier value gets no link
+and no dates, a source that cannot answer leaves the report saying the date has
+to be looked up by hand, and a tenure the source has not closed offers no end
+date at all.
+
+These suggestions are **report-only by construction**, and stay that way until
+[step 8](#8--may-the-departed-members-p582-be-applied-in-bulk--not-measured-the-reason-those-suggestions-are-report-only)
+comes back `CONFIRMED` — that probe (`scripts/verify_departures.py`) measures
+the historic table for departed members the way step 1 measured `PersonNumber`
+for sitting ones. `is_mechanical` refuses them twice over: the member carries
+no `qid_source` (the identifier came from Wikidata, not from a resolved member)
+and the payload carries no `position`. Do not remove either gate to "unlock"
+them — a P582 backfill across everyone Wikidata records as sitting is exactly
+the class of bulk edit the rest of this README is about not making by accident.
 
 ## How members are matched
 

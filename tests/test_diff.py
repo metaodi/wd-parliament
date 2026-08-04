@@ -25,6 +25,7 @@ from wd_parliament.models import (
     Member,
     Period,
     PositionStatement,
+    Tenure,
     WikidataPerson,
 )
 
@@ -355,6 +356,202 @@ def test_wikidata_still_lists_a_departed_member(periods):
     # No leaving date is known for someone outside the current-members set, so
     # this one must not become a QuickStatement.
     assert "end" not in suggestions[0].payload
+
+
+def test_the_departed_member_is_linked_to_the_source_by_their_identifier(periods):
+    """The only bridge back to the source: Wikidata's own P1307 value.
+
+    There is no Member to read a number off — that is what being outside the
+    current-members set means — so the link and the dates come from the
+    identifier Wikidata itself asserts, or not at all.
+    """
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, periods, make_config(MODEL_TENURE)
+    )
+    assert suggestions[0].person_number == 3432
+    assert (
+        suggestions[0].payload["biography"]
+        == "https://www.parlament.ch/de/biografie/wd/3432"
+    )
+
+
+def test_the_link_template_comes_from_the_config(periods):
+    """A cantonal run must not send a reader to parlament.ch."""
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "9532"
+    config = make_config(MODEL_TENURE)
+    config.biography_url = "https://example.org/{language}/member/{person_number}"
+    config.language = "fr"
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, periods, config
+    )
+    assert suggestions[0].payload["biography"] == "https://example.org/fr/member/9532"
+
+
+def test_an_item_without_the_identifier_gets_no_link_rather_than_a_wrong_one(periods):
+    member, seated = _sitting_member_and_person()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": _ghost()}, periods,
+        make_config(MODEL_TENURE),
+    )
+    assert suggestions[0].person_number is None
+    assert "biography" not in suggestions[0].payload
+
+
+def test_a_non_numeric_identifier_is_not_a_person_number(periods):
+    """A malformed value must not become somebody else's biography URL."""
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "P1307"
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, periods, make_config(MODEL_TENURE)
+    )
+    assert suggestions[0].person_number is None
+    assert "biography" not in suggestions[0].payload
+
+
+def _departed(tenures=None, start=date(2015, 11, 30), wikidata_start=date(2015, 11, 30)):
+    """The reverse walk over one departed member, with source dates supplied."""
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    ghost.statements[0].start = wikidata_start
+    return compute_suggestions(
+        BODY,
+        [member],
+        {"Q7": seated, "Q99": ghost},
+        [],
+        make_config(MODEL_TENURE),
+        tenures=tenures,
+    )[0]
+
+
+def test_the_source_supplies_the_start_and_end_date_to_add(periods):
+    """The report's whole point here: name the dates, do not say 'by hand'."""
+    tenures = {
+        (3432, "N"): Tenure(
+            person_number=3432, council="N",
+            start=date(2011, 12, 5), end=date(2019, 12, 1),
+        )
+    }
+    suggestion = _departed(tenures)
+    assert suggestion.payload["start"] == date(2011, 12, 5)
+    assert suggestion.payload["end"] == date(2019, 12, 1)
+    assert "2011-12-05 to 2019-12-01" in suggestion.detail
+    assert "looked up by hand" not in suggestion.detail
+
+
+def test_a_start_date_that_disagrees_is_pointed_out_too(periods):
+    tenures = {
+        (3432, "N"): Tenure(
+            person_number=3432, council="N",
+            start=date(2011, 12, 5), end=date(2019, 12, 1),
+        )
+    }
+    suggestion = _departed(tenures, wikidata_start=date(2015, 11, 30))
+    assert "start date (P580) is 2015-11-30" in suggestion.detail
+
+
+def test_a_missing_start_date_is_offered_from_the_source(periods):
+    tenures = {
+        (3432, "N"): Tenure(
+            person_number=3432, council="N",
+            start=date(2011, 12, 5), end=date(2019, 12, 1),
+        )
+    }
+    suggestion = _departed(tenures, wikidata_start=None)
+    assert "no start date (P580) either" in suggestion.detail
+
+
+def test_an_open_tenure_gives_no_end_date_rather_than_a_guess(periods):
+    """The source knows them but has not closed the spell: still by hand."""
+    tenures = {
+        (3432, "N"): Tenure(person_number=3432, council="N", start=date(2011, 12, 5))
+    }
+    suggestion = _departed(tenures)
+    assert "end" not in suggestion.payload
+    assert suggestion.payload["start"] == date(2011, 12, 5)
+    assert "no leaving date" in suggestion.detail
+
+
+def test_another_chambers_tenure_is_never_reported_for_this_seat(periods):
+    """A person is not a seat: an NR spell says nothing about an SR statement."""
+    tenures = {
+        (3432, "S"): Tenure(
+            person_number=3432, council="S",
+            start=date(2011, 12, 5), end=date(2019, 12, 1),
+        )
+    }
+    suggestion = _departed(tenures)
+    assert "end" not in suggestion.payload
+    assert "looked up by hand" in suggestion.detail
+
+
+def test_the_departed_member_is_never_mechanical(periods):
+    """Report-only, and gated twice: no qid_source, and no position in payload.
+
+    The identifier is Wikidata's rather than a resolved member's, and the dates
+    come from a historic table no probe has measured for departed members. A
+    P582 backfill across everyone Wikidata lists as sitting would need both.
+    """
+    from wd_parliament.quickstatements import is_mechanical
+
+    tenures = {
+        (3432, "N"): Tenure(
+            person_number=3432, council="N",
+            start=date(2011, 12, 5), end=date(2019, 12, 1),
+        )
+    }
+    suggestion = _departed(tenures)
+    assert suggestion.qid_source is None
+    assert "position" not in suggestion.payload
+    assert is_mechanical(suggestion, MODEL_TENURE) is False
+
+
+def test_a_departed_member_with_two_statements_is_marked_ambiguous(periods):
+    """Left and returned: property + main value names neither statement.
+
+    Run 16 found 3 such people among 1,969. The stamp is not redundant with the
+    report-only gates: those say the whole class is unmeasured, this says the
+    person is unaddressable however the class is settled.
+    """
+    from wd_parliament.quickstatements import is_mechanical
+
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    ghost.statements.append(
+        PositionStatement(
+            person_qid="Q99", statement_id="S8", position_qid=POSITION,
+            start=date(2003, 12, 1), end=date(2007, 12, 2),
+        )
+    )
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, periods,
+        make_config(MODEL_TENURE),
+        tenures={
+            (3432, "N"): Tenure(
+                person_number=3432, council="N",
+                start=date(2015, 11, 30), end=date(2019, 12, 1),
+            )
+        },
+    )
+    departed = next(s for s in suggestions if s.person_qid == "Q99")
+    assert departed.payload["ambiguous_statement"] is True
+    assert is_mechanical(departed, MODEL_TENURE) is False
+
+
+def test_a_single_statement_is_not_marked_ambiguous(periods):
+    member, seated = _sitting_member_and_person()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": _ghost()}, periods,
+        make_config(MODEL_TENURE),
+    )
+    assert "ambiguous_statement" not in suggestions[0].payload
 
 
 def test_a_closed_statement_is_not_flagged_in_the_reverse_walk(periods):

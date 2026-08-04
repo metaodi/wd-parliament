@@ -45,7 +45,7 @@ import logging
 from datetime import date, datetime
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
-from .models import Body, Member, Period
+from .models import Body, Member, Period, Tenure
 
 log = logging.getLogger(__name__)
 
@@ -160,6 +160,22 @@ def _split_name(person: Dict[str, Any]) -> tuple:
     return (head, tail) if head else ("", full)
 
 
+def has_seat_role(
+    row: Dict[str, Any], seat_roles: Optional[Sequence[str]] = None
+) -> bool:
+    """Does this membership's role hold a seat? Pure.
+
+    An empty ``seat_roles`` accepts every row, which is what a caller that has
+    not been told the allowlist should get: the roles are a fact about one
+    source, and inventing one here would be the guess :data:`DEFAULT_SEAT_ROLES`
+    exists to avoid.
+    """
+    if not seat_roles:
+        return True
+    role = _tidy(_first(row, ROLE_FIELDS)).casefold()
+    return role in {_tidy(r).casefold() for r in seat_roles}
+
+
 def is_seat_row(
     row: Dict[str, Any],
     today: Optional[date] = None,
@@ -177,10 +193,7 @@ def is_seat_row(
     begin = _as_date(_first(row, BEGIN_FIELDS))
     if begin is None or begin > today:
         return False
-    if seat_roles:
-        role = _tidy(_first(row, ROLE_FIELDS)).casefold()
-        return role in {_tidy(r).casefold() for r in seat_roles}
-    return True
+    return has_seat_role(row, seat_roles)
 
 
 def member_from_rows(
@@ -268,6 +281,46 @@ def members_from_rows(
     return sorted(best.values(), key=lambda m: (m.council, m.sort_name.casefold()))
 
 
+def tenures_from_rows(
+    memberships: Iterable[Dict[str, Any]],
+    body: Body,
+    seat_roles: Optional[Sequence[str]] = None,
+) -> Dict[tuple, Tenure]:
+    """``(person_id, council)`` → their latest spell in this chamber. Pure.
+
+    Every membership row, the **ended** ones included — which is the point:
+    :func:`members_from_rows` keeps only seats held today, so a person Wikidata
+    still records as sitting is absent from it and the report has no leaving
+    date to offer. Here they are, in the same rows.
+
+    No ``begin_date``/``today`` filter either, for the same reason: a spell that
+    has ended is exactly what is wanted, and a future start is still the row
+    that says when this person's seat begins. Only the role allowlist applies,
+    because a ``Gast`` row was never a seat and its dates are not this seat's
+    dates.
+
+    Per-tenure rows (913 across 834 people), so a row *is* a tenure and the
+    latest-starting one is the current spell — no chaining, unlike
+    :func:`parliament.latest_tenure`.
+    """
+    council = body.council.upper()
+    best: Dict[tuple, Tenure] = {}
+    for row in memberships:
+        person_id = _as_int(row.get("person_id"))
+        if person_id is None or not has_seat_role(row, seat_roles):
+            continue
+        tenure = Tenure(
+            person_number=person_id,
+            council=council,
+            start=_as_date(_first(row, BEGIN_FIELDS)),
+            end=_as_date(_first(row, END_FIELDS)),
+        )
+        current = best.get(tenure.key)
+        if current is None or (tenure.start or date.min) > (current.start or date.min):
+            best[tenure.key] = tenure
+    return best
+
+
 class OpenParlDataClient:
     """Fetch cantonal members from api.openparldata.ch.
 
@@ -292,6 +345,10 @@ class OpenParlDataClient:
         self.seat_roles = list(seat_roles or DEFAULT_SEAT_ROLES)
         self._client = client
         self._session = session
+        # Membership rows per group id. ``get_members`` and ``get_tenures``
+        # read the same rows for different questions ("who sits today" and
+        # "when did they hold it"), so the fetch is cached rather than repeated.
+        self._memberships: Dict[int, List[Dict[str, Any]]] = {}
 
     @property
     def client(self) -> Any:
@@ -370,7 +427,7 @@ class OpenParlDataClient:
             group_id = group_ids.get(body.council)
             if group_id is None:
                 continue
-            rows = self._rows(MEMBERSHIP_TABLE, group_id=group_id)
+            rows = self._membership_rows(group_id)
             members = members_from_rows(
                 rows,
                 persons,
@@ -387,6 +444,41 @@ class OpenParlDataClient:
                 len(rows),
             )
             out.extend(members)
+        return out
+
+    def _membership_rows(self, group_id: int) -> List[Dict[str, Any]]:
+        """Every membership row of one group, fetched at most once."""
+        if group_id not in self._memberships:
+            self._memberships[group_id] = self._rows(
+                MEMBERSHIP_TABLE, group_id=group_id
+            )
+        return self._memberships[group_id]
+
+    def get_tenures(
+        self, councils: Optional[Sequence[str]] = None
+    ) -> Dict[tuple, Tenure]:
+        """``(person id, council)`` → their latest spell, ended ones included.
+
+        The cantonal twin of :meth:`parliament.ParliamentClient.get_tenures`,
+        and the reason it can exist at all: the ended ``memberships`` rows are
+        in the same result ``get_members`` filters down to seats held today, so
+        this costs no extra request.
+        """
+        wanted = {c.strip().upper() for c in councils} if councils else None
+        group_ids = self.resolve_group_ids()
+        out: Dict[tuple, Tenure] = {}
+        for body in self.bodies:
+            if wanted is not None and body.council.upper() not in wanted:
+                continue
+            group_id = group_ids.get(body.council)
+            if group_id is None:
+                continue
+            out.update(
+                tenures_from_rows(
+                    self._membership_rows(group_id), body, seat_roles=self.seat_roles
+                )
+            )
+        log.info("Tenure dates available for %d (person, council) pair(s)", len(out))
         return out
 
     def get_periods(self) -> List[Period]:

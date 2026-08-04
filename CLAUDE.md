@@ -94,6 +94,18 @@ start equals OpenParlData's independent per-term start for every sitting
 member, so P580 may be applied in bulk. Step 4 came back clean in the same run
 — 183 of 183 voting members assigned in the current legislature.
 
+**`wikidata_id` is not unique, and both scripts that join through it assumed
+it was.** OpenParlData's person → `wikidata_id` → Q-ID join has no uniqueness
+constraint: two person records naming one item pool their memberships under a
+single key, and whatever reads "the latest row" then reads the *other* person's.
+Run 17 reported Alfred Gehrig — who left in 1971 — against a leaving date of
+2014 because of it. `verify_departures` and `compare_tenure_dates` both now
+**skip** a Q-ID claimed by more than one record and say how many they skipped,
+the same rule `resolve.match_by_identifier` applies to a P1307 claimed by two
+items. Never arbitrate one: a source contradicting itself about who somebody is
+cannot be resolved by picking a side. Any new join through that field needs the
+same guard.
+
 **A person is not a seat, and both new checks got that wrong first.** Run 11
 had comparison 2 keying OpenParlData rows by Q-ID alone, so a member who moved
 NR→SR chained their National Council years onto their Council of States seat —
@@ -197,7 +209,11 @@ selected by `config.source` in `app.build_source`, joined on
 - **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
   purpose.** No period table exists (so no P2937 is ever suggested), and the
   rows are per-tenure so `begin_date` is already the date P580 wants. Do not
-  "fix" either by inventing data.
+  "fix" either by inventing data. `get_tenures` is *not* in that category and
+  does return rows: it answers a different question — when did somebody hold
+  this seat, including people who have left — off the ended `memberships` rows
+  `get_members` filters away. Same cached fetch, role allowlist applied, no
+  `today` filter.
 - **user-facing strings are parameters.** `report` and `diff` take
   `source_name` / `identifier_property` / `district_label`; a cantonal report
   saying "parlament.ch" or "P1307" sends a reader to a service that has never
@@ -275,6 +291,8 @@ A straight line, wired in `app.py::run` → `app.py::process`:
 config.load_config
   → parliament.get_periods()          # LegislativePeriod (~52 rows), one request
   → parliament.get_members()          # MemberCouncil, Active=True, ~246 rows
+  → parliament.get_member_segments()  # MemberCouncilHistory -> the P580 start
+  → parliament.get_tenures()          # the same rows -> dates for people who left
   → wikidata.get_position_holders()   # 3 SPARQL queries, merged into one map
   → resolve.resolve_members()         # P1307 join, then the name fallback
   → for each chamber: diff.compute_suggestions()
@@ -291,7 +309,11 @@ expensive one.
   `KIND_*` constants, `PRIORITY` sort weights (lower = more urgent) and
   `KIND_LABEL` human strings. Adding a kind means touching all three maps plus
   `diff.py`. `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
-  was established, and that provenance is what gates QuickStatements.
+  was established, and that provenance is what gates QuickStatements. `Member`
+  is "who sits today"; `Tenure` is "when did this person hold this seat", asked
+  about people the members table does not contain, and keyed
+  `(person_number, council)` for the same reason `seats_by_seat` is — a person
+  is not a seat.
 - **`config.py`** — loads/validates `config/parliament.yaml`. Enforces a real
   `user_agent` (rejects placeholders) and validates every Q-ID map. A key
   mapped to a blank value is a deliberate "not known yet" and is dropped, not
@@ -304,7 +326,10 @@ expensive one.
   `periods_from_rows`) are module-level and pure, and that is how
   `get_members` is tested — by feeding fixture rows, never by mocking OData.
   The client is constructed lazily because building it fetches the metadata
-  document over the network.
+  document over the network. `MemberCouncilHistory` is read **once per client**
+  and answers two questions off the same rows: the tenure *start* P580 comes
+  from (`tenure_start`), and the tenure *end* the reverse walk reports for
+  departed members (`latest_tenure` / `tenures_from_segments`).
 - **`period_overlap.py`** — pure interval arithmetic, and **the most
   consequential logic in the tool**: it decides a P2937 qualifier on every
   statement emitted. Both intervals are **closed**. A member with no
@@ -324,8 +349,23 @@ expensive one.
 - **`diff.py`** — pure. `expected_statements` is the **single place** the
   `tenure` vs `period` statement model lives; the rest of the diff works off
   whatever it returns. Walks members → Wikidata, then Wikidata's open
-  memberships → members (catching people Wikidata still lists as sitting; those
-  carry no leaving date, so they are report-only). Sorted by priority then name.
+  memberships → members (catching people Wikidata still lists as sitting).
+  Sorted by priority then name. That second walk is about people the
+  *current-members* table does not contain, so `_departed_suggestion` reaches
+  the source through the identifier **Wikidata** asserts — `config.biography_url`
+  for the link, `Tenure` from the source's historic record for the dates it
+  suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
+  `position` in the payload. Removing either would turn it into a P582 backfill
+  across every open membership on Wikidata. `scripts/verify_departures.py`
+  (README step 8) is the probe that would license removing them; **runs 16-18
+  (2026-08-04) say not yet, and have found more wrong with the probe than with
+  the data** — run 18 has the leaving dates agreeing **1,960 of 1,960**, and
+  what is left is five identities one character apart (`Zünd`/`Zündt`), which a
+  name comparison cannot settle and so reports as `near` without accepting.
+  Both gates have a test naming them. `_departed_suggestion` also
+  stamps `ambiguous_statement` when the item holds several P39 for the seat (3
+  of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
+  that survives them being removed.
 - **`quickstatements.py`** — pure renderer. `is_mechanical` is the **one place**
   the safety rule lives; keep it that way. Review/correction kinds are excluded
   because QuickStatements can only add, so applying them would create a second
@@ -374,13 +414,17 @@ no run has happened yet.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
   `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
-  `--validate-periods` and `scripts/verify_kantonsrat.py`, writes all six to
+  `--validate-periods`, `scripts/verify_departures.py` and
+  `scripts/verify_kantonsrat.py`, writes all seven to
   the run summary, and writes nothing to the repo. Keep it read-only: it is
   the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other four report without gating and are deliberately
+  first two gate**; the other five report without gating and are deliberately
   excluded from the job's pass/fail — do not wire their outcomes into the
   gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
-  `--validate-periods` answer whether a *bulk apply* is safe, and
+  `--validate-periods` answer whether a *bulk apply* is safe,
+  `verify_departures` answers whether the departed members' report-only gates
+  could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
+  never wire it into a gate), and
   `verify_kantonsrat` measures a parliament no config here processes, so it
   cannot bear on the federal run by construction. The file must be on the
   default branch to appear in the dispatch UI, though a dispatch then runs the

@@ -53,6 +53,7 @@ from .models import (
     Period,
     PositionStatement,
     Suggestion,
+    Tenure,
     WikidataPerson,
 )
 from .period_overlap import assign_periods, clip_to_period
@@ -195,6 +196,25 @@ def _date_str(value: Optional[date]) -> str:
     return value.isoformat() if value else "unknown"
 
 
+def _person_number(identifier: Optional[str]) -> Optional[int]:
+    """Wikidata's identifier value as the source's person number. Pure.
+
+    The reverse walk knows a person only through Wikidata, so this is the one
+    bridge back to the source: the P1307 (or P14527) value *is* the source's
+    id — Parmelin's ``PersonNumber=1108`` against P1307 = 1108, checked
+    directly, which is the same equality ``resolve.match_by_identifier`` joins
+    on. A value that is not a plain number is not that id, so it yields
+    ``None`` and the suggestion simply carries no link and no dates rather than
+    a link to some other member's biography.
+    """
+    if identifier is None:
+        return None
+    text = str(identifier).strip()
+    if not text.isdigit():
+        return None
+    return int(text)
+
+
 def compute_suggestions(
     body: Body,
     members: Sequence[Member],
@@ -202,12 +222,19 @@ def compute_suggestions(
     periods: Sequence[Period],
     config: Config,
     today: Optional[date] = None,
+    tenures: Optional[Dict[tuple, Tenure]] = None,
 ) -> List[Suggestion]:
     """Produce the suggested edits for one chamber. Pure.
 
     ``people`` maps Q-ID → :class:`WikidataPerson` and must already contain
     everyone holding ``body.position_qid``, whether or not they matched a
     sitting member — the second pass below relies on it.
+
+    ``tenures`` maps ``(person number, council)`` → :class:`Tenure`, from the
+    source's historic table. It is what lets the second pass name the dates of
+    a member who has already left, instead of telling the reader to look them
+    up by hand. Optional: left out, that pass degrades to exactly the text it
+    printed before.
     """
     today = today or date.today()
     suggestions: List[Suggestion] = []
@@ -257,27 +284,115 @@ def compute_suggestions(
         if not open_statements:
             continue
         suggestions.append(
-            Suggestion(
-                kind=KIND_ADD_END_DATE,
-                body=body,
-                member_label=person.label or qid,
-                person_qid=qid,
-                detail=(
-                    f"Wikidata records an open '{body.label}' membership (no "
-                    f"end date), but {config.source_name} does not list this "
-                    "person as a sitting member. They have most likely left; "
-                    f"add an end date (P582). {config.source_name} gives no "
-                    "leaving date here because the person is outside the "
-                    "current-members set, so the date has to be looked up by "
-                    "hand."
-                ),
-                links={"item": _item_url(qid), "position": _item_url(body.position_qid)},
-                payload={"statement_id": open_statements[0].statement_id},
+            _departed_suggestion(
+                body, qid, person, open_statements[0], config, tenures or {}
             )
         )
 
     suggestions.sort(key=lambda s: (s.priority, s.member_label.casefold()))
     return suggestions
+
+
+def _departed_suggestion(
+    body: Body,
+    qid: str,
+    person: WikidataPerson,
+    statement: PositionStatement,
+    config: Config,
+    tenures: Dict[tuple, Tenure],
+) -> Suggestion:
+    """Wikidata still records this person as sitting; the source does not.
+
+    Everything here is reached through Wikidata's own identifier value, because
+    that is all this pass has: the person is outside the current-members set,
+    so there is no :class:`~.models.Member` to read a number or a link off. It
+    buys two things the report used to lack — the source's biography page, and
+    the dates the source's historic table gives for the spell — and neither is
+    guessed: an item with no identifier value gets no link and no dates.
+
+    **Report-only, deliberately.** ``qid_source`` stays unset, so
+    :func:`quickstatements.is_mechanical` refuses these; the payload also
+    carries no ``position``, which refuses them a second time. Both are load
+    bearing. The identifier here comes from Wikidata rather than from a
+    resolved member, and the dates from a historic table no probe has yet
+    measured for departed members — the two things a P582 backfill across
+    everyone Wikidata lists as sitting would have to be sure of. A human reads
+    the dates, applies them, and that is the intended workflow until such a
+    probe exists.
+    """
+    number = _person_number(person.parliament_id)
+    tenure = tenures.get((number, body.council.upper())) if number is not None else None
+    statements = person.statements_for(body.position_qid)
+
+    detail = (
+        f"Wikidata records an open '{body.label}' membership (no end date), "
+        f"but {config.source_name} does not list this person as a sitting "
+        "member. They have most likely left; "
+    )
+    payload: Dict[str, object] = {"statement_id": statement.statement_id}
+
+    # Left and returned: several P39 statements for one seat, which property +
+    # main value does not identify. Stamped here for the same reason
+    # ``_statement_suggestions`` stamps it for sitting members — and it is not
+    # redundant with the report-only gates below. Those two say "this whole
+    # class is unmeasured"; this says "this person is unaddressable however the
+    # class is settled", which survives the day somebody removes them. Run 16
+    # found 3 such people among 1,969.
+    if len(statements) > 1:
+        payload["ambiguous_statement"] = True
+
+    if number is not None:
+        payload["parliament_id"] = str(number)
+        payload["biography"] = config.biography_url_for(number)
+
+    if tenure is not None and tenure.end is not None:
+        detail += (
+            f"{config.source_name} records the seat as held from "
+            f"{_date_str(tenure.start)} to {_date_str(tenure.end)}, so add an "
+            f"end date (P582) of {_date_str(tenure.end)}"
+        )
+        payload["start"] = tenure.start
+        payload["end"] = tenure.end
+        if statement.start is None:
+            detail += (
+                f", and the statement has no start date (P580) either — "
+                f"{_date_str(tenure.start)} per the same record"
+            )
+        elif tenure.start is not None and statement.start != tenure.start:
+            detail += (
+                f". Wikidata's start date (P580) is {_date_str(statement.start)} "
+                f"against the source's {_date_str(tenure.start)}, so check that "
+                "too"
+            )
+        detail += (
+            ". These dates come from the source's historic record rather than "
+            "from its current-members set, so confirm them on the biography "
+            "page before applying."
+        )
+    elif tenure is not None:
+        detail += (
+            f"add an end date (P582). {config.source_name} records the seat as "
+            f"held from {_date_str(tenure.start)} but gives no leaving date, so "
+            "the end has to be looked up by hand on the biography page."
+        )
+        payload["start"] = tenure.start
+    else:
+        detail += (
+            f"add an end date (P582). {config.source_name} gives no leaving "
+            "date here because the person is outside the current-members set, "
+            "so the date has to be looked up by hand."
+        )
+
+    return Suggestion(
+        kind=KIND_ADD_END_DATE,
+        body=body,
+        member_label=person.label or qid,
+        person_qid=qid,
+        person_number=number,
+        detail=detail,
+        links={"item": _item_url(qid), "position": _item_url(body.position_qid)},
+        payload=payload,
+    )
 
 
 def _member_suggestions(

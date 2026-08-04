@@ -72,6 +72,11 @@ quickstatements: false
 # There is no per-person biography page in the API's data, so this is the
 # chamber's own member list rather than a fabricated per-person deep link.
 # {language} and {person_number} would be substituted if used.
+#
+# The reports link here — including from the "Recorded as sitting, but the
+# member has left" section, whose people are not in the members table at all.
+# That is why the template is configuration: the federal default would point a
+# cantonal reader at parlament.ch, which has never heard of these members.
 biography_url: "https://www.kantonsrat.zh.ch/mitglieder/"
 
 # ---------------------------------------------------------------------------
