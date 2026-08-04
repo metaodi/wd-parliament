@@ -102,18 +102,26 @@ P_ZH_MEMBER_ID = "P13468"
 # not, and would need its own constant before it could ever be emitted from.
 #
 # Provenance is only half the question. The other half is whether the
-# property's **value** is the person id the source gives, and that is measured
-# per property, not inherited: P1307 was checked directly (Parmelin,
-# ``PersonNumber`` 1108 == P1307 1108) and P14527 by ``verify_kantonsrat.py``
-# section C. P13468 is the canton of Zürich's own member id — the cantonal
-# analogue of P1307, and the reason a ZH config can join on anything at all
-# now that P14527 has been measured at 0 of 180 sitting members — but that its
-# value equals OpenParlData's person id is **unmeasured**. A config joining on
-# an unmeasured property must say so with ``identifier_verified: false``; see
-# :class:`~.config.Config`.
+# property's **value** is the person id the source gives, and run 20
+# (2026-08-04) measured that for all three — with two surprises:
+#
+# - **P13468 is the canton of Zürich's own member id, and OpenParlData does not
+#   carry it.** Of the 35 ZH people the source links to Wikidata, 28 carry
+#   P13468 and **0 of the 28 values are the person id** (Ruth Genner: P13468
+#   22518 against person id 9532). The probe then searched *every* column of
+#   the person record and found the values in **none** of them. So the property
+#   is right about the parliament and unusable from this source: it identifies
+#   people in the canton's own dataset, which this tool does not read.
+#   ``config.load_config`` refuses the combination outright.
+# - **P14527 identifies a person *record*, not a person.** 34 of 35 values are
+#   the ZH person id; the one that is not (Q131948095: P14527 1411 against ZH
+#   person id 17436) is another body's record for the same human, because
+#   OpenParlData holds one record per person **per body**. That is the federal
+#   bias in miniature — it misfires on exactly the members who also sat
+#   elsewhere — so P14527 is no longer claimed as verified either.
 IDENTIFIER_PROPERTIES = {
     "P1307": "Swiss parliament ID (MemberCouncil.PersonNumber)",
-    "P14527": "OpenParlData ID",
+    "P14527": "OpenParlData ID (per person *record*, so per body)",
     P_ZH_MEMBER_ID: "Zurich Kantonsrat and Regierungsrat member ID",
 }
 
@@ -121,7 +129,15 @@ IDENTIFIER_PROPERTIES = {
 # id. A config joining on anything else must set ``identifier_verified: false``,
 # which turns on the corroboration in ``resolve.match_by_identifier`` and stops
 # ``quickstatements`` writing anything off the back of the join.
-VERIFIED_IDENTIFIER_PROPERTIES = frozenset({"P1307", "P14527"})
+#
+# Only P1307 is in here, and it is here because of a direct check on the value
+# rather than on the coverage: Parmelin's ``PersonNumber`` 1108 against
+# Wikidata's P1307 1108 (``verify_source.py`` section B). P14527 was in here
+# until run 20 compared its values for the first time and found the record/person
+# distinction above. **Membership of this set costs a measurement, and losing it
+# costs only one disagreement** — that asymmetry is deliberate: the claim it
+# encodes is the one ``is_mechanical`` writes real edits off the back of.
+VERIFIED_IDENTIFIER_PROPERTIES = frozenset({"P1307"})
 
 P_START_TIME = "P580"
 P_END_TIME = "P582"

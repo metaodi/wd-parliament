@@ -18,6 +18,7 @@ from .models import (
     IDENTIFIER_PROPERTIES,
     MODEL_PERIOD,
     P_PARLIAMENT_ID,
+    P_ZH_MEMBER_ID,
     STATEMENT_MODELS,
     VERIFIED_IDENTIFIER_PROPERTIES,
     Body,
@@ -71,10 +72,11 @@ class Config:
     # OpenParlData only: the body (level of parliament) the chambers sit under.
     body_key: str = ""
     # The Wikidata property whose value equals the source's person identifier.
-    # Federally P1307 == MemberCouncil.PersonNumber; cantonally there is no
-    # P1307 at all, and for the Kantonsrat Zürich the canton's own member id
-    # P13468 is the analogue — P14527 (OpenParlData ID) is Wikidata-asserted
-    # too but reaches almost none of the sitting members.
+    # Federally P1307 == MemberCouncil.PersonNumber. Cantonally there is no
+    # P1307 at all: the Kantonsrat is joined on P14527 (the OpenParlData ID),
+    # which is the only identifier this source can actually supply a value for
+    # — P13468, the canton's own member id, is the property Wikidata uses for
+    # these people, but run 20 found its values in no column of OpenParlData.
     identifier_property: str = P_PARLIAMENT_ID
     # Has the property's **value** been shown to equal the source's person id?
     #
@@ -280,6 +282,27 @@ def load_config(path: str | Path) -> Config:
     # allowed and is how a config records the day a probe confirms it; claiming
     # true for an unmeasured property is not, because that claim is exactly
     # what ``is_mechanical`` would write edits off the back of.
+    # Measured and falsified, so it is refused rather than documented. Run 20
+    # (2026-08-04) compared P13468 against every column of OpenParlData's ZH
+    # person records: its values are the canton's own member ids and appear in
+    # **no** column of this source. Joining on it here would compare a person id
+    # to a different id space — matching nobody at best, and the wrong people at
+    # worst — and every ADD_IDENTIFIER suggestion would offer a number that is
+    # not this property's. The right source for it is the canton's own dataset
+    # (README step 7); the wrong fix is to try this pairing again.
+    if (
+        identifier_property == P_ZH_MEMBER_ID
+        and source == SOURCE_OPENPARLDATA
+    ):
+        raise ValueError(
+            f"{P_ZH_MEMBER_ID} cannot be joined on from source "
+            f"'{SOURCE_OPENPARLDATA}': its values are the canton of Zürich's "
+            "own member ids, and run 20 found them in no column of that "
+            "source's person records (0 of 28 compared). Join on a property "
+            "this source supplies, or read the canton's dataset — see README "
+            "step 7."
+        )
+
     identifier_verified = bool(
         data.get(
             "identifier_verified",

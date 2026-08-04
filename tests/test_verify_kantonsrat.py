@@ -397,13 +397,13 @@ def test_c_good_p14527_coverage_needs_no_change_to_the_safety_rule():
     assert "is_mechanical" in detail
 
 
-def test_c_the_cantons_own_id_outranks_the_aggregators():
-    """P14527 was CONFIRMED at 35 of 35 and then reached 0 of the 180 seats.
+def test_c_the_cantons_own_id_is_reported_as_wikidatas_side_only():
+    """Coverage is what this classifier can see, and only half the question.
 
-    Its 35 were the people OpenParlData had already linked — a sample biased
-    towards members notable enough to have gone federal. The canton's own id
-    has no such bias by construction, which is why it wins the ranking even
-    when both are present.
+    Run 20: P13468 reaches 28 of the 35 linked people — and **0 of 28** of its
+    values are OpenParlData's person id, in no column of that source. An
+    identifier needs a value on both sides, so a high count here must not read
+    as "join on this".
     """
     verdict, detail = classify_wikidata_reach(
         holders=400, with_opd_id=300, with_federal_id=90, with_either=340,
@@ -411,16 +411,8 @@ def test_c_the_cantons_own_id_outranks_the_aggregators():
     )
     assert verdict == CONFIRMED
     assert ZH_MEMBER_ID in detail
-    assert "identifier_verified: false" in detail
-
-
-def test_c_coverage_does_not_settle_the_value():
-    """The mistake the P14527 round made: coverage answered, value assumed."""
-    _, detail = classify_wikidata_reach(
-        holders=400, with_opd_id=0, with_federal_id=0, with_either=250,
-        with_zh_id=250,
-    )
-    assert "does NOT settle" in detail
+    assert "Wikidata's** side only" in detail
+    assert "not for this source" in detail
 
 
 def test_c_thin_coverage_still_confirms_but_promises_less():

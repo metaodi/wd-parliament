@@ -43,13 +43,15 @@ there are four candidates and they are not equivalent:
 
 - **P13468 (Zurich Kantonsrat and Regierungsrat member ID)**, the canton's own
   member id and therefore the cantonal analogue of P1307 — the id assigned by
-  the body that runs the parliament rather than by a mirror of it. This is what
-  ``config/kantonsrat-zh.yaml`` now joins on, and the two questions asked about
-  it here are separate: *coverage* (how many seat holders carry it) and
-  *value* (whether it equals OpenParlData's person id). Only the first was ever
-  asked of P14527, which is why this section grew a column report — if the
-  values are not the person id, the source may keep them under another column,
-  or nowhere at all, and those mean different things for the config.
+  the body that runs the parliament rather than by a mirror of it. Two separate
+  questions are asked about it, and run 20 answered them differently:
+  *coverage* on Wikidata's side is good (28 of 35), while the *value* is not
+  OpenParlData's person id in a single case and lives in none of that source's
+  columns. An identifier needs a value on both sides, so this is the property
+  a config reading the **canton's own dataset** would join on, and one that
+  ``config.load_config`` refuses to pair with OpenParlData. The column report
+  is what tells "the source keeps it elsewhere" apart from "the source has
+  never heard of it" — the second forbids the join outright.
 - **P14527 (OpenParlData ID)**, which *is* Wikidata-asserted and so slots into
   the existing gate unchanged. ``verify_openparldata.py`` found it adds nobody
   federally — 0 National Councillors carry it without P1307 — but that is a
@@ -168,12 +170,25 @@ from verify_openparldata import (  # noqa: E402
 # Kantonsrat, which is why it identifies a *person* and never a seat — section D
 # still has to say which seat is meant.
 #
-# It is measured here rather than assumed for the reason the whole file exists:
-# P14527 was CONFIRMED at 35 of 35 in run 14 and then matched **0 of the 180
-# sitting members** on the first real run, because those 35 were the people
-# OpenParlData already links — a sample biased towards members notable enough
-# to have gone federal. Coverage measured over a linked sample is not coverage
-# over the chamber, and this section now asks both.
+# It is measured here rather than assumed, and run 20 (2026-08-04) is why that
+# matters twice over:
+#
+# - **coverage said yes**: 28 of the 35 linked ZH people carry it;
+# - **the value said no**: **0 of those 28** equal OpenParlData's person id
+#   (Ruth Genner: P13468 22518 against person id 9532), and the column report
+#   found the values in **no column** of the person record at all.
+#
+# So this property identifies these people in the *canton's own dataset*, which
+# this tool does not read, and it cannot be joined on from OpenParlData —
+# ``config.load_config`` refuses that combination. It stays measured here
+# because it is the join a config reading the canton's dataset would use, and
+# because the pairing is exactly the plausible mistake somebody will try again.
+#
+# The sampling lesson that made this section suspicious in the first place also
+# still stands: P14527 was CONFIRMED at 35 of 35 in run 14 and then matched
+# **0 of the 180 sitting members** on the first real run, because those 35 are
+# the people OpenParlData already links — a sample biased towards members
+# notable enough to have gone federal.
 ZH_MEMBER_ID = "P13468"
 
 # The body the Kantonsrat should live under. A body is the *level* of
@@ -618,14 +633,14 @@ def classify_wikidata_reach(
             CONFIRMED,
             detail_counts + f" {ZH_MEMBER_ID} is the canton's own member id — "
             "the cantonal analogue of P1307 — and Wikidata asserts it, so it "
-            "slots into the existing 'is_mechanical' gate with no change to "
-            f"the safety rule. It reaches {zh_share:.0f}% of the seat holders "
-            f"against {OPENPARLDATA_ID}'s "
-            f"{100.0 * with_opd_id / holders:.0f}%, and the members it misses "
-            "are the ones to raise ADD_IDENTIFIER for. What it does NOT settle "
-            "is whether its value is the source's person id — that is the "
-            "comparison below, and until it reads CONFIRMED the config joins "
-            "on it with 'identifier_verified: false'.",
+            f"reaches these people: {zh_share:.0f}% of the seat holders against "
+            f"{OPENPARLDATA_ID}'s {100.0 * with_opd_id / holders:.0f}%. That is "
+            "a fact about **Wikidata's** side only. Run 20 measured the other "
+            f"side and found OpenParlData supplies no value for {ZH_MEMBER_ID} "
+            "in any column, so it is the join for a config reading the "
+            "canton's own dataset and not for this source — see the value and "
+            "column comparisons below, which is where this section's answer "
+            "actually lives.",
         )
 
     if with_either == 0:

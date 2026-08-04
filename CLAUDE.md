@@ -153,29 +153,47 @@ Three things about it that cost a wrong answer each, and are now guarded:
 - P14527 adds nobody — 0 National Councillors carry it without P1307 — so the
   P1307 join stays whatever happens to the source. **That is a fact about the
   *federal* overlap and it inverts cantonally** (README step 7): the Kantonsrat
-  Zürich has no P1307. P14527 turned out not to be the cantonal join either
-  (0 of 180 sitting members); **P13468**, the canton's own member id, is.
-  `scripts/verify_kantonsrat.py` measures both on every dispatch.
+  Zürich has no P1307, so P14527 is the cantonal join despite reaching 0 of the
+  180 sitting members — it is the only identifier OpenParlData can supply a
+  value for. `scripts/verify_kantonsrat.py` measures it, P13468 and P1307 on
+  every dispatch, values as well as coverage.
 
 Runs 13 and 14 (2026-07-30) measured the cantonal source and it is sound: body
 `ZH`, group **5077** `Kantonsrat Zürich`, 913 memberships, 912 with a
 `begin_date`, `electoral_district_de/fr/it` on the *person* records. **The
 position is `Q21518678`** "Mitglied des Zürcher Kantonsrat".
 
-**The join is `P13468`** "Zurich Kantonsrat and Regierungsrat member ID" — the
-canton's own member id, and the cantonal analogue of P1307. It replaced P14527,
-which run 14 measured at **35 of 35** and the first real run at **0 of the 180
-sitting members**. Both numbers are right: the 35 were the people OpenParlData
-*had already linked*, a sample skewed towards members notable enough to have
-gone federal. **A coverage rate measured over a linked sample is not a coverage
-rate over the chamber** — the same sampling trap that put the National Council
-at the top of the position ranking, one level up.
+**The join is `P14527`, and `P13468` is the property that proves why coverage
+is not a join.** P13468 "Zurich Kantonsrat and Regierungsrat member ID" is the
+canton's own member id — the cantonal analogue of P1307, carried by 28 of the
+35 linked ZH items. Run 20 (2026-08-04) then compared its *values*: **0 of 28**
+equal OpenParlData's person id (Ruth Genner: 22518 against 9532), and the
+column report found them in **no column** of the person record. An identifier
+needs a value on **both** sides; P13468's lives in the canton's own dataset,
+which this tool does not read. `config.load_config` **refuses**
+`identifier_property: P13468` with `source: openparldata` — measured and
+falsified, so it is refused rather than documented. Never re-pair them; the way
+to P13468 is a source that supplies it.
 
-**Provenance and value are two separate measurements, and only the first is
-settled for P13468.** Wikidata asserts it, so `is_mechanical` needs no change.
-That its *value* equals OpenParlData's person id is the cantonal twin of the
-Parmelin check and is **unmeasured**, which is why the config ships
-`identifier_verified: false`. That flag is load-bearing, not documentation:
+Two more findings from the same run, both load-bearing:
+
+- **P14527 identifies a person *record*, not a person.** 34 of 35 values are
+  the ZH person id; `Q131948095` carries 1411 where this body's record is
+  17436, because OpenParlData holds one record per person **per body**. So it
+  misfires on exactly the members who also sat elsewhere — the federal bias in
+  miniature — and it is out of `VERIFIED_IDENTIFIER_PROPERTIES`, which now
+  holds P1307 alone. **Membership costs a measurement; losing it costs one
+  disagreement.**
+- **P14527 still ships as the join** because it is the only identifier this
+  source can supply a value for, even though it matched **0 of the 180 sitting
+  members** on the first real run — the 35 linked people are mostly members
+  notable enough to have gone federal. **A coverage rate measured over a linked
+  sample is not a coverage rate over the chamber**, the same sampling trap that
+  put the National Council at the top of the position ranking one level up.
+
+**Provenance and value are two separate measurements**, and the config records
+the second with `identifier_verified: false`. That flag is load-bearing, not
+documentation:
 `resolve.corroborates` then checks every identifier match against the item's own
 name and birth date, `Member.identifier_mismatch_qids` records the rejects,
 `report` prints the count, `diff` stamps `identifier_unverified` on every
@@ -185,7 +203,8 @@ numerically match confidently and match the wrong people** — correct data
 written onto somebody else's item, which no later run can detect. Never set
 `identifier_verified: true` for a property outside
 `models.VERIFIED_IDENTIFIER_PROPERTIES`; `config.load_config` refuses it, and
-the way through is `verify_kantonsrat.py` section C reading CONFIRMED first.
+the way through is `verify_kantonsrat.py` section C reading CONFIRMED — 35 of
+35, not 34 — first.
 Section C also reports **which person column** does carry the values when the
 person id does not — "the source keeps it elsewhere" and "the source has never
 heard of it" mean opposite things for the config, and only the second forbids
@@ -259,8 +278,8 @@ selected by `config.source` in `app.build_source`, joined on
   heard of these members.
 - **it ships `quickstatements: false` *and* `identifier_verified: false`,**
   which are two different gates. The first is an operator switch; the second is
-  the claim that the identifier's value is the source's person id, and it
-  refuses every command on its own. `verify_kantonsrat`'s
+  the claim that the identifier's value is the source's person id — measured at
+  34 of 35 by run 20 — and it refuses every command on its own. `verify_kantonsrat`'s
   `compare_identifier_values` (now per-property) and
   `discover_identifier_columns` check it — the cantonal twin of the Parmelin
   check — and that must read CONFIRMED before either is flipped.

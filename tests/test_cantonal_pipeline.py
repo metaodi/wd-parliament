@@ -3,8 +3,8 @@
 ``test_pipeline.py`` does this for the federal run. The point of repeating it
 for Zurich is not coverage of the same code — it is that **the pipeline is
 genuinely source-agnostic**: the same ``app.process`` produces a report from
-OpenParlData rows joined on P13468 — the canton's own member id — with no
-federal table and no P1307 anywhere in the path.
+OpenParlData rows joined on P14527, with no federal table and no P1307
+anywhere in the path.
 
 Everything reaches ``process`` through the same seams the federal tests use, so
 no network is touched.
@@ -56,7 +56,7 @@ class FakeApi:
 
 
 class FakeWikidata:
-    """Only Ruth Genner is on Wikidata, and she is joined on P13468."""
+    """Only Ruth Genner is on Wikidata, and she is joined on P14527."""
 
     def __init__(self, people=None):
         self.people = people if people is not None else self._default()
@@ -97,23 +97,23 @@ def source(config):
 def test_the_config_selects_the_cantonal_source_and_join(config):
     assert config.source == SOURCE_OPENPARLDATA
     assert config.body_key == "ZH"
-    assert config.identifier_property == "P13468"
+    assert config.identifier_property == "P14527"
     assert config.councils == ["KR"]
 
 
-def test_the_join_is_the_cantons_own_id_and_is_declared_unverified(config):
-    """P13468 is Wikidata-asserted; that its value is the person id is not.
+def test_the_join_is_declared_unverified(config):
+    """Wikidata asserts P14527; that its value is *this body's* person id is a
+    separate question, and run 20 answered it 34 of 35.
 
-    Two different questions, and the config may only claim the first. The
-    second is what ``scripts/verify_kantonsrat.py`` section C measures, and
-    until it does the run corroborates every identifier match and emits
-    nothing mechanically.
+    The one that disagrees carries another parliament's OpenParlData id for the
+    same human, because the source holds a record per person per body. So the
+    run corroborates every identifier match and emits nothing mechanically.
     """
     assert config.identifier_verified is False
 
 
 def test_the_config_is_report_only_until_the_join_is_confirmed(config):
-    """P13468's value has not been shown to equal OpenParlData's person id.
+    """P14527's value agrees with OpenParlData's person id 34 times in 35.
 
     The federal equivalent was checked directly (Parmelin, PersonNumber 1108 ==
     P1307 1108). Until the cantonal one is, nothing may be emitted.
@@ -154,7 +154,7 @@ def test_the_join_uses_the_configured_property_not_p1307(config, source):
     """The whole point of the cantonal config: no P1307 anywhere in the path."""
     wikidata = FakeWikidata()
     process(config, source, wikidata)
-    assert wikidata.identifier_properties == ["P13468"]
+    assert wikidata.identifier_properties == ["P14527"]
 
 
 def test_a_member_matched_on_the_cantonal_id_carries_identifier_provenance(
@@ -164,7 +164,7 @@ def test_a_member_matched_on_the_cantonal_id_carries_identifier_provenance(
     matched = [
         s for s in results[0].suggestions if s.qid_source == QID_FROM_IDENTIFIER
     ]
-    assert matched, "Ruth Genner should have joined on P13468 == person id 9532"
+    assert matched, "Ruth Genner should have joined on P14527 == person id 9532"
     assert all(s.person_qid == "Q117716" for s in matched)
 
 
@@ -173,11 +173,11 @@ def test_an_identifier_match_naming_somebody_else_is_rejected_and_counted(
 ):
     """The failure an *unverified* identifier can produce, and the guard on it.
 
-    P13468's values have not been shown to be OpenParlData's person ids. If
-    they are a different id space, the join does not fail — it succeeds on
-    whoever happens to carry the same number. Here 9532 points at an item that
-    is plainly not Ruth Genner, so the match is refused, counted and reported
-    rather than believed.
+    P14527 identifies a person *record*, so an item can carry another body's id
+    for the same human — and any id space that overlaps this one numerically
+    does not make the join fail, it makes it succeed on the wrong person. Here
+    9532 points at an item that is plainly not Ruth Genner, so the match is
+    refused, counted and reported rather than believed.
     """
     impostor = WikidataPerson(
         qid="Q999", label="Heinrich Müller", parliament_id="9532"
