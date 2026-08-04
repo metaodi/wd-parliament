@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-04 15:40 UTC",
-  "total_suggestions": 1994,
+  "generated": "2026-08-04 16:01 UTC",
+  "total_suggestions": 1986,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -12,7 +12,7 @@
       "matched_by_identifier": 200,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 1903,
+      "wikidata_open": 1900,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
@@ -410,28 +410,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/3717",
             "start": "1857-12-07",
             "end": "1875-12-05"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Adolf Furrer",
-          "person_qid": "Q361780",
-          "person_number": 2093,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1935-12-02 to 1963-12-01, so add an end date (P582) of 1963-12-01, and the statement has no start date (P580) either — 1935-12-02 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q361780",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q361780-5FF71923-D27D-4C7B-9703-95A298789736",
-            "parliament_id": "2093",
-            "biography": "https://www.parlament.ch/de/biografie/wd/2093",
-            "start": "1935-12-02",
-            "end": "1963-12-01"
           }
         },
         {
@@ -2104,28 +2082,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/2116",
             "start": "1960-06-07",
             "end": "1965-06-01"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Alfred Gehrig",
-          "person_qid": "Q51879989",
-          "person_number": 2126,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1967-12-04 to 1971-11-28, so add an end date (P582) of 1971-11-28, and the statement has no start date (P580) either — 1967-12-04 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q51879989",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q51879989-F5351C2D-B63F-4C1D-96D7-FB4596FE9BD9",
-            "parliament_id": "2126",
-            "biography": "https://www.parlament.ch/de/biografie/wd/2126",
-            "start": "1967-12-04",
-            "end": "1971-11-28"
           }
         },
         {
@@ -4656,28 +4612,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/1379",
             "start": "1967-12-04",
             "end": "1979-11-25"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "August Dür",
-          "person_qid": "Q26046169",
-          "person_number": 1949,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1858-06-01 to 1860-12-02, so add an end date (P582) of 1860-12-02, and the statement has no start date (P580) either — 1858-06-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q26046169",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q26046169-4826BA5D-4D23-4769-AD28-E9FFE7EE16E6",
-            "parliament_id": "1949",
-            "biography": "https://www.parlament.ch/de/biografie/wd/1949",
-            "start": "1858-06-01",
-            "end": "1860-12-02"
           }
         },
         {
@@ -27634,28 +27568,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Loïc Dobler",
-          "person_qid": "Q138498177",
-          "person_number": 16905,
-          "qid_source": "identifier",
-          "canton": "JU",
-          "parl_group": "S",
-          "detail": "Wikidata's start date (P580) is 2026-03-27, but parlament.ch gives 2026-04-27. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q138498177"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2026-04-27",
-            "wikidata_start": "2026-03-27",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q138498177-304eb413-44f8-7cfd-51f8-48ed9a9106f1",
-            "biography": "https://www.parlament.ch/de/biografie/wd/16905"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Lucien Decoppet",
@@ -28401,28 +28313,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/2111",
             "start": "1914-12-07",
             "end": "1925-12-06"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Martin Haab",
-          "person_qid": "Q64617510",
-          "person_number": 4236,
-          "qid_source": "identifier",
-          "canton": "ZH",
-          "parl_group": "V",
-          "detail": "Wikidata's start date (P580) is 2019-03-01, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q64617510"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2019-06-03",
-            "wikidata_start": "2019-03-01",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q64617510-E6570504-BEC5-47F8-8805-D83E468CB25B",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4236"
           }
         },
         {
@@ -32011,28 +31901,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/746",
             "start": "1971-11-29",
             "end": "1991-11-24"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Raphaël Mahaim",
-          "person_qid": "Q110634549",
-          "person_number": 4327,
-          "qid_source": "identifier",
-          "canton": "VD",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2022-03-01, but parlament.ch gives 2022-02-28. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q110634549"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "start": "2022-02-28",
-            "wikidata_start": "2022-03-01",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q110634549-8E9B7AB5-4929-4975-B801-94EC143070C9",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4327"
           }
         },
         {
@@ -37566,6 +37434,30 @@
       "error": null,
       "suggestions": [
         {
+          "kind": "DUPLICATE_IDENTIFIER",
+          "priority": 1,
+          "member": "Paul Usteri (Q116119), Paul Emil Usteri (Q16832474)",
+          "person_qid": null,
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "P1307 '3469' is claimed by 2 Wikidata items that hold a 'Swiss Council of States' seat: Paul Usteri (Q116119), Paul Emil Usteri (Q16832474). The identifier should be unique, so either they are duplicates that need merging or one carries the wrong value. No *sitting* member has that number, so this is a conflict between items about people who have left — invisible to the rest of this report, which is why it is raised here.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510613",
+            "Q116119": "https://www.wikidata.org/wiki/Q116119",
+            "Q16832474": "https://www.wikidata.org/wiki/Q16832474"
+          },
+          "payload": {
+            "duplicate_qids": [
+              "Q116119",
+              "Q16832474"
+            ],
+            "parliament_id": "3469",
+            "biography": "https://www.parlament.ch/de/biografie/wd/3469"
+          }
+        },
+        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Abraham Louis Tourte",
@@ -38795,28 +38687,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/1456",
             "start": "1869-07-05",
             "end": "1871-06-01"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Daniel Fässler",
-          "person_qid": "Q1160790",
-          "person_number": 4056,
-          "qid_source": "identifier",
-          "canton": "AI",
-          "parl_group": "M-E",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-06-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q1160790"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-06-03",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1160790-45E540ED-3166-436E-960C-0E336540585E",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4056"
           }
         },
         {
@@ -42382,28 +42252,6 @@
           }
         },
         {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Matthias Michel",
-          "person_qid": "Q1910152",
-          "person_number": 4309,
-          "qid_source": "identifier",
-          "canton": "ZG",
-          "parl_group": "RL",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-03. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q1910152"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-12-03",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1910152-9FF85670-4171-4C02-8737-CA60F73EBC28",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4309"
-          }
-        },
-        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Max Petitpierre",
@@ -42423,28 +42271,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/2914",
             "start": "1942-06-01",
             "end": "1944-12-14"
-          }
-        },
-        {
-          "kind": "FIX_START_DATE",
-          "priority": 2,
-          "member": "Maya Graf",
-          "person_qid": "Q119406",
-          "person_number": 806,
-          "qid_source": "identifier",
-          "canton": "BL",
-          "parl_group": "G",
-          "detail": "Wikidata's start date (P580) is 2019-12-02, but parlament.ch gives 2019-12-04. Check which is right before changing it — a mid-term replacement often joins on a different day from the one a Wikipedia list records.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q119406"
-          },
-          "payload": {
-            "position": "Q18510613",
-            "start": "2019-12-04",
-            "wikidata_start": "2019-12-02",
-            "statement_id": "http://www.wikidata.org/entity/statement/Q119406-6066082B-EEA8-4999-9947-6755B4141DE2",
-            "biography": "https://www.parlament.ch/de/biografie/wd/806"
           }
         },
         {
