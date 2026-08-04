@@ -1,6 +1,6 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-08-04 18:27 UTC
+Generated: 2026-08-04 22:21 UTC
 
 **335 suggested edits** across **180 sitting members** in **1 chamber(s)**.
 
@@ -14,7 +14,7 @@ Generated: 2026-08-04 18:27 UTC
 
 | Kind | Priority | Count |
 | --- | ---: | ---: |
-| Item matched by name but has no unique ID (P1307/P14527) | 1 | 131 |
+| Item matched by name but has no unique ID (the source's own) | 1 | 131 |
 | Recorded as sitting, but the member has left | 2 | 44 |
 | Sitting member, but no position held (P39) statement | 2 | 15 |
 | Open membership without a start date (P580) | 3 | 103 |
