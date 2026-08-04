@@ -394,13 +394,17 @@ no run has happened yet.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
   `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
-  `--validate-periods` and `scripts/verify_kantonsrat.py`, writes all six to
+  `--validate-periods`, `scripts/verify_departures.py` and
+  `scripts/verify_kantonsrat.py`, writes all seven to
   the run summary, and writes nothing to the repo. Keep it read-only: it is
   the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other four report without gating and are deliberately
+  first two gate**; the other five report without gating and are deliberately
   excluded from the job's pass/fail — do not wire their outcomes into the
   gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
-  `--validate-periods` answer whether a *bulk apply* is safe, and
+  `--validate-periods` answer whether a *bulk apply* is safe,
+  `verify_departures` answers whether the departed members' report-only gates
+  could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
+  never wire it into a gate), and
   `verify_kantonsrat` measures a parliament no config here processes, so it
   cannot bear on the federal run by construction. The file must be on the
   default branch to appear in the dispatch UI, though a dispatch then runs the

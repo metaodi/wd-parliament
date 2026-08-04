@@ -50,12 +50,14 @@ Runs 11 and 12 (2026-07-30) settled the last two that a workflow can settle:
   members, two sources sharing neither key nor publisher. P580 may be applied
   in bulk.
 
-**Step 5 is the only one left on the federal pipeline, and no workflow can do
-it:** a person has to paste one line into QuickStatements and look at what
-landed. Step 7 — extending the tool to a *cantonal* parliament, the Kantonsrat
-Zürich — is open too, but it gates nothing here: runs 13 and 14 settled the
-source, the position item and the identifier join, and what remains is the
-adapter itself.
+**Step 5 is the only one left that blocks the federal pipeline, and no workflow
+can do it:** a person has to paste one line into QuickStatements and look at
+what landed. Step 7 — extending the tool to a *cantonal* parliament, the
+Kantonsrat Zürich — is open too, but it gates nothing here: runs 13 and 14
+settled the source, the position item and the identifier join, and what remains
+is the adapter itself. Step 8 is open by design: it asks whether the *departed*
+members' leaving dates could be applied mechanically, and until it comes back
+`CONFIRMED` those suggestions stay report-only, which is how they ship.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -834,8 +836,8 @@ uv run python scripts/verify_kantonsrat.py \
   --body-key BE --expect-seats 160 --position ''
 ```
 
-Wired into `Verify assumptions` as section 6, and like step 6 it **never gates
-the job** — for the plainest reason of the three non-gating checks: it measures
+Wired into `Verify assumptions` as section 7, and like step 6 it **never gates
+the job** — for the plainest reason of the non-gating checks: it measures
 a parliament no config here processes, so nothing it finds can make the federal
 pipeline more or less safe to run.
 
@@ -845,6 +847,63 @@ Kanton Zürich ab 1803* (members with entry/exit dates, party and Wahlkreis — 
 direct `MemberCouncil` + `MemberCouncilHistory` analogue) and an XML web service
 for the Kantonsrat's business system. That is the *authoritative* source in the
 sense `diff` relies on; OpenParlData is a harmonised aggregator of it.
+
+### 8. ⬜ May the departed members' P582 be applied in bulk? — *not measured; the reason those suggestions are report-only*
+
+The diff's second pass finds people Wikidata still records as sitting whom the
+source does not list, and the report now names the leaving date to add (see
+[The one suggestion that is about somebody the source does not
+list](#the-one-suggestion-that-is-about-somebody-the-source-does-not-list)).
+Applying those dates mechanically is a *different* question from printing them,
+and it is the one nothing has answered. Three things about that population are
+unmeasured, and each is enough on its own:
+
+- **it is defined by Wikidata, not by the source.** Every other check in this
+  file starts from the ~246 people parlament.ch lists. This one starts from
+  whatever Wikidata has left open, which is precisely the set nobody has looked
+  at. `ADD_END_DATE` is mechanical, so ungating it writes P582 across all of
+  them unread.
+- **the person number comes from Wikidata's identifier value.** Step 1
+  confirmed P1307 == `PersonNumber` for a *sitting* member (Parmelin, two
+  identifiers compared directly). Nothing has checked it for somebody who left
+  in 1987, and the failure mode is a date written to another person's item.
+- **the date comes from a table read only for people still in office.**
+  `MemberCouncilHistory` is where P580's tenure start comes from — and step 0c
+  is the standing proof that "it is in the history" can mean something other
+  than it looks like.
+
+`scripts/verify_departures.py` measures all three plus a fourth nobody would
+think of until QuickStatements refused: **which statement the P582 would
+close.** An item with two P39 statements for one seat cannot be targeted by
+property + main value at all, and an open statement whose P580 is not this
+tenure's start is most likely about an earlier spell — closing it with this
+tenure's end puts a wrong span on a real statement out of two individually
+correct dates.
+
+```bash
+uv run python scripts/verify_departures.py
+
+# single-source run: section C then says INCONCLUSIVE by construction
+uv run python scripts/verify_departures.py --no-openparldata
+```
+
+It cross-checks the leaving date against OpenParlData through the same join
+step 0c uses — `PersonNumber` →P1307→ Q-ID ←`wikidata_id`— keyed by
+`(Q-ID, council)` and never by Q-ID alone, because a member who moved NR→SR
+reads as a contradiction if the two chambers are pooled.
+
+Wired into `Verify assumptions` as section 6, and it **never gates the job**
+for a third distinct reason: the suggestions it measures are report-only *by
+construction*. `diff._departed_suggestion` sets no `qid_source` and puts no
+`position` in the payload, so `is_mechanical` refuses them twice over and
+nothing this probe could falsify reaches `suggestions.qs` today. What a
+`CONFIRMED` would license is removing those two gates — a deliberate act, after
+step 5, not something a green run should imply.
+
+**`INCONCLUSIVE` is the expected answer on tidy data.** The population is
+however many open memberships Wikidata has for people who have gone; a small
+one is good news about the data and no news about the question. That is exactly
+why this must never be wired into a gate.
 
 
 ---
@@ -897,13 +956,14 @@ to be looked up by hand, and a tenure the source has not closed offers no end
 date at all.
 
 These suggestions are **report-only by construction**, and stay that way until
-somebody measures the historic table for departed members the way step 1
-measured `PersonNumber` for sitting ones. `is_mechanical` refuses them twice
-over: the member carries no `qid_source` (the identifier came from Wikidata,
-not from a resolved member) and the payload carries no `position`. Do not
-remove either gate to "unlock" them — a P582 backfill across everyone Wikidata
-records as sitting is exactly the class of bulk edit the rest of this README is
-about not making by accident.
+[step 8](#8--may-the-departed-members-p582-be-applied-in-bulk--not-measured-the-reason-those-suggestions-are-report-only)
+comes back `CONFIRMED` — that probe (`scripts/verify_departures.py`) measures
+the historic table for departed members the way step 1 measured `PersonNumber`
+for sitting ones. `is_mechanical` refuses them twice over: the member carries
+no `qid_source` (the identifier came from Wikidata, not from a resolved member)
+and the payload carries no `position`. Do not remove either gate to "unlock"
+them — a P582 backfill across everyone Wikidata records as sitting is exactly
+the class of bulk edit the rest of this README is about not making by accident.
 
 ## How members are matched
 
