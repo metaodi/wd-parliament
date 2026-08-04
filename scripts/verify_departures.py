@@ -88,7 +88,9 @@ the suggestions it measures are report-only by construction.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
+import unicodedata
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -131,6 +133,11 @@ from verify_openparldata import (  # noqa: E402
 # whatever Wikidata happens to have left open — a tidy Wikidata makes it small,
 # and demanding 10 would report a shortage of *errors* as a failed probe.
 MIN_COMPARABLE = 5
+
+# How many offending rows a section prints. Also the line between "these people
+# need checking" and "the sources disagree": a reader can act on a list they
+# can see, and cannot act on a count.
+_MAX_ROWS = 20
 
 
 @dataclass
@@ -194,37 +201,105 @@ class Departure:
         )
 
 
+# What a name comparison can conclude. ``VARIANT`` is the bucket run 16 forced
+# into existence: all 29 "contradictions" it found were the *same* person spelt
+# differently on the two sides — Börlin/Boerlin, Ettlin/Etlin, Bremi/
+# Bremi-Forrer, Vonderweid/von der Weid. A check that calls those wrong people
+# is not strict, it is broken, because the 29 false alarms hide the one real
+# mismatch nobody would then look for. So variants are recognised, counted and
+# **printed** rather than folded into agreement: a check that stops showing its
+# work has stopped checking.
+NAME_EXACT = "exact"
+NAME_VARIANT = "variant"
+NAME_DIFFERENT = "different"
+
+_PARENTHESISED = re.compile(r"\(.*?\)")
+_NOT_LETTERS = re.compile(r"[^a-z]")
+_DOUBLED = re.compile(r"(.)\1+")
+
+
 def surname_of(label: str) -> str:
     """The surname in a Wikidata label. Pure.
 
     Everything after the last space, lowercased. Crude, and deliberately so:
-    this corroborates an identifier, it does not establish one, and a
-    comparison that tried to be clever about "von Matt" or "Badran Jacqueline"
-    would fail in ways that are harder to read than a plain mismatch.
+    this corroborates an identifier, it does not establish one.
     """
     return label.strip().rpartition(" ")[2].casefold()
 
 
-def names_agree(label: Optional[str], last_name: Optional[str]) -> Optional[bool]:
-    """Does a Wikidata label corroborate a history row's surname? Pure.
+def fold_name(text: Optional[str]) -> str:
+    """Reduce a surname to what two spellings of it share. Pure.
 
-    ``None`` when either side is missing — unknown, which is neither
-    agreement nor contradiction and must not be scored as either. An item whose
-    label is a Q-ID (the fallback when no label exists in any queried language)
-    is also unknown rather than a mismatch.
+    Every transformation here was paid for by a real pair from run 16, and each
+    is applied to **both** sides, so it can only ever merge spellings — never
+    tell two people apart that the raw comparison would have distinguished:
+
+    - parentheses go: ``Bünzli(y)`` is the source recording two spellings in
+      one field;
+    - umlauts fold both ways, ``ö`` → ``o`` and ``oe`` → ``o``, because the two
+      sides transliterate differently: ``Börlin`` / ``Boerlin``;
+    - accents go by NFKD: ``Demiéville`` / ``Demieville``;
+    - spaces, hyphens and apostrophes go: ``von der Weid`` / ``Vonderweid``;
+    - doubled letters collapse: ``Patocchi`` / ``Pattocchi``, ``Etlin`` /
+      ``Ettlin``, ``Traveletti`` / ``Travelletti``.
+
+    The last one is the loosest and the one to watch: it also merges names that
+    differ only by a doubled letter. That is a deliberate trade — this is
+    corroboration, and a false *alarm* costs more here than a missed one,
+    because 29 of them buried the question of whether any real mismatch exists.
+    """
+    text = _PARENTHESISED.sub("", text or "").casefold()
+    for src, dst in (("ä", "a"), ("ö", "o"), ("ü", "u"), ("ß", "ss")):
+        text = text.replace(src, dst)
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    text = _NOT_LETTERS.sub("", text)
+    for src, dst in (("ae", "a"), ("oe", "o"), ("ue", "u")):
+        text = text.replace(src, dst)
+    return _DOUBLED.sub(r"\1", text)
+
+
+def _name_parts(text: Optional[str]) -> List[str]:
+    """The folded components of a compound surname. Pure.
+
+    ``Bremi-Forrer`` is one person's married name and ``Bremi`` is the same
+    person; splitting on the separators is what lets either side carry the
+    fuller form.
+    """
+    return [p for p in (fold_name(part) for part in re.split(r"[-\s]+", text or "")) if p]
+
+
+def name_relation(label: Optional[str], last_name: Optional[str]) -> Optional[str]:
+    """How a Wikidata label relates to a history row's surname. Pure.
+
+    ``None`` when either side is missing — unknown, which is neither agreement
+    nor contradiction and must not be scored as either. An item whose label is
+    a Q-ID (the fallback when no label exists in any queried language) is also
+    unknown rather than a mismatch.
     """
     if not label or not last_name:
         return None
     label = label.strip()
     if label.startswith("Q") and label[1:].isdigit():
         return None
-    wanted = last_name.strip().casefold()
+    wanted = last_name.strip()
     if not wanted:
         return None
-    # Either the whole surname is the label's last word, or it appears in the
-    # label at all — enough for "Jacqueline Badran" against "Badran", and for a
-    # double-barrelled surname recorded differently on the two sides.
-    return wanted == surname_of(label) or wanted in label.casefold()
+
+    if wanted.casefold() == surname_of(label) or wanted.casefold() in label.casefold():
+        return NAME_EXACT
+
+    folded_label = fold_name(label)
+    folded_wanted = fold_name(wanted)
+    if folded_wanted and folded_wanted in folded_label:
+        return NAME_VARIANT
+
+    # A compound or married surname on either side: any shared component is the
+    # same family name recorded at different lengths.
+    label_parts = set(_name_parts(label))
+    if label_parts & set(_name_parts(wanted)):
+        return NAME_VARIANT
+    return NAME_DIFFERENT
 
 
 def chained_end(rows: Sequence[Dict[str, Any]]) -> Optional[date]:
@@ -320,21 +395,33 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
     """
     lines: List[str] = []
     judged = [d for d in departures if d.reachable]
-    verdicts = [(d, names_agree(d.label, d.history_name)) for d in judged]
-    agree = [d for d, v in verdicts if v is True]
-    differ = [d for d, v in verdicts if v is False]
-    unknown = [d for d, v in verdicts if v is None]
+    relations = [(d, name_relation(d.label, d.history_name)) for d in judged]
+    agree = [d for d, r in relations if r == NAME_EXACT]
+    variants = [d for d, r in relations if r == NAME_VARIANT]
+    differ = [d for d, r in relations if r == NAME_DIFFERENT]
+    unknown = [d for d, r in relations if r is None]
 
     lines.append(f"identities checked:               {len(judged)}")
-    lines.append(f"  surname corroborates the label: {len(agree)}")
+    lines.append(f"  surname matches the label:      {len(agree)}")
+    lines.append(f"  same name, spelt differently:   {len(variants)}")
     lines.append(f"  surname contradicts the label:  {len(differ)}")
     lines.append(f"  one side has no name:           {len(unknown)}")
-    lines.append("")
-    for d in differ[:12]:
-        lines.append(
-            f"  {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
-            f"'{d.history_name}'"
-        )
+    if variants:
+        lines.append("")
+        lines.append("  accepted as spelling variants — read them:")
+        for d in variants[:_MAX_ROWS]:
+            lines.append(
+                f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
+                f"'{d.history_name}'"
+            )
+    if differ:
+        lines.append("")
+        lines.append("  NOT the same name:")
+        for d in differ[:_MAX_ROWS]:
+            lines.append(
+                f"    {d.qid} '{d.label}' ({d.council}) -> #{d.person_number} "
+                f"'{d.history_name}'"
+            )
 
     if not judged:
         return (
@@ -347,18 +434,22 @@ def classify_identity(departures: Sequence[Departure]) -> Tuple[str, str, List[s
         return (
             CONTRADICTED,
             f"{len(differ)} of {len(judged)} identifier values reach a person "
-            "whose surname does not appear in the Wikidata label. Each one is a "
-            "date that would be written to the wrong person's item. This alone "
-            "blocks a bulk apply; read the rows above and check them by hand on "
-            "the biography pages.",
+            "whose surname is not the item's, even after folding umlauts, "
+            "accents, particles, married names and doubled letters. Each one is "
+            "a date that would be written to the wrong person's item. This "
+            "alone blocks a bulk apply; check them by hand on the biography "
+            "pages.",
             lines,
         )
     return (
         CONFIRMED,
-        f"All {len(agree)} checkable identifier values reach a person whose "
-        f"surname matches the item's label ({len(unknown)} unknown). "
-        "Corroboration, not proof — it is a name check, not the two-identifier "
-        "comparison README step 1 could do for sitting members.",
+        f"All {len(judged) - len(unknown)} checkable identifier values reach a "
+        f"person whose surname is the item's — {len(agree)} exactly and "
+        f"{len(variants)} after folding a spelling difference "
+        f"({len(unknown)} unknown). Corroboration, not proof: it is a name "
+        "check, not the two-identifier comparison README step 1 could do for "
+        "sitting members. Read the variants above rather than trusting the "
+        "count.",
         lines,
     )
 
@@ -434,7 +525,7 @@ def classify_leaving_dates(
     lines.append(f"agree exactly:                    {len(agree)} ({share:.1f}%)")
     lines.append(f"disagree:                         {len(differ)}")
     lines.append("")
-    for d in differ[:12]:
+    for d in differ[:_MAX_ROWS]:
         lines.append(
             f"  #{d.person_number} {d.label} ({d.council}): "
             f"source {d.source_end}, OpenParlData {d.opd_end}"
@@ -453,30 +544,52 @@ def classify_leaving_dates(
         )
 
     earlier = [d for d in differ if d.source_end < d.opd_end]  # type: ignore[operator]
+    # Whether this is "a few bad rows" or "the sources disagree" is decided by
+    # whether every disagreement is on the page above, not by a rate: a rate
+    # threshold says different things about 1-in-6 and 1-in-2000 while meaning
+    # the same arithmetic, and the reader can act on a list.
+    shape = (
+        f"All {len(differ)} are listed above, so the remedy is checking those "
+        "people by hand rather than distrusting the source — but nothing "
+        "excludes them today, and a P582 cannot be corrected by "
+        "QuickStatements once written. "
+        if len(differ) <= _MAX_ROWS
+        else "That is more than can be listed, so this is the sources telling "
+        "different stories rather than a handful of bad rows. "
+    )
     return (
         CONTRADICTED,
         f"{len(differ)} of {len(comparable)} leaving dates disagree — "
         f"{len(earlier)} with the source earlier than OpenParlData and "
-        f"{len(differ) - len(earlier)} later. Leave the gates in diff alone: a "
-        "P582 is not correctable by QuickStatements once written, so a date "
-        "that two sources dispute must be read by a human, which is what the "
-        "report already asks for.",
+        f"{len(differ) - len(earlier)} later. " + shape + "Leave the gates in "
+        "diff alone; the report already asks a human to read these dates.",
         lines,
     )
 
 
 def classify_statement_ambiguity(
     departures: Sequence[Departure],
+    statements_total: int = 0,
+    statements_with_start: int = 0,
 ) -> Tuple[str, str, List[str]]:
     """Could a P582 name the statement it means to close? Pure.
 
-    QuickStatements matches on property + main value, so an item with two P39
-    statements for one seat cannot be targeted by a qualifier-only command.
-    ``diff`` already refuses that for sitting members; nothing has sized it for
-    the departed. The second count is the subtler one: an open statement whose
-    P580 is not this tenure's start is most likely about an earlier spell, and
-    closing it with this tenure's end would put a wrong span on a real
-    statement using two dates that are individually correct.
+    Two problems that look alike and are not. **Several P39 statements for one
+    seat** is excludable: QuickStatements matches on property + main value, so
+    such a command names none of them — and ``diff`` stamps
+    ``ambiguous_statement`` on exactly those, which ``is_mechanical`` already
+    refuses. A handful of them is a handful of people skipped, not a reason to
+    distrust the rest. **An open statement whose P580 is not this tenure's
+    start** is not excludable: it is most likely about an *earlier* spell, so
+    closing it with this tenure's end writes a wrong span out of two
+    individually correct dates, and nothing in ``is_mechanical`` can see that.
+    Only the second blocks the population as a whole.
+
+    ``statements_total`` / ``statements_with_start`` are the control group for
+    the third count, and exist because run 16 returned "no P580" for **1,969 of
+    1,969** — a number that is either a fact about Wikidata's undated P39
+    imports or a broken read, and the two are indistinguishable from inside the
+    subset. If the seats' statements carry P580 elsewhere, the read works.
     """
     lines: List[str] = []
     dated = [d for d in departures if d.has_date_to_emit]
@@ -485,11 +598,17 @@ def classify_statement_ambiguity(
     undated = [d for d in dated if d.statement_start is None]
 
     lines.append(f"people with a date to emit:       {len(dated)}")
-    lines.append(f"  several P39 for the same seat:  {len(ambiguous)}")
+    lines.append(f"  several P39 for the same seat:  {len(ambiguous)} (excludable)")
     lines.append(f"  open statement's P580 differs:  {len(mismatched)}")
     lines.append(f"  open statement has no P580:     {len(undated)}")
+    if statements_total:
+        share = 100.0 * statements_with_start / statements_total
+        lines.append(
+            f"  control: P39 statements for these seats carrying a P580: "
+            f"{statements_with_start} of {statements_total} ({share:.1f}%)"
+        )
     lines.append("")
-    for d in mismatched[:12]:
+    for d in mismatched[:_MAX_ROWS]:
         lines.append(
             f"  {d.qid} {d.label} ({d.council}): statement starts "
             f"{d.statement_start}, source tenure starts {d.source_start}"
@@ -501,23 +620,31 @@ def classify_statement_ambiguity(
             "No leaving dates to emit, so no statement to aim one at.",
             lines,
         )
-    if not ambiguous and not mismatched:
+    if mismatched:
+        return (
+            CONTRADICTED,
+            f"{len(mismatched)} open statement(s) start on a date that is not "
+            "this tenure's start, so they are most likely about an earlier "
+            "spell and closing them with this end would write a wrong span from "
+            "two correct dates. Nothing in is_mechanical can see that, so it "
+            "cannot be excluded automatically — read the rows above.",
+            lines,
+        )
+    if ambiguous:
         return (
             CONFIRMED,
-            f"Every one of the {len(dated)} people holds a single P39 for the "
-            "seat and its start agrees with the tenure the date came from, so a "
-            "P582 would land on the statement it is meant for.",
+            f"{len(ambiguous)} of {len(dated)} item(s) hold several P39 "
+            "statements for this seat, which the existing ambiguous_statement "
+            "rule already refuses — they are skipped, not a reason to distrust "
+            f"the other {len(dated) - len(ambiguous)}. No statement starts on "
+            "the wrong date, so a P582 would land where it is meant to.",
             lines,
         )
     return (
-        CONTRADICTED,
-        f"{len(ambiguous)} item(s) hold several P39 statements for this seat "
-        f"and {len(mismatched)} have an open statement whose P580 is not this "
-        "tenure's start. A qualifier-only command cannot say which statement it "
-        "means in the first case, and means the wrong one in the second. Those "
-        "people would need excluding by the same ambiguous_statement rule the "
-        "sitting members already have before any bulk apply — the report is "
-        "right for them either way.",
+        CONFIRMED,
+        f"Every one of the {len(dated)} people holds a single P39 for the "
+        "seat and none starts on a date other than this tenure's, so a P582 "
+        "would land on the statement it is meant for.",
         lines,
     )
 
@@ -555,12 +682,17 @@ def collect(
     wikidata: WikidataClient,
     opd_client: Any = None,
     body_key: str = "CHE",
-) -> List[Departure]:
+) -> Tuple[List[Departure], int, int]:
     """Build the population, from all three sources. Network.
 
     A person Wikidata says nothing identifying about is kept, not dropped:
     "no identifier value" is a reach finding that section A counts, and
     dropping them would quietly shrink the population the verdict is about.
+
+    Also returns the control group for section D: how many P39 statements for
+    these seats carry a P580 at all, across *everyone* rather than the departed
+    subset. Without it, "none of the departed statements has a start" cannot be
+    told apart from "the start is not being read".
     """
     members = parliament.get_members(councils=config.councils)
     print(f"parlament.ch: {len(members)} sitting member(s)")
@@ -574,6 +706,19 @@ def collect(
         config.position_qids, config.language, config.identifier_property
     )
     print(f"Wikidata: {len(people)} item(s) hold one of the configured seats")
+
+    seat_statements = [
+        s
+        for person in people.values()
+        for qid in config.position_qids
+        for s in person.statements_for(qid)
+    ]
+    with_start = sum(1 for s in seat_statements if s.start is not None)
+    print(
+        f"Wikidata: {len(seat_statements)} statement(s) for those seats, "
+        f"{with_start} with a P580, "
+        f"{sum(1 for s in seat_statements if s.end is not None)} with a P582"
+    )
 
     # The same exact join the pipeline's first pass makes. Members matched only
     # by *name* are not excluded here, and cannot be: their items carry no
@@ -622,7 +767,7 @@ def collect(
                     opd_rows=len(rows),
                 )
             )
-    return departures
+    return departures, len(seat_statements), with_start
 
 
 def surname_in_history(
@@ -712,7 +857,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print("  -> section C cannot compare and will say so.")
 
     try:
-        departures = collect(config, parliament, wikidata, opd_client, args.body_key)
+        departures, statements_total, statements_with_start = collect(
+            config, parliament, wikidata, opd_client, args.body_key
+        )
     except Exception as exc:
         print(f"  ! {exc}")
         return 1
@@ -726,7 +873,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         _section("C. Agreement: do two sources give the same leaving date?",
                  classify_leaving_dates(departures)),
         _section("D. Which statement would the P582 close?",
-                 classify_statement_ambiguity(departures)),
+                 classify_statement_ambiguity(
+                     departures, statements_total, statements_with_start
+                 )),
     ]
 
     result = overall(verdicts)

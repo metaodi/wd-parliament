@@ -512,6 +512,48 @@ def test_the_departed_member_is_never_mechanical(periods):
     assert is_mechanical(suggestion, MODEL_TENURE) is False
 
 
+def test_a_departed_member_with_two_statements_is_marked_ambiguous(periods):
+    """Left and returned: property + main value names neither statement.
+
+    Run 16 found 3 such people among 1,969. The stamp is not redundant with the
+    report-only gates: those say the whole class is unmeasured, this says the
+    person is unaddressable however the class is settled.
+    """
+    from wd_parliament.quickstatements import is_mechanical
+
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    ghost.statements.append(
+        PositionStatement(
+            person_qid="Q99", statement_id="S8", position_qid=POSITION,
+            start=date(2003, 12, 1), end=date(2007, 12, 2),
+        )
+    )
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, periods,
+        make_config(MODEL_TENURE),
+        tenures={
+            (3432, "N"): Tenure(
+                person_number=3432, council="N",
+                start=date(2015, 11, 30), end=date(2019, 12, 1),
+            )
+        },
+    )
+    departed = next(s for s in suggestions if s.person_qid == "Q99")
+    assert departed.payload["ambiguous_statement"] is True
+    assert is_mechanical(departed, MODEL_TENURE) is False
+
+
+def test_a_single_statement_is_not_marked_ambiguous(periods):
+    member, seated = _sitting_member_and_person()
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": _ghost()}, periods,
+        make_config(MODEL_TENURE),
+    )
+    assert "ambiguous_statement" not in suggestions[0].payload
+
+
 def test_a_closed_statement_is_not_flagged_in_the_reverse_walk(periods):
     member, seated = _sitting_member_and_person()
     people = {"Q7": seated, "Q99": _ghost(end=date(2019, 12, 1))}

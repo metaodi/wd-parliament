@@ -322,6 +322,7 @@ def _departed_suggestion(
     """
     number = _person_number(person.parliament_id)
     tenure = tenures.get((number, body.council.upper())) if number is not None else None
+    statements = person.statements_for(body.position_qid)
 
     detail = (
         f"Wikidata records an open '{body.label}' membership (no end date), "
@@ -329,6 +330,16 @@ def _departed_suggestion(
         "member. They have most likely left; "
     )
     payload: Dict[str, object] = {"statement_id": statement.statement_id}
+
+    # Left and returned: several P39 statements for one seat, which property +
+    # main value does not identify. Stamped here for the same reason
+    # ``_statement_suggestions`` stamps it for sitting members — and it is not
+    # redundant with the report-only gates below. Those two say "this whole
+    # class is unmeasured"; this says "this person is unaddressable however the
+    # class is settled", which survives the day somebody removes them. Run 16
+    # found 3 such people among 1,969.
+    if len(statements) > 1:
+        payload["ambiguous_statement"] = True
 
     if number is not None:
         payload["parliament_id"] = str(number)

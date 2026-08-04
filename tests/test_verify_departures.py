@@ -17,6 +17,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -26,13 +28,17 @@ from verify_departures import (  # noqa: E402
     CONTRADICTED,
     INCONCLUSIVE,
     MIN_COMPARABLE,
+    NAME_DIFFERENT,
+    NAME_EXACT,
+    NAME_VARIANT,
     Departure,
     chained_end,
     classify_identity,
     classify_leaving_dates,
     classify_reach,
     classify_statement_ambiguity,
-    names_agree,
+    fold_name,
+    name_relation,
     overall,
     surname_in_history,
 )
@@ -112,27 +118,59 @@ def test_no_rows_and_no_columns_give_nothing():
 
 # --- the identity corroboration ---------------------------------------------
 def test_a_matching_surname_corroborates():
-    assert names_agree("Ruth Beispiel", "Beispiel") is True
+    assert name_relation("Ruth Beispiel", "Beispiel") == NAME_EXACT
 
 
 def test_a_surname_anywhere_in_the_label_counts():
     """'Badran Jacqueline' on one side, 'Jacqueline Badran' on the other."""
-    assert names_agree("Jacqueline Badran", "Badran") is True
+    assert name_relation("Jacqueline Badran", "Badran") == NAME_EXACT
 
 
 def test_a_different_surname_contradicts():
-    assert names_agree("Ruth Beispiel", "Muster") is False
+    assert name_relation("Ruth Beispiel", "Muster") == NAME_DIFFERENT
 
 
 def test_a_missing_name_on_either_side_is_unknown_not_a_mismatch():
-    assert names_agree(None, "Muster") is None
-    assert names_agree("Ruth Beispiel", None) is None
-    assert names_agree("Ruth Beispiel", "  ") is None
+    assert name_relation(None, "Muster") is None
+    assert name_relation("Ruth Beispiel", None) is None
+    assert name_relation("Ruth Beispiel", "  ") is None
 
 
 def test_a_q_id_label_is_unknown_rather_than_a_mismatch():
     """An item with no label in any queried language falls back to its Q-ID."""
-    assert names_agree("Q42", "Muster") is None
+    assert name_relation("Q42", "Muster") is None
+
+
+# Every pair below is a real one from run 16, where all 29 "contradictions"
+# turned out to be the same person spelt differently. A check that calls these
+# wrong people hides the one real mismatch nobody would then go looking for.
+@pytest.mark.parametrize(
+    "label, history_name",
+    [
+        ("Ernst Börlin", "Boerlin"),               # umlaut transliterated
+        ("Josef Bürgi", "Bürgi-Gretener"),         # married name on one side
+        ("Alfred Vonderweid", "von der Weid"),     # particle spacing
+        ("Simon Ettlin", "Etlin"),                 # doubled letter
+        ("Franz Bünzli", "Bünzli(y)"),             # two spellings in one field
+        ("Giuseppe Patocchi", "Pattocchi"),
+        ("Jean-Louis Demiéville", "de Demiéville"),
+        ("Ulrich Bremi", "Bremi-Forrer"),
+        ("Ulrich Meyer", "Meyer-Boller"),
+        ("Karl Wilhelm von Grafenried", "von Graffenried"),
+        ("Ruth Mascarin", "Mascarin-Bircher"),
+        ("Adolphe Travelletti", "Traveletti"),
+    ],
+)
+def test_run_16s_false_alarms_are_recognised_as_variants(label, history_name):
+    assert name_relation(label, history_name) == NAME_VARIANT
+
+
+def test_folding_does_not_merge_two_different_families():
+    """The loosening must not reach the case the check exists for."""
+    assert name_relation("Ruth Beispiel", "Mascarin") == NAME_DIFFERENT
+    assert name_relation("Ernst Börlin", "Bircher") == NAME_DIFFERENT
+    assert fold_name("Boerlin") == fold_name("Börlin")
+    assert fold_name("Meyer") != fold_name("Mascarin")
 
 
 def test_the_surname_comes_from_the_segments_already_fetched():
@@ -185,6 +223,19 @@ def test_one_wrong_person_blocks_everything():
     assert "Andereleute" in "\n".join(lines)
 
 
+def test_variants_are_counted_and_printed_rather_than_swallowed():
+    """Accepting a spelling difference silently is how a check stops checking."""
+    people = agreeing(3) + [
+        departure(qid="Q9", label="Ernst Börlin", history_name="Boerlin")
+    ]
+    verdict, detail, lines = classify_identity(people)
+    assert verdict == CONFIRMED
+    assert "3 exactly and 1 after folding" in detail
+    text = "\n".join(lines)
+    assert "same name, spelt differently:   1" in text
+    assert "Boerlin" in text
+
+
 def test_unknown_names_are_neither_agreement_nor_contradiction():
     verdict, detail, _ = classify_identity(agreeing(3) + [departure(qid="Q9",
                                                                    label="Q9")])
@@ -212,7 +263,10 @@ def test_one_disagreement_blocks_the_bulk_apply():
     ]
     verdict, detail, lines = classify_leaving_dates(people)
     assert verdict == CONTRADICTED
-    assert "not correctable by QuickStatements" in detail
+    assert "cannot be corrected by QuickStatements" in detail
+    # One bad row in a population that otherwise agrees is a per-person
+    # problem; the detail must say so rather than condemning the source.
+    assert "All 1 are listed above" in detail
     assert "source 2019-12-01, OpenParlData 2019-11-30" in "\n".join(lines)
 
 
@@ -266,12 +320,17 @@ def test_a_single_matching_statement_can_be_targeted():
     assert verdict == CONFIRMED
 
 
-def test_several_statements_for_one_seat_cannot_be_targeted():
-    """QuickStatements matches on property + main value, which names neither."""
+def test_several_statements_for_one_seat_are_excluded_not_a_veto():
+    """The existing ambiguous_statement rule already refuses these people.
+
+    Run 16 found 3 of them among 1,969. Treating that as a verdict on the whole
+    population would be reading a per-person exclusion as a systemic failure.
+    """
     people = agreeing(3) + [departure(qid="Q9", statements=2)]
-    verdict, detail, _ = classify_statement_ambiguity(people)
-    assert verdict == CONTRADICTED
+    verdict, detail, lines = classify_statement_ambiguity(people)
+    assert verdict == CONFIRMED
     assert "ambiguous_statement" in detail
+    assert "several P39 for the same seat:  1 (excludable)" in "\n".join(lines)
 
 
 def test_a_statement_about_an_earlier_spell_would_be_closed_wrongly():
@@ -281,7 +340,9 @@ def test_a_statement_about_an_earlier_spell_would_be_closed_wrongly():
     ]
     verdict, detail, lines = classify_statement_ambiguity(people)
     assert verdict == CONTRADICTED
-    assert "means the wrong one" in detail
+    # Unlike the ambiguous case, is_mechanical cannot see this one, so it is
+    # not excludable and does block the population.
+    assert "cannot be excluded automatically" in detail
     assert "statement starts 2003-12-01" in "\n".join(lines)
 
 
@@ -290,6 +351,19 @@ def test_an_undated_statement_is_counted_but_is_not_a_mismatch():
     verdict, _, lines = classify_statement_ambiguity(people)
     assert verdict == CONFIRMED
     assert "open statement has no P580:     1" in "\n".join(lines)
+
+
+def test_the_control_group_tells_no_p580_apart_from_no_p580_read():
+    """Run 16 returned 1,969 of 1,969 undated. Only a control says which it is."""
+    people = [departure(qid=f"Q{i}", statement_start=None) for i in range(3)]
+    _, _, lines = classify_statement_ambiguity(
+        people, statements_total=6000, statements_with_start=2400
+    )
+    assert "carrying a P580: 2400 of 6000 (40.0%)" in "\n".join(lines)
+
+    # Omitted, the line is absent rather than a misleading 0 of 0.
+    _, _, bare = classify_statement_ambiguity(people)
+    assert "control" not in "\n".join(bare)
 
 
 # --- the overall answer ------------------------------------------------------

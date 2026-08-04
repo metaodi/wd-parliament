@@ -344,8 +344,14 @@ expensive one.
   for the link, `Tenure` from the source's historic record for the dates it
   suggests. It stays **report-only** and is gated twice: no `qid_source`, and no
   `position` in the payload. Removing either would turn it into a P582 backfill
-  across every open membership on Wikidata, off a table no probe has measured
-  for departed members. Both gates have a test naming them.
+  across every open membership on Wikidata. `scripts/verify_departures.py`
+  (README step 8) is the probe that would license removing them; **run 16
+  (2026-08-04) says not yet** — 1,961 of 1,962 leaving dates agree with
+  OpenParlData and the single dissenter (`#2126 Alfred Gehrig`) has nothing
+  excluding it. Both gates have a test naming them. `_departed_suggestion` also
+  stamps `ambiguous_statement` when the item holds several P39 for the seat (3
+  of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
+  that survives them being removed.
 - **`quickstatements.py`** — pure renderer. `is_mechanical` is the **one place**
   the safety rule lives; keep it that way. Review/correction kinds are excluded
   because QuickStatements can only add, so applying them would create a second

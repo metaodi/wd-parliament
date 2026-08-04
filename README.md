@@ -55,9 +55,10 @@ can do it:** a person has to paste one line into QuickStatements and look at
 what landed. Step 7 — extending the tool to a *cantonal* parliament, the
 Kantonsrat Zürich — is open too, but it gates nothing here: runs 13 and 14
 settled the source, the position item and the identifier join, and what remains
-is the adapter itself. Step 8 is open by design: it asks whether the *departed*
-members' leaving dates could be applied mechanically, and until it comes back
-`CONFIRMED` those suggestions stay report-only, which is how they ship.
+is the adapter itself. Step 8 asks whether the *departed* members' leaving
+dates could be applied mechanically; run 16 (2026-08-04) measured it at **1,961
+of 1,962 agreeing with an independent source**, and the single dissenting row
+is what keeps those suggestions report-only, which is how they ship.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -848,7 +849,7 @@ direct `MemberCouncil` + `MemberCouncilHistory` analogue) and an XML web service
 for the Kantonsrat's business system. That is the *authoritative* source in the
 sense `diff` relies on; OpenParlData is a harmonised aggregator of it.
 
-### 8. ⬜ May the departed members' P582 be applied in bulk? — *not measured; the reason those suggestions are report-only*
+### 8. 🔶 May the departed members' P582 be applied in bulk? — *measured: no, on one row in 1,962*
 
 The diff's second pass finds people Wikidata still records as sitting whom the
 source does not list, and the report now names the leaving date to add (see
@@ -892,6 +893,50 @@ step 0c uses — `PersonNumber` →P1307→ Q-ID ←`wikidata_id`— keyed by
 `(Q-ID, council)` and never by Q-ID alone, because a member who moved NR→SR
 reads as a contradiction if the two chambers are pooled.
 
+**Run 16 (2026-08-04)** measured it for the first time. Of 3,727 items holding
+one of the two seats, **1,986** are reported as departed — an open P39 whom
+parlament.ch does not list — and the population turns out to be far more
+tractable than the gates assumed:
+
+| | Verdict |
+| --- | --- |
+| Reach | **CONFIRMED** — 1,977 carry an identifier, 1,969 resolve into `MemberCouncilHistory`, and **all 1,969** have a closed tenure, i.e. a date to suggest |
+| Identity | **CONFIRMED** — every checkable value reaches a person whose surname is the item's (see below) |
+| Leaving dates | **CONTRADICTED** — 1,961 of 1,962 agree with OpenParlData (**99.9%**); one row disputes |
+| Which statement | **CONFIRMED** — 3 people hold several P39 for the seat and are excluded by the existing `ambiguous_statement` rule; none starts on the wrong date |
+
+So the answer is *no*, and it rests on **one person**: `#2126 Alfred Gehrig
+(NR)`, where parlament.ch says 1971-11-28 and OpenParlData says 2014-05-31.
+That is not a systemic disagreement — 43 years apart on a single row reads as a
+bad row in one source — but a P582 cannot be un-written by QuickStatements, and
+nothing excludes that person today. Resolving him by hand is what stands
+between this and a `CONFIRMED`.
+
+Two things the first run got wrong about *itself*, both now fixed:
+
+- **the identity check cried wolf 29 times.** All 29 "wrong person" hits were
+  the same person spelt differently: `Börlin`/`Boerlin`, `Ettlin`/`Etlin`,
+  `Bremi`/`Bremi-Forrer`, `Vonderweid`/`von der Weid`,
+  `Patocchi`/`Pattocchi`. `fold_name` now folds umlauts, accents, particles,
+  married names and doubled letters, and reports them as a **third bucket** —
+  counted and printed, never silently merged, because a check that stops
+  showing its work has stopped checking. 29 false alarms would have buried the
+  one real mismatch nobody would then look for.
+- **statement ambiguity is excludable, and was being read as a veto.** Three
+  people out of 1,969 is three people skipped by a rule that already exists —
+  except it did not exist for *these* suggestions: `diff` only stamped
+  `ambiguous_statement` on sitting members. It now stamps departed ones too,
+  which is right whatever happens to the gates.
+
+One number is still open and the probe now carries its own control for it:
+**every one of the 1,969 open statements has no P580 at all.** Zero out of
+1,969 is a rule, not a tail, so it is either a real fact about Wikidata's
+undated P39 imports — plausible, since a statement carrying P580 *and* no P582
+is what a *sitting* member's looks like, and sitting members are excluded from
+this population by construction — or the start is not being read. Section D now
+prints how many statements for these seats carry a P580 across *everyone*,
+which tells the two apart on the next dispatch.
+
 Wired into `Verify assumptions` as section 6, and it **never gates the job**
 for a third distinct reason: the suggestions it measures are report-only *by
 construction*. `diff._departed_suggestion` sets no `qid_source` and puts no
@@ -903,7 +948,9 @@ step 5, not something a green run should imply.
 **`INCONCLUSIVE` is the expected answer on tidy data.** The population is
 however many open memberships Wikidata has for people who have gone; a small
 one is good news about the data and no news about the question. That is exactly
-why this must never be wired into a gate.
+why this must never be wired into a gate. (Federally the population is 1,986,
+so this is not the federal run's situation — it is what a cantonal or
+well-maintained chamber would return.)
 
 
 ---
