@@ -629,7 +629,7 @@ Wired into the `Verify assumptions` workflow as an evaluation that **never
 gates the job** — an answer about a design option must not turn the diagnostic
 red.
 
-### 7. 🔶 Could this be pointed at a cantonal parliament? — *yes, and P14527 is the join*
+### 7. 🔶 Could this be pointed at a cantonal parliament? — *yes; the join is now P13468, the canton's own id*
 
 The **Kantonsrat Zürich**, as the first case. `scripts/verify_kantonsrat.py`
 measures it. Runs 13–15 (2026-07-30) settled every question an adapter needs
@@ -641,24 +641,53 @@ left empty makes no suggestion:
 | Kantonsrat located as a group | **YES** — body `ZH`, group **5077**, `name_de='Kantonsrat Zürich'` |
 | Seat memberships dated | **CONFIRMED** — 912 of 913 carry a `begin_date` |
 | Seats currently held == 180 | **CONFIRMED** — `186 open → 182 begun → 180 in a seat role` |
-| A Wikidata-asserted identifier | **CONFIRMED** — **35 of 35** linked members carry P14527 |
+| A Wikidata-asserted identifier | **CONFIRMED** — **35 of 35** linked members carry P14527… |
+| …and it reaches the *chamber* | **CONTRADICTED** by the first real run — **0 of the 180 sitting members** matched on it |
+| A better one | **P13468** "Zurich Kantonsrat and Regierungsrat member ID", the canton's own; coverage and value both measured by section C on every dispatch |
 | The position item | **CONFIRMED** — `Q21518678`, held by 270 items, **167 currently (93% of 180)** |
 | P768 Wahlkreis map | **CONTRADICTED** — 18 districts in the source, **0 resolvable** |
 | P2937 term map | **INCONCLUSIVE** — the qualifier is used on **no** statement for the seat |
 
-**P14527 is the cantonal join, and the federal finding inverts exactly as
-predicted.** Of the 35 ZH members OpenParlData links to Wikidata, **all 35**
-carry P14527 and 27 also carry P1307. Because P14527 is *Wikidata-asserted*, it
-slots into `is_mechanical` with **no change to the safety rule** — only
-`identifier_property` in the config and the two SPARQL builders in
-`wikidata.py` need to become configurable. Step 6 found P14527 added nobody
-federally; here it is the whole join.
+**P14527 was the cantonal join, and measuring it over the wrong population is
+what made it look like one.** Of the 35 ZH members OpenParlData links to
+Wikidata, **all 35** carry P14527 and 27 also carry P1307 — CONFIRMED, and the
+federal finding inverted exactly as predicted. Then the first real run joined
+**0 of the 180 sitting members** on it and fell through to the name search for
+138 of them.
 
-Two caveats on that 35. It is 35 of **834** ZH person records (4.2%, against
-3,685 of 3,686 federally), so the vast majority of cantonal members have no
-Wikidata item at all — the report will be dominated by `NO_WIKIDATA_ITEM`, a
-worklist for *creating* items. And 100% is measured over the people
-OpenParlData already links, which is a biased sample by construction.
+Nothing about the 35 was wrong; the population was. Those 35 are the people
+OpenParlData *had already linked to an item*, which skews hard towards members
+notable enough to have gone federal — the same bias that put the National
+Council at the top of the position ranking below. **A coverage rate measured
+over a linked sample is not a coverage rate over the chamber**, and this is the
+second time that distinction has cost a wrong answer in the same section.
+
+**The join is now P13468** "Zurich Kantonsrat and Regierungsrat member ID" —
+the id the canton itself assigns, and therefore the cantonal analogue of P1307
+in a way an aggregator's id never was. It covers the Regierungsrat too, so it
+identifies a *person* and not a seat; which seat is meant still comes from
+`position`. Wikidata asserts it, so `is_mechanical` needs no change to the
+safety rule.
+
+⚠️ **What has *not* been measured is that a P13468 value equals OpenParlData's
+person id** — the cantonal twin of the Parmelin check. That gap is exactly the
+kind an exact join hides rather than reveals: if the two are different id
+spaces, the join does not fail, it succeeds on whoever happens to carry the
+same number. So `config/kantonsrat-zh.yaml` ships `identifier_verified: false`,
+which makes the run corroborate every identifier match against the item's own
+name and birth date, count the rejections in the report, stamp every suggestion
+`identifier_unverified` so nothing can be emitted, and say in each
+ADD_IDENTIFIER suggestion that the number it offers is unconfirmed. Section C
+of the probe now asks the value question for **both** candidates on every
+dispatch, and — when the answer is "not the person id" — reports which column of
+the source's person record *does* carry those values, because "the source keeps
+it elsewhere" and "the source does not have it at all" mean opposite things for
+the config.
+
+One caveat that survives all of this: 35 links is 35 of **834** ZH person
+records (4.2%, against 3,685 of 3,686 federally), so the vast majority of
+cantonal members have no Wikidata item at all — the report is dominated by
+`NO_WIKIDATA_ITEM`, a worklist for *creating* items.
 
 **The source side works.** 46 groups under body `ZH`, the chamber found by
 exact name, 913 memberships all of `type_harmonized='council_legislative'`,
@@ -737,11 +766,13 @@ config.
 **It ships report-only** (`quickstatements: false`), for two independent
 reasons. Only 35 of 834 ZH people have a Wikidata item at all, so the report is
 chiefly a worklist for *creating* them rather than for fixing statements. And
-one link in the join is still unmeasured: P14527 is carried by all 35, but that
-its **value equals OpenParlData's person id** has not been shown the way the
-federal side showed it (Parmelin: `PersonNumber` 1108 == P1307 1108). Section C
-of the probe now compares them on every dispatch; turn QuickStatements on when
-it says CONFIRMED, and not before.
+one link in the join is still unmeasured: that a P13468 **value equals
+OpenParlData's person id** has not been shown the way the federal side showed it
+(Parmelin: `PersonNumber` 1108 == P1307 1108). Section C of the probe compares
+them on every dispatch. When it says CONFIRMED, add P13468 to
+`models.VERIFIED_IDENTIFIER_PROPERTIES`, flip `identifier_verified`, and only
+then consider QuickStatements — in that order, and each step in the same commit
+as the output that licenses it.
 
 The rest of this section is design that the measurements have not changed.
 
@@ -764,7 +795,8 @@ not equivalent — and run 14 settled it in favour of the first:
 
 | Candidate | Provenance | What it would cost |
 | --- | --- | --- |
-| **P14527** OpenParlData ID | Wikidata-asserted | nothing — slots into the existing gate; only `identifier_property` in the config and the two SPARQL builders need to become configurable |
+| **P13468** Zurich Kantonsrat and Regierungsrat member ID | Wikidata-asserted, and the canton's *own* id | nothing to the gate; `identifier_verified: false` until its value is measured against the person id |
+| **P14527** OpenParlData ID | Wikidata-asserted | nothing — but measured at **0 of the 180 sitting members**, so it is not a join for this chamber |
 | OpenParlData's `wikidata_id` field | a third party asserting a Q-ID *about* Wikidata | its own `QID_FROM_*` constant and its own decision in `is_mechanical`; it must not inherit the P1307 gate |
 | name matching only | none | `is_mechanical` already refuses it → report-only, `quickstatements: false` |
 
@@ -1021,7 +1053,7 @@ well-maintained chamber would return.)
 
 | Suggestion | Priority | Trigger |
 | --- | :---: | --- |
-| **Add Swiss parliament ID** | 1 | Item matched by name but has no P1307. Highest leverage — it makes every future run exact. |
+| **Add the source's identifier** | 1 | Item matched by name but has no P1307 (P13468 for the Kantonsrat). Highest leverage — it makes every future run exact. |
 | **One identifier, several items** | 1 | Two or more Wikidata items claim the same P1307. A contradiction in Wikidata's own data — see below. |
 | **One item, several source records** | 1 | Two or more *source* records point at one Wikidata item. The mirror image, and the only finding here that is fixed in the source rather than on Wikidata. |
 | **The two sources disagree** | 2 | parlament.ch and OpenParlData describe the same seat differently. Withholds the mechanical edit for that member — see below. |
@@ -1033,7 +1065,7 @@ well-maintained chamber would return.)
 | **Add parliamentary term** | 3 | P39 missing a P2937 for a period the tenure covers. |
 | **Add qualifier** | 4 | Missing P768 electoral district or P4100 parliamentary group. |
 | **Review party** | 4 | P102 missing or disagreeing with `PartyAbbreviation`. |
-| **No Wikidata item** | 5 | No item found by P1307 or by name. |
+| **No Wikidata item** | 5 | No item found by the identifier or by name. |
 
 Scope for v1: **both chambers, currently sitting members only** (~246 people).
 Historic members are a later extension — `MemberCouncilHistory` has an identical
@@ -1157,7 +1189,7 @@ to read anything off, so both of the things that suggestion needs come from
 elsewhere:
 
 - **the link to the source's database** — built from the identifier *Wikidata
-  itself* asserts (P1307 federally, P14527 cantonally) through the
+  itself* asserts (P1307 federally, P13468 cantonally) through the
   `biography_url` template in the config, which is why the template is
   configuration rather than a constant: a cantonal report pointing at
   parlament.ch sends a reader to a service that has never heard of these
@@ -1186,9 +1218,24 @@ the class of bulk edit the rest of this README is about not making by accident.
 
 ## How members are matched
 
-1. **P1307 join** — `MemberCouncil.PersonNumber` against Wikidata's Swiss
-   parliament ID. Exact. This is the only provenance QuickStatements are
-   emitted from.
+1. **Identifier join** — the source's person id against the Wikidata property
+   the config names (`identifier_property`): P1307 "Swiss parliament ID"
+   against `MemberCouncil.PersonNumber` federally, P13468 "Zurich Kantonsrat
+   and Regierungsrat member ID" for the Kantonsrat. Exact. This is the only
+   provenance QuickStatements are emitted from.
+
+   Two things have to be true of that property, and they are measured
+   separately. **Wikidata must assert it** — that is what `is_mechanical`
+   gates on. And its **value must be the source's person id** — that is what
+   `verify_source.py` section B showed for P1307 (Parmelin: `PersonNumber`
+   1108 == P1307 1108) and what `verify_kantonsrat.py` section C asks for the
+   cantonal candidates. A config joining on a property whose value has not
+   been measured says so with `identifier_verified: false`, and then the run
+   corroborates every identifier match against the item's own name and birth
+   date, counts the ones it rejects, and emits nothing mechanically. That
+   guard exists because an unverified identifier fails in the one direction a
+   missing one cannot: two id spaces that overlap numerically match
+   *exactly*, and match the wrong people.
 2. **Name + birth date fallback** — an exact label/alias match on a human who
    is a politician or already holds one of the seats, **with the birth date
    required to agree**. `MemberCouncil.DateOfBirth` upgrades wd-squads' "refuse

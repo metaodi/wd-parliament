@@ -37,12 +37,15 @@ from verify_kantonsrat import (  # noqa: E402
     INCONCLUSIVE,
     OPENPARLDATA_ID,
     SWISS_PARLIAMENT_ID,
+    ZH_MEMBER_ID,
+    classify_identifier_column,
     classify_position_item,
     classify_qualifier_readiness,
     classify_seat_count,
     classify_wikidata_reach,
     compare_identifier_values,
     date_clusters,
+    discover_identifier_columns,
     district_fields,
     distinct_values,
     find_kantonsrat_group,
@@ -394,6 +397,32 @@ def test_c_good_p14527_coverage_needs_no_change_to_the_safety_rule():
     assert "is_mechanical" in detail
 
 
+def test_c_the_cantons_own_id_outranks_the_aggregators():
+    """P14527 was CONFIRMED at 35 of 35 and then reached 0 of the 180 seats.
+
+    Its 35 were the people OpenParlData had already linked — a sample biased
+    towards members notable enough to have gone federal. The canton's own id
+    has no such bias by construction, which is why it wins the ranking even
+    when both are present.
+    """
+    verdict, detail = classify_wikidata_reach(
+        holders=400, with_opd_id=300, with_federal_id=90, with_either=340,
+        with_zh_id=250,
+    )
+    assert verdict == CONFIRMED
+    assert ZH_MEMBER_ID in detail
+    assert "identifier_verified: false" in detail
+
+
+def test_c_coverage_does_not_settle_the_value():
+    """The mistake the P14527 round made: coverage answered, value assumed."""
+    _, detail = classify_wikidata_reach(
+        holders=400, with_opd_id=0, with_federal_id=0, with_either=250,
+        with_zh_id=250,
+    )
+    assert "does NOT settle" in detail
+
+
 def test_c_thin_coverage_still_confirms_but_promises_less():
     verdict, detail = classify_wikidata_reach(
         holders=400, with_opd_id=40, with_federal_id=10, with_either=45
@@ -715,7 +744,21 @@ def test_c_matching_values_confirm_the_cantonal_join():
         [_binding("Q117716", 9532), _binding("Q117154", 21905)],
     )
     assert verdict == CONFIRMED
-    assert "quickstatements: false" in detail
+    assert "identifier_verified: false" in detail
+
+
+def test_c_the_property_compared_is_named_in_the_finding():
+    """Two candidates now, and only one of them can be the person id.
+
+    P13468 is the canton's own member id and P14527 an aggregator's, so a
+    finding that does not say which one it is about cannot settle a config.
+    """
+    _, detail, lines = compare_identifier_values(
+        {"Q1": 9532}, [_binding("Q1", 777)], ZH_MEMBER_ID
+    )
+    assert ZH_MEMBER_ID in detail
+    assert any(ZH_MEMBER_ID in line for line in lines)
+    assert OPENPARLDATA_ID not in detail
 
 
 def test_c_leading_zeros_and_ints_are_the_same_identifier():
@@ -747,3 +790,66 @@ def test_c_the_value_query_asks_only_about_the_given_people():
     assert "wd:Q117716" in sparql
     assert f"wdt:{OPENPARLDATA_ID}" in sparql
     assert "P39" not in sparql
+
+
+def test_c_the_value_query_can_ask_about_either_candidate():
+    sparql = identifier_values_query(["Q117716"], ZH_MEMBER_ID)
+    assert f"wdt:{ZH_MEMBER_ID}" in sparql
+    assert OPENPARLDATA_ID not in sparql
+
+
+# --- C. where does the source keep the identifier? --------------------------
+def _person(pid, qid, **extra):
+    row = {"id": pid, "wikidata_id": qid, "lastname": "Muster"}
+    row.update(extra)
+    return row
+
+
+def test_c_the_column_report_finds_the_person_id_when_that_is_the_value():
+    counts, compared = discover_identifier_columns(
+        [_person(9532, "Q1"), _person(21905, "Q2")],
+        {"Q1": "9532", "Q2": "21905"},
+    )
+    assert compared == 2
+    assert counts["id"] == 2
+    assert classify_identifier_column(counts, compared)[0] == CONFIRMED
+
+
+def test_c_the_column_report_names_the_column_that_does_carry_the_values():
+    """"Not the person id" is half an answer; this is the other half.
+
+    If the source keeps the canton's id under another name, the config can
+    join on that instead — and the two id spaces being different means the
+    members matched so far were matched by accident.
+    """
+    counts, compared = discover_identifier_columns(
+        [_person(9532, "Q1", source_id=22243), _person(21905, "Q2", source_id=20314)],
+        {"Q1": "22243", "Q2": "20314"},
+    )
+    verdict, detail = classify_identifier_column(counts, compared)
+    assert counts == {"source_id": 2}
+    assert verdict == CONTRADICTED
+    assert "source_id" in detail
+
+
+def test_c_no_column_at_all_means_this_source_cannot_supply_the_identifier():
+    """The finding that would forbid the join outright.
+
+    An identifier that exists on Wikidata and nowhere in the source cannot be
+    joined on, and — worse — must not be *suggested*: the number the report
+    would offer is the source's own person id, from a different id space.
+    """
+    counts, compared = discover_identifier_columns(
+        [_person(9532, "Q1"), _person(21905, "Q2")],
+        {"Q1": "22243", "Q2": "20314"},
+    )
+    verdict, detail = classify_identifier_column(counts, compared)
+    assert counts == {}
+    assert verdict == CONTRADICTED
+    assert "must not suggest adding it" in detail
+
+
+def test_c_an_unlinked_source_says_nothing_about_the_column():
+    counts, compared = discover_identifier_columns([_person(9532, "Q1")], {})
+    assert (counts, compared) == ({}, 0)
+    assert classify_identifier_column(counts, compared)[0] == INCONCLUSIVE

@@ -27,6 +27,11 @@ class BodyResult:
     matched_by_name: int = 0
     unmatched: int = 0
     wikidata_open: int = 0
+    # Identifier matches rejected because the item they point at names somebody
+    # else. Only ever non-zero under ``identifier_verified: false``, and then it
+    # is the number that answers whether the property's values are the source's
+    # person ids at all — which is why it is printed rather than merely logged.
+    identifier_mismatches: int = 0
     error: Optional[str] = None
 
     @property
@@ -144,6 +149,21 @@ def render_body_markdown(
         "",
     ]
 
+    # Only under ``identifier_verified: false``, and then it is the run's own
+    # answer to the question the config could not: an identifier that matches
+    # an item naming somebody else is two id spaces overlapping by accident,
+    # and a large share of them means the join is on the wrong property.
+    if result.identifier_mismatches:
+        lines[-1] = (
+            f"- ⚠️ {identifier_property} matches rejected because the item "
+            f"names a different person: **{result.identifier_mismatches}** of "
+            f"{result.identifier_mismatches + result.matched_by_identifier} "
+            f"attempted. {identifier_property} is joined on unverified — a "
+            "large share here means its values are not this source's person "
+            "ids."
+        )
+        lines.append("")
+
     if result.error:
         lines += [f"> ⚠️ Could not fully process this chamber: {result.error}", ""]
 
@@ -249,6 +269,7 @@ def to_json(
                 "matched_by_name": r.matched_by_name,
                 "unmatched": r.unmatched,
                 "wikidata_open": r.wikidata_open,
+                "identifier_mismatches": r.identifier_mismatches,
                 "identifier_hit_rate": round(r.identifier_hit_rate, 1),
                 "error": r.error,
                 "suggestions": [
@@ -374,6 +395,10 @@ _HTML_TEMPLATE = """<!doctype html>
   <section class="chamber">
     <h2 id="{{ r.slug }}">{{ r.body.label }}</h2>
     {% if r.error %}<p class="byname">Error: {{ r.error }}</p>{% endif %}
+    {% if r.identifier_mismatches %}<p class="byname">⚠️ {{ r.identifier_mismatches }}
+      {{ identifier_property }} match(es) rejected: the item they point at names
+      a different person. The property is joined on unverified &mdash; a large
+      share here means its values are not this source&rsquo;s person ids.</p>{% endif %}
     {% if not r.suggestions %}
       <p>✅ Nothing to do &mdash; {{ source_name }} and Wikidata agree.</p>
     {% else %}
@@ -447,6 +472,7 @@ def render_html(
                 matched_by_identifier=r.matched_by_identifier,
                 matched_by_name=r.matched_by_name,
                 unmatched=r.unmatched,
+                identifier_mismatches=r.identifier_mismatches,
                 error=r.error,
                 slug=_slug(r.body.label),
                 groups=group_suggestions(r.suggestions, group_by),
@@ -480,6 +506,7 @@ class _HtmlBody:
     matched_by_identifier: int
     matched_by_name: int
     unmatched: int
+    identifier_mismatches: int
     error: Optional[str]
     slug: str
     groups: List[Tuple[str, List[Suggestion]]]

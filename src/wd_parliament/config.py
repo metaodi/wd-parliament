@@ -19,6 +19,7 @@ from .models import (
     MODEL_PERIOD,
     P_PARLIAMENT_ID,
     STATEMENT_MODELS,
+    VERIFIED_IDENTIFIER_PROPERTIES,
     Body,
 )
 
@@ -71,9 +72,29 @@ class Config:
     body_key: str = ""
     # The Wikidata property whose value equals the source's person identifier.
     # Federally P1307 == MemberCouncil.PersonNumber; cantonally there is no
-    # P1307 at all and P14527 (OpenParlData ID) is the only Wikidata-asserted
-    # identifier that reaches those people.
+    # P1307 at all, and for the Kantonsrat Zürich the canton's own member id
+    # P13468 is the analogue — P14527 (OpenParlData ID) is Wikidata-asserted
+    # too but reaches almost none of the sitting members.
     identifier_property: str = P_PARLIAMENT_ID
+    # Has the property's **value** been shown to equal the source's person id?
+    #
+    # Provenance and value are two different questions, and only the first one
+    # ``quickstatements.is_mechanical`` can see. A Wikidata-asserted identifier
+    # whose value belongs to a *different* id space joins exactly and joins the
+    # wrong people — the failure an unverified property can produce that an
+    # unmatched member cannot. So a config naming a property outside
+    # ``VERIFIED_IDENTIFIER_PROPERTIES`` must set this to false, which:
+    #
+    #   * makes ``resolve`` corroborate every identifier match against the
+    #     item's own name and birth date, and count the ones it rejects;
+    #   * stamps ``identifier_unverified`` on every suggestion, which
+    #     ``is_mechanical`` refuses — nothing is written off an unproven join;
+    #   * says so in the ADD_IDENTIFIER suggestion, whose value would be the
+    #     wrong number if the id spaces differ.
+    #
+    # Flipping it to true is a measurement, not an opinion: run the probe named
+    # in the config comments and read CONFIRMED first.
+    identifier_verified: bool = True
     user_agent: str = DEFAULT_USER_AGENT
     request_delay: float = 1.0
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
@@ -248,8 +269,32 @@ def load_config(path: str | Path) -> Config:
             f"{', '.join(sorted(IDENTIFIER_PROPERTIES))}; got "
             f"'{identifier_property}'. It is the property whose value equals "
             "the source's person id, and quickstatements.is_mechanical trusts "
-            "a match made through it — so an unmeasured property must not be "
-            "added here without a probe confirming the values are equal."
+            "a match made through it — so a property nothing on Wikidata "
+            "asserts must not be added here at all, and one whose value has "
+            "not been measured against the source's person id must be joined "
+            "on with 'identifier_verified: false'."
+        )
+
+    # Default: true for a property whose value has been measured against the
+    # source's person id, false for one that has not. Stating it explicitly is
+    # allowed and is how a config records the day a probe confirms it; claiming
+    # true for an unmeasured property is not, because that claim is exactly
+    # what ``is_mechanical`` would write edits off the back of.
+    identifier_verified = bool(
+        data.get(
+            "identifier_verified",
+            identifier_property in VERIFIED_IDENTIFIER_PROPERTIES,
+        )
+    )
+    if identifier_verified and identifier_property not in VERIFIED_IDENTIFIER_PROPERTIES:
+        raise ValueError(
+            f"identifier_verified: true claims that {identifier_property}'s "
+            "value equals the source's person id, which has not been measured. "
+            "Run the probe (scripts/verify_kantonsrat.py section C for a "
+            "cantonal config, scripts/verify_source.py section B federally), "
+            "read CONFIRMED, and add the property to "
+            "models.VERIFIED_IDENTIFIER_PROPERTIES in the same commit as the "
+            "evidence."
         )
 
     enrich_raw = data.get("enrich") or {}
@@ -283,6 +328,7 @@ def load_config(path: str | Path) -> Config:
         source=source,
         body_key=str(data.get("body_key", "") or "").strip(),
         identifier_property=identifier_property,
+        identifier_verified=identifier_verified,
         user_agent=str(data.get("user_agent", DEFAULT_USER_AGENT)),
         request_delay=float(data.get("request_delay", 1.0)),
         statement_model=statement_model,

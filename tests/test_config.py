@@ -169,3 +169,40 @@ enrich:
   groups:
     NR: Nationalrat
 """))
+
+
+# --- the identifier property and its value ----------------------------------
+def test_a_measured_property_is_verified_by_default(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL))
+    assert cfg.identifier_property == "P1307"
+    assert cfg.identifier_verified is True
+
+
+def test_an_unmeasured_property_defaults_to_unverified(tmp_path):
+    """Provenance and value are two questions, and only the first is settled.
+
+    Wikidata asserts P13468, which is what ``is_mechanical`` can see. That its
+    value equals the source's person id is what nothing has measured, and a
+    config joining on it must default to saying so rather than to silence.
+    """
+    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P13468\n"))
+    assert cfg.identifier_verified is False
+
+
+def test_claiming_an_unmeasured_property_is_verified_is_rejected(tmp_path):
+    """The one claim ``is_mechanical`` writes real edits off the back of."""
+    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    with pytest.raises(ValueError, match="has not been measured"):
+        load_config(write(tmp_path, text))
+
+
+def test_an_unknown_identifier_property_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match="identifier_property"):
+        load_config(write(tmp_path, MINIMAL + "identifier_property: P9999999\n"))
+
+
+def test_the_shipped_cantonal_config_joins_on_the_cantons_own_id():
+    cfg = load_config("config/kantonsrat-zh.yaml")
+    assert cfg.identifier_property == "P13468"
+    assert cfg.identifier_verified is False
+    assert cfg.quickstatements is False

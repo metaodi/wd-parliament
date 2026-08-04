@@ -61,7 +61,7 @@ PRIORITY = {
 }
 
 KIND_LABEL = {
-    KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (P1307/P14527)",
+    KIND_ADD_IDENTIFIER: "Item matched by name but has no unique ID (the source's own)",
     KIND_DUPLICATE_IDENTIFIER: "One identifier claimed by several Wikidata items",
     KIND_DUPLICATE_SOURCE_LINK: "One Wikidata item claimed by several source records",
     KIND_SOURCES_DISAGREE: "The two sources disagree about this member",
@@ -78,11 +78,13 @@ KIND_LABEL = {
 
 # How a member's Q-ID was established (see ``resolve``).
 #
-# ``QID_FROM_IDENTIFIER`` is an exact join on P1307 and is the *only* source
-# trusted enough to emit QuickStatements from — see
-# ``quickstatements.is_mechanical``. ``QID_FROM_NAME`` is a name match
-# corroborated by the birth date; good enough to report, not to automate.
-QID_FROM_IDENTIFIER = "identifier"  # P1307 == MemberCouncil.PersonNumber
+# ``QID_FROM_IDENTIFIER`` is an exact join on the configured identifier
+# property and is the *only* source trusted enough to emit QuickStatements
+# from — see ``quickstatements.is_mechanical``, which also requires that
+# property's value to have been measured against the source's person id.
+# ``QID_FROM_NAME`` is a name match corroborated by the birth date; good enough
+# to report, not to automate.
+QID_FROM_IDENTIFIER = "identifier"  # e.g. P1307 == MemberCouncil.PersonNumber
 QID_FROM_NAME = "name"  # label/alias match, birth date agreed
 
 # Wikidata properties this tool reasons about, kept in one place so the SPARQL,
@@ -90,16 +92,37 @@ QID_FROM_NAME = "name"  # label/alias match, birth date agreed
 P_POSITION_HELD = "P39"
 P_PARLIAMENT_ID = "P1307"
 
+P_ZH_MEMBER_ID = "P13468"
+
 # The identifier properties a source can be joined on, and what each one's
 # value is. ``QID_FROM_IDENTIFIER`` — the provenance ``quickstatements`` gates
 # on — means *Wikidata itself* asserted one of these, which is what makes the
-# match a fact rather than a guess. Both qualify; a Q-ID asserted by a third
-# party **about** Wikidata (OpenParlData's own ``wikidata_id`` field) does not,
-# and would need its own constant before it could ever be emitted from.
+# match a fact rather than a guess. All three qualify; a Q-ID asserted by a
+# third party **about** Wikidata (OpenParlData's own ``wikidata_id`` field) does
+# not, and would need its own constant before it could ever be emitted from.
+#
+# Provenance is only half the question. The other half is whether the
+# property's **value** is the person id the source gives, and that is measured
+# per property, not inherited: P1307 was checked directly (Parmelin,
+# ``PersonNumber`` 1108 == P1307 1108) and P14527 by ``verify_kantonsrat.py``
+# section C. P13468 is the canton of Zürich's own member id — the cantonal
+# analogue of P1307, and the reason a ZH config can join on anything at all
+# now that P14527 has been measured at 0 of 180 sitting members — but that its
+# value equals OpenParlData's person id is **unmeasured**. A config joining on
+# an unmeasured property must say so with ``identifier_verified: false``; see
+# :class:`~.config.Config`.
 IDENTIFIER_PROPERTIES = {
     "P1307": "Swiss parliament ID (MemberCouncil.PersonNumber)",
     "P14527": "OpenParlData ID",
+    P_ZH_MEMBER_ID: "Zurich Kantonsrat and Regierungsrat member ID",
 }
+
+# Identifier properties whose value has been shown to equal the source's person
+# id. A config joining on anything else must set ``identifier_verified: false``,
+# which turns on the corroboration in ``resolve.match_by_identifier`` and stops
+# ``quickstatements`` writing anything off the back of the join.
+VERIFIED_IDENTIFIER_PROPERTIES = frozenset({"P1307", "P14527"})
+
 P_START_TIME = "P580"
 P_END_TIME = "P582"
 P_ELECTORAL_DISTRICT = "P768"
@@ -178,6 +201,16 @@ class Member:
     # *why* the member went unmatched — without it the run says "no item was
     # found" about somebody who has two.
     duplicate_identifier_qids: List[str] = field(default_factory=list)
+    # Items whose identifier value equals this member's, but which the item's
+    # *own* name and birth date say are somebody else. Only ever filled in when
+    # the config declares the identifier property unverified
+    # (``identifier_verified: false``), because that is the one situation where
+    # an exact join can be exactly wrong: two id spaces that happen to overlap
+    # numerically match confidently and match the wrong people. Recorded rather
+    # than merely skipped so a run can report how often it happened — a rate
+    # near 100% is the id spaces being different, which is a fact about the
+    # config, not about Wikidata.
+    identifier_mismatch_qids: List[str] = field(default_factory=list)
 
     @property
     def full_name(self) -> str:

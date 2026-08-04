@@ -39,8 +39,17 @@ decides whether the cantonal tool may emit QuickStatements at all.
 ``quickstatements.is_mechanical`` gates on ``QID_FROM_IDENTIFIER``, which means
 *Wikidata itself* asserted the identifier that established the match. Federally
 that is P1307 against ``PersonNumber``. **The Kantonsrat has no P1307**, so
-there are three candidates and they are not equivalent:
+there are four candidates and they are not equivalent:
 
+- **P13468 (Zurich Kantonsrat and Regierungsrat member ID)**, the canton's own
+  member id and therefore the cantonal analogue of P1307 — the id assigned by
+  the body that runs the parliament rather than by a mirror of it. This is what
+  ``config/kantonsrat-zh.yaml`` now joins on, and the two questions asked about
+  it here are separate: *coverage* (how many seat holders carry it) and
+  *value* (whether it equals OpenParlData's person id). Only the first was ever
+  asked of P14527, which is why this section grew a column report — if the
+  values are not the person id, the source may keep them under another column,
+  or nowhere at all, and those mean different things for the config.
 - **P14527 (OpenParlData ID)**, which *is* Wikidata-asserted and so slots into
   the existing gate unchanged. ``verify_openparldata.py`` found it adds nobody
   federally — 0 National Councillors carry it without P1307 — but that is a
@@ -152,6 +161,20 @@ from verify_openparldata import (  # noqa: E402
     fetch,
     summarise_wikidata_ids,
 )
+
+# The canton's **own** member id, and so the cantonal analogue of P1307 in the
+# way P14527 never was: P14527 is an aggregator's id, this is the id assigned by
+# the body that runs the parliament. It covers the Regierungsrat as well as the
+# Kantonsrat, which is why it identifies a *person* and never a seat — section D
+# still has to say which seat is meant.
+#
+# It is measured here rather than assumed for the reason the whole file exists:
+# P14527 was CONFIRMED at 35 of 35 in run 14 and then matched **0 of the 180
+# sitting members** on the first real run, because those 35 were the people
+# OpenParlData already links — a sample biased towards members notable enough
+# to have gone federal. Coverage measured over a linked sample is not coverage
+# over the chamber, and this section now asks both.
+ZH_MEMBER_ID = "P13468"
 
 # The body the Kantonsrat should live under. A body is the *level* of
 # parliament, so the canton is one body covering its legislature — the same
@@ -550,6 +573,7 @@ def classify_wikidata_reach(
     with_federal_id: int,
     with_either: int,
     seats: int = DEFAULT_SEATS,
+    with_zh_id: int = 0,
 ) -> Tuple[str, str]:
     """Can the cantonal tool ever emit QuickStatements? Pure.
 
@@ -563,6 +587,13 @@ def classify_wikidata_reach(
     the first release ships report-only, which is how the federal side began
     and is a perfectly good tool. What would be a failure is emitting edits off
     a join nothing on Wikidata vouches for.
+
+    Where two Wikidata-asserted identifiers both reach these people, the
+    canton's **own** member id wins over the aggregator's. Not on principle:
+    P14527 was CONFIRMED here at 35 of 35 and then reached 0 of the 180 sitting
+    members, because the 35 were the people OpenParlData had already linked.
+    A parliament's own id has no such sampling bias by construction, which is
+    also why the federal join is P1307 rather than anything about a mirror.
     """
     if holders == 0:
         return (
@@ -574,11 +605,28 @@ def classify_wikidata_reach(
 
     share = 100.0 * with_either / holders
     detail_counts = (
-        f"{holders} item(s) hold the seat; {with_opd_id} carry "
+        f"{holders} item(s) hold the seat; {with_zh_id} carry {ZH_MEMBER_ID} "
+        f"(the canton's own member id), {with_opd_id} carry "
         f"{OPENPARLDATA_ID}, {with_federal_id} carry {SWISS_PARLIAMENT_ID} "
-        f"(federal service, not the cantonal seat), {with_either} carry either "
+        f"(federal service, not the cantonal seat), {with_either} carry any "
         f"({share:.1f}%)."
     )
+
+    if with_zh_id:
+        zh_share = 100.0 * with_zh_id / holders
+        return (
+            CONFIRMED,
+            detail_counts + f" {ZH_MEMBER_ID} is the canton's own member id — "
+            "the cantonal analogue of P1307 — and Wikidata asserts it, so it "
+            "slots into the existing 'is_mechanical' gate with no change to "
+            f"the safety rule. It reaches {zh_share:.0f}% of the seat holders "
+            f"against {OPENPARLDATA_ID}'s "
+            f"{100.0 * with_opd_id / holders:.0f}%, and the members it misses "
+            "are the ones to raise ADD_IDENTIFIER for. What it does NOT settle "
+            "is whether its value is the source's person id — that is the "
+            "comparison below, and until it reads CONFIRMED the config joins "
+            "on it with 'identifier_verified: false'.",
+        )
 
     if with_either == 0:
         return (
@@ -704,6 +752,7 @@ def seat_reach_query(position_qid: str) -> str:
 SELECT
   (COUNT(DISTINCT ?person) AS ?holders)
   (COUNT(DISTINCT ?open) AS ?open)
+  (COUNT(DISTINCT ?withZh) AS ?withZh)
   (COUNT(DISTINCT ?withOpd) AS ?withOpd)
   (COUNT(DISTINCT ?withFederal) AS ?withFederal)
   (COUNT(DISTINCT ?either) AS ?either)
@@ -718,11 +767,14 @@ WHERE {{
     FILTER NOT EXISTS {{ ?openStatement pq:P582 ?anyEnd . }}
     BIND(?person AS ?open)
   }}
+  OPTIONAL {{ ?person wdt:{ZH_MEMBER_ID} ?zh . BIND(?person AS ?withZh) }}
   OPTIONAL {{ ?person wdt:{OPENPARLDATA_ID} ?opd . BIND(?person AS ?withOpd) }}
   OPTIONAL {{
     ?person wdt:{SWISS_PARLIAMENT_ID} ?fed . BIND(?person AS ?withFederal)
   }}
   OPTIONAL {{
+    {{ ?person wdt:{ZH_MEMBER_ID} ?c }}
+    UNION
     {{ ?person wdt:{OPENPARLDATA_ID} ?a }}
     UNION
     {{ ?person wdt:{SWISS_PARLIAMENT_ID} ?b }}
@@ -745,16 +797,20 @@ def identifier_reach_query(person_qids: Sequence[str]) -> str:
     values = " ".join(f"wd:{q}" for q in person_qids)
     return f"""
 SELECT
+  (COUNT(DISTINCT ?withZh) AS ?withZh)
   (COUNT(DISTINCT ?withOpd) AS ?withOpd)
   (COUNT(DISTINCT ?withFederal) AS ?withFederal)
   (COUNT(DISTINCT ?either) AS ?either)
 WHERE {{
   VALUES ?person {{ {values} }}
+  OPTIONAL {{ ?person wdt:{ZH_MEMBER_ID} ?zh . BIND(?person AS ?withZh) }}
   OPTIONAL {{ ?person wdt:{OPENPARLDATA_ID} ?opd . BIND(?person AS ?withOpd) }}
   OPTIONAL {{
     ?person wdt:{SWISS_PARLIAMENT_ID} ?fed . BIND(?person AS ?withFederal)
   }}
   OPTIONAL {{
+    {{ ?person wdt:{ZH_MEMBER_ID} ?c }}
+    UNION
     {{ ?person wdt:{OPENPARLDATA_ID} ?a }}
     UNION
     {{ ?person wdt:{SWISS_PARLIAMENT_ID} ?b }}
@@ -764,8 +820,10 @@ WHERE {{
 """
 
 
-def identifier_values_query(person_qids: Sequence[str]) -> str:
-    """The P14527 *value* each of these items carries.
+def identifier_values_query(
+    person_qids: Sequence[str], identifier_property: str = OPENPARLDATA_ID
+) -> str:
+    """The identifier *value* each of these items carries.
 
     Coverage is not the same question as correctness. Run 14 established that
     35 of 35 linked members carry P14527; this asks whether the value **equals
@@ -774,22 +832,30 @@ def identifier_values_query(person_qids: Sequence[str]) -> str:
     trusted: Parmelin's row reads ``PersonNumber=1108`` against Wikidata's
     P1307 = 1108 (``verify_source.py`` section B).
 
-    Until this agrees, ``config/kantonsrat-zh.yaml`` stays ``quickstatements:
-    false`` — a wrong identifier would attach real edits to the wrong people.
+    The property is a parameter because there are now two candidates and they
+    are not interchangeable: P13468 is the canton's own id and P14527 the
+    aggregator's, and only one of them can equal the person id OpenParlData
+    reports. Asking about both in one dispatch is what tells them apart.
+
+    Until the configured one agrees, ``config/kantonsrat-zh.yaml`` stays
+    ``identifier_verified: false`` — a value from a different id space would
+    match exactly and attach real edits to the wrong people.
     """
     values = " ".join(f"wd:{q}" for q in person_qids)
     return f"""
 SELECT ?person ?value WHERE {{
   VALUES ?person {{ {values} }}
-  ?person wdt:{OPENPARLDATA_ID} ?value .
+  ?person wdt:{identifier_property} ?value .
 }}
 """
 
 
 def compare_identifier_values(
-    expected: Dict[str, Any], bindings: Sequence[dict]
+    expected: Dict[str, Any],
+    bindings: Sequence[dict],
+    identifier_property: str = OPENPARLDATA_ID,
 ) -> Tuple[str, str, List[str]]:
-    """Does each item's P14527 equal the person id the source gave? Pure.
+    """Does each item's identifier equal the person id the source gave? Pure.
 
     ``expected`` maps Q-ID → OpenParlData person id. Compared as strings after
     an int round-trip so ``'09532'`` and ``9532`` agree, the same normalisation
@@ -823,38 +889,129 @@ def compare_identifier_values(
         if got == norm(person_id):
             agree += 1
         else:
-            differ.append(f"{qid}: {OPENPARLDATA_ID}={got!r} but person id={person_id!r}")
+            differ.append(
+                f"{qid}: {identifier_property}={got!r} but person id={person_id!r}"
+            )
 
     lines.append(f"  compared:            {len(expected)}")
     lines.append(f"  value == person id:  {agree}")
     lines.append(f"  value != person id:  {len(differ)}")
-    lines.append(f"  carries no {OPENPARLDATA_ID}: {absent}")
+    lines.append(f"  carries no {identifier_property}: {absent}")
     for line in differ[:10]:
         lines.append(f"    {line}")
 
     if not expected or (agree == 0 and not differ):
         return (
             INCONCLUSIVE,
-            "No item could be compared, so the join is still unverified. "
-            "Keep quickstatements off.",
+            f"No item could be compared, so the {identifier_property} join is "
+            "still unverified. Keep quickstatements off.",
             lines,
         )
     if differ:
         return (
             CONTRADICTED,
-            f"{len(differ)} item(s) carry a {OPENPARLDATA_ID} that is not the "
-            "person id the source gives. The join would attach edits to the "
-            f"wrong people. Do NOT set identifier_property: {OPENPARLDATA_ID} "
-            "without working out what the value actually is.",
+            f"{len(differ)} item(s) carry a {identifier_property} that is not "
+            "the person id the source gives. A join on it would attach edits "
+            f"to the wrong people. Keep identifier_verified: false for "
+            f"{identifier_property} and read the column report below, which "
+            "says where those values actually live in the source — if nowhere, "
+            "this source cannot supply this identifier at all.",
             lines,
         )
     return (
         CONFIRMED,
-        f"{agree} of {agree} compared item(s) carry a {OPENPARLDATA_ID} equal "
-        "to OpenParlData's person id, so the cantonal join is the same class "
-        "of fact as the federal P1307 one. This is the check "
-        "config/kantonsrat-zh.yaml's 'quickstatements: false' was waiting on.",
+        f"{agree} of {agree} compared item(s) carry a {identifier_property} "
+        "equal to OpenParlData's person id, so the cantonal join is the same "
+        "class of fact as the federal P1307 one. This is the check "
+        "config/kantonsrat-zh.yaml's 'identifier_verified: false' was waiting "
+        "on: add the property to models.VERIFIED_IDENTIFIER_PROPERTIES and "
+        "flip it in the same commit as this output.",
         lines,
+    )
+
+
+def discover_identifier_columns(
+    persons: Sequence[Dict[str, Any]],
+    values: Dict[str, Any],
+    qid_field: str = "wikidata_id",
+) -> Tuple[Dict[str, int], int]:
+    """Which source column holds the value Wikidata carries? Pure.
+
+    Runs when :func:`compare_identifier_values` did **not** confirm, and turns
+    "the person id is not it" into "here is what is". Every column of the
+    person record is compared against the item's identifier value, and the
+    columns that match are counted — so an id the source keeps under some other
+    name is found rather than guessed at, the same discipline
+    :func:`district_fields` and ``BEGIN_FIELDS`` encode.
+
+    Returns ``(column -> matches, people compared)``. An empty result is a real
+    answer and the important one: it means this source does not carry the
+    identifier anywhere, so no config can join on it and no ADD_IDENTIFIER
+    suggestion could ever name the right number.
+    """
+    def norm(value: Any) -> str:
+        text = _text(value).strip()
+        try:
+            return str(int(text))
+        except (TypeError, ValueError):
+            return text
+
+    counts: Dict[str, int] = {}
+    compared = 0
+    for row in persons:
+        qid = _text(row.get(qid_field)).strip()
+        wanted = values.get(qid)
+        if not qid or wanted is None:
+            continue
+        compared += 1
+        target = norm(wanted)
+        if not target:
+            continue
+        for column, value in row.items():
+            if norm(value) == target:
+                counts[column] = counts.get(column, 0) + 1
+    return dict(sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))), compared
+
+
+def classify_identifier_column(
+    counts: Dict[str, int], compared: int, id_field: str = "id"
+) -> Tuple[str, str]:
+    """What the column report means for the config. Pure.
+
+    Three outcomes, and only one of them lets a config keep joining on the
+    person id.
+    """
+    if not compared:
+        return (
+            INCONCLUSIVE,
+            "No person could be compared — the source links none of these "
+            "items — so nothing is known about where the identifier lives.",
+        )
+    if counts.get(id_field) == compared:
+        return (
+            CONFIRMED,
+            f"Every compared value is the person id ({id_field!r}), which is "
+            "what the join already uses.",
+        )
+    if not counts:
+        return (
+            CONTRADICTED,
+            f"No column of the source's person record carries these values for "
+            f"any of the {compared} people compared. The identifier exists on "
+            "Wikidata and not in this source, so this source cannot join on it "
+            "and must not suggest adding it: the number it would offer is its "
+            "own person id, which is a different id space. Either join on a "
+            "property this source does supply, or read the canton's own "
+            "dataset (README step 7) for the id.",
+        )
+    best, hits = next(iter(counts.items()))
+    return (
+        CONTRADICTED,
+        f"The values are not the person id, but column {best!r} carries them "
+        f"for {hits} of the {compared} people compared. Join on that column "
+        "rather than on the person id — and note the two are different id "
+        "spaces, so the members matched so far on the person id were matched "
+        "by accident or not at all.",
     )
 
 
@@ -1359,15 +1516,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if known_qids:
         try:
             rows = wikidata.run_query(identifier_reach_query(known_qids))
+            with_zh = _count(rows, "withZh")
             with_opd = _count(rows, "withOpd")
             with_fed = _count(rows, "withFederal")
             either = _count(rows, "either")
+            print(f"    carrying {ZH_MEMBER_ID:<9}    : {with_zh} "
+                  "(the canton's own member id)")
             print(f"    carrying {OPENPARLDATA_ID:<9}    : {with_opd}")
             print(f"    carrying {SWISS_PARLIAMENT_ID:<9}     : {with_fed} "
                   "(federal service, not this seat)")
-            print(f"    carrying either        : {either}")
+            print(f"    carrying any           : {either}")
             reach_verdict, reach_detail = classify_wikidata_reach(
-                len(known_qids), with_opd, with_fed, either, args.expect_seats
+                len(known_qids),
+                with_opd,
+                with_fed,
+                either,
+                args.expect_seats,
+                with_zh_id=with_zh,
             )
         except Exception as exc:
             print(f"    ! WDQS: {exc}")
@@ -1384,27 +1549,66 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     # Coverage is not correctness. The join depends on the *value* being the
     # person id, which is what the federal side checked directly and what
-    # config/kantonsrat-zh.yaml's 'quickstatements: false' is waiting on.
-    print()
-    print(f"  Does a {OPENPARLDATA_ID} value equal OpenParlData's person id?")
-    value_verdict, value_detail = INCONCLUSIVE, "Not compared."
+    # config/kantonsrat-zh.yaml's 'identifier_verified: false' is waiting on.
+    #
+    # Both candidates are asked about in one dispatch, because only one of them
+    # can equal OpenParlData's person id and the config has to name that one.
+    # The section's verdict is P13468's: that is what the ZH config joins on.
     expected_ids = {
         _text(r.get("wikidata_id")).strip(): r.get("id")
         for r in seated
         if _text(r.get("wikidata_id")).strip().startswith("Q")
     }
-    if expected_ids:
-        try:
-            value_verdict, value_detail, value_lines = compare_identifier_values(
-                expected_ids,
-                wikidata.run_query(identifier_values_query(list(expected_ids))),
-            )
-            for line in value_lines:
-                print(line)
-        except Exception as exc:
-            print(f"    ! WDQS: {exc}")
-    print()
-    print(f"{value_verdict}: {value_detail}")
+    value_verdict, value_detail = INCONCLUSIVE, "Not compared."
+    zh_values: Dict[str, Any] = {}
+    for prop in (ZH_MEMBER_ID, OPENPARLDATA_ID):
+        print()
+        print(f"  Does a {prop} value equal OpenParlData's person id?")
+        verdict, detail = INCONCLUSIVE, "Not compared."
+        if expected_ids:
+            try:
+                bindings = wikidata.run_query(
+                    identifier_values_query(list(expected_ids), prop)
+                )
+                if prop == ZH_MEMBER_ID:
+                    zh_values = {
+                        _qid(row.get("person", {}).get("value", "")): (
+                            row.get("value") or {}
+                        ).get("value")
+                        for row in bindings
+                        if _qid(row.get("person", {}).get("value", ""))
+                    }
+                verdict, detail, value_lines = compare_identifier_values(
+                    expected_ids, bindings, prop
+                )
+                for line in value_lines:
+                    print(line)
+            except Exception as exc:
+                print(f"    ! WDQS: {exc}")
+        print()
+        print(f"{verdict}: {detail}")
+        if prop == ZH_MEMBER_ID:
+            value_verdict, value_detail = verdict, detail
+
+    # "Not the person id" is only half an answer, and the useless half. If the
+    # source keeps the canton's id under some other column, the config can join
+    # on that instead; if it keeps it nowhere, no config can join on P13468 at
+    # all and the ADD_IDENTIFIER suggestions would be offering the wrong
+    # number. Asked of the rows rather than of a guess, for the same reason
+    # BEGIN_FIELDS is resolved from the rows.
+    if zh_values and value_verdict != CONFIRMED:
+        print()
+        print(f"  If {ZH_MEMBER_ID} is not the person id, which column is it?")
+        counts, compared = discover_identifier_columns(seated, zh_values)
+        print(f"    people compared: {compared}")
+        if counts:
+            for column, hits in list(counts.items())[:10]:
+                print(f"    {column:<28} matches {hits}")
+        else:
+            print("    (no column of the person record carries these values)")
+        column_verdict, column_detail = classify_identifier_column(counts, compared)
+        print()
+        print(f"{column_verdict}: {column_detail}")
 
     # --- D. which item IS the seat? -----------------------------------------
     print()
@@ -1594,7 +1798,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"B. Seat tenure dated             : {date_verdict}")
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")
     print(f"C. Wikidata-asserted identifier  : {reach_verdict}")
-    print(f"C. ...and its value is the id    : {value_verdict}")
+    print(f"C. {ZH_MEMBER_ID}'s value is the id  : {value_verdict}")
     print(f"D. Position item {args.position or '(none given)':<15}: {pos_verdict}")
     print(f"E. Wahlkreis map for P768        : {district_verdict} "
           f"({len(mapping)}/{args.expect_districts} resolved)")
