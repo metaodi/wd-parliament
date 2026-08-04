@@ -147,6 +147,11 @@ P_PARLIAMENTARY_TERM = "P2937"
 P_POLITICAL_PARTY = "P102"
 P_DATE_OF_BIRTH = "P569"
 P_DATE_OF_DEATH = "P570"
+# "subject named as", read as a qualifier on the identifier statement: how the
+# person is spelt *in the source the identifier points at*. Never written by
+# this tool — it is read to corroborate that an identifier reached the right
+# person when the item's label and the source's spelling differ.
+P_SUBJECT_NAMED_AS = "P1810"
 
 # The two statement models this tool can target; see ``config.Config`` and the
 # ``statement_model`` key in config/parliament.yaml.
@@ -366,6 +371,30 @@ class WikidataPerson:
 
     def statements_for(self, position_qid: str) -> List[PositionStatement]:
         return [s for s in self.statements if s.position_qid == position_qid]
+
+
+# Where a name other than the item's label came from. An alias is Wikidata's
+# "also known as"; ``NAME_FROM_NAMED_AS`` is a P1810 qualifier on the identifier
+# statement, which is the stronger of the two because it names the spelling used
+# by *the very source the identifier points at* rather than any spelling at all.
+NAME_FROM_ALIAS = "alias"
+NAME_FROM_NAMED_AS = "P1810"
+
+
+@dataclass(frozen=True)
+class NameVariant:
+    """A name an item carries besides its label.
+
+    Read only to corroborate an identifier: an item whose label is
+    ``Johann Zünd`` while the source's record says ``Zündt`` is the same person
+    if the item also carries ``Johannes Zündt`` as an alias, and is *certainly*
+    the same person if P1810 says so on the identifier statement — that
+    qualifier exists precisely to record the source's spelling.
+    """
+
+    name: str
+    origin: str  # NAME_FROM_ALIAS or NAME_FROM_NAMED_AS
+    language: Optional[str] = None  # the alias's language tag, when it has one
 
 
 @dataclass

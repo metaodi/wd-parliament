@@ -983,6 +983,54 @@ nothing, so widening it cannot cost safety; the worst it can do is move a row
 from "wrong person" to "check this one". Somebody settling those five on the
 biography pages is what stands between step 8 and a `CONFIRMED`.
 
+#### Wikidata already answers some of those five, and the check was not asking
+
+An item's **label is not the whole of what Wikidata says a person is called**,
+and until now section B compared the label alone. Two other assertions live on
+the same item, both about spelling and both ignored:
+
+- an **alias** ("also known as"). `Johann Zünd` carries `Johannes Zündt` as an
+  alias — the item itself records the second spelling;
+- **P1810 `subject named as`** as a qualifier on the P1307 statement. That one
+  is not a spelling in general but a claim about *this source*: "in the
+  parlament.ch council-member database this person is named `Johannes Zündt`".
+  Where it exists it settles the question outright, because it is Wikidata
+  stating which record the identifier points at and under what name.
+
+Both are now read, by a fourth bounded query
+(`WikidataClient.get_name_variants`), asked only for the people section B
+actually judges. Every name the item carries is compared and the **strongest
+reading wins**, so the extra names can only move a row *towards* agreement:
+they cannot manufacture the `CONTRADICTED` that would block a bulk apply, and
+the worst they can do is settle a row the probe already had the answer to. What
+they cannot do is turn corroboration into proof — an alias is asserted by
+whoever wrote the item, exactly like the label — so which name settled a row is
+counted and printed rather than folded into the total:
+
+```
+  items carrying another name:    2
+    settled by an alias:          1
+    settled by P1810 'named as':  1
+
+  settled by a name the label does not carry — read them:
+    Q9 'Johann Zünd' (NR) -> #2126 'Zündt' via P1810 'Johannes Zündt' (exact)
+```
+
+An unsettled row now also says whether there was anything else to check
+(`[no alias or P1810 to check]` against `[also checked: alias '…']`), because
+the two mean different things: the first is somebody not having recorded the
+source's spelling yet — fixable on Wikidata by adding the P1810, which both
+records the finding and settles the probe — while the second is the sources
+genuinely spelling the person differently everywhere.
+
+⚠️ **Not yet re-measured against live Wikidata.** The change is covered by
+tests, but how many of the five it settles is a question only a dispatch of
+`Verify assumptions` can answer. Until run 19 reports, the table above stands.
+
+The main pipeline's name fallback (`resolve.py`) already searched aliases —
+`people_search_query` matches `rdfs:label` UNION `skos:altLabel` — so this
+closes the gap between what the pipeline matches on and what the probe checks.
+
 ⚠️ Even then, `CONFIRMED` licenses *considering* the removal of the gates, not
 the removal itself. Step 5 — pasting one line by hand — comes first.
 
@@ -1039,7 +1087,8 @@ rather than wired into a gate:
   have repeated the first mistake in miniature. Those are now `near` misses:
   reported, listed, and **not accepted** — the section returns INCONCLUSIVE
   rather than either CONFIRMED or CONTRADICTED, because "unsettled" is what
-  they are.
+  they are. And it was asking a narrower question than Wikidata answers: the
+  aliases and the P1810 qualifier are now read too, see above.
 
 **The "no P580 anywhere" anomaly is settled, and it is real data.** Every one
 of the 1,968 open statements carries no start date — but the control run 18
