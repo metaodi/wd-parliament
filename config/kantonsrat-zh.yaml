@@ -30,20 +30,53 @@ body_key: ZH
 # There is no cantonal P1307: it is the federal service, and joining on it would
 # reach only the members who also sat in Bern — silently excluding exactly the
 # people who never went federal, a bias that reads as coverage rather than as a
-# bug. P14527 (OpenParlData ID) is the alternative, and unlike federally — where
-# it adds nobody, every holder already having P1307 — it is here the only
-# Wikidata-asserted identifier that reaches these people at all: 35 of the 35
-# members OpenParlData links to Wikidata carry it (run 14).
+# bug.
 #
-# Because *Wikidata* asserts it, a match through it is the same class of fact as
-# the federal P1307 match, and quickstatements.is_mechanical needs no change.
+# **P13468 is the right property and the wrong join, and run 20 (2026-08-04) is
+# why.** "Zurich Kantonsrat and Regierungsrat member ID" is the canton's own
+# member id and so the cantonal analogue of P1307; 28 of the 35 ZH people
+# OpenParlData links to Wikidata carry it, against P14527's 35. But an
+# identifier needs a value on *both* sides, and section C found:
 #
-# ⚠️ ONE THING IS STILL UNVERIFIED: that a P14527 *value* equals OpenParlData's
-# person id. The federal equivalent was checked directly (Parmelin: PersonNumber
-# 1108 == P1307 1108, verify_source.py section B); the cantonal one has not
-# been. That is why `quickstatements` is false below. Confirm it before
-# flipping that, exactly as the federal side did.
+#     value == person id:  0 of 28   (Ruth Genner: P13468 22518, person id 9532)
+#     which column is it?  none of the person record's columns, for any of them
+#
+# So P13468 identifies these people in the canton's own dataset — which this
+# tool does not read — and OpenParlData carries it nowhere. Joining on it would
+# compare a person id against a different id space, and every ADD_IDENTIFIER
+# suggestion would offer a number that is not this property's.
+# `config.load_config` now refuses the combination outright. Supplying P13468
+# properly means reading the canton's dataset (README step 7), not renaming a
+# key here.
+#
+# That leaves P14527, the OpenParlData ID: Wikidata-asserted, and the only
+# identifier whose value this source can actually produce (34 of 35 values are
+# the ZH person id). Its known cost is that it reaches almost none of the
+# *sitting* chamber — the first real run matched 0 of 180, with 138 falling
+# through to the name search — because the 35 linked people are mostly members
+# notable enough to have gone federal. The report's ADD_IDENTIFIER suggestions
+# are the fix for that, and they are the highest-leverage edit here: each one
+# makes a future run exact.
 identifier_property: P14527
+
+# ⚠️ FALSE, and run 20 is why. The 35th value disagrees — Q131948095 carries
+# P14527 1411 while this body's person id is 17436 — because **OpenParlData
+# holds one person record per person *per body***, so P14527 identifies a
+# record and not a person, and an item can carry the record from another
+# parliament. That is the federal bias in miniature: it misfires on exactly the
+# members who also sat elsewhere.
+#
+# The flag is a mechanism, not a note. It makes the run corroborate every
+# identifier match against the item's own name and birth date
+# (`resolve.corroborates`), report how many it rejected, stamp every suggestion
+# `identifier_unverified` so `quickstatements.is_mechanical` refuses it, and say
+# in each ADD_IDENTIFIER that the value is unconfirmed. Two id spaces that
+# overlap numerically match *exactly* and match the wrong people; this is what
+# stands between that and a wrong edit.
+#
+# Flipping it needs section C to read CONFIRMED — 35 of 35, not 34 — and P14527
+# put back into models.VERIFIED_IDENTIFIER_PROPERTIES in the same commit.
+identifier_verified: false
 
 # One P39 statement per continuous tenure. Measured rather than assumed: the ZH
 # memberships are one row per *tenure*, not per term as the federal ones are —
@@ -59,7 +92,8 @@ group_by: canton
 # ---------------------------------------------------------------------------
 # Two reasons, either of which is sufficient:
 #
-#   1. the P14527 == person id equality above is unconfirmed;
+#   1. the P14527 == person id equality above is 34 of 35, not 35 of 35, and
+#      while it is, `identifier_verified: false` refuses every command anyway;
 #   2. OpenParlData links only 35 of 834 ZH people to a Wikidata item (4.2%,
 #      against 3,685 of 3,686 federally), so most members have no item at all
 #      and the report is chiefly a worklist for *creating* them. There is very

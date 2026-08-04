@@ -273,6 +273,11 @@ def process(
         config.position_qids,
         config.language,
         config.identifier_property,
+        # An identifier property whose value has not been measured against the
+        # source's person id may join the wrong people rather than none, so
+        # every match it makes is checked against the item's own name and
+        # birth date. See ``config.Config.identifier_verified``.
+        corroborate=not config.identifier_verified,
     )
 
     results: List[BodyResult] = []
@@ -314,6 +319,7 @@ def _fill_counts(
     )
     result.matched_by_name = sum(1 for m in members if m.qid_source == QID_FROM_NAME)
     result.unmatched = sum(1 for m in members if not m.qid)
+    result.identifier_mismatches = sum(1 for m in members if m.identifier_mismatch_qids)
     result.wikidata_open = sum(
         1
         for p in people.values()

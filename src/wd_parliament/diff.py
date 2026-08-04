@@ -56,6 +56,7 @@ from .models import (
     KIND_REVIEW_PARTY,
     KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
+    P_PARLIAMENT_ID,
     QID_FROM_NAME,
     Body,
     Member,
@@ -192,12 +193,17 @@ def _base_suggestion(
     )
 
 
-def _verify_note(member: Member) -> str:
-    """Ask the reader to check an identity that was established by name."""
+def _verify_note(member: Member, identifier_property: str = P_PARLIAMENT_ID) -> str:
+    """Ask the reader to check an identity that was established by name.
+
+    The property is named rather than described, because "the Swiss parliament
+    ID" is the wrong thing to send a cantonal reader looking for: the Kantonsrat
+    is joined on P13468 and none of its members has a P1307 at all.
+    """
     if member.qid_source == QID_FROM_NAME:
         return (
-            " The item was matched by name and birth date, not by the Swiss "
-            "parliament ID, so please confirm it is the right person."
+            f" The item was matched by name and birth date, not by "
+            f"{identifier_property}, so please confirm it is the right person."
         )
     return ""
 
@@ -536,7 +542,18 @@ def _departed_suggestion(
     probe exists.
     """
     number = _person_number(person.parliament_id)
-    tenure = tenures.get((number, body.council.upper())) if number is not None else None
+    # The bridge back to the source is the identifier's *value*, so it holds
+    # only while that value is the source's person id. Under
+    # ``identifier_verified: false`` nothing has shown it is, and a wrong bridge
+    # here does not fail — it lands on some other person's spell and prints
+    # their dates under this person's name. The finding itself stands (Wikidata
+    # records an open seat the source does not), so it is still reported; only
+    # the dates it would offer are withheld.
+    tenure = (
+        tenures.get((number, body.council.upper()))
+        if number is not None and config.identifier_verified
+        else None
+    )
     statements = person.statements_for(body.position_qid)
 
     detail = (
@@ -591,6 +608,14 @@ def _departed_suggestion(
             "the end has to be looked up by hand on the biography page."
         )
         payload["start"] = tenure.start
+    elif not config.identifier_verified:
+        detail += (
+            f"add an end date (P582), looked up by hand. The dates "
+            f"{config.source_name} holds are not offered here: reaching them "
+            f"means reading {config.identifier_property}'s value as this "
+            "source's person id, which has not been measured — a wrong reading "
+            "would print somebody else's dates under this name."
+        )
     else:
         detail += (
             f"add an end date (P582). {config.source_name} gives no leaving "
@@ -627,12 +652,27 @@ def _member_suggestions(
     ``quickstatements.is_mechanical``.
     """
     out: List[Suggestion] = []
-    verify = _verify_note(member)
+    verify = _verify_note(member, config.identifier_property)
     biography = config.biography_url_for(member.person_number)
 
     # The highest-leverage edit: give the item its identifier so that every
     # future run joins exactly instead of guessing from a name.
+    #
+    # The value is the source's person id, which is the whole claim behind the
+    # identifier property. Under ``identifier_verified: false`` that claim is
+    # the one thing no probe has checked yet, and the suggestion says so
+    # rather than being withheld: a reader who confirms it gets the most
+    # valuable edit in the report, and one who does not must not paste a
+    # number from a different id space onto an item.
     if member.qid_source == QID_FROM_NAME and not person.parliament_id:
+        caveat = (
+            ""
+            if config.identifier_verified
+            else f" ⚠️ That {config.identifier_property} values equal "
+            f"{config.source_name}'s person ids is asserted by this config and "
+            "not yet measured (scripts/verify_kantonsrat.py section C) — check "
+            "one by hand before applying these in bulk."
+        )
         out.append(
             _base_suggestion(
                 KIND_ADD_IDENTIFIER,
@@ -641,7 +681,7 @@ def _member_suggestions(
                 f"Add {config.identifier_property} "
                 f"'{member.person_number}'. The item was found by name and "
                 "birth date; recording the identifier makes every future "
-                "comparison exact." + verify,
+                "comparison exact." + caveat + verify,
                 payload={
                     "parliament_id": str(member.person_number),
                     "biography": biography,
@@ -709,6 +749,16 @@ def _member_suggestions(
         )
 
     out.extend(_party_suggestions(body, member, person, config, verify))
+
+    # The join rests on a property whose values nothing has yet shown to be
+    # the source's person ids. Stamped on every suggestion for this member, and
+    # refused by ``quickstatements.is_mechanical`` for the same reason
+    # ``sources_disagree`` is: the identity behind the edit is disputed, and a
+    # wrong identity does not write a wrong value — it writes a right value
+    # onto the wrong person, which no later run can detect.
+    if not config.identifier_verified:
+        for suggestion in out:
+            suggestion.payload["identifier_unverified"] = True
 
     # A second source contradicting the first. Stamped onto every suggestion
     # above *before* it is added to the list, so the disagreement itself does

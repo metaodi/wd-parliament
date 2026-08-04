@@ -215,3 +215,63 @@ def test_match_members_without_name_matches_only_joins_on_the_identifier():
     matched = match_members([member], [make_person("Q1", "999")])
     assert member.qid is None
     assert matched == {}
+
+
+# --- corroborating an unverified identifier ---------------------------------
+# Turned on by ``identifier_verified: false``, which is what a config says when
+# the property's *value* has not been shown to be the source's person id. The
+# failure it guards against is the one an exact join can produce and a missing
+# one cannot: two id spaces that overlap numerically match confidently, and
+# match the wrong people.
+def test_an_unverified_identifier_match_must_be_corroborated():
+    member = make_member(9532, "Ruth", "Genner", birth=None)
+    people = [make_person("Q999", "9532", label="Heinrich Müller")]
+    matched = match_by_identifier([member], people, corroborate=True)
+    assert member.qid is None
+    assert member.identifier_mismatch_qids == ["Q999"]
+    assert matched == {}
+
+
+def test_the_same_match_is_taken_when_the_property_is_verified():
+    """The default, and what the federal P1307 join keeps doing.
+
+    P1307's value was measured against ``PersonNumber`` directly, so an item it
+    points at is this member however the item is labelled — an unhelpful label
+    is not evidence of anything.
+    """
+    member = make_member(9532, "Ruth", "Genner", birth=None)
+    match_by_identifier([member], [make_person("Q999", "9532", label="Q999")])
+    assert member.qid == "Q999"
+
+
+def test_corroboration_accepts_an_agreeing_name():
+    member = make_member(9532, "Ruth", "Genner", birth=None)
+    people = [make_person("Q117716", "9532", label="Ruth Genner")]
+    match_by_identifier([member], people, corroborate=True)
+    assert member.qid == "Q117716"
+    assert member.identifier_mismatch_qids == []
+
+
+def test_corroboration_lets_the_birth_date_decide_over_the_label():
+    """The strongest evidence available, and the same test the name fallback
+    applies to a candidate: a namesake born on another day is another person."""
+    member = make_member(9532, "Ruth", "Genner", birth="1956-08-30")
+    agreeing = make_person("Q1", "9532", label="R. Genner-Muster", birth="1956-08-30")
+    match_by_identifier([member], [agreeing], corroborate=True)
+    assert member.qid == "Q1"
+
+    other = make_member(9532, "Ruth", "Genner", birth="1956-08-30")
+    namesake = make_person("Q2", "9532", label="Ruth Genner", birth="1980-01-01")
+    match_by_identifier([other], [namesake], corroborate=True)
+    assert other.qid is None
+
+
+def test_an_item_nothing_corroborates_is_refused_not_assumed():
+    """No label and no birth date corroborates nothing, so the fail-safe
+    direction is to refuse: the member falls through to the name search, which
+    corroborates whatever it finds."""
+    member = make_member(9532, "Ruth", "Genner", birth=None)
+    match_by_identifier([member], [make_person("Q3", "9532", label="Q3")],
+                        corroborate=True)
+    assert member.qid is None
+    assert member.identifier_mismatch_qids == ["Q3"]

@@ -3,8 +3,8 @@
 ``test_pipeline.py`` does this for the federal run. The point of repeating it
 for Zurich is not coverage of the same code — it is that **the pipeline is
 genuinely source-agnostic**: the same ``app.process`` produces a report from
-OpenParlData rows joined on P14527, with no federal table and no P1307 anywhere
-in the path.
+OpenParlData rows joined on P14527, with no federal table and no P1307
+anywhere in the path.
 
 Everything reaches ``process`` through the same seams the federal tests use, so
 no network is touched.
@@ -101,8 +101,19 @@ def test_the_config_selects_the_cantonal_source_and_join(config):
     assert config.councils == ["KR"]
 
 
+def test_the_join_is_declared_unverified(config):
+    """Wikidata asserts P14527; that its value is *this body's* person id is a
+    separate question, and run 20 answered it 34 of 35.
+
+    The one that disagrees carries another parliament's OpenParlData id for the
+    same human, because the source holds a record per person per body. So the
+    run corroborates every identifier match and emits nothing mechanically.
+    """
+    assert config.identifier_verified is False
+
+
 def test_the_config_is_report_only_until_the_join_is_confirmed(config):
-    """P14527's value has not been shown to equal OpenParlData's person id.
+    """P14527's value agrees with OpenParlData's person id 34 times in 35.
 
     The federal equivalent was checked directly (Parmelin, PersonNumber 1108 ==
     P1307 1108). Until the cantonal one is, nothing may be emitted.
@@ -146,13 +157,51 @@ def test_the_join_uses_the_configured_property_not_p1307(config, source):
     assert wikidata.identifier_properties == ["P14527"]
 
 
-def test_a_member_matched_on_p14527_carries_identifier_provenance(config, source):
+def test_a_member_matched_on_the_cantonal_id_carries_identifier_provenance(
+    config, source
+):
     results = process(config, source, FakeWikidata())
     matched = [
         s for s in results[0].suggestions if s.qid_source == QID_FROM_IDENTIFIER
     ]
     assert matched, "Ruth Genner should have joined on P14527 == person id 9532"
     assert all(s.person_qid == "Q117716" for s in matched)
+
+
+def test_an_identifier_match_naming_somebody_else_is_rejected_and_counted(
+    config, source
+):
+    """The failure an *unverified* identifier can produce, and the guard on it.
+
+    P14527 identifies a person *record*, so an item can carry another body's id
+    for the same human — and any id space that overlaps this one numerically
+    does not make the join fail, it makes it succeed on the wrong person. Here
+    9532 points at an item that is plainly not Ruth Genner, so the match is
+    refused, counted and reported rather than believed.
+    """
+    impostor = WikidataPerson(
+        qid="Q999", label="Heinrich Müller", parliament_id="9532"
+    )
+    results = process(config, source, FakeWikidata({"Q999": impostor}))
+    assert results[0].identifier_mismatches == 1
+    assert results[0].matched_by_identifier == 0
+    assert all(s.person_qid != "Q999" for s in results[0].suggestions)
+
+
+def test_nothing_is_mechanical_while_the_identifier_is_unverified(config, source):
+    """The second gate, independent of ``quickstatements: false``.
+
+    Even a member matched on the identifier is refused, because provenance is
+    only half the claim: the value being from another id space would put
+    correct data on the wrong item, which no later run can detect.
+    """
+    results = process(config, source, FakeWikidata())
+    suggestions = results[0].suggestions
+    assert any(s.qid_source == QID_FROM_IDENTIFIER for s in suggestions)
+    assert all(
+        s.payload.get("identifier_unverified") for s in suggestions if s.person_qid
+    )
+    assert render(suggestions, statement_model=config.statement_model) == []
 
 
 def test_members_without_an_item_are_reported_for_creation(config, source):
@@ -269,13 +318,25 @@ def test_a_departed_cantonal_member_gets_their_dates_and_the_cantonal_link(confi
             ],
         )
     }
+    # As shipped, the dates are withheld: reaching them means reading the
+    # identifier's value as OpenParlData's person id, which is the one thing
+    # section C has not measured. The *finding* is unaffected — Wikidata records
+    # an open seat the source does not — and so is the cantonal link.
+    results = process(config, source, FakeWikidata(people))
+    suggestion = next(s for s in results[0].suggestions if s.person_qid == "Q999")
+    assert "end" not in suggestion.payload
+    assert "looked up by hand" in suggestion.detail
+    assert suggestion.payload["biography"] == "https://www.kantonsrat.zh.ch/mitglieder/"
+    assert "parlament.ch" not in suggestion.detail
+
+    # …and the day the probe confirms the value, the same run offers them: the
+    # ended `memberships` row carries both dates, in the cantonal source.
+    config.identifier_verified = True
     results = process(config, source, FakeWikidata(people))
     suggestion = next(s for s in results[0].suggestions if s.person_qid == "Q999")
     assert suggestion.payload["start"] == date(2011, 5, 9)
     assert suggestion.payload["end"] == date(2019, 5, 5)
-    assert suggestion.payload["biography"] == "https://www.kantonsrat.zh.ch/mitglieder/"
     assert "OpenParlData records the seat as held" in suggestion.detail
-    assert "parlament.ch" not in suggestion.detail
 
 
 # --- a data error in the source, surfaced in the source's own report ----------

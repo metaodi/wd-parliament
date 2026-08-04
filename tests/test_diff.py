@@ -282,6 +282,37 @@ def test_name_matched_item_without_the_identifier(periods):
     assert suggestions[0].payload["parliament_id"] == "1101"
 
 
+def test_an_unverified_identifier_says_so_in_the_suggestion(periods):
+    """The number offered is only right if the two id spaces are the same one.
+
+    ADD_IDENTIFIER is the highest-leverage edit in the report, so it is not
+    withheld while a config joins on an unmeasured property — but a reader who
+    pastes it in bulk without checking one would write the source's own person
+    id into a property that is not it.
+    """
+    member = make_member(qid_source=QID_FROM_NAME)
+    config = make_config(MODEL_TENURE)
+    config.identifier_property = "P13468"
+    config.identifier_verified = False
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id=None)}, periods, config
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_IDENTIFIER)
+    assert "not yet measured" in add.detail
+    assert all(s.payload.get("identifier_unverified") for s in suggestions)
+
+
+def test_a_verified_identifier_adds_no_caveat(periods):
+    member = make_member(qid_source=QID_FROM_NAME)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id=None)}, periods,
+        make_config(MODEL_TENURE),
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_IDENTIFIER)
+    assert "not yet measured" not in add.detail
+    assert "identifier_unverified" not in add.payload
+
+
 def test_identifier_matched_item_never_gets_add_identifier(periods):
     member = make_member(qid_source=QID_FROM_IDENTIFIER)
     statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
@@ -431,6 +462,34 @@ def _departed(tenures=None, start=date(2015, 11, 30), wikidata_start=date(2015, 
         make_config(MODEL_TENURE),
         tenures=tenures,
     )[0]
+
+
+def test_an_unverified_identifier_withholds_the_departed_dates(periods):
+    """The reverse walk reaches the source *through Wikidata's own value*.
+
+    That bridge holds only while the value is the source's person id. Unmeasured,
+    a wrong bridge does not fail — it lands on another person's spell and prints
+    their dates under this name, so the finding stands and the dates do not.
+    """
+    member, seated = _sitting_member_and_person()
+    ghost = _ghost()
+    ghost.parliament_id = "3432"
+    config = make_config(MODEL_TENURE)
+    config.identifier_property = "P13468"
+    config.identifier_verified = False
+    suggestion = compute_suggestions(
+        BODY, [member], {"Q7": seated, "Q99": ghost}, [], config,
+        tenures={
+            (3432, "N"): Tenure(
+                person_number=3432, council="N",
+                start=date(2011, 12, 5), end=date(2019, 12, 1),
+            )
+        },
+    )[0]
+    assert "start" not in suggestion.payload
+    assert "end" not in suggestion.payload
+    assert "2019-12-01" not in suggestion.detail
+    assert "looked up by hand" in suggestion.detail
 
 
 def test_the_source_supplies_the_start_and_end_date_to_add(periods):

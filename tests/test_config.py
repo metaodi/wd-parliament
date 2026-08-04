@@ -169,3 +169,70 @@ enrich:
   groups:
     NR: Nationalrat
 """))
+
+
+# --- the identifier property and its value ----------------------------------
+def test_a_measured_property_is_verified_by_default(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL))
+    assert cfg.identifier_property == "P1307"
+    assert cfg.identifier_verified is True
+
+
+def test_an_unmeasured_property_defaults_to_unverified(tmp_path):
+    """Provenance and value are two questions, and only the first is settled.
+
+    Wikidata asserts P13468, which is what ``is_mechanical`` can see. That its
+    value equals the source's person id is what nothing has measured, and a
+    config joining on it must default to saying so rather than to silence.
+    """
+    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P13468\n"))
+    assert cfg.identifier_verified is False
+
+
+def test_claiming_an_unmeasured_property_is_verified_is_rejected(tmp_path):
+    """The one claim ``is_mechanical`` writes real edits off the back of."""
+    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    with pytest.raises(ValueError, match="has not been measured"):
+        load_config(write(tmp_path, text))
+
+
+def test_an_unknown_identifier_property_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match="identifier_property"):
+        load_config(write(tmp_path, MINIMAL + "identifier_property: P9999999\n"))
+
+
+def test_the_shipped_cantonal_config_joins_on_what_the_source_can_supply():
+    """P13468 is the canton's own id and the property Wikidata uses for these
+    people — but run 20 found its values in no column of OpenParlData, so the
+    only joinable identifier here is the one that source *does* produce."""
+    cfg = load_config("config/kantonsrat-zh.yaml")
+    assert cfg.identifier_property == "P14527"
+    assert cfg.identifier_verified is False
+    assert cfg.quickstatements is False
+
+
+def test_the_cantons_own_id_cannot_be_joined_on_from_openparldata(tmp_path):
+    """Measured and falsified, so it is refused rather than documented.
+
+    Run 20 compared P13468 against every column of the ZH person records: 0 of
+    28 values are the person id and no column carries them. A join would
+    compare two id spaces, and every ADD_IDENTIFIER would offer a number from
+    the wrong one.
+    """
+    text = MINIMAL + """
+source: openparldata
+body_key: ZH
+identifier_property: P13468
+"""
+    with pytest.raises(ValueError, match="no column"):
+        load_config(write(tmp_path, text))
+
+
+def test_p14527_lost_its_verified_status_to_a_single_disagreement():
+    """One is enough, and the reason generalises: OpenParlData holds one person
+    record per person *per body*, so P14527 identifies a record. Q131948095
+    carries 1411 where the ZH record is 17436 — another parliament's id for the
+    same human."""
+    from wd_parliament.models import VERIFIED_IDENTIFIER_PROPERTIES
+
+    assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307"})

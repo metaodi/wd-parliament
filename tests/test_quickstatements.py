@@ -109,6 +109,20 @@ def test_a_missing_position_is_never_mechanical():
     assert is_mechanical(s, MODEL_TENURE) is False
 
 
+def test_an_unverified_identifier_is_never_mechanical():
+    """Provenance is only half the claim, and this is the other half.
+
+    Wikidata asserting the property is what ``qid_source`` records. Whether its
+    *value* is the source's person id is what a probe measures, and until one
+    has, an exact match can be exactly wrong — correct data written onto
+    somebody else's item, which no later run can detect. ``diff`` stamps this
+    on every suggestion for such a member.
+    """
+    s = make_suggestion(start=date(2015, 12, 7), identifier_unverified=True)
+    assert is_mechanical(s, MODEL_TENURE) is False
+    assert render_suggestion(s, RETRIEVED, MODEL_TENURE) is None
+
+
 def test_the_reverse_walk_end_date_is_not_mechanical():
     """No leaving date is known for someone outside the current-members set."""
     s = make_suggestion(kind=KIND_ADD_END_DATE, statement_id="S1")
