@@ -12,6 +12,7 @@ directly rather than mocking ``swissparlpy``'s OData layer.
 from __future__ import annotations
 
 import logging
+import re
 from datetime import date, datetime
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
@@ -35,6 +36,37 @@ VOTE_TABLE = "Vote"
 VOTE_ID_FIELDS = ("IdVote", "ID", "Id")
 
 DEFAULT_LANGUAGE = "DE"
+
+# Columns the personal-data checks read (README step 9). Three are certain and
+# measured: ``BirthPlace_City`` / ``BirthPlace_Canton`` (P19, filled in for 245
+# of 246 sitting members), ``Citizenship`` (P1321, 244 of 246) and
+# ``NumberOfChildren`` (P1971, 105 of 246).
+#
+# **The other two do not exist.** Run 19 (2026-08-04) listed every column
+# ``MemberCouncil`` returns and there is no occupation and no website among
+# them, so ``config/parliament.yaml`` no longer asks for P106 or P856. The
+# tuples stay as the hook a future column would be read through, and they cost
+# nothing meanwhile: a name that matches no column yields ``None``, an empty
+# ``Member`` field and therefore no suggestion at all — the same "skip unknown
+# values" rule the Q-ID maps follow. Re-run the probe before adding a name.
+#
+# The same listing turned up ``Nationality``, which is not in the fixtures and
+# is a country rather than a Bürgerort — a possible P27 source, and a separate
+# check nobody has asked for. ``Citizenship`` remains the P1321 field.
+#
+# Deliberately **not** candidates for the occupation: ``Mandates``,
+# ``AdditionalMandate`` and ``AdditionalActivity``. Those are the register of
+# interests — board seats and side activities held *because* of the mandate —
+# and P106 is what somebody does for a living. Filing one as the other would
+# put a wrong statement on a real person.
+OCCUPATION_FIELDS = ("Occupation", "OccupationText", "Profession", "ProfessionText")
+WEBSITE_FIELDS = ("Website", "HomePage", "Homepage", "PersonalWebsite")
+
+# ``Citizenship`` carries the Bürgerort as "City (XX)", and a member may hold
+# several. Splitting on a comma is safe **only** when every part it produces
+# looks like one of those, which is what :func:`places_of_origin` checks rather
+# than assumes: a place name containing a comma would otherwise be torn in two.
+_ORIGIN_RE = re.compile(r"^.+\([A-Z]{2}\)$")
 
 # SQL Server's ``datetime`` minimum. The OData service is backed by one and
 # sends this value for "no date" rather than a null — every sitting member's
@@ -109,6 +141,75 @@ def _as_bool(value: Any) -> bool:
     return str(value).strip().lower() in ("true", "1", "yes")
 
 
+def _first_field(row: Dict[str, Any], candidates: Sequence[str]) -> Any:
+    """The first candidate column that carries a value on this row. Pure.
+
+    The discipline :mod:`openparldata` applies to its date columns, for the
+    same reason: "no such column" and "column full of nulls" are
+    indistinguishable through ``.get()``, so the name is resolved from the row
+    rather than assumed and a miss degrades to ``None``.
+    """
+    for name in candidates:
+        value = row.get(name)
+        if value not in (None, ""):
+            return value
+    return None
+
+
+def place_of_birth(row: Dict[str, Any]) -> Optional[str]:
+    """``BirthPlace_City`` qualified by its canton, as the source spells it. Pure.
+
+    "Bern (BE)" rather than "Bern", because the canton is what distinguishes
+    the eleven Swiss municipalities sharing a name — and this string is read by
+    a human resolving it to an item, so the disambiguator is the useful half.
+    The canton alone is **not** a place of birth: a row carrying only
+    ``BirthPlace_Canton`` yields ``None``, since P19 wants the municipality.
+    """
+    city = _as_str(row.get("BirthPlace_City"))
+    if not city:
+        return None
+    canton = _as_str(row.get("BirthPlace_Canton"))
+    return f"{city} ({canton})" if canton else city
+
+
+def places_of_origin(value: Any) -> List[str]:
+    """``Citizenship`` split into individual Bürgerorte. Pure.
+
+    Semicolons always separate. A comma only does when **every** resulting part
+    still looks like "City (XX)" — see :data:`_ORIGIN_RE`. A member with two
+    places of origin reads "Zürich (ZH), Chur (GR)" and splits correctly; a
+    single place whose name happens to contain a comma is left whole rather
+    than being reported as two municipalities that do not exist.
+    """
+    text = _as_str(value)
+    if not text:
+        return []
+    parts = [p.strip() for p in text.split(";")]
+    out: List[str] = []
+    for part in parts:
+        if not part:
+            continue
+        pieces = [p.strip() for p in part.split(",") if p.strip()]
+        if len(pieces) > 1 and all(_ORIGIN_RE.match(p) for p in pieces):
+            out.extend(pieces)
+        else:
+            out.append(part)
+    return out
+
+
+def occupations(value: Any) -> List[str]:
+    """An occupation column split into individual occupations. Pure.
+
+    Semicolon-separated, and nothing else: an occupation is a phrase that may
+    well contain a comma ("Rechtsanwalt, selbständig"), so splitting on one
+    would invent professions nobody has.
+    """
+    text = _as_str(value)
+    if not text:
+        return []
+    return [p.strip() for p in text.split(";") if p.strip()]
+
+
 def member_from_row(row: Dict[str, Any]) -> Optional[Member]:
     """Map one ``MemberCouncil`` row to a :class:`Member`.
 
@@ -144,6 +245,11 @@ def member_from_row(row: Dict[str, Any]) -> Optional[Member]:
         date_resignation=_as_date(row.get("DateResignation")),
         date_of_birth=_as_date(row.get("DateOfBirth")),
         date_of_death=_as_date(row.get("DateOfDeath")),
+        place_of_birth=place_of_birth(row),
+        places_of_origin=places_of_origin(row.get("Citizenship")),
+        occupations=occupations(_first_field(row, OCCUPATION_FIELDS)),
+        website=_as_str(_first_field(row, WEBSITE_FIELDS)),
+        number_of_children=_as_int(row.get("NumberOfChildren")),
         person_id_code=_as_int(row.get("PersonIdCode")),
         id=_as_int(row.get("ID")),
     )

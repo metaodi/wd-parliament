@@ -7,10 +7,13 @@
     "body_key": "ZH",
     "electoral_district_de": "I      Zürich 1+2",
     "electoral_district_fr": "I Zurich 1+2",
-    "party_name_de": "Grüne",
+    "party_de": "Grüne",
     "party_harmonized_wikidata_id": "Q659739",
     "wikidata_id": "Q117716",
-    "birthdate": "1956-08-30"
+    "birthday": "1956-08-30",
+    "occupation_de": "Architektin",
+    "website_personal": "https://example.ch/genner",
+    "website_parliament_url_de": "https://www.kantonsrat.zh.ch/mitglieder/9532/"
   },
   {
     "id": 21905,
@@ -19,10 +22,12 @@
     "fullname": "Christoph Mörgeli",
     "body_key": "ZH",
     "electoral_district_de": "XII Uster",
-    "party_name_de": "SVP",
+    "party_de": "SVP",
     "party_harmonized_wikidata_id": "Q385258",
     "wikidata_id": "Q117154",
-    "birthdate": "1960-04-16"
+    "birthday": "1960-04-16",
+    "occupation_de": "Publizist; Historiker",
+    "website_parliament_url_de": "https://www.kantonsrat.zh.ch/mitglieder/21905/"
   },
   {
     "id": 17728,
@@ -31,9 +36,10 @@
     "fullname": "Urs Hany",
     "body_key": "ZH",
     "electoral_district_de": "XVII Bülach",
-    "party_name_de": "Die Mitte",
+    "party_de": "Die Mitte",
     "wikidata_id": "Q125423",
-    "birthdate": null
+    "birthday": null,
+    "website_parliament_url_de": "https://www.kantonsrat.zh.ch/mitglieder/17728/"
   },
   {
     "id": 17860,
@@ -42,9 +48,11 @@
     "fullname": "Sarah Akanji",
     "body_key": "ZH",
     "electoral_district_de": "XIV Winterthur Stadt",
-    "party_name_de": "SP",
+    "party_de": "SP",
     "wikidata_id": "Q58120942",
-    "birthdate": "1996-01-31"
+    "birthday": "1996-01-31",
+    "occupation_de": "Juristin",
+    "website_parliament_url_de": "https://www.kantonsrat.zh.ch/mitglieder/17860/"
   },
   {
     "id": 18759,
@@ -53,8 +61,9 @@
     "fullname": "Ruedi Noser",
     "body_key": "ZH",
     "electoral_district_de": "IX Horgen",
-    "party_name_de": "FDP",
+    "party_de": "FDP",
     "wikidata_id": "Q693305",
-    "birthdate": "1961-04-19"
+    "birthday": "1961-04-19",
+    "website_parliament_url_de": "https://www.kantonsrat.zh.ch/mitglieder/18759/"
   }
 ]

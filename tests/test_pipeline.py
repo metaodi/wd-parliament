@@ -72,7 +72,9 @@ class FakeWikidata:
         self._people = people or {}
         self._matches = matches or {}
 
-    def get_position_holders(self, position_qids, language="de", identifier_property="P1307"):
+    def get_position_holders(self, position_qids, language="de", identifier_property="P1307",
+                             person_data_properties=()):
+        self.person_data_properties = list(person_data_properties)
         return self._people
 
     def search_people(self, names, position_qids, language="de", identifier_property="P1307"):
@@ -116,6 +118,23 @@ def test_unmatched_members_are_reported_not_dropped(pipeline):
     national = results[0]
     assert national.unmatched == national.member_count
     assert all(s.kind == KIND_NO_WIKIDATA_ITEM for s in national.suggestions)
+
+
+def test_the_configured_person_data_properties_reach_the_query(member_rows, period_rows, config):
+    """The config decides what is asked for, and an empty list asks nothing.
+
+    The properties travel all the way to the SPARQL builder, so a config that
+    turns the personal-data checks off does not pay for the extra query.
+    """
+    config.person_data = ["P19", "P1971"]
+    wikidata = FakeWikidata()
+    process(config, FakeParliament(member_rows, period_rows), wikidata)
+    assert wikidata.person_data_properties == ["P19", "P1971"]
+
+    config.person_data = []
+    wikidata = FakeWikidata()
+    process(config, FakeParliament(member_rows, period_rows), wikidata)
+    assert wikidata.person_data_properties == []
 
 
 def test_the_identifier_join_drives_the_hit_rate(pipeline):
@@ -252,7 +271,8 @@ def test_a_failing_chamber_records_the_error_instead_of_aborting(
             raise RuntimeError("boom")
 
     class Exploding(FakeWikidata):
-        def get_position_holders(self, position_qids, language="de", identifier_property="P1307"):
+        def get_position_holders(self, position_qids, language="de", identifier_property="P1307",
+                                 person_data_properties=()):
             return {"Q1": Landmine(qid="Q1", label="Landmine")}
 
     results = process(config, FakeParliament(member_rows, period_rows), Exploding())

@@ -15,6 +15,14 @@ value looks wrong", and QuickStatements can only add statements, not correct
 them: emitting those would create a second, contradictory value rather than fix
 the first. They stay in the report for a human.
 
+``ADD_PERSON_DATA`` does add information, and is still excluded, for a
+different reason: its value is the source's free text ("Bern (BE)",
+"Rechtsanwalt") and the property wants an item. There is no Q-ID to render, so
+there is nothing to emit — and the day somebody adds a map that resolves those
+strings, adding the kind here would still be a deliberate decision rather than
+a consequence. The payload carries no ``position`` either, so the general gate
+below refuses it a second time.
+
 Format
 ------
 V1 syntax, pipe-separated, as consumed by QuickStatements' ``#v1=`` URL form::

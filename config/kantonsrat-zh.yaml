@@ -170,6 +170,36 @@ parl_groups: {}
 # anyway.
 parties: {}
 
+# ---------------------------------------------------------------------------
+# Personal data -> presence checks (README step 9)
+# ---------------------------------------------------------------------------
+# Which properties to report as missing when the source publishes them and the
+# item carries no statement. Presence only, never a value comparison, and never
+# emitted as QuickStatements — see config/parliament.yaml for the reasoning.
+#
+# MEASURED on 2026-08-04 (run 19). The ZH `persons` table carries an
+# `occupation_de` and a `website_personal` — so unlike the federal source, this
+# one can answer P106 and P856 — plus `party_de` for P102. It carries **no**
+# birthplace, no Bürgerort and no children, so P19, P1321 and P1971 are not
+# listed: there is nothing for them to compare.
+#
+#   P106  occupation        <- occupation_de (also _fr, _it)
+#   P856  official website  <- website_personal
+#   P102  member of party   <- party_de
+#
+# ⚠️ `website_parliament_url_de` is the member's page on the *chamber's* site,
+# not a website of the person, and is deliberately not read as P856.
+#
+# P102 is the one that closes a real gap: `parties:` above is empty, so
+# REVIEW_PARTY (which needs a mapped Q-ID) never fires, and this is the only
+# check that notices a cantonal member with no P102 at all.
+#
+# Run 19 also found that this adapter had been reading the party from
+# `party_name_de` and the birth date from `birthdate` — neither of which
+# OpenParlData uses. Both are fixed in openparldata.py; that is what a probe
+# printing the real column list buys you.
+person_data: [P102, P106, P856]
+
 # Legislative terms -> P2937. Empty, and there is nothing to fill it from yet:
 # OpenParlData exposes no period table for ZH, so `get_periods` returns none and
 # no P2937 is suggested at all. Run 15 also found P2937 on *no* statement for

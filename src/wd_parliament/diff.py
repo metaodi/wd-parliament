@@ -26,6 +26,16 @@ the choice is config, not code (``statement_model`` in
 
 :func:`expected_statements` is the single place that difference lives; the rest
 of the diff works off whatever it returns.
+
+Seat checks and person checks
+-----------------------------
+Most of this module is about the **seat**: a P39 statement, its dates and its
+qualifiers, all compared *by value* because parlament.ch is authoritative about
+them. :func:`_person_data_suggestions` is the exception — it is about the
+**person** (P19, P1321, P106, P102, P856, P1971) and compares only *presence*,
+because those values arrive as free text and matching text to an item is a
+judgement this tool does not make. Keeping the two apart is what lets the seat
+checks stay assertive and the person checks stay report-only.
 """
 
 from __future__ import annotations
@@ -45,6 +55,7 @@ from .models import (
     KIND_ADD_END_DATE,
     KIND_ADD_IDENTIFIER,
     KIND_ADD_MEMBERSHIP,
+    KIND_ADD_PERSON_DATA,
     KIND_ADD_QUALIFIER,
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
@@ -57,10 +68,12 @@ from .models import (
     KIND_SOURCES_DISAGREE,
     MODEL_PERIOD,
     P_PARLIAMENT_ID,
+    P_POLITICAL_PARTY,
     QID_FROM_NAME,
     Body,
     Member,
     Period,
+    PersonDataCheck,
     PositionStatement,
     SourceSpan,
     Suggestion,
@@ -749,6 +762,7 @@ def _member_suggestions(
         )
 
     out.extend(_party_suggestions(body, member, person, config, verify))
+    out.extend(_person_data_suggestions(body, member, person, config, verify))
 
     # The join rests on a property whose values nothing has yet shown to be
     # the source's person ids. Stamped on every suggestion for this member, and
@@ -771,6 +785,122 @@ def _member_suggestions(
             _sources_disagree_suggestion(body, member, span, found, config, verify)
         )
     return out
+
+
+def source_values(member: Member, check: PersonDataCheck) -> List[str]:
+    """The source's value(s) for one personal-data check, as strings. Pure.
+
+    Empty whenever the source has nothing to say, which is what makes the whole
+    class of check fail-safe: a column the source does not have, or does not
+    fill in for this member, produces no suggestion rather than a claim that
+    Wikidata is missing something.
+
+    A ``number_of_children`` of **0** is deliberately treated as nothing. In a
+    nullable integer column a zero and an unstated value are the same shape,
+    and "this person has no children" is a statement worth making only when the
+    source means it — which cannot be told apart from here.
+    """
+    value = getattr(member, check.attribute, None)
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple)):
+        return [str(v).strip() for v in value if str(v).strip()]
+    if isinstance(value, bool):  # pragma: no cover - no boolean check today
+        return []
+    if isinstance(value, int):
+        return [str(value)] if value > 0 else []
+    text = str(value).strip()
+    return [text] if text else []
+
+
+def _person_data_suggestions(
+    body: Body,
+    member: Member,
+    person: WikidataPerson,
+    config: Config,
+    verify: str,
+) -> List[Suggestion]:
+    """Facts the source publishes that the item records nowhere. Pure.
+
+    The one check in this tool that compares **presence rather than value**,
+    and the reason is in :data:`~.models.PERSON_DATA_CHECKS`: the source gives
+    "Bern (BE)" or "Rechtsanwalt" where Wikidata wants an item, and resolving
+    one to the other is the judgement the config's Q-ID maps exist to keep out
+    of the code. So this never says a recorded value is wrong — only that a
+    published fact is absent — and it hands the reader the source's own string.
+
+    Three conditions, each of which alone would make a suggestion unsafe:
+
+    - **the item must have been queried.** ``person_data_known`` is false for an
+      item outside the personal-data query's population (a name-matched item
+      with neither the identifier nor a seat), and an item nobody asked about
+      is not an item that is missing anything.
+    - **Wikidata must carry no statement for the property at all.** A different
+      value is not a finding here; it is the noise ``REVIEW_PARTY`` exists to
+      handle for the one property where the source can be compared.
+    - **the source must actually have a value.**
+
+    Report-only, and gated the way :func:`_departed_suggestion` is: the kind is
+    not in ``quickstatements.MECHANICAL_KINDS``, and the payload carries no
+    ``position``, so ``is_mechanical`` refuses these twice over. Removing one
+    gate would not be enough to emit them, which is the point — a P19 written
+    from an unresolved place name would be a wrong statement on a real person.
+    """
+    if not person.person_data_known:
+        return []
+
+    out: List[Suggestion] = []
+    for check in config.person_data_checks:
+        if person.has_property(check.property_id):
+            continue
+        # A mapped party is ``_party_suggestions``' business: it compares the
+        # value and would raise REVIEW_PARTY for this same member, so checking
+        # presence here as well would file one gap twice. Unmapped — which is
+        # how both configs ship — that check returns nothing at all, and this
+        # is the only thing that notices a member with no P102 whatsoever.
+        if check.property_id == P_POLITICAL_PARTY and config.party_qid(
+            member.party_abbreviation
+        ):
+            continue
+        values = source_values(member, check)
+        if not values:
+            continue
+        out.append(
+            _base_suggestion(
+                KIND_ADD_PERSON_DATA,
+                body,
+                member,
+                f"No '{check.label}' ({check.property_id}) statement, but "
+                f"{config.source_name} gives {', '.join(values)}. "
+                + _person_data_advice(check)
+                + verify,
+                payload={
+                    "property": check.property_id,
+                    "values": values,
+                    "biography": config.biography_url_for(member.person_number),
+                },
+            )
+        )
+    return out
+
+
+def _person_data_advice(check: PersonDataCheck) -> str:
+    """What a reader has to do with the source's value. Pure."""
+    if check.needs_item:
+        return (
+            "The source publishes this as text, so it has to be matched to a "
+            "Wikidata item by hand — which is why this is reported rather than "
+            "applied."
+        )
+    if check.value_kind == "url":
+        return (
+            "Check that the address is the member's own site rather than their "
+            "page on the source's website before adding it."
+        )
+    return (
+        "Confirm the figure is current on the biography page before adding it; "
+        "the source states it as of the member's last update."
+    )
 
 
 def _sources_disagree_suggestion(

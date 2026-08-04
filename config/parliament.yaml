@@ -187,6 +187,49 @@ parties: {}
   # FDP: Q...
 
 # ---------------------------------------------------------------------------
+# Personal data  ->  presence checks (README step 9)
+# ---------------------------------------------------------------------------
+# The properties that describe the *person* rather than the seat. Unlike every
+# other check here these compare PRESENCE, not value: parlament.ch publishes
+# "Bern (BE)" and "Rechtsanwalt" as free text, and matching that to a Wikidata
+# item is a judgement, so a suggestion is raised only when the source has a
+# value and the item carries no statement for the property at all. The report
+# then quotes the source's own string for a human to resolve.
+#
+# None of them is ever emitted as QuickStatements. There is no Q-ID to render.
+#
+# MEASURED against the live service on 2026-08-04 (run 19,
+# scripts/verify_person_data.py). Source coverage over the 246 sitting members,
+# and the suggestions each check would make against Wikidata today:
+#
+#   P19    place of birth      <- BirthPlace_City (+ _Canton)  245/246 ->  23
+#   P1321  place of origin     <- Citizenship, the Bürgerort   244/246 ->  82
+#   P102   member of party     <- PartyName                    246/246 ->   0
+#   P1971  number of children  <- NumberOfChildren             105/246 -> 101
+#
+# 206 suggestions in total, none of them mechanical.
+#
+# P102 finds nothing today because every matched item already carries one —
+# which is worth keeping listed rather than removing: it is what would notice a
+# newly elected member without a party statement. It only fires while `parties:`
+# above is empty; a mapped party is compared by value as REVIEW_PARTY instead.
+#
+# ⚠️ P106 AND P856 ARE NOT LISTED BECAUSE THE SOURCE HAS NO SUCH COLUMN. Run 19
+# printed every column MemberCouncil returns and there is no occupation and no
+# website among them. Listing them would cost nothing — a missing column yields
+# no value and so no suggestion — but it would also imply a check that can
+# never fire. Add them back when (and only when) the probe names a real column.
+# Do NOT point them at Mandates / AdditionalMandate / AdditionalActivity: that
+# is the register of interests, not what somebody does for a living.
+#
+# ⚠️ AND KNOW THE VOLUME before adding to this list. These are *coverage*
+# checks across ~246 members, not exceptions: P1971 alone is 41% of the
+# chamber. They sit at priority 6, below everything about the seat, so they
+# cannot bury the findings that matter — but if a report should only be about
+# the mandate, shorten this list or set it to [].
+person_data: [P19, P1321, P102, P1971]
+
+# ---------------------------------------------------------------------------
 # Legislative terms  ->  P2937 parliamentary term (qualifier)
 # ---------------------------------------------------------------------------
 # Keyed by LegislativePeriodNumber (from the LegislativePeriod table), mapped

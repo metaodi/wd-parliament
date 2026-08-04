@@ -59,7 +59,12 @@ is the adapter itself. Step 8 asks whether the *departed* members' leaving
 dates could be applied mechanically; run 18 (2026-08-04) measured **1,960 of
 1,960 agreeing exactly** with an independent source, and what keeps those
 suggestions report-only is now five identities that are one character apart —
-a morning's work on the biography pages, not a data problem.
+a morning's work on the biography pages, not a data problem. **Step 9 is done**:
+run 19 (2026-08-04) measured which personal data each source actually carries
+— four of six properties federally, three cantonally, 206 suggestions in the
+federal report — and found two long-standing bugs in the *cantonal adapter*
+along the way. It gates nothing, since none of those suggestions can ever be
+mechanical.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -1116,6 +1121,101 @@ so this is not the federal run's situation — it is what a cantonal or
 well-maintained chamber would return.)
 
 
+### 9. ✅ Do the personal-data checks have a source? — *measured: four of six federally, three cantonally, and it found two adapter bugs*
+
+The checks described under [The suggestions that are about the person rather
+than the seat](#the-suggestions-that-are-about-the-person-rather-than-the-seat)
+are safe however this comes out — a source with nothing to say produces no
+suggestion — but "safe" is not "useful". **Run 19 (2026-08-04)** measured both
+halves.
+
+**Federally, four of the six have a column and two do not.** Coverage over the
+246 sitting members, and what each check would suggest against Wikidata today:
+
+| Property | Column | Source coverage | Suggestions |
+| --- | --- | ---: | ---: |
+| P19 place of birth | `BirthPlace_City` + `BirthPlace_Canton` | 245 (99.6%) | **23** |
+| P1321 place of origin | `Citizenship` | 244 (99.2%) | **82** |
+| P102 member of party | `PartyName` | 246 (100%) | **0** |
+| P1971 number of children | `NumberOfChildren` | 105 (42.7%) | **101** |
+| P106 occupation | — **no such column** | — | — |
+| P856 official website | — **no such column** | — | — |
+
+206 suggestions in total, none of them mechanical. Every one of the 246 members
+matched an item and every one was reached by the personal-data query, so the
+zeroes are real answers rather than gaps. P102's zero is the good kind — every
+matched item already carries one — and the check is kept listed because it is
+what would notice a newly elected member without one.
+
+`config/parliament.yaml` therefore ships `person_data: [P19, P1321, P102,
+P1971]`. `parliament.OCCUPATION_FIELDS` / `WEBSITE_FIELDS` stay as the hook a
+future column would be read through. `Mandates`, `AdditionalMandate` and
+`AdditionalActivity` are deliberately **not** candidates for P106: they are the
+register of interests, and filing a board seat as an occupation would put a
+wrong statement on a real person.
+
+**Cantonally it inverts, exactly as the identifier did.** The ZH `persons`
+table *does* carry `occupation_de` and `website_personal` — so P106 and P856
+are answerable there and not here — and carries no birthplace, no Bürgerort and
+no children. `config/kantonsrat-zh.yaml` ships `person_data: [P102, P106,
+P856]`. Note `website_parliament_url_de` is the member's page on the chamber's
+own site rather than a website *of the person*, and is deliberately not read as
+P856.
+
+**And the probe found more wrong with the adapter than with the checks.**
+Printing the real column list showed `openparldata.py` reading the party from
+`party_name_de` and the birth date from `birthdate`, neither of which
+OpenParlData uses — the real names are **`party_de`** and **`birthday`**. So
+every cantonal member had been coming out with no party and no birth date since
+the adapter was written. Neither failure was visible from inside the pipeline:
+an unmapped party makes no suggestion (`parties:` ships empty), and a missing
+birth date silently downgrades the name fallback from "pick the one born on the
+right day" to a bare label match. Both names are fixed, the wrong ones kept as
+trailing aliases, and `tests/fixtures/zh_persons.json` now carries the columns
+the API really returns.
+
+Two smaller findings from the same listing: `MemberCouncil` has a `Nationality`
+column that is not in the fixtures — a country rather than a Bürgerort, so a
+possible P27 source and a separate check nobody has asked for — and 13 of the
+138 matched ZH members were *not* reached by the personal-data query, which is
+precisely the population `person_data_known` exists to keep quiet about.
+
+**Re-run it after touching any of this**, and know the volume before adding to
+`person_data:`. These are coverage checks across a whole chamber rather than
+exceptions: P1971 alone is 41% of the National Council and the Council of
+States.
+
+```bash
+uv run python scripts/verify_person_data.py
+uv run python scripts/verify_person_data.py --config config/kantonsrat-zh.yaml
+
+# section A only — no SPARQL, so no suggestion counts
+uv run python scripts/verify_person_data.py --skip-wikidata
+```
+
+Section A prints every column the source returns, then per property: the
+columns found, how many sitting members carry a value, and an example.
+Section B runs the real comparison and counts what would come out. The three
+verdicts are the ones this repo has learned to keep apart:
+
+| Verdict | Meaning |
+| --- | --- |
+| `CONFIRMED` | the column exists and is filled in; the count says how often |
+| `CONTRADICTED` | **no** candidate column exists. The check is dead weight in `person_data:` — drop it, or read the column listing and add the real name |
+| `INCONCLUSIVE` | the column exists but is empty for every sitting member — a fact about today's chamber, not about the schema. Also what an unreadable column listing returns, because "no such column" and "could not look" mean different things |
+
+Wired into `Verify assumptions` as section 8, and it **never gates the job** —
+the strongest of this file's several reasons for that: `ADD_PERSON_DATA` is not
+in `MECHANICAL_KINDS` at all, so nothing this probe measures can reach
+`suggestions.qs` under any verdict.
+
+One thing run 19 got wrong about *itself*, now fixed: a check with **no source
+column** printed "nothing to do — every matched item already records it",
+which is the message for the opposite situation. A zero has two causes — the
+source said nothing, or Wikidata already has it — and reading the first as the
+second is how a missing column comes to look like a well-maintained property.
+`volume_note` now takes the source coverage and says which it is.
+
 ---
 
 ## What it checks
@@ -1135,6 +1235,7 @@ well-maintained chamber would return.)
 | **Add qualifier** | 4 | Missing P768 electoral district or P4100 parliamentary group. |
 | **Review party** | 4 | P102 missing or disagreeing with `PartyAbbreviation`. |
 | **No Wikidata item** | 5 | No item found by the identifier or by name. |
+| **Add personal data** | 6 | The source publishes a fact about the person (P19, P1321, P106, P102, P856, P1971) and the item records **no** statement for it. See below. |
 
 Scope for v1: **both chambers, currently sitting members only** (~246 people).
 Historic members are a later extension — `MemberCouncilHistory` has an identical
@@ -1172,6 +1273,64 @@ Q-ID, so the reverse walk below cannot recognise them by item and would report
 **both** claimants as having left — a confident, wrong claim about somebody
 sitting today. That pass therefore also skips any item whose identifier belongs
 to a sitting member, not just any item whose Q-ID does.
+
+### The suggestions that are about the person rather than the seat
+
+Everything above is about a **mandate**: a P39 statement, its dates, its
+qualifiers — compared *by value*, because parlament.ch is authoritative about
+them and that is what licenses saying a statement disagrees.
+
+The personal-data checks are the exception, and they are deliberately weaker.
+The source publishes facts *about the member* alongside the mandate, and
+Wikidata has properties for them:
+
+| Property | Source (federal / cantonal) | Value |
+| --- | --- | --- |
+| [P19](https://www.wikidata.org/wiki/Property:P19) place of birth | `BirthPlace_City` + `BirthPlace_Canton` / — | "Bern (BE)" |
+| [P1321](https://www.wikidata.org/wiki/Property:P1321) place of origin | `Citizenship`, the *Bürgerort* / — | "Zürich (ZH), Chur (GR)" |
+| [P106](https://www.wikidata.org/wiki/Property:P106) occupation | — / `occupation_de` | "Architektin" |
+| [P102](https://www.wikidata.org/wiki/Property:P102) member of political party | `PartyName` / `party_de` | "Schweizerische Volkspartei" |
+| [P856](https://www.wikidata.org/wiki/Property:P856) official website | — / `website_personal` | "https://example.ch/anna" |
+| [P1971](https://www.wikidata.org/wiki/Property:P1971) number of children | `NumberOfChildren` / — | 2 |
+
+The two sources answer **different** halves of that list, which is why the
+enabled checks are per-config: parlament.ch has a birthplace, a Bürgerort and a
+number of children but no occupation and no website, and OpenParlData's ZH
+records have exactly the reverse (step 9).
+
+**They compare presence, not value.** The source gives free text and the
+property wants an item; matching "Bern (BE)" to
+[Q70](https://www.wikidata.org/wiki/Q70) is a judgement, and it is the same
+judgement the config's Q-ID maps exist to keep out of the code. So a suggestion
+is raised only when the source has a value **and the item carries no statement
+for that property at all**, and the report quotes the source's own string for a
+human to resolve. The tool never says a recorded place of birth is wrong.
+
+Three consequences follow, and all three are load-bearing:
+
+- **Nothing here is ever mechanical.** `ADD_PERSON_DATA` is not in
+  `MECHANICAL_KINDS`, and its payload carries no `position`, so
+  `is_mechanical` refuses it twice. There is no Q-ID to render, so there is
+  nothing to emit — relaxing one rule elsewhere cannot turn these into edits.
+- **An item nobody queried produces nothing.** `WikidataPerson.person_data_known`
+  is what separates "we asked and it carries none of them" from "we never
+  asked". A name-matched item with neither the identifier nor a seat falls
+  outside the query's population, and without that flag every one of them would
+  become a false positive.
+- **A source that cannot answer produces nothing.** An absent column, an empty
+  one, a member the source has no birthplace for — each yields no value and no
+  suggestion. That is what makes the unmeasured column names safe (step 9).
+
+**P102 is the one that overlaps.** *Review party* compares the value, but only
+for a party in the `parties:` map — and both configs ship that map empty, so it
+never fires today. The presence check is what notices a member with no P102
+whatsoever; when a party *is* mapped, it stands aside so one gap is not filed
+twice.
+
+They sit at **priority 6**, below every seat finding, because there is
+potentially one per member per property and the question this tool exists to
+answer is who sits today. Turn any of them off — or all of them — with
+`person_data:` in the config.
 
 ### Reading a second source, to be contradicted by it
 

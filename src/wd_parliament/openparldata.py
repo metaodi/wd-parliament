@@ -76,14 +76,64 @@ DISTRICT_FIELDS = (
     "district_de",
     "district",
 )
-PARTY_NAME_FIELDS = ("party_name_de", "party_name", "party_harmonized", "party")
-BIRTH_FIELDS = ("birthdate", "birth_date", "date_of_birth")
-DEATH_FIELDS = ("deathdate", "death_date", "date_of_death")
+# ⚠️ The first name in each of the next three tuples was WRONG until run 19
+# (2026-08-04) printed the `persons` columns the API really returns. The party
+# is `party_de` (harmonised: `party_harmonized_de`), not `party_name_de`, and
+# the dates are `birthday` / `deathday`, not `birthdate` / `deathdate` — so
+# every cantonal member was coming out with **no party and no birth date**.
+# Neither failure was visible from inside the pipeline: an unmapped party makes
+# no suggestion (`parties:` ships empty), and a missing birth date silently
+# downgrades the name fallback from "pick the one born on the right day" to a
+# bare label match. The wrong names are kept as trailing aliases because they
+# cost nothing and another body may yet use them.
+PARTY_NAME_FIELDS = (
+    "party_de",
+    "party_harmonized_de",
+    "party_name_de",
+    "party_name",
+    "party",
+)
+BIRTH_FIELDS = ("birthday", "birthdate", "birth_date", "date_of_birth")
+DEATH_FIELDS = ("deathday", "deathdate", "death_date", "date_of_death")
 # The Q-ID a person record asserts *about* Wikidata. Read only to check it for
 # collisions — never to join on: a Q-ID a third party asserts about Wikidata is
 # a different class of claim from one Wikidata asserts about itself, and would
 # need its own ``QID_FROM_*`` constant before anything could be emitted from it.
 WIKIDATA_ID_FIELDS = ("wikidata_id", "wikidata_qid", "wikidata")
+
+# Person columns the personal-data checks read (README step 9). **Measured** on
+# 2026-08-04 (run 19), which changed two of them and settled the rest:
+#
+#   occupation  -> `occupation_de` (also _fr, _it). Present, and the first
+#                  candidate already guessed it.
+#   website     -> `website_personal`. The guesses all missed it. Note
+#                  `website_parliament_url_de` is the member's page on the
+#                  *parliament's* site, which is not an official website of the
+#                  person and must never be filed as P856.
+#   birthplace  -> no such column. `city`/`street`/`postal_code` are a postal
+#                  address, not a place of birth, and must not be read as one.
+#   origin      -> no such column: OpenParlData carries no Bürgerort.
+#   children    -> no such column.
+#
+# The names that matched nothing are kept: they cost nothing (a missing column
+# yields no value and so no suggestion) and another body may use them. What
+# they must not do is grow by guesswork — re-run the probe instead.
+BIRTHPLACE_FIELDS = (
+    "birthplace",
+    "birth_place",
+    "place_of_birth",
+    "birthplace_de",
+)
+ORIGIN_FIELDS = ("place_of_origin", "origin", "citizenship", "hometown")
+OCCUPATION_FIELDS = (
+    "occupation_de",
+    "occupation",
+    "profession_de",
+    "profession",
+    "job_title",
+)
+WEBSITE_FIELDS = ("website_personal", "website", "url", "homepage", "website_url")
+CHILDREN_FIELDS = ("number_of_children", "children")
 
 
 def _text(value: Any) -> str:
@@ -145,6 +195,21 @@ def _first(row: Dict[str, Any], candidates: Sequence[str]) -> Any:
         if row.get(name) not in (None, ""):
             return row[name]
     return None
+
+
+def _split_list(value: Any) -> List[str]:
+    """A multi-valued free-text field as a list. Pure.
+
+    Semicolons and JSON-style lists separate; a comma does not, because an
+    occupation or a place name may contain one and splitting on it would invent
+    values. Whitespace is tidied for the same reason it is on the districts.
+    """
+    if isinstance(value, (list, tuple)):
+        return [_tidy(v) for v in value if _tidy(v)]
+    text = _tidy(value)
+    if not text:
+        return []
+    return [p.strip() for p in text.split(";") if p.strip()]
 
 
 def _split_name(person: Dict[str, Any]) -> tuple:
@@ -243,6 +308,14 @@ def member_from_rows(
         date_leaving=_as_date(_first(membership, END_FIELDS)),
         date_of_birth=_as_date(_first(person, BIRTH_FIELDS)),
         date_of_death=_as_date(_first(person, DEATH_FIELDS)),
+        # Personal data for the presence checks, all of it optional and none of
+        # it measured on this source — see the field tuples above. A column
+        # this API does not have costs an empty value and no suggestion.
+        place_of_birth=_tidy(_first(person, BIRTHPLACE_FIELDS)) or None,
+        places_of_origin=_split_list(_first(person, ORIGIN_FIELDS)),
+        occupations=_split_list(_first(person, OCCUPATION_FIELDS)),
+        website=_tidy(_first(person, WEBSITE_FIELDS)) or None,
+        number_of_children=_as_int(_first(person, CHILDREN_FIELDS)),
         id=_as_int(membership.get("id")),
     )
 
