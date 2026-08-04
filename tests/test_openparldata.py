@@ -24,6 +24,7 @@ from wd_parliament.openparldata import (
     DEFAULT_SEAT_ROLES,
     OpenParlDataClient,
     is_seat_row,
+    link_conflicts_from_rows,
     member_from_rows,
     members_from_rows,
     tenures_from_rows,
@@ -293,3 +294,66 @@ def test_a_future_start_is_still_a_tenure(memberships):
     """Not sitting *today*, which is `is_seat_row`'s question, not this one."""
     tenures = tenures_from_rows(memberships, ZH, seat_roles=DEFAULT_SEAT_ROLES)
     assert tenures[(17860, "KR")].start == date(2026, 8, 17)
+
+
+# --- one Wikidata item, several person records -------------------------------
+# A data error in the source rather than on Wikidata, and the one this tool
+# reports that nobody can fix by editing Wikidata. Found the hard way: run 17
+# of the departures probe reported a member who left in 1971 against a leaving
+# date of 2014, because a second person record named his item.
+def person_row(person_id, qid="Q117716"):
+    return {"id": person_id, "fullname": f"Person {person_id}", "wikidata_id": qid}
+
+
+def test_two_records_naming_one_item_are_a_conflict():
+    rows = [person_row(1, "Q7"), person_row(2, "Q7"), person_row(3, "Q9")]
+    assert link_conflicts_from_rows(rows) == {"Q7": [1, 2]}
+
+
+def test_one_record_per_item_is_no_conflict():
+    rows = [person_row(1, "Q7"), person_row(2, "Q9")]
+    assert link_conflicts_from_rows(rows) == {}
+
+
+def test_a_record_repeated_is_not_two_records():
+    """The same id twice is one person, however the page was assembled."""
+    assert link_conflicts_from_rows([person_row(1, "Q7"), person_row(1, "Q7")]) == {}
+
+
+def test_a_missing_or_malformed_q_id_is_not_a_link():
+    rows = [
+        person_row(1, ""),
+        person_row(2, "not-a-qid"),
+        {"id": 3, "fullname": "No field at all"},
+        person_row(4, "Q7"),
+        person_row(5, "Q7"),
+    ]
+    assert link_conflicts_from_rows(rows) == {"Q7": [4, 5]}
+
+
+def test_only_conflicts_touching_this_chamber_are_reported():
+    """A body's report raises its own conflicts, not another body's."""
+    rows = [person_row(1, "Q7"), person_row(2, "Q7"), person_row(8, "Q9"),
+            person_row(9, "Q9")]
+    assert link_conflicts_from_rows(rows, seat_person_ids={1}) == {"Q7": [1, 2]}
+    assert link_conflicts_from_rows(rows, seat_person_ids={5}) == {}
+
+
+def test_the_client_keys_conflicts_by_chamber(memberships, persons):
+    class ConflictedApi:
+        """Ruth Genner's item claimed by a second, seatless record."""
+
+        def get_data(self, table, **params):
+            if table == "memberships":
+                return [r for r in memberships if r["group_id"] == params["group_id"]]
+            if table == "persons":
+                return persons + [
+                    {"id": 99999, "fullname": "Duplicate Genner",
+                     "wikidata_id": "Q117716", "body_key": "ZH"}
+                ]
+            if table == "groups":
+                return [{"id": 5077, "name_de": "Kantonsrat Zürich"}]
+            raise AssertionError(table)
+
+    client = OpenParlDataClient(body_key="ZH", bodies=[ZH], client=ConflictedApi())
+    assert client.get_link_conflicts() == {("KR", "Q117716"): [9532, 99999]}

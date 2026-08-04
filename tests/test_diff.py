@@ -14,6 +14,7 @@ from wd_parliament.models import (
     KIND_ADD_START_DATE,
     KIND_ADD_TERM,
     KIND_DUPLICATE_IDENTIFIER,
+    KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
@@ -862,3 +863,59 @@ def test_a_name_match_onto_one_claimant_still_raises_the_conflict(periods):
     conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_IDENTIFIER)
     assert "uses Q11" in conflict.detail
     assert "not an answer" in conflict.detail
+
+
+# --- one Wikidata item, several source records -------------------------------
+# The mirror image of DUPLICATE_IDENTIFIER, and the only finding in this report
+# that is not repaired on Wikidata. Raised anyway: the report is the only place
+# anybody looks, and such a link silently corrupts any join made through it.
+def test_a_duplicated_source_link_is_reported(periods):
+    member = make_member()
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q117716"): [9532, 99999]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert conflict.payload["wikidata_qid"] == "Q117716"
+    assert conflict.payload["source_person_ids"] == [9532, 99999]
+    assert "#9532, #99999" in conflict.detail
+    assert conflict.links["item"] == "https://www.wikidata.org/wiki/Q117716"
+
+
+def test_the_source_link_conflict_says_where_it_is_fixed(periods):
+    """Nothing here is a Wikidata edit, and the report must not imply one."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q1"): [1, 2]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert "not on Wikidata" in conflict.detail
+
+
+def test_a_source_link_conflict_is_never_mechanical(periods):
+    from wd_parliament.quickstatements import is_mechanical
+
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("N", "Q1"): [1, 2]},
+    )
+    conflict = next(s for s in suggestions if s.kind == KIND_DUPLICATE_SOURCE_LINK)
+    assert is_mechanical(conflict, MODEL_TENURE) is False
+
+
+def test_another_chambers_link_conflict_is_not_reported_here(periods):
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE),
+        link_conflicts={("S", "Q1"): [1, 2]},
+    )
+    assert KIND_DUPLICATE_SOURCE_LINK not in kinds(suggestions)
+
+
+def test_a_source_that_asserts_no_wikidata_link_raises_nothing(periods):
+    """parlament.ch says nothing about Wikidata; that is not a degradation."""
+    suggestions = compute_suggestions(
+        BODY, [make_member()], {"Q7": person()}, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_DUPLICATE_SOURCE_LINK not in kinds(suggestions)

@@ -206,6 +206,15 @@ selected by `config.source` in `app.build_source`, joined on
 - **`Member.active` is computed, not read.** The source has no usable flag, and
   `is_seat_row` — open, already begun, in a seat role — is the entire
   difference between 186 rows and 180 members.
+- **`get_link_conflicts` reports a data error in the *source*.** Two person
+  records naming one `wikidata_id` is one item claimed as two people — the
+  mirror image of `DUPLICATE_IDENTIFIER`, and the only finding in the report
+  that is **not** repaired on Wikidata. Read only for collisions, never joined
+  on: a Q-ID a third party asserts *about* Wikidata still needs its own
+  `QID_FROM_*` constant. Keyed `(council, Q-ID)` so a chamber raises its own.
+  `ParliamentClient` deliberately has no such method — parlament.ch asserts
+  nothing about Wikidata — and `app.process` treats its absence as ordinary
+  rather than as a degradation.
 - **`get_periods` returns `[]` and `get_member_segments` returns `{}`, both on
   purpose.** No period table exists (so no P2937 is ever suggested), and the
   rows are per-tenure so `begin_date` is already the date P580 wants. Do not
