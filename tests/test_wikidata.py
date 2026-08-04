@@ -100,6 +100,22 @@ def test_search_query_escapes_quotes():
     assert r'\"Ann\"' in q
 
 
+def test_name_variant_query_asks_for_both_kinds_of_name():
+    q = WikidataClient.name_variant_query(["Q7"])
+    assert "skos:altLabel" in q          # "also known as"
+    assert "p:P1307 ?idStatement" in q   # the qualifier hangs off the statement
+    assert "pq:P1810" in q               # "subject named as"
+    assert "UNION" in q                  # never a product of aliases × P1810
+    assert '"de"' in q and '"mul"' in q  # aliases restricted to label languages
+
+
+def test_name_variant_query_follows_the_configured_identifier():
+    """P1307 federally, P14527 cantonally — the qualifier hangs off whichever."""
+    q = WikidataClient.name_variant_query(["Q7"], "de", "P14527")
+    assert "p:P14527 ?idStatement" in q
+    assert "p:P1307" not in q
+
+
 # --- parsing ----------------------------------------------------------------
 def test_identifier_index():
     client = FakeClient([[
@@ -202,6 +218,39 @@ def test_search_people_deduplicates_across_label_languages():
     ]
     matches = FakeClient([rows]).search_people(["Anna Muster"], POSITIONS)
     assert len(matches["Anna Muster"]) == 1
+
+
+def test_name_variants_are_grouped_by_item_and_keep_their_origin():
+    rows = [
+        {"person": uri("Q7"), "name": {"value": "Johannes Zündt", "xml:lang": "de"},
+         "origin": lit("alias")},
+        {"person": uri("Q7"), "name": lit("Zündt Johannes"), "origin": lit("P1810")},
+        {"person": uri("Q8"), "name": lit("Desplands"), "origin": lit("P1810")},
+    ]
+    variants = FakeClient([rows]).get_name_variants(["Q7", "Q8", "Q9"])
+    assert [v.name for v in variants["Q7"]] == ["Johannes Zündt", "Zündt Johannes"]
+    assert variants["Q7"][0].origin == "alias"
+    assert variants["Q7"][0].language == "de"
+    assert variants["Q7"][1].origin == "P1810"
+    # An item with neither is absent, not empty: "nothing more to compare".
+    assert "Q9" not in variants
+
+
+def test_name_variants_deduplicate_and_ask_once_per_batch():
+    rows = [
+        {"person": uri("Q7"), "name": lit("Zündt"), "origin": lit("alias")},
+        {"person": uri("Q7"), "name": lit("Zündt"), "origin": lit("alias")},
+        {"person": uri("Q7"), "name": lit("Zündt"), "origin": lit("P1810")},
+    ]
+    client = FakeClient([rows])
+    variants = client.get_name_variants(["Q7", "Q7"])
+    assert len(client.queries) == 1  # the duplicate Q-ID is not asked twice
+    # Same string, different assertion: both are kept, because which one settled
+    # a row is the thing section B prints.
+    assert [(v.name, v.origin) for v in variants["Q7"]] == [
+        ("Zündt", "alias"),
+        ("Zündt", "P1810"),
+    ]
 
 
 def test_describe_qids_reports_labels_and_instances():

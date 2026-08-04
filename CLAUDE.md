@@ -351,7 +351,9 @@ expensive one.
   Python. The P39 query deliberately fetches statements for **everyone** with
   those positions, not just P1307 holders, because the diff's second pass needs
   people who are *not* in the current-members set. Query builders are static
-  methods so they are unit-testable.
+  methods so they are unit-testable. `get_name_variants` is **not** one of the
+  three: it is asked on demand, by the step 8 probe only, for a Q-ID list the
+  caller has already narrowed — the pipeline's own path is unchanged.
 - **`resolve.py`** — the P1307 join first (exact). An identifier claimed by two
   items is **skipped, logged and recorded on the member**
   (`Member.duplicate_identifier_qids`), never arbitrated. Recording it is what
@@ -383,7 +385,16 @@ expensive one.
   the data** — run 18 has the leaving dates agreeing **1,960 of 1,960**, and
   what is left is five identities one character apart (`Zünd`/`Zündt`), which a
   name comparison cannot settle and so reports as `near` without accepting.
-  Both gates have a test naming them. `_departed_suggestion` also
+  **Its identity check compares every name Wikidata gives the item, not the
+  label alone**: aliases and the P1810 `subject named as` qualifier on the
+  identifier statement, fetched by `WikidataClient.get_name_variants` (a fourth
+  bounded query, asked only for the people section B judges, `UNION` rather than
+  two `OPTIONAL`s so aliases and P1810 cannot multiply). The **strongest**
+  reading wins, which is what makes the widening safe: an extra name can only
+  move a row towards agreement, never produce the `CONTRADICTED` that blocks a
+  bulk apply. It stays corroboration — an alias is asserted by whoever wrote the
+  item — so which name settled a row is counted and printed, never folded into
+  the total. Both gates have a test naming them. `_departed_suggestion` also
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
