@@ -16,6 +16,7 @@ from wd_parliament.models import (
     KIND_DUPLICATE_IDENTIFIER,
     KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
+    KIND_MISSING_IDENTIFIER,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
@@ -320,6 +321,95 @@ def test_identifier_matched_item_never_gets_add_identifier(periods):
         BODY, [member], {"Q7": person([statement])}, periods, make_config(MODEL_TENURE)
     )
     assert KIND_ADD_IDENTIFIER not in kinds(suggestions)
+
+
+# --- the *other* identifier: reported, never valued --------------------------
+def _config_with_both(model=MODEL_TENURE):
+    config = make_config(model)
+    config.identifiers = ["P1307", "P14527"]
+    return config
+
+
+def test_the_second_identifier_is_reported_when_the_item_lacks_it(periods):
+    """A member has two ids and the run joins on one. Nothing else would ever
+    notice the other was missing."""
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    statement = make_statement(start=date(2019, 12, 2), districts=["Q11943"])
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person([statement])}, periods, _config_with_both()
+    )
+    missing = next(s for s in suggestions if s.kind == KIND_MISSING_IDENTIFIER)
+    assert missing.payload["property"] == "P14527"
+    assert missing.links["property"] == "https://www.wikidata.org/wiki/Property:P14527"
+
+
+def test_the_second_identifier_offers_no_value(periods):
+    """The value would have to come from a register this run does not read, and
+    a number from the wrong id space is the failure `identifier_verified`
+    exists to prevent — right data, wrong person."""
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, _config_with_both()
+    )
+    missing = next(s for s in suggestions if s.kind == KIND_MISSING_IDENTIFIER)
+    assert "parliament_id" not in missing.payload
+    assert str(member.person_number) not in missing.detail
+    assert "look the person up" in missing.detail
+
+
+def test_an_item_that_already_carries_the_second_identifier_is_left_alone(periods):
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    item = person()
+    item.identifiers["P14527"] = "3901"
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": item}, periods, _config_with_both()
+    )
+    assert KIND_MISSING_IDENTIFIER not in kinds(suggestions)
+
+
+def test_the_second_identifier_is_asked_of_identifier_matched_members_too(periods):
+    """Unlike ADD_IDENTIFIER, which only a name match can raise: joining on
+    P1307 says nothing at all about whether the item carries P14527."""
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, _config_with_both()
+    )
+    assert KIND_ADD_IDENTIFIER not in kinds(suggestions)
+    assert KIND_MISSING_IDENTIFIER in kinds(suggestions)
+
+
+def test_the_join_propertys_value_never_answers_for_the_other_property(periods):
+    """`parliament_id` is the join property's value. Reading it as the second
+    property's would report an item as already carrying an id it has never had
+    — and, on a federal run, treat an OpenParlData record id as a PersonNumber."""
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id="1101")}, periods,
+        _config_with_both(),
+    )
+    assert KIND_MISSING_IDENTIFIER in kinds(suggestions)
+
+
+def test_a_config_naming_one_identifier_reports_only_that_one(periods):
+    member = make_member(qid_source=QID_FROM_IDENTIFIER)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE)
+    )
+    assert KIND_MISSING_IDENTIFIER not in kinds(suggestions)
+
+
+def test_add_identifier_names_the_property_it_is_about(periods):
+    """Cantonally this is P14527 and the register is OpenParlData's; federally
+    it is P1307 and parlament.ch's. Naming the wrong one sends the reader to a
+    service that has never heard of the number."""
+    member = make_member(qid_source=QID_FROM_NAME)
+    suggestions = compute_suggestions(
+        BODY, [member], {"Q7": person(parliament_id=None)}, periods,
+        _config_with_both(),
+    )
+    add = next(s for s in suggestions if s.kind == KIND_ADD_IDENTIFIER)
+    assert add.payload["property"] == "P1307"
+    assert add.payload["source_url"] == "https://www.parlament.ch/de/biografie/wd/1101"
 
 
 def test_name_matched_suggestions_carry_a_verify_note(periods):

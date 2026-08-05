@@ -78,6 +78,29 @@ identifier_property: P14527
 # put back into models.VERIFIED_IDENTIFIER_PROPERTIES in the same commit.
 identifier_verified: false
 
+# ---------------------------------------------------------------------------
+# Both identifiers, because a member has two and they are not the same thing
+# ---------------------------------------------------------------------------
+# P14527 is the OpenParlData ID — a record in api.openparldata.ch, which is an
+# aggregator that happens to be this config's source. P13468 is the *canton's
+# own* member id, kept by the Staatsarchiv, and it is the cantonal analogue of
+# P1307: 28 of the 35 linked ZH items already carry it.
+#
+# The join can only be one of them (see above: only P14527 has a value on both
+# sides), and until now the report only ever mentioned the join. So a member's
+# item could be missing P13468 for good and nothing here would ever say so.
+# Listing both makes the run report each one it does not find:
+#
+#   P14527 -> ADD_IDENTIFIER,     value in hand (the source's person id)
+#   P13468 -> MISSING_IDENTIFIER, no value: run 20 searched every column of
+#             OpenParlData's person records and P13468's values are in none of
+#             them. The reader looks the person up at wahlen.zh.ch and adds it.
+#
+# Neither is ever emitted as QuickStatements. Supplying a P13468 *value* means
+# reading the canton's own dataset (README step 7) — the same thing that would
+# let it be joined on.
+identifiers: [P14527, P13468]
+
 # One P39 statement per continuous tenure. Measured rather than assumed: the ZH
 # memberships are one row per *tenure*, not per term as the federal ones are —
 # 913 rows across 834 people, with each election adding only ~40-50 rows rather
@@ -103,15 +126,22 @@ group_by: canton
 # the join and a human has pasted one line by hand (README step 5).
 quickstatements: false
 
-# There is no per-person biography page in the API's data, so this is the
-# chamber's own member list rather than a fabricated per-person deep link.
-# {language} and {person_number} would be substituted if used.
+# The record the number beside each member in the report actually names.
+#
+# It used to be the Kantonsrat's own member list, https://kantonsrat.zh.ch/
+# mitglieder/ — a page that knows nothing about the number it was linked from.
+# The number is OpenParlData's person id, i.e. the P14527 value this config
+# joins on, so the page that resolves it is OpenParlData's own. Left unset the
+# tool would now derive exactly this from `identifier_property`; it is written
+# out because the correspondence — printed number ↔ linked page — is the thing
+# that was wrong, and a config that overrides this key owns it.
 #
 # The reports link here — including from the "Recorded as sitting, but the
-# member has left" section, whose people are not in the members table at all.
-# That is why the template is configuration: the federal default would point a
-# cantonal reader at parlament.ch, which has never heard of these members.
-biography_url: "https://www.kantonsrat.zh.ch/mitglieder/"
+# member has left" section, whose people are not in the members table at all
+# and whose number is read off the identifier Wikidata itself carries.
+#
+# {person_number}, {id} and {language} are substituted.
+biography_url: "https://openparldata.ch/item/persons/{person_number}"
 
 # ---------------------------------------------------------------------------
 # Chambers

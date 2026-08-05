@@ -62,6 +62,7 @@ from .models import (
     KIND_DUPLICATE_IDENTIFIER,
     KIND_DUPLICATE_SOURCE_LINK,
     KIND_FIX_START_DATE,
+    KIND_MISSING_IDENTIFIER,
     KIND_NO_WIKIDATA_ITEM,
     KIND_REVIEW_ENDED,
     KIND_REVIEW_PARTY,
@@ -648,6 +649,117 @@ def _departed_suggestion(
     )
 
 
+def _identifier_suggestions(
+    body: Body,
+    member: Member,
+    person: WikidataPerson,
+    config: Config,
+    verify: str,
+) -> List[Suggestion]:
+    """The identifiers this item ought to carry and does not. Pure.
+
+    A parliament has **two**, and they are different claims about different
+    registers: its own member id (P1307 federally, P13468 for the Kantonsrat)
+    and the OpenParlData id (P14527) of a record an aggregator keeps about the
+    same person. A run can only join on one of them, so the other is never
+    recorded by anything unless it is reported — which is why both are checked
+    here rather than only the one that happens to be the join.
+
+    The two kinds this raises differ in exactly one thing: whether the run has
+    the **value**.
+
+    ``ADD_IDENTIFIER``
+        The join property. Its value is the source's own person id — that
+        equality is what the join *is* — so the suggestion carries a number to
+        paste, and it is the highest-leverage edit in the report: it turns
+        every future run's name match into an exact one.
+
+    ``MISSING_IDENTIFIER``
+        Any other configured property. No source this pipeline reads publishes
+        its values (measured for P13468 in run 20: they appear in no column of
+        OpenParlData's person records), so the finding is the absence itself
+        and the reader has to look the person up in that register. Offering a
+        number here would mean offering one from a different id space, which is
+        the failure ``identifier_verified`` exists to prevent — the one that
+        writes correct data onto the wrong person.
+
+    Neither is ever mechanical: both kinds are outside
+    ``quickstatements.MECHANICAL_KINDS`` and neither payload carries a
+    ``position``.
+    """
+    out: List[Suggestion] = []
+    for check in config.identifier_checks:
+        if check.property_id == config.identifier_property:
+            # The join property. Absence is knowable for *any* item, matched or
+            # not, because ``get_identifier_index`` asks Wikidata globally
+            # rather than within the seat — so this needs no "was it queried?"
+            # guard the way the personal-data checks do. An item matched *by*
+            # the identifier carries it by construction, which is why only a
+            # name match can raise this.
+            if member.qid_source != QID_FROM_NAME or person.parliament_id:
+                continue
+            # Under ``identifier_verified: false`` the claim behind the value —
+            # that this property's values are the source's person ids — is the
+            # one thing no probe has checked. The suggestion says so rather
+            # than being withheld: a reader who confirms it gets the most
+            # valuable edit in the report, and one who does not must not paste
+            # a number from a different id space onto an item.
+            caveat = (
+                ""
+                if config.identifier_verified
+                else f" ⚠️ That {check.property_id} values equal "
+                f"{config.source_name}'s person ids is asserted by this config "
+                "and not yet measured (scripts/verify_kantonsrat.py section C) "
+                "— check one by hand before applying these in bulk."
+            )
+            out.append(
+                _base_suggestion(
+                    KIND_ADD_IDENTIFIER,
+                    body,
+                    member,
+                    f"Add {check.property_id} ({check.label}) "
+                    f"'{member.person_number}'. The item was found by name and "
+                    "birth date; recording the identifier makes every future "
+                    "comparison exact." + caveat + verify,
+                    payload={
+                        "property": check.property_id,
+                        "parliament_id": str(member.person_number),
+                        "biography": config.biography_url_for(member.person_number),
+                        # The page *this property's* value resolves to, which
+                        # is not automatically the biography link: a config may
+                        # override that one, and then only this is guaranteed
+                        # to know the number.
+                        "source_url": config.identifier_url(
+                            check.property_id, member.person_number
+                        ),
+                    },
+                )
+            )
+            continue
+
+        if person.identifier_value(check.property_id):
+            continue
+        suggestion = _base_suggestion(
+            KIND_MISSING_IDENTIFIER,
+            body,
+            member,
+            f"No {check.property_id} ({check.label}) statement. That is this "
+            f"person's id in {check.register}, a different register from the "
+            f"one {config.source_name} is joined on "
+            f"({config.identifier_property}), so an item can carry one and not "
+            "the other. No value is offered here because nothing this run "
+            "reads publishes it — look the person up in that register and add "
+            "it by hand." + verify,
+            payload={
+                "property": check.property_id,
+                "biography": config.biography_url_for(member.person_number),
+            },
+        )
+        suggestion.links["property"] = check.property_url
+        out.append(suggestion)
+    return out
+
+
 def _member_suggestions(
     body: Body,
     member: Member,
@@ -668,39 +780,7 @@ def _member_suggestions(
     verify = _verify_note(member, config.identifier_property)
     biography = config.biography_url_for(member.person_number)
 
-    # The highest-leverage edit: give the item its identifier so that every
-    # future run joins exactly instead of guessing from a name.
-    #
-    # The value is the source's person id, which is the whole claim behind the
-    # identifier property. Under ``identifier_verified: false`` that claim is
-    # the one thing no probe has checked yet, and the suggestion says so
-    # rather than being withheld: a reader who confirms it gets the most
-    # valuable edit in the report, and one who does not must not paste a
-    # number from a different id space onto an item.
-    if member.qid_source == QID_FROM_NAME and not person.parliament_id:
-        caveat = (
-            ""
-            if config.identifier_verified
-            else f" ⚠️ That {config.identifier_property} values equal "
-            f"{config.source_name}'s person ids is asserted by this config and "
-            "not yet measured (scripts/verify_kantonsrat.py section C) — check "
-            "one by hand before applying these in bulk."
-        )
-        out.append(
-            _base_suggestion(
-                KIND_ADD_IDENTIFIER,
-                body,
-                member,
-                f"Add {config.identifier_property} "
-                f"'{member.person_number}'. The item was found by name and "
-                "birth date; recording the identifier makes every future "
-                "comparison exact." + caveat + verify,
-                payload={
-                    "parliament_id": str(member.person_number),
-                    "biography": biography,
-                },
-            )
-        )
+    out.extend(_identifier_suggestions(body, member, person, config, verify))
 
     statements = person.statements_for(body.position_qid)
     expected = expected_statements(member, periods, config.statement_model)

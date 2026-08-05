@@ -70,9 +70,11 @@ class FakeWikidata:
         return {"Q117716": genner}
 
     def get_position_holders(self, position_qids, language="de",
-                             identifier_property="P1307", person_data_properties=()):
+                             identifier_property="P1307", person_data_properties=(),
+                             extra_identifiers=()):
         self.identifier_properties.append(identifier_property)
         self.person_data_properties = list(person_data_properties)
+        self.extra_identifiers = list(extra_identifiers)
         return self.people
 
     def search_people(self, names, position_qids, language="de",
@@ -292,9 +294,11 @@ def test_the_seat_roles_default_is_what_the_probe_measured():
 def test_a_departed_cantonal_member_gets_their_dates_and_the_cantonal_link(config):
     """Same report, other source: the ended `memberships` row carries both dates.
 
-    And the link is the Kantonsrat's own page — the federal biography URL would
-    send a reader to a service that has never heard of this member, which is
-    why the template is configuration.
+    And the link resolves the number printed next to it: that number is the
+    P14527 value this config joins on, so the page is OpenParlData's record for
+    it. The federal biography URL would send a reader to a service that has
+    never heard of this member — and so, for this number, did the Kantonsrat's
+    own member list, which is what the template used to be.
     """
     class DepartedApi(FakeApi):
         """Person 18759's 2023 return is removed: they left in 2019 and stayed."""
@@ -327,7 +331,9 @@ def test_a_departed_cantonal_member_gets_their_dates_and_the_cantonal_link(confi
     suggestion = next(s for s in results[0].suggestions if s.person_qid == "Q999")
     assert "end" not in suggestion.payload
     assert "looked up by hand" in suggestion.detail
-    assert suggestion.payload["biography"] == "https://www.kantonsrat.zh.ch/mitglieder/"
+    assert suggestion.payload["biography"] == (
+        "https://openparldata.ch/item/persons/18759"
+    )
     assert "parlament.ch" not in suggestion.detail
 
     # …and the day the probe confirms the value, the same run offers them: the

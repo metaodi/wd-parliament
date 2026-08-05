@@ -7,6 +7,7 @@ import pytest
 from wd_parliament.models import (
     KIND_ADD_END_DATE,
     KIND_ADD_IDENTIFIER,
+    KIND_MISSING_IDENTIFIER,
     KIND_ADD_MEMBERSHIP,
     KIND_ADD_QUALIFIER,
     KIND_ADD_START_DATE,
@@ -73,7 +74,7 @@ def test_a_suggestion_without_a_qid_is_never_mechanical():
 @pytest.mark.parametrize(
     "kind",
     [KIND_FIX_START_DATE, KIND_REVIEW_ENDED, KIND_REVIEW_PARTY,
-     KIND_NO_WIKIDATA_ITEM, KIND_ADD_IDENTIFIER],
+     KIND_NO_WIKIDATA_ITEM, KIND_ADD_IDENTIFIER, KIND_MISSING_IDENTIFIER],
 )
 def test_review_and_correction_kinds_are_never_mechanical(kind):
     """QuickStatements can only add, so 'this value is wrong' cannot be applied."""

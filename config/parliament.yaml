@@ -63,6 +63,28 @@ quickstatements: true
 biography_url: "https://www.parlament.ch/{language}/biografie/wd/{person_number}"
 
 # ---------------------------------------------------------------------------
+# Both identifiers, because a member has two and they are not the same thing
+# ---------------------------------------------------------------------------
+# P1307 is the Swiss parliament ID: PersonNumber, from the source this config
+# reads, which is why it is the join. P14527 is the OpenParlData ID — the id of
+# a record api.openparldata.ch keeps about the same person, one per person *per
+# body*. An item can carry either without the other, and the run only ever
+# mentioned the one it joined on, so a missing P14527 was invisible here.
+#
+# Listing both makes the run report each one it does not find:
+#
+#   P1307  -> ADD_IDENTIFIER,     value in hand (MemberCouncil.PersonNumber)
+#   P14527 -> MISSING_IDENTIFIER, no value. parlament.ch does not publish
+#             OpenParlData's ids, and the `enrich:` cross-check below must not
+#             supply them: it is bounded to *contradicting* this source and
+#             produces no values by construction (src/wd_parliament/enrich.py).
+#             Reading them off it would be a deliberate widening of that
+#             bound, not a tidy-up.
+#
+# Neither kind is ever emitted as QuickStatements.
+identifiers: [P1307, P14527]
+
+# ---------------------------------------------------------------------------
 # Chambers
 # ---------------------------------------------------------------------------
 # `council` matches MemberCouncil.CouncilAbbreviation, and `position` is the

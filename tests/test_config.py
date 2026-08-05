@@ -236,3 +236,88 @@ def test_p14527_lost_its_verified_status_to_a_single_disagreement():
     from wd_parliament.models import VERIFIED_IDENTIFIER_PROPERTIES
 
     assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307"})
+
+
+# --- the two identifiers a member has ---------------------------------------
+def test_a_config_that_says_nothing_reports_only_the_join(tmp_path):
+    """What the tool did before the key existed, unchanged."""
+    cfg = load_config(write(tmp_path, MINIMAL))
+    assert cfg.identifiers == ["P1307"]
+    assert [c.property_id for c in cfg.identifier_checks] == ["P1307"]
+
+
+def test_both_identifiers_are_read_and_the_join_comes_first(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL + "identifiers: [P14527, P1307]\n"))
+    assert [c.property_id for c in cfg.identifier_checks] == ["P1307", "P14527"]
+
+
+def test_the_join_property_is_reported_even_if_the_list_omits_it(tmp_path):
+    """It is the only one whose value the run holds, so dropping it would lose
+    the highest-leverage edit in the report — a strange power for a config key
+    that reads like an addition."""
+    cfg = load_config(write(tmp_path, MINIMAL + "identifiers: [P14527]\n"))
+    assert [c.property_id for c in cfg.identifier_checks] == ["P1307", "P14527"]
+
+
+def test_an_unknown_identifier_property_is_an_error(tmp_path):
+    """Not a skip, for the same reason person_data's is not: it selects a code
+    path rather than supplying a value, and a typo would silently drop the
+    second of a parliament's two identifiers."""
+    with pytest.raises(ValueError, match="P999999"):
+        load_config(write(tmp_path, MINIMAL + "identifiers: [P1307, P999999]\n"))
+
+
+def test_a_string_instead_of_a_list_is_an_error(tmp_path):
+    with pytest.raises(ValueError, match="identifiers"):
+        load_config(write(tmp_path, MINIMAL + "identifiers: P1307\n"))
+
+
+def test_the_biography_link_defaults_to_the_join_propertys_record_page(tmp_path):
+    """The number printed beside a member *is* the join property's value, so
+    the page that resolves it is that property's. Linking it through anything
+    else is how the Kantonsrat report came to point an OpenParlData person id
+    at the chamber's member list."""
+    text = MINIMAL + """
+source: openparldata
+body_key: ZH
+identifier_property: P14527
+identifier_verified: false
+"""
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.biography_url_for(18172) == "https://openparldata.ch/item/persons/18172"
+
+
+def test_an_explicit_biography_url_still_wins(tmp_path):
+    cfg = load_config(
+        write(tmp_path, MINIMAL + 'biography_url: "https://example.org/{id}"\n')
+    )
+    assert cfg.biography_url_for(1108) == "https://example.org/1108"
+
+
+def test_each_identifier_resolves_through_its_own_template(tmp_path):
+    """Three registers, three URLs, and the values are not interchangeable."""
+    cfg = load_config(write(tmp_path, MINIMAL))
+    assert cfg.identifier_url("P1307", 1108) == (
+        "https://www.parlament.ch/de/biografie/wd/1108"
+    )
+    assert cfg.identifier_url("P14527", 18172) == (
+        "https://openparldata.ch/item/persons/18172"
+    )
+    assert cfg.identifier_url("P13468", 22518) == (
+        "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22518"
+    )
+    assert cfg.identifier_url("P1307", None) is None
+
+
+def test_the_shipped_configs_report_both_identifiers():
+    """Federally the parliament's own id is the join and OpenParlData's is the
+    extra; cantonally it is the other way round, because P13468's values are in
+    no column OpenParlData has (run 20)."""
+    federal = load_config("config/parliament.yaml")
+    assert [c.property_id for c in federal.identifier_checks] == ["P1307", "P14527"]
+
+    zurich = load_config("config/kantonsrat-zh.yaml")
+    assert [c.property_id for c in zurich.identifier_checks] == ["P14527", "P13468"]
+    assert zurich.biography_url_for(18172) == (
+        "https://openparldata.ch/item/persons/18172"
+    )

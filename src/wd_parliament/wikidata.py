@@ -11,6 +11,11 @@ Python costs one extra request and keeps every result set predictable.
   configured position items *regardless of P1307*, with qualifiers. Fetching
   these unconditionally is what lets the diff walk Wikidata → parlament.ch and
   catch people Wikidata still lists as sitting.
+- :meth:`WikidataClient.get_identifier_values` — the same query asked about an
+  identifier property the run reports on but does **not** join on (a
+  parliament's own member id beside the OpenParlData id, or the reverse). Read
+  for presence, and kept out of ``parliament_id`` so nothing mistakes another
+  id space's value for the source's person id.
 - :meth:`WikidataClient.get_parties` — open P102 statements for the same people.
 - :meth:`WikidataClient.person_data_query` — which personal-data properties
   (P19, P1321, P106, P102, P856, P1971) each of those people already carries.
@@ -356,12 +361,41 @@ SELECT ?person ?name ?origin WHERE {{
         )
         return people
 
+    def get_identifier_values(
+        self, identifier_property: str, language: str = "de"
+    ) -> Dict[str, str]:
+        """Q-ID → value, for every item carrying ``identifier_property``.
+
+        The same query as :meth:`get_identifier_index`, read for one thing
+        only: which items already have this identifier. It is asked about a
+        property the run does **not** join on — a parliament's own member id on
+        a run joined on the OpenParlData id, or the other way round — so the
+        answer must never reach :attr:`WikidataPerson.parliament_id`, which
+        every join and every duplicate check reads as the source's person id.
+
+        Global rather than bounded by the seat, and deliberately: absence is
+        the finding here, and "this item has no P13468" is only sayable about
+        an item the query could have seen. A population narrowed to seat
+        holders would report every item outside it as missing the property.
+        """
+        values: Dict[str, str] = {}
+        for row in self.run_query(self.identifier_query(language, identifier_property)):
+            qid = qid_from_uri(row.get("person", {}).get("value", ""))
+            value = _literal(row.get("parliamentId"))
+            if qid and value and qid not in values:
+                values[qid] = value
+        log.info(
+            "Wikidata: %d item(s) carry %s", len(values), identifier_property
+        )
+        return values
+
     def get_position_holders(
         self,
         position_qids: Sequence[str],
         language: str = "de",
         identifier_property: str = P_PARLIAMENT_ID,
         person_data_properties: Sequence[str] = (),
+        extra_identifiers: Sequence[str] = (),
     ) -> Dict[str, WikidataPerson]:
         """Everyone holding one of ``position_qids``, with their P39 statements.
 
@@ -374,9 +408,22 @@ SELECT ?person ?name ?origin WHERE {{
         (the default) it is not run at all, and every person is left
         ``person_data_known=False``, which makes the diff suggest nothing about
         them.
+
+        ``extra_identifiers`` adds one query per identifier property the run
+        reports on but does not join on, filling
+        :attr:`WikidataPerson.identifiers`. It widens the returned map with
+        items that carry such an identifier and nothing else this run cares
+        about; they hold no statements, so every pass that walks the map by
+        statement or by ``parliament_id`` ignores them.
         """
         people = self.get_identifier_index(language, identifier_property)
         statements: Dict[str, PositionStatement] = {}
+
+        for prop in extra_identifiers:
+            if prop == identifier_property:
+                continue
+            for qid, value in self.get_identifier_values(prop, language).items():
+                people.setdefault(qid, WikidataPerson(qid=qid)).identifiers[prop] = value
 
         for row in self.run_query(
             self.position_query(position_qids, language, identifier_property)

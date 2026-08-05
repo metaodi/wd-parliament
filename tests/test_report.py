@@ -9,6 +9,7 @@ from wd_parliament.models import (
     KIND_ADD_END_DATE,
     KIND_ADD_MEMBERSHIP,
     KIND_DUPLICATE_IDENTIFIER,
+    KIND_MISSING_IDENTIFIER,
     KIND_NO_WIKIDATA_ITEM,
     QID_FROM_IDENTIFIER,
     QID_FROM_NAME,
@@ -168,6 +169,28 @@ def test_the_departed_section_links_to_the_source_database():
     assert "Recorded as sitting, but the member has left" in md
     assert "[#3432](https://www.parlament.ch/de/biografie/wd/3432)" in md
     assert "2011-12-05 to 2019-12-01" in md
+
+
+def test_a_missing_identifier_links_the_property_it_is_about():
+    """The finding has no value to offer — that is what separates it from
+    ADD_IDENTIFIER — so the property page is the only thing to link."""
+    suggestion = make_suggestion(
+        kind=KIND_MISSING_IDENTIFIER,
+        detail="No P13468 statement.",
+        payload={
+            "property": "P13468",
+            "biography": "https://openparldata.ch/item/persons/18172",
+        },
+        links={"property": "https://www.wikidata.org/wiki/Property:P13468"},
+    )
+    result = BodyResult(body=BODY, suggestions=[suggestion], member_count=1)
+    md = render_body_markdown(result, GENERATED, "canton")
+    assert "[P13468](https://www.wikidata.org/wiki/Property:P13468)" in md
+    # The number beside the member still resolves through the *join* property.
+    assert "[#1101](https://openparldata.ch/item/persons/18172)" in md
+    assert "https://www.wikidata.org/wiki/Property:P13468" in render_html(
+        [result], GENERATED
+    )
 
 
 def test_the_departed_members_dates_reach_the_dashboard_and_the_json():
