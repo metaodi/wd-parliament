@@ -1,42 +1,50 @@
 name: Verify assumptions
 
-# A read-only diagnostic, not a build. It answers the questions under "Open
-# verification steps" in the README that need live network access:
+# A read-only diagnostic, not a build. It answers the questions under "What has
+# been verified" and "Open verification steps" in the README that need live
+# network access.
 #
-#   1. can the sitting members be read from parlament.ch at all, and if not,
-#      which filter empties the list? (The run of 2026-07-29 read zero members
-#      and published 2,234 wrong suggestions off the back of it.)
-#   2. does Wikidata's P1307 really hold MemberCouncil.PersonNumber?
-#   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
+# Two of them gate the job, and they are the two that say whether the pipeline
+# may run at all:
+#
+#   1. can the sitting members be read from parlament.ch, and if not, which
+#      filter empties the list? (The run of 2026-07-29 read zero members and
+#      published 2,234 wrong suggestions off the back of it.) The same step
+#      re-checks that Wikidata's P1307 holds MemberCouncil.PersonNumber;
+#   2. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
 #      the items they claim to?
 #
-# It also runs five things that report without gating:
+# The other five report without gating, and each for its own reason:
 #
-#   * whether swissparlpy's OpenParlData backend could source this tool's
-#     data, and whether P14527 is a better join key than P1307 — a "no" there
-#     is an answer about a design option, not a broken pipeline;
-#   * README step 0c, comparing both the raw MemberCouncil.DateJoining and
-#     the tenure start the tool actually emits as P580 against OpenParlData's
-#     seat memberships. A disagreement blocks a *bulk apply* of
-#     ADD_MEMBERSHIP / ADD_START_DATE, since both are mechanical, but it does
-#     not stop reports being generated — which is what this job's pass/fail
-#     decides. Read it before applying QuickStatements;
-#   * README step 4, comparing the legislative-period overlap against who
+#   * README step 0c compares both the raw MemberCouncil.DateJoining and the
+#     tenure start the tool actually emits as P580 against OpenParlData's seat
+#     memberships. A disagreement blocks a *bulk apply* of ADD_MEMBERSHIP /
+#     ADD_START_DATE, since both are mechanical, but it does not stop reports
+#     being generated — which is what this job's pass/fail decides. Its first
+#     verdict is a standing CONTRADICTED by design: it records why P580 is not
+#     read from DateJoining. Read the second one before applying anything;
+#   * README step 4 compares the legislative-period overlap against who
 #     actually voted in a roll-call. It decides P2937, and `terms:` ships
 #     empty, so today nothing it could falsify is emitted at all;
-#   * README step 8, measuring the people Wikidata still records as sitting
-#     whom the source does not list. The report now names their leaving date,
-#     and this asks whether that date could be *applied* — a question about
-#     removing the report-only gates in `diff`, not about generating reports.
-#     Its INCONCLUSIVE is the expected answer when Wikidata is tidy;
-#   * README step 7, measuring whether the tool could be pointed at a cantonal
-#     parliament (the Kantonsrat Zürich). It concerns a parliament this repo
-#     does not yet process at all, so it cannot gate anything here by
-#     construction;
-#   * README step 9, measuring whether the source really carries the personal
+#   * README step 8 measures the people Wikidata still records as sitting whom
+#     the source does not list. The report names their leaving date, and this
+#     asks whether that date could be *applied* — a question about removing the
+#     report-only gates in `diff`, not about generating reports. Its
+#     INCONCLUSIVE is the expected answer when Wikidata is tidy;
+#   * README step 7 measures the cantonal config (the Kantonsrat Zürich). No
+#     verdict about a cantonal parliament can make the federal pipeline more or
+#     less safe to run;
+#   * README step 9 measures whether each source really carries the personal
 #     data (P19, P1321, P106, P102, P856, P1971) the presence checks ask for,
-#     and how many suggestions each one would make. Those suggestions are
-#     never mechanical, so nothing it measures can reach suggestions.qs.
+#     and how many suggestions each one would make. Those suggestions are never
+#     mechanical, so nothing it measures can reach suggestions.qs.
+#
+# `scripts/verify_openparldata.py` was wired in here until every one of its
+# verdicts was settled (README step 6: the backend can source P39, and P14527
+# adds nobody federally). It is now run by hand — after a swissparlpy upgrade
+# in particular, since its section E is what measures the library's defaults.
+# The cantonal step still reads OpenParlData live through swissparlpy on every
+# dispatch, so a source or library regression does not go unnoticed here.
 #
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
@@ -45,6 +53,9 @@ name: Verify assumptions
 on:
   workflow_dispatch:
     inputs:
+      # The identity spot-check is the one thing here worth pointing at another
+      # person: it is how a member whose dates look wrong gets their
+      # MemberCouncilHistory read (section 3 says so when it disagrees).
       last_name:
         description: "Surname to look up on parlament.ch"
         required: false
@@ -53,22 +64,6 @@ on:
         description: "The P1307 value Wikidata holds for that person"
         required: false
         default: "1108"
-      openparldata_sample_name:
-        description: "A sitting National Councillor, to sample OpenParlData memberships"
-        required: false
-        default: "Andrey"
-      vote_ids:
-        description: "IdVote numbers for the period cross-check, space separated ('auto' discovers them)"
-        required: false
-        default: "auto"
-      kantonsrat_body_key:
-        description: "OpenParlData body key for the canton (step 7)"
-        required: false
-        default: "ZH"
-      kantonsrat_position:
-        description: "Q-ID for the Kantonsrat seat (blank = only discover candidates)"
-        required: false
-        default: "Q21518678"
 
 # Read-only on purpose. This workflow must never write to the repository.
 permissions:
@@ -87,8 +82,8 @@ jobs:
           python-version: "3.11"
           enable-cache: true
 
-      # Both checks run even when the first one fails: one dispatch should
-      # answer both questions, not stop at the first bad news.
+      # Every step runs even when an earlier one fails: one dispatch should
+      # answer every question, not stop at the first bad news.
       - name: Probe the parlament.ch source and the P1307 join
         id: source
         continue-on-error: true
@@ -130,27 +125,6 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
 
-      # An evaluation, not a check. Its outcome is deliberately absent from
-      # the job result below: whether OpenParlData suits this tool is a design
-      # question, and a "no" must not turn the diagnostic red.
-      - name: Evaluate the OpenParlData backend and P14527
-        id: openparldata
-        continue-on-error: true
-        env:
-          SAMPLE_NAME: ${{ inputs.openparldata_sample_name }}
-        run: |
-          set +e
-          uv run python scripts/verify_openparldata.py \
-            --config config/parliament.yaml \
-            --last-name "$SAMPLE_NAME" 2>&1 | tee openparldata.txt
-          {
-            echo "## 3. OpenParlData backend (evaluation only)"
-            echo
-            echo '```'
-            cat openparldata.txt
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
       # README step 0c: does MemberCouncil.DateJoining agree with OpenParlData's
       # per-term begin_date? Both kinds that emit P580 are mechanical, so a
       # disagreement blocks a bulk apply — but not the generation of reports,
@@ -163,7 +137,7 @@ jobs:
           uv run python scripts/compare_tenure_dates.py \
             --config config/parliament.yaml 2>&1 | tee tenure.txt
           {
-            echo "## 4. Tenure start dates — README step 0c"
+            echo "## 3. Tenure start dates — README step 0c"
             echo
             echo '```'
             cat tenure.txt
@@ -171,27 +145,27 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       # README step 4: does the interval overlap agree with who actually voted?
-      # Reports, does not gate — for a different reason than the two above.
+      # Reports, does not gate — for a different reason than the one above.
       # P2937 is the qualifier this decides, `terms:` in the config ships empty,
       # and the tool skips unknown values, so nothing this check could falsify
       # currently reaches QuickStatements at all. It gates a *bulk apply* the
       # day that map is filled in, not the generation of reports.
       #
-      # VOTE_IDS is unquoted on purpose: several IdVotes are several arguments.
-      # It reaches argparse, not a shell command, and anything that is neither a
-      # number nor 'auto' is rejected there rather than silently ignored.
+      # The votes are discovered from the `Vote` table, one per period, for the
+      # three most recent periods — which is what removed this step's `vote_ids`
+      # input, since nobody has to supply IdVote numbers any more. Name them by
+      # hand with `--validate-periods 12345 23456` locally if you want exactly
+      # those.
       - name: Cross-check the period join (step 4)
         id: periods
         continue-on-error: true
-        env:
-          VOTE_IDS: ${{ inputs.vote_ids }}
         run: |
           set +e
           uv run python -m wd_parliament \
             --config config/parliament.yaml \
-            --validate-periods $VOTE_IDS 2>&1 | tee periods.txt
+            --validate-periods 2>&1 | tee periods.txt
           {
-            echo "## 5. Legislative-period join — README step 4"
+            echo "## 4. Legislative-period join — README step 4"
             echo
             echo '```'
             cat periods.txt
@@ -202,8 +176,8 @@ jobs:
       # Reports, does not gate — the third variety of "does not gate" in this
       # file. The suggestions it measures are report-only *by construction*
       # (two gates in diff._departed_suggestion), so nothing it could falsify
-      # reaches QuickStatements today; what a CONFIRMED here would license is
-      # removing those gates, which is a deliberate act, not a run.
+      # reaches QuickStatements today; what its CONFIRMED licenses is removing
+      # those gates, which is a deliberate act, not a run.
       #
       # INCONCLUSIVE is the expected answer on tidy data: the population is
       # whatever Wikidata has left open for people who have gone, and a small
@@ -217,39 +191,34 @@ jobs:
           uv run python scripts/verify_departures.py \
             --config config/parliament.yaml 2>&1 | tee departures.txt
           {
-            echo "## 6. Departed members' leaving dates — README step 8"
+            echo "## 5. Departed members' leaving dates — README step 8"
             echo
             echo '```'
             cat departures.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # README step 7: could this tool be pointed at a cantonal parliament?
-      # Reports, does not gate — and for the plainest reason of the three: it
-      # measures the Kantonsrat Zürich, which no config here processes, so
-      # nothing it finds can make the federal pipeline more or less safe to
-      # run. Its "no" answers are design findings (ship report-only, use a
-      # different position item), not faults.
+      # README step 7: the cantonal config. Reports, does not gate — for the
+      # plainest reason of the non-gating checks: it measures the Kantonsrat
+      # Zürich, so nothing it finds can make the *federal* pipeline more or less
+      # safe to run. Its section C is what would license flipping
+      # `identifier_verified` in config/kantonsrat-zh.yaml, and it is measured
+      # at 34 of 35.
       #
-      # The position Q-ID is UNVERIFIED and section D of the probe is what
-      # checks it; passing it as an input is what lets a dispatch try another
-      # candidate without a commit.
-      - name: Evaluate a cantonal extension — Kantonsrat Zürich (step 7)
+      # The body and the position Q-ID were dispatch inputs while the position
+      # was unverified and section D was checking candidates. Both are settled
+      # (body ZH, Q21518678 held by 167 of the 180 sitting members), so the
+      # script's own defaults are used; another canton needs --expect-seats and
+      # --seat-roles too, which is a local run rather than a dispatch.
+      - name: Evaluate the cantonal config — Kantonsrat Zürich (step 7)
         id: kantonsrat
         continue-on-error: true
-        env:
-          # Via env rather than inline ${{ }}, so neither value can be
-          # interpolated into the shell.
-          BODY_KEY: ${{ inputs.kantonsrat_body_key }}
-          POSITION: ${{ inputs.kantonsrat_position }}
         run: |
           set +e
           uv run python scripts/verify_kantonsrat.py \
-            --config config/parliament.yaml \
-            --body-key "$BODY_KEY" \
-            --position "$POSITION" 2>&1 | tee kantonsrat.txt
+            --config config/parliament.yaml 2>&1 | tee kantonsrat.txt
           {
-            echo "## 7. Cantonal extension — README step 7 (evaluation only)"
+            echo "## 6. Cantonal extension — README step 7 (evaluation only)"
             echo
             echo '```'
             cat kantonsrat.txt
@@ -264,8 +233,9 @@ jobs:
       # `person_data:` has no source column and is quietly making no
       # suggestions, which is a tidiness finding, not a fault.
       #
-      # Runs for both configs: the cantonal source's person columns are
-      # entirely unmeasured, and this is the probe that would name them.
+      # Runs for both configs: the two sources answer different halves of the
+      # list, and this is the probe that reads each one's real column names —
+      # which is how two long-standing bugs in the cantonal adapter were found.
       - name: Measure the personal-data checks (step 9)
         id: persondata
         continue-on-error: true
@@ -276,7 +246,7 @@ jobs:
             uv run python scripts/verify_person_data.py --config "$cfg" 2>&1
           done | tee persondata.txt
           {
-            echo "## 8. Personal-data checks — README step 9"
+            echo "## 7. Personal-data checks — README step 9"
             echo
             echo '```'
             cat persondata.txt
@@ -294,7 +264,6 @@ jobs:
             echo "| --- | --- |"
             echo "| parlament.ch source + P1307 join | \`$source_step\` |"
             echo "| Configured Q-IDs | \`$qids\` |"
-            echo "| OpenParlData evaluation | \`${{ steps.openparldata.outcome }}\` (does not gate) |"
             echo "| Tenure start dates (0c) | \`${{ steps.tenure.outcome }}\` (does not gate) |"
             echo "| Period join (step 4) | \`${{ steps.periods.outcome }}\` (does not gate) |"
             echo "| Departed members' dates (step 8) | \`${{ steps.departures.outcome }}\` (does not gate) |"
@@ -305,11 +274,11 @@ jobs:
               echo "Both gating checks passed: the members are readable, the"
               echo "identifier join is verified, and every configured Q-ID resolves"
               echo "— read the labels above to confirm they name what you meant."
-              echo "Before *applying* anything, read section 4's second verdict"
-              echo "(P580 as emitted), section 5, and — if you are thinking of"
-              echo "ungating the departed members — section 6. The only step left that"
-              echo "nothing here can do for you is step 5: paste one line into"
-              echo "QuickStatements by hand and check it lands."
+              echo "Before *applying* anything, read section 3's second verdict"
+              echo "(P580 as emitted), section 4, and — if you are thinking of"
+              echo "ungating the departed members — section 5. The only question"
+              echo "left that nothing here can answer is README step 5: paste one"
+              echo "line into QuickStatements by hand and check it lands."
             else
               echo "At least one check failed — see the detail above. Do not run"
               echo "\"Update parliament TODO\" or apply any QuickStatements until"
