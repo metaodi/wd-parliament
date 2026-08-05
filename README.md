@@ -64,7 +64,10 @@ run 19 (2026-08-04) measured which personal data each source actually carries
 — four of six properties federally, three cantonally, 206 suggestions in the
 federal report — and found two long-standing bugs in the *cantonal adapter*
 along the way. It gates nothing, since none of those suggestions can ever be
-mechanical.
+mechanical. **Step 10 is newly open and has never been dispatched**: it asks
+whether the canton's own Gever (`swissparlpy` PR #51) publishes P13468, the one
+identifier step 7 left without a source. Like step 7 it gates nothing here —
+it reads a service no config in this repo names.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -820,7 +823,7 @@ not equivalent — and run 14 settled it in favour of the first:
 
 | Candidate | Provenance | What it would cost |
 | --- | --- | --- |
-| **P13468** Zurich Kantonsrat and Regierungsrat member ID | Wikidata-asserted, and the canton's *own* id | a source that can supply its value — OpenParlData cannot (run 20), so this needs the canton's dataset |
+| **P13468** Zurich Kantonsrat and Regierungsrat member ID | Wikidata-asserted, and the canton's *own* id | a source that can supply its value — OpenParlData cannot (run 20), so this needs the canton's dataset. The canton's Gever is the next candidate and is unmeasured: [step 10](#10--can-the-cantons-own-gever-supply-p13468--asked-not-yet-answered) |
 | **P14527** OpenParlData ID | Wikidata-asserted, per person *record* | nothing to the gate, and it is what ships — but it matched **0 of the 180 sitting members**, so the report is carried by the name fallback |
 | OpenParlData's `wikidata_id` field | a third party asserting a Q-ID *about* Wikidata | its own `QID_FROM_*` constant and its own decision in `is_mechanical`; it must not inherit the P1307 gate |
 | name matching only | none | `is_mechanical` already refuses it → report-only, `quickstatements: false` |
@@ -1215,6 +1218,65 @@ which is the message for the opposite situation. A zero has two causes — the
 source said nothing, or Wikidata already has it — and reading the first as the
 second is how a missing column comes to look like a well-maintained property.
 `volume_note` now takes the source coverage and says which it is.
+
+### 10. ⬜ Can the canton's own Gever supply P13468? — *asked, not yet answered*
+
+Step 7 ended with P13468 as "the right property and the wrong join": 28 of 35
+linked ZH items carry it, **0 of 28** values are OpenParlData's person id, and
+run 20 found them in **no column** of the person record. What that step could
+not say is where the values *do* live, beyond "the canton's own dataset".
+
+[`swissparlpy` PR #51](https://github.com/metaodi/swissparlpy/pull/51) adds a
+**Gever backend** — the CMI CDWS API behind `kantonsrat.zh.ch`
+(`parlzhcdws.cmicloud.ch`, instance `canton_zurich`), with a `MITGLIEDER`
+index beside `BEHOERDEN`, `PARTEIEN` and `WAHLKREISE`. It is the first
+candidate source for the Kantonsrat that belongs to the *canton* rather than to
+an aggregator, which makes it the obvious place to look — and exactly the
+reason to measure rather than assume. **Whose system a service is says nothing
+about which register's numbers it publishes.** P13468's formatter URL points at
+`wahlen.zh.ch/krdaten_staatsarchiv/`, the Staatsarchiv's database of Kantonsrat
+and Regierungsrat members; the Gever is the chamber's business-management
+system. Two systems of one canton are still two id spaces, and reading one as
+the other is the failure `identifier_verified` exists to stop.
+
+`scripts/verify_gever.py` asks it, and the shape of the question is run 20's:
+
+```bash
+uv run python scripts/verify_gever.py
+uv run python scripts/verify_gever.py --limit 200 --verbose
+```
+
+| Section | Question |
+| --- | --- |
+| A | does the `MITGLIEDER` index answer, with how many rows, and what can be *queried* on |
+| B | which fields the service really returns — printed, not guessed at, for run 19's reason |
+| C | every item Wikidata gives P13468, matched by name, its value compared against **every field** of that member's rows |
+| D | what else it carries (P569, P106, P102, P768, P580/P582) and the distinct `Gremium` values, so the Kantonsrat's own seat row is discovered rather than named in advance |
+
+| Verdict | Meaning |
+| --- | --- |
+| `CONFIRMED` | a field carries the P13468 value for every person compared. That is the source the property was waiting on, and a Gever-sourced config could join on it — after measuring coverage over the *chamber*, since a rate measured over the people Wikidata already links is not one |
+| `CONTRADICTED` | the value appears in no field. Gever settles the way OpenParlData did, and `config.load_config`'s refusal stands for a Gever config too |
+| `INCONCLUSIVE` | nobody could be matched — a fact about the overlap between the two lists, not about the source |
+
+Section C asks a second question that survives the first one's answer: **is the
+record key a person or a row?** The index holds one row per person per
+*Gremium* (a faction seat, a commission seat), which is how `goifer` — the
+client PR #51 is adapted from — queries it. If a person's rows carry different
+`OBJ_GUID`s then the source has no person-level key at all, which is a harder
+obstacle than a missing property: no Wikidata property holds a Gever GUID
+either way, so a config reading it would have nothing to join on but names.
+
+**Unmeasured as of 2026-08-05** — the environment this was written in has no
+egress to `parlzhcdws.cmicloud.ch`, so nothing here is a finding yet. What the
+`MITGLIEDER` record is known to contain comes from `goifer`'s own live example
+output (`dauer_start`/`dauer_end`, `funktion`, `gremium`, `gremiumname`,
+`name`, `vorname`, `geschlecht`, `wahlkreis`, `beruf`, `geburtsdatum`,
+`parteizugehoerigkeit.*`, `foto_id`, plus `obj_guid`/`seq`), and **no field in
+that list is a member id in P13468's range** — which is a reason to run the
+probe, not a substitute for running it. Wired into `Verify assumptions` as
+section 9; it **never gates**, for the plainest reason in that file: no config
+here names this service.
 
 ---
 

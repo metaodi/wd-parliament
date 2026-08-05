@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hand-built against the CMI CDWS response shape, NOT captured. See
+  tests/fixtures/README.md.
+
+  The element names are the real ones: they are the fields `goifer`'s own
+  pandas example reports back from the live canton_zurich MITGLIEDER index
+  (dauer_start / dauer_end / dauer_text, funktion, gremium, gremiumname,
+  vorname, name, geschlecht, wahlkreis, beruf, geburtsdatum,
+  parteizugehoerigkeit.*, foto_id, sitz as a nil element). The **people are
+  invented** and hold no seat anywhere.
+
+  Two things this fixture deliberately encodes, because the probe's answers
+  turn on them:
+
+  - Anna Muster has TWO rows with two different OBJ_GUIDs — one row per
+    Gremium, which is how the index is shaped — so `classify_row_key` has a
+    case where the record key is a row rather than a person.
+  - NO element carries anything resembling a Staatsarchiv member id. That is
+    not an assertion that the live service carries none; it is the shape the
+    parsing tests need, and only `scripts/verify_gever.py` against the live
+    index can say what is really there.
+-->
+<SearchDetailResponse IDXSEQ="2244279" q="seq &gt; 0" l="de-CH" s="1" m="500"
+    numHits="3" indexName="Mitglieder"
+    xmlns="http://www.cmiag.ch/cdws/searchDetailResponse"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Hit Guid="c180bdd8c294436ca373a46168449b38" SEQ="2244279" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="c180bdd8c294436ca373a46168449b38" SEQ="2244279"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2019-05-06T00:00:00</Start>
+        <End>9999-12-31T23:59:59</End>
+        <Text>06.05.2019 -</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Mitglied</Funktion>
+      <Gremium>FRASP</Gremium>
+      <GremiumName>Fraktion SP</GremiumName>
+      <Name>Muster</Name>
+      <Vorname>Anna</Vorname>
+      <Geschlecht>w</Geschlecht>
+      <Wahlkreis>I      Zürich 1+2</Wahlkreis>
+      <Beruf>Juristin</Beruf>
+      <Geburtsdatum xsi:nil="false">1975-03-04T00:00:00</Geburtsdatum>
+      <Parteizugehoerigkeit OBJ_GUID="2c7f8e1373594fb5bf6cf07bed46a154">
+        <Name>Sozialdemokratische Partei</Name>
+        <Kurzname>SP</Kurzname>
+      </Parteizugehoerigkeit>
+      <Foto_ID>c180bdd8c294436ca373a46168449b38-1664</Foto_ID>
+    </Mitglied>
+  </Hit>
+  <Hit Guid="19c7adbecb5241a0b82605f71c8d8445" SEQ="2246449" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="19c7adbecb5241a0b82605f71c8d8445" SEQ="2246449"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2020-02-24T00:00:00</Start>
+        <End>9999-12-31T23:59:59</End>
+        <Text>24.02.2020 -</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Präsidentin</Funktion>
+      <Gremium>KJS</Gremium>
+      <GremiumName>Kommission für Justiz und öffentliche Sicherheit</GremiumName>
+      <Name>Muster</Name>
+      <Vorname>Anna</Vorname>
+      <Geschlecht>w</Geschlecht>
+      <Wahlkreis>I      Zürich 1+2</Wahlkreis>
+      <Beruf>Juristin</Beruf>
+      <Geburtsdatum xsi:nil="false">1975-03-04T00:00:00</Geburtsdatum>
+      <Parteizugehoerigkeit OBJ_GUID="2c7f8e1373594fb5bf6cf07bed46a154">
+        <Name>Sozialdemokratische Partei</Name>
+        <Kurzname>SP</Kurzname>
+      </Parteizugehoerigkeit>
+      <Foto_ID>c180bdd8c294436ca373a46168449b38-1664</Foto_ID>
+    </Mitglied>
+  </Hit>
+  <Hit Guid="d3f337f849c945f683a47304c3f1d9d5" SEQ="2247057" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="d3f337f849c945f683a47304c3f1d9d5" SEQ="2247057"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2015-05-18T00:00:00</Start>
+        <End>2022-04-11T00:00:00</End>
+        <Text>18.05.2015 - 10.04.2022</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Mitglied</Funktion>
+      <Gremium>FRGRU</Gremium>
+      <GremiumName>Fraktion Grüne</GremiumName>
+      <Name>Bäumli-Roth</Name>
+      <Vorname>Rita</Vorname>
+      <Geschlecht>w</Geschlecht>
+      <Wahlkreis>IX     Horgen</Wahlkreis>
+      <Beruf xsi:nil="true"/>
+      <Geburtsdatum xsi:nil="true"/>
+      <Parteizugehoerigkeit OBJ_GUID="5ec95a689bf64555a0253f3fb8ed4f92">
+        <Name>Grüne Partei</Name>
+        <Kurzname>GP</Kurzname>
+      </Parteizugehoerigkeit>
+      <Foto_ID>d3f337f849c945f683a47304c3f1d9d5-1664</Foto_ID>
+    </Mitglied>
+  </Hit>
+</SearchDetailResponse>

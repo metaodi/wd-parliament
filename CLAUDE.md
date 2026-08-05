@@ -191,6 +191,24 @@ Two more findings from the same run, both load-bearing:
   sample is not a coverage rate over the chamber**, the same sampling trap that
   put the National Council at the top of the position ranking one level up.
 
+**The canton's Gever is the next candidate for P13468's value, and it is
+unmeasured** (README step 10). `swissparlpy` PR #51 adds a backend for the CMI
+CDWS API behind `kantonsrat.zh.ch` — `parlzhcdws.cmicloud.ch`, instance
+`canton_zurich`, with a `MITGLIEDER` index. `scripts/verify_gever.py` asks
+whether it publishes P13468, and it exists rather than an assumption because
+**whose system a service is says nothing about which register's numbers it
+publishes**: P13468's values live in the *Staatsarchiv's* KR-Daten database
+(`wahlen.zh.ch/krdaten_staatsarchiv/`), and the Gever is the chamber's
+business-management system. Two systems of one canton are two id spaces. Three
+things about the probe that are deliberate: it reads the **raw CDWS XML**
+rather than going through `GeverBackend`, because a column report taken through
+a normaliser measures the normaliser; it searches **every field** for the
+value, since "kept elsewhere" and "never heard of it" mean opposite things; and
+it asks a second question that survives the first one's answer — the index
+holds one row per person per *Gremium*, so if a person's rows carry different
+`OBJ_GUID`s the source has no person-level key at all, which no property could
+fix. Nothing about it gates: no config here names that service.
+
 **A parliament has two identifiers and only one of them can be the join, so the
 other has to be *reported* or it is never recorded at all.** Federally that is
 P1307 (the join) beside P14527; cantonally P14527 (the join) beside P13468.
@@ -629,11 +647,11 @@ no run has happened yet.
   `scripts/verify_source.py`, `--verify-config`,
   `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
   `--validate-periods`, `scripts/verify_departures.py`,
-  `scripts/verify_kantonsrat.py` and `scripts/verify_person_data.py`, writes
-  all eight to
+  `scripts/verify_kantonsrat.py`, `scripts/verify_person_data.py` and
+  `scripts/verify_gever.py`, writes all nine to
   the run summary, and writes nothing to the repo. Keep it read-only: it is
   the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other six report without gating and are deliberately
+  first two gate**; the other seven report without gating and are deliberately
   excluded from the job's pass/fail — do not wire their outcomes into the
   gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
   `--validate-periods` answer whether a *bulk apply* is safe,
@@ -641,9 +659,10 @@ no run has happened yet.
   could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
   never wire it into a gate),
   `verify_kantonsrat` measures a parliament no config here processes, so it
-  cannot bear on the federal run by construction, and `verify_person_data`
+  cannot bear on the federal run by construction, `verify_person_data`
   measures checks that are never mechanical, so no verdict it returns can
-  change what reaches `suggestions.qs`. The file must be on the
+  change what reaches `suggestions.qs`, and `verify_gever` reads a service no
+  config here names at all. The file must be on the
   default branch to appear in the dispatch UI, though a dispatch then runs the
   selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits

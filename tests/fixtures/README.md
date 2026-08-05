@@ -69,3 +69,20 @@ language — and the tests will keep passing against the real data.
 | --- | --- |
 | `membercouncil.json` | 13 `MemberCouncil` rows: 10 distinct people across both chambers, one repeated in German (an older mandate row) and once in French, one with a null `PersonNumber`. |
 | `periods.json` | 10 `LegislativePeriod` rows: the 44th–52nd legislatures, plus the 52nd repeated in French. The 52nd has no `EndDate` — it is the running one. |
+| `gever_mitglieder.xml` | 3 CMI CDWS `Hit`s from the canton of Zürich's `MITGLIEDER` index: two of them one invented person's two `Gremium` rows, under two different `OBJ_GUID`s. |
+| `gever_mitglieder_schema.xml` | The XSD's `searchfield` annotation for the same index — what the API can be *filtered* on, which is a shorter list than what a record carries. |
+
+### The two Gever fixtures
+
+Also **hand-built, not captured** — the environment had no egress to
+`parlzhcdws.cmicloud.ch` either. The *element names* are real: they are the
+fields [`goifer`](https://github.com/metaodi/goifer)'s own pandas example
+prints back from the live `canton_zurich` index, and `goifer` is the client
+`swissparlpy` PR #51's Gever backend is adapted from. The people are invented.
+
+What these fixtures must **not** be read as saying: no element here resembles a
+Staatsarchiv member id, and that is a property of a file written to exercise
+the parser, not a measurement of the service. Only
+`scripts/verify_gever.py` against the live index can answer README step 10 —
+which is the whole reason that probe prints the column list instead of
+inspecting the fields it expects.
