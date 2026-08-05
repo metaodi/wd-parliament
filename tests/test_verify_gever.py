@@ -278,7 +278,7 @@ def test_the_row_guid_varies_within_a_person(records):
     index, _ = index_by_name(records, *PERSON_NAME_COLUMNS)
     verdict, detail, lines = classify_row_key(index, ROW_KEY_FIELDS[0])
     assert verdict == CONTRADICTED
-    assert "membership row" in detail
+    assert "does not identify a person" in detail
     assert lines
 
 
@@ -294,6 +294,65 @@ def test_one_row_each_tests_nothing():
         {name_key("Muster", "Anna"): [person()]}, "obj_guid"
     )
     assert verdict == INCONCLUSIVE
+
+
+# Run 23's 14-of-748: a name is not a person, and two readings fit that shape.
+def keyed(guid, year, **fields):
+    return person(person_key=guid, birth_year=year, **fields)
+
+
+def test_two_keys_with_different_birth_years_are_two_people():
+    index = {
+        name_key("Bachmann", "Oskar"): [
+            keyed("a", "1921", gremium="KR"),
+            keyed("b", "1968", gremium="KR"),
+        ]
+    }
+    verdict, detail, lines = classify_row_key(index, "person_key", "birth_year")
+    assert verdict == CONFIRMED
+    assert "1 namesake(s), 0 split, 0 undecided" in detail
+    assert "namesakes" in lines[0]
+
+
+def test_two_keys_with_one_birth_year_are_one_person_split():
+    index = {
+        name_key("Bachmann", "Oskar"): [
+            keyed("a", "1921", gremium="KR"),
+            keyed("b", "1921", gremium="FRASP"),
+        ]
+    }
+    verdict, detail, _ = classify_row_key(index, "person_key", "birth_year")
+    assert verdict == CONTRADICTED
+    assert "does not identify a person" in detail
+
+
+def test_two_keys_and_no_birth_year_is_undecided_not_a_failure():
+    """Neither reading is available, so neither is asserted."""
+    index = {
+        name_key("Bachmann", "Oskar"): [
+            keyed("a", None, gremium="KR"),
+            keyed("b", "1921", gremium="FRASP"),
+        ]
+    }
+    verdict, detail, _ = classify_row_key(index, "person_key", "birth_year")
+    assert verdict == INCONCLUSIVE
+    assert "0 split, 1 undecided" in detail
+
+
+def test_one_split_outweighs_any_number_of_namesakes():
+    index = {
+        name_key("Bachmann", "Oskar"): [
+            keyed("a", "1921"),
+            keyed("b", "1968"),
+        ],
+        name_key("Muster", "Anna"): [
+            keyed("c", "1975"),
+            keyed("d", "1975"),
+        ],
+    }
+    verdict, detail, _ = classify_row_key(index, "person_key", "birth_year")
+    assert verdict == CONTRADICTED
+    assert "1 namesake(s), 1 split" in detail
 
 
 # --- resolving a candidate to a real column ----------------------------------

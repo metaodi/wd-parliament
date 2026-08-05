@@ -90,8 +90,9 @@ which reads as a fact about the source and was a fact about the probe. A
 fixture built from a normaliser's output cannot catch that; one built from the
 service's own column list can.
 
-What these fixtures must **not** be read as saying: no element here resembles a
-Staatsarchiv member id, and that is a property of a file written to exercise
-the parser, not a measurement of the service — run 22 crashed before it could
-ask. Only `scripts/verify_gever.py` against the live index can answer README
-step 10.
+No element here resembles a Staatsarchiv member id, and that is a property of a
+file written to exercise the parser — but run 23 then asked the live service
+and got the same answer for real: **130 of 130 P13468 values appear in no
+field**. Keep the two apart anyway. A fixture cannot measure a service; only
+`scripts/verify_gever.py` against the live index can, which is why README
+step 10 cites the run and not this file.

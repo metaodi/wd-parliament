@@ -33,7 +33,12 @@ two adapter bugs (``party_name_de`` for ``party_de``, ``birthdate`` for
 **C. P13468.** Every item Wikidata gives the property to, matched to a Gever
 member by name, and the value compared against **every field** of that member's
 records. CONFIRMED names the field that holds it; CONTRADICTED means the value
-appears nowhere, which settles Gever the way run 20 settled OpenParlData.
+appears nowhere. **Run 23 (2026-08-05) returned CONTRADICTED at 130 of 130**,
+which settles Gever the way run 20 settled OpenParlData: the property's
+register is the Staatsarchiv's KR-Daten database, not the chamber's Gever, and
+belonging to one canton does not make two systems one id space. Re-run it after
+touching this probe; do not re-open the question on the ownership argument the
+run falsified.
 
 **D. What else it carries.** The columns that would feed the checks this tool
 already has — P569, P106, P102, P768, P580/P582 — counted, plus the distinct
@@ -70,6 +75,7 @@ import re
 import sys
 import unicodedata
 import xml.etree.ElementTree as ET
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
@@ -529,7 +535,9 @@ def field_coverage(
 
 
 def classify_row_key(
-    index: Dict[str, List[Dict[str, Any]]], field: str = "person_kontakt_obj_guid"
+    index: Dict[str, List[Dict[str, Any]]],
+    field: str = "person_kontakt_obj_guid",
+    distinguisher: str = "person_kontakt_geburtsjahr",
 ) -> Tuple[str, str, List[str]]:
     """Is this field a key for the person, or only for the row? Pure.
 
@@ -544,47 +552,94 @@ def classify_row_key(
     row, and ``person_kontakt_obj_guid`` is the person. Asking about both in
     one run is what tells them apart — running it on the row key alone would
     report "no person-level key" about a source that has one.
+
+    **The ``index`` is keyed by name, and a name is not a person.** Run 23
+    found 14 of 748 multi-row names carrying two ``person_kontakt_obj_guid``s
+    across an index spanning 1991 to today, and the first version of this
+    function called all 14 a failure of the key. Two readings fit that shape
+    and they are opposites: one human recorded twice, or **two humans who share
+    a name** — which in a 35-year historical file is entirely ordinary and says
+    nothing bad about the key at all. So the two are separated by asking a
+    second field: if the records under the two keys disagree about the
+    ``distinguisher`` (the birth year), they are different people and the key
+    is fine; if they agree, one person really does hold two keys. Where the
+    distinguisher is missing on either side, neither reading is available and
+    the name is counted as undecided rather than assigned to whichever is
+    convenient — the same refusal to arbitrate the rest of this repo applies to
+    a doubly-claimed identifier.
     """
     lines: List[str] = []
     multi_row = 0
-    multi_key = 0
-    for key, rows in sorted(index.items()):
+    namesakes = 0
+    split = 0
+    undecided = 0
+    for name, rows in sorted(index.items()):
         if len(rows) < 2:
             continue
         multi_row += 1
-        keys = {
-            v
-            for record in rows
-            for v in record_values(record).get(field, [])
-        }
-        if len(keys) > 1:
-            multi_key += 1
-            if len(lines) < 5:
-                lines.append(f"{key}: {len(rows)} row(s), {len(keys)} distinct {field}")
+        by_key: Dict[str, Set[str]] = {}
+        for record in rows:
+            values = record_values(record)
+            for key in values.get(field, []):
+                marks = by_key.setdefault(key, set())
+                marks.update(values.get(distinguisher, []))
+        if len(by_key) < 2:
+            continue
+
+        marks = list(by_key.values())
+        if any(not m for m in marks):
+            undecided += 1
+            verdict = "undecided"
+        elif all(a.isdisjoint(b) for a, b in combinations(marks, 2)):
+            namesakes += 1
+            seen_marks = sorted("/".join(sorted(m)) for m in marks)
+            verdict = f"namesakes ({distinguisher} {', '.join(seen_marks)})"
+        else:
+            split += 1
+            verdict = "one person, two keys"
+        if len(lines) < 6:
+            lines.append(
+                f"{name}: {len(rows)} row(s), {len(by_key)} distinct {field} "
+                f"— {verdict}"
+            )
+
     if not multi_row:
         return (
             INCONCLUSIVE,
-            f"No person has more than one row here, so whether {field!r} "
+            f"No name has more than one row here, so whether {field!r} "
             "identifies the person or the row was not tested.",
             lines,
         )
-    if multi_key:
+    counted = f"{namesakes} namesake(s), {split} split, {undecided} undecided"
+    if split:
         return (
             CONTRADICTED,
-            f"{multi_key} of {multi_row} people with several rows carry several "
-            f"distinct {field!r} values, so {field!r} identifies a *membership "
-            "row*, not a person. If no other field of the record is stable per "
-            "person, that is a stronger obstacle than a missing property: a "
-            "config reading this source would have nothing to join on but "
-            "names.",
+            f"{split} of {multi_row} multi-row names carry two distinct "
+            f"{field!r} values for what the {distinguisher} says is one person, "
+            f"so {field!r} does not identify a person ({counted}). If no other "
+            "field is stable per person, that is a stronger obstacle than a "
+            "missing property: a config reading this source would have nothing "
+            "to join on but names.",
+            lines,
+        )
+    if undecided:
+        return (
+            INCONCLUSIVE,
+            f"{undecided} of {multi_row} multi-row names carry two distinct "
+            f"{field!r} values and no {distinguisher} to say whether that is "
+            f"one person or two people sharing a name ({counted}). Nothing "
+            "here shows the key failing — but nothing shows it holding either, "
+            "and an adapter grouping rows by it would silently merge or split "
+            "exactly these people.",
             lines,
         )
     return (
         CONFIRMED,
-        f"Every one of the {multi_row} people with several rows carries a "
-        f"single {field!r}, so it is a person-level key. It is still not a "
-        "*Wikidata* identifier — no property holds a Gever GUID — but it is "
-        "what a Gever adapter would group rows by.",
+        f"Every one of the {multi_row} multi-row names resolves to a single "
+        f"{field!r}, or to several that the {distinguisher} shows are different "
+        f"people ({counted}). So {field!r} is a person-level key. It is still "
+        "not a *Wikidata* identifier — no property holds a Gever GUID — but it "
+        "is what a Gever adapter would group rows by.",
         lines,
     )
 

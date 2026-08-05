@@ -209,6 +209,30 @@ holds one row per person per *Gremium*, so the row key necessarily varies
 within a person and only a field that does *not* could ever be joined on.
 Nothing about it gates: no config here names that service.
 
+**Run 23 (2026-08-05) answered it: CONTRADICTED, 130 of 130.** Every P13468
+value Wikidata holds, compared against every field of every row belonging to
+that person, appears **nowhere** in Gever. So the canton's own business system
+does not publish the canton's own member id, `config.load_config`'s refusal of
+`identifier_property: P13468` stands for a Gever-sourced config too, and the
+way to that property is still the Staatsarchiv's KR-Daten dataset. **Never
+re-open this on the grounds that Gever belongs to the canton — that is the
+inference the run falsified.** The same run makes Gever the richest *data*
+source measured for the Kantonsrat (3,862 rows back to 1991; `dauer_start` /
+`dauer_end` 3,862 of 3,862, party 3,735, district 3,716, occupation 3,596,
+`Kantonsrat` 986 rows against OpenParlData's 913) — a separate finding, and one
+that still cannot supply a *join*: no Wikidata property holds a Gever GUID, so
+a Gever-sourced config would be name-matched throughout.
+
+**A name is not a person, and `classify_row_key` learned it the way everything
+else here did.** Run 23 found 14 of 748 multi-row names carrying two
+`person_kontakt_obj_guid`s and the probe called all 14 a failure of the key.
+Two opposite readings fit: one human recorded twice, or **two humans sharing a
+name** — ordinary in a file spanning 35 years. It now asks the birth year:
+disagreeing years mean namesakes and the key holds, agreeing years mean a split
+person, and a missing year is **undecided** rather than assigned to whichever
+reading is convenient. Do not collapse the third bucket into either of the
+others.
+
 Run 22 (2026-08-05) answered the first two sections and **crashed on the
 third**, and the crash is the more useful half. The index is real and rich —
 3,862 rows back to 1991, 55 columns, the Kantonsrat's own seat among the

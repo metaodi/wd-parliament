@@ -64,13 +64,15 @@ run 19 (2026-08-04) measured which personal data each source actually carries
 — four of six properties federally, three cantonally, 206 suggestions in the
 federal report — and found two long-standing bugs in the *cantonal adapter*
 along the way. It gates nothing, since none of those suggestions can ever be
-mechanical. **Step 10 is newly open**: it asks whether the canton's own Gever
-(`swissparlpy` PR #51) publishes P13468, the one identifier step 7 left without
-a source. Run 22 (2026-08-05) read the `MITGLIEDER` index — 3,862 rows, 55
-columns, the Kantonsrat's own seat among them — and then **crashed before it
-could ask about P13468**, on two bugs in the probe rather than anything about
-the data. Like step 7 it gates nothing here: it reads a service no config in
-this repo names.
+mechanical. **Step 10 is answered, and the answer is no**: run 23 (2026-08-05)
+compared every P13468 value Wikidata holds against every field of the canton's
+own Gever (`swissparlpy` PR #51) and found **130 of 130 appearing nowhere**.
+The property's register is the Staatsarchiv's, not the chamber's — so the
+identifier step 7 left without a source still has none. The same run found
+Gever to be the richest *data* source yet measured for the Kantonsrat (3,862
+rows back to 1991, dates on all of them), which is a separate finding and a
+separate decision. Like step 7 it gates nothing here: it reads a service no
+config in this repo names.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -826,7 +828,7 @@ not equivalent — and run 14 settled it in favour of the first:
 
 | Candidate | Provenance | What it would cost |
 | --- | --- | --- |
-| **P13468** Zurich Kantonsrat and Regierungsrat member ID | Wikidata-asserted, and the canton's *own* id | a source that can supply its value — OpenParlData cannot (run 20), so this needs the canton's dataset. The canton's Gever is the next candidate and is unmeasured: [step 10](#10--can-the-cantons-own-gever-supply-p13468--asked-not-yet-answered) |
+| **P13468** Zurich Kantonsrat and Regierungsrat member ID | Wikidata-asserted, and the canton's *own* id | a source that can supply its value. **Two have now been measured and neither can**: OpenParlData (run 20) and the canton's own Gever (run 23, 130 of 130 values in no field). Its register is the Staatsarchiv's KR-Daten database — see [step 10](#10--can-the-cantons-own-gever-supply-p13468--no-130-of-130-values-appear-in-no-field-it-is-a-fine-data-source-and-not-an-identifier-source) |
 | **P14527** OpenParlData ID | Wikidata-asserted, per person *record* | nothing to the gate, and it is what ships — but it matched **0 of the 180 sitting members**, so the report is carried by the name fallback |
 | OpenParlData's `wikidata_id` field | a third party asserting a Q-ID *about* Wikidata | its own `QID_FROM_*` constant and its own decision in `is_mechanical`; it must not inherit the P1307 gate |
 | name matching only | none | `is_mechanical` already refuses it → report-only, `quickstatements: false` |
@@ -1222,7 +1224,7 @@ source said nothing, or Wikidata already has it — and reading the first as the
 second is how a missing column comes to look like a well-maintained property.
 `volume_note` now takes the source coverage and says which it is.
 
-### 10. 🔶 Can the canton's own Gever supply P13468? — *the index is measured; the identifier question is still open*
+### 10. ✅ Can the canton's own Gever supply P13468? — *no: 130 of 130 values appear in no field. It is a fine data source and not an identifier source*
 
 Step 7 ended with P13468 as "the right property and the wrong join": 28 of 35
 linked ZH items carry it, **0 of 28** values are OpenParlData's person id, and
@@ -1271,10 +1273,60 @@ source has no person-level key at all, which is a harder obstacle than a
 missing property: no Wikidata property holds a Gever GUID either way, so a
 config reading it would have nothing to join on but names.
 
-#### What run 22 (2026-08-05) measured
+#### The answer: run 23 (2026-08-05), CONTRADICTED at 130 of 130
 
-Sections A and B answered; **section C crashed on a bug in the probe**, so
-P13468 itself is still open. What is now known:
+```
+items carrying P13468: 794
+  usable names: 778; dropped as ambiguous: 16
+  matched to a Gever member: 130; not in this index: 648
+  fields carrying the value: none
+    ackermann pia:  P13468='22236' appears in no field
+    ackermann ruth: P13468='22145' appears in no field
+```
+
+**Gever does not publish P13468.** Not in a field under another name, not
+nested somewhere unexpected — the probe compared each value against *every*
+field of *every* row belonging to that person, and 130 of 130 came back empty.
+Being the canton's own system is not the same as publishing the canton's own
+member id: P13468's register is the **Staatsarchiv's** KR-Daten database, and
+the Gever is the chamber's business-management system. Two systems of one
+canton, two id spaces. `config.load_config`'s refusal of
+`identifier_property: P13468` therefore stands for a Gever-sourced config
+exactly as it does for an OpenParlData-sourced one, and the way to that
+property is still the Staatsarchiv's own dataset.
+
+**But as a *data* source for the Kantonsrat it is the best thing measured so
+far** — better than OpenParlData on every axis except the identifier. Over all
+3,862 rows:
+
+| Property | Column | Coverage |
+| --- | --- | ---: |
+| P580 / P582 start & end | `dauer_start` / `dauer_end` | **3,862 / 3,862** |
+| P102 member of party | `…parteizugehoerigkeit_kurzname` / `_name` | 3,735 |
+| P768 electoral district | `person_kontakt_wahlkreis` | 3,716 |
+| P106 occupation | `person_kontakt_beruf` | 3,596 |
+| P569 date of birth | `person_kontakt_geburtsjahr` | 3,818 — **a year, not a date** |
+
+`Kantonsrat` is the largest of 25 Gremien at **986 rows** (against
+OpenParlData's 913 ZH memberships), so the seat itself is there beside the
+commissions and factions. What it cannot offer is a *join*: no Wikidata
+property holds a Gever GUID, so a Gever-sourced config would be name-matched
+throughout — `QID_FROM_NAME`, which `is_mechanical` already refuses.
+
+**And the key question needed a second question.** Run 23 found 14 of 748
+multi-row names carrying two `person_kontakt_obj_guid`s, and the probe called
+all 14 a failure of the key. Two readings fit that shape and they are
+opposites: one human recorded twice, or **two humans who share a name** —
+entirely ordinary in a file spanning 1991 to today (959 distinct person GUIDs).
+`classify_row_key` now separates them by asking the birth year: disagreeing
+years mean namesakes and the key is fine, agreeing years mean a genuinely split
+person, and a missing year on either side is counted as **undecided** rather
+than assigned to whichever reading is convenient. Run 24 will say which.
+
+#### What run 22 (2026-08-05) measured first
+
+Sections A and B answered; **section C crashed on a bug in the probe**. What
+that run established:
 
 - **the index answers, and it is the whole history**: `q=seq>0` returns
   **3,862 rows**, with `dauer_start` as far back as 1991 and `dauer_end`
@@ -1287,10 +1339,10 @@ P13468 itself is still open. What is now known:
   `person_kontakt_wahlkreis`, `person_kontakt_parteizugehoerigkeiten_…`),
   while the mandate's own fields (`dauer_*`, `funktion`, `gremium`) are at the
   top level.
-- **a record carries two GUIDs.** Its own `OBJ_GUID` is the *membership row*;
-  `person_kontakt_obj_guid` is the *person* (3,857 of 3,862, and the stem of
-  `foto_id`). So the source does have a person-level key — a fact the first
-  draft of this step guessed the other way.
+- **a record carries two GUIDs.** Its own `OBJ_GUID` is the *membership row*
+  (3,862 distinct over 3,862 rows); `person_kontakt_obj_guid` is the *person*
+  (959 distinct, and the stem of `foto_id`). So the source does have a
+  person-level key — a fact the first draft of this step guessed the other way.
 - **it is a birth *year*, not a birth date**: `person_kontakt_geburtsjahr`
   (3,818 of 3,862) reads `'1936'`. Year precision is a different claim from a
   P569 date, and it cannot tell two namesakes apart the way the name
