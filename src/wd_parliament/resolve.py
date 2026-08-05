@@ -7,14 +7,16 @@ Wikidata's P1307 ("Swiss parliament ID") against
 ``MemberCouncil.PersonNumber``. That match is a fact, and it is the only
 provenance :mod:`quickstatements` will emit an edit from.
 
-Which property that is, is configuration: P1307 federally, and the canton's own
-member id (P13468 for the Kantonsrat Zürich) cantonally. A property whose value
-has not been *measured* against the source's person id is joined on under
-``identifier_verified: false``, and then every match must be corroborated by
-the item's own name or birth date — see :func:`corroborates`. Two id spaces
-that overlap numerically would otherwise match confidently and match the wrong
-people, which is the one failure an exact join can produce that a missing one
-cannot.
+Which property that is, is configuration: P1307 federally, P14527 for the
+Kantonsrat Zürich — whichever the *source* can supply a value for, which is not
+always the one Wikidata prefers for those people (run 20: the canton's own
+P13468 appears on 28 of 35 ZH items and in no column of OpenParlData). A
+property whose value has not been *measured* against the source's person id is
+joined on under ``identifier_verified: false``, and then every match must be
+corroborated by the item's own name or birth date — see :func:`corroborates`.
+Two id spaces that overlap numerically would otherwise match confidently and
+match the wrong people, which is the one failure an exact join can produce that
+a missing one cannot.
 
 The name search is a fallback for members whose item does not carry P1307 yet,
 and it is corroborated rather than guessed: ``MemberCouncil.DateOfBirth``

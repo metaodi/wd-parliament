@@ -211,7 +211,7 @@ def _verify_note(member: Member, identifier_property: str = P_PARLIAMENT_ID) -> 
 
     The property is named rather than described, because "the Swiss parliament
     ID" is the wrong thing to send a cantonal reader looking for: the Kantonsrat
-    is joined on P13468 and none of its members has a P1307 at all.
+    is joined on P14527 and none of its members has a P1307 at all.
     """
     if member.qid_source == QID_FROM_NAME:
         return (

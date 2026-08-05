@@ -153,9 +153,10 @@ class WikidataClient:
         The property is configuration because the join key is not the same at
         every level of government: federally it is P1307 against
         ``MemberCouncil.PersonNumber``, but **no cantonal parliament has a
-        P1307**, and for the Kantonsrat Zürich it is P13468, the canton's own
-        member id. (P14527, the OpenParlData ID, is Wikidata-asserted too and
-        was the first cantonal choice; it reached 0 of the 180 sitting members.)
+        P1307**, and the Kantonsrat Zürich is joined on P14527, the
+        OpenParlData ID. (P13468, the canton's own member id, is what Wikidata
+        carries for these people — but run 20 found its values in no column of
+        OpenParlData, and an identifier needs a value on both sides.)
         """
         return f"""
 SELECT ?person ?personLabel ?parliamentId ?birth ?death WHERE {{
