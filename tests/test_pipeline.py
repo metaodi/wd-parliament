@@ -73,8 +73,9 @@ class FakeWikidata:
         self._matches = matches or {}
 
     def get_position_holders(self, position_qids, language="de", identifier_property="P1307",
-                             person_data_properties=()):
+                             person_data_properties=(), extra_identifiers=()):
         self.person_data_properties = list(person_data_properties)
+        self.extra_identifiers = list(extra_identifiers)
         return self._people
 
     def search_people(self, names, position_qids, language="de", identifier_property="P1307"):
@@ -272,7 +273,7 @@ def test_a_failing_chamber_records_the_error_instead_of_aborting(
 
     class Exploding(FakeWikidata):
         def get_position_holders(self, position_qids, language="de", identifier_property="P1307",
-                                 person_data_properties=()):
+                                 person_data_properties=(), extra_identifiers=()):
             return {"Q1": Landmine(qid="Q1", label="Landmine")}
 
     results = process(config, FakeParliament(member_rows, period_rows), Exploding())

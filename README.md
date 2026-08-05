@@ -1223,6 +1223,7 @@ second is how a missing column comes to look like a well-maintained property.
 | Suggestion | Priority | Trigger |
 | --- | :---: | --- |
 | **Add the source's identifier** | 1 | Item matched by name but has no P1307 (P14527 for the Kantonsrat). Highest leverage — it makes every future run exact. |
+| **Missing the other identifier** | 5 | The item lacks the *other* of the parliament's two identifiers — the one this run does not join on and has no value for. See below. |
 | **One identifier, several items** | 1 | Two or more Wikidata items claim the same P1307. A contradiction in Wikidata's own data — see below. |
 | **One item, several source records** | 1 | Two or more *source* records point at one Wikidata item. The mirror image, and the only finding here that is fixed in the source rather than on Wikidata. |
 | **The two sources disagree** | 2 | parlament.ch and OpenParlData describe the same seat differently. Withholds the mechanical edit for that member — see below. |
@@ -1241,6 +1242,47 @@ Scope for v1: **both chambers, currently sitting members only** (~246 people).
 Historic members are a later extension — `MemberCouncilHistory` has an identical
 shape, so it is a table swap plus following `IdPredecessor` chains for members
 who left and returned.
+
+### A member has two identifiers, and only one of them can be the join
+
+Every parliament here is described by **two** Wikidata identifiers, and they
+name records in different registers:
+
+| | the parliament's own member id | the OpenParlData id |
+| --- | --- | --- |
+| Federal Assembly | **P1307** Swiss parliament ID | **P14527** OpenParlData ID |
+| Kantonsrat Zürich | **P13468** Zurich Kantonsrat and Regierungsrat member ID | **P14527** OpenParlData ID |
+| resolves through | `parlament.ch/{lang}/biografie/wd/{id}` · `wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id={id}` | `openparldata.ch/item/persons/{id}` |
+
+A run can only join on one of them — the one whose value its source publishes —
+so the other was never mentioned anywhere, and an item missing it stayed missing
+it. The `identifiers:` key in the config lists both, and the run reports each one
+it does not find. The two findings differ in exactly one thing, **whether the run
+has the value**:
+
+- **`ADD_IDENTIFIER`** (priority 1) is the join property. Its value *is* the
+  source's person id — that equality is what the join means — so the suggestion
+  carries a number to paste.
+- **`MISSING_IDENTIFIER`** (priority 5) is the other one. No source this
+  pipeline reads publishes its values (measured for P13468 in
+  [run 20](#7--could-this-be-pointed-at-a-cantonal-parliament--yes-on-p14527-the-cantons-own-id-is-the-right-property-and-this-source-cannot-supply-it):
+  they appear in **no column** of OpenParlData's person records), so the finding
+  is the absence itself and the reader looks the person up in that register.
+  Offering a number here would mean offering one from the wrong id space, which
+  is the failure `identifier_verified` exists to prevent — correct data written
+  onto somebody else's item.
+
+Neither is ever mechanical: both kinds are outside
+`quickstatements.MECHANICAL_KINDS` and neither payload carries a `position`.
+
+The **URL template belongs to the property**, in
+`models.IDENTIFIER_PROPERTIES`, and that is not decoration. The number printed
+beside a member in a report is one particular property's value, so linking it
+through any other property's template sends the reader to a page that has never
+heard of it — which is what the Kantonsrat report did until now: an OpenParlData
+person id (P14527) linked to the chamber's member list. `biography_url` now
+defaults to the **join property's** record page, and a config overriding it owns
+that same correspondence.
 
 ### The one suggestion that is about Wikidata contradicting itself
 
@@ -1418,10 +1460,11 @@ elsewhere:
 
 - **the link to the source's database** — built from the identifier *Wikidata
   itself* asserts (P1307 federally, P14527 cantonally) through the
-  `biography_url` template in the config, which is why the template is
-  configuration rather than a constant: a cantonal report pointing at
-  parlament.ch sends a reader to a service that has never heard of these
-  members;
+  `biography_url` template, which defaults to that very property's record page
+  and can be overridden per config: a cantonal report pointing at parlament.ch
+  sends a reader to a service that has never heard of these members, and one
+  pointing an OpenParlData person id at the Kantonsrat's member list sends them
+  to a page that cannot resolve the number either;
 - **the start and end date to add** — from the source's *historic* record,
   which the pipeline already reads: `MemberCouncilHistory` federally (the same
   rows P580's tenure start comes from, so it costs no extra request) and the
@@ -1451,6 +1494,16 @@ the class of bulk edit the rest of this README is about not making by accident.
    against `MemberCouncil.PersonNumber` federally, P14527 "OpenParlData ID"
    for the Kantonsrat. Exact. This is the only provenance QuickStatements are
    emitted from.
+
+   Exactly one property can be the join, because only one of them has a value
+   on both sides. The parliament's *other* identifier is still reported when an
+   item lacks it — see
+   [A member has two identifiers](#a-member-has-two-identifiers-and-only-one-of-them-can-be-the-join)
+   — and `config.identifiers` is the list of both. It never joins on anything,
+   and `WikidataPerson.identifiers` is deliberately kept out of
+   `parliament_id`: that field is read as *the source's person id* by the join
+   and by both duplicate checks, and another register's number landing there
+   would be read as one.
 
    Two things have to be true of that property, and they are measured
    separately — run 20 found a property that passes the first and fails the

@@ -18,6 +18,7 @@ from typing import Dict, List, Optional
 # a sort weight (lower = more urgent), ``KIND_LABEL`` to a human string used in
 # the reports. Adding a kind means touching all three maps plus ``diff.py``.
 KIND_ADD_IDENTIFIER = "ADD_IDENTIFIER"
+KIND_MISSING_IDENTIFIER = "MISSING_IDENTIFIER"
 KIND_DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
 KIND_DUPLICATE_SOURCE_LINK = "DUPLICATE_SOURCE_LINK"
 KIND_SOURCES_DISAGREE = "SOURCES_DISAGREE"
@@ -59,6 +60,13 @@ PRIORITY = {
     KIND_ADD_QUALIFIER: 4,
     KIND_REVIEW_PARTY: 4,
     KIND_NO_WIKIDATA_ITEM: 5,
+    # Ranked well below ADD_IDENTIFIER even though both are "this item lacks an
+    # identifier", because the two differ in what a reader can *do*. The join
+    # property's value is in hand — the source's own person id — so applying it
+    # is a paste. This one is a property the run has no value for: somebody has
+    # to look the person up in another dataset first. Worth reporting, never
+    # worth burying the seat findings under.
+    KIND_MISSING_IDENTIFIER: 5,
     # Last, deliberately. Biographical enrichment is worth having, but nothing
     # here affects the question the tool exists to answer — who sits today —
     # and there is potentially one of these per member per property, so a
@@ -80,6 +88,9 @@ KIND_LABEL = {
     KIND_ADD_QUALIFIER: "Membership missing an electoral district (P768) or group (P4100)",
     KIND_REVIEW_PARTY: "Political party (P102) missing or disagreeing with source",
     KIND_NO_WIKIDATA_ITEM: "Sitting member, but no Wikidata item could be found",
+    KIND_MISSING_IDENTIFIER: (
+        "Missing the parliament's other identifier — value to be looked up"
+    ),
     KIND_ADD_PERSON_DATA: "Personal data the source publishes and Wikidata does not record",
 }
 
@@ -100,6 +111,53 @@ P_POSITION_HELD = "P39"
 P_PARLIAMENT_ID = "P1307"
 
 P_ZH_MEMBER_ID = "P13468"
+
+
+@dataclass(frozen=True)
+class IdentifierProperty:
+    """One identifier property, and the record its value points at.
+
+    Two of these describe every parliament this tool reads, and **they are not
+    interchangeable**:
+
+    - the **parliament's own member id** — P1307 federally, P13468 for the
+      Kantonsrat Zürich. It identifies the person in the parliament's own
+      register.
+    - the **OpenParlData id** (P14527), which identifies a person *record* in
+      api.openparldata.ch — a third-party aggregator that happens to be this
+      tool's cantonal source.
+
+    ``url_template`` is what turns a value into a page a reader can open, and
+    it is the reason this registry exists at all: the number a report prints
+    beside a member is the value of *one particular* property, so linking it
+    through any other property's template sends the reader to a page that has
+    never heard of that number. That is exactly what the Kantonsrat report did
+    — an OpenParlData person id (P14527) linked to the chamber's member list.
+
+    ``{id}`` is the value; ``{language}`` is substituted from the config where
+    a template has one, so a German-language run links to the German page.
+    """
+
+    property_id: str
+    label: str  # the property's English name, as it appears in the report
+    url_template: str  # {id}, and optionally {language}
+    # Whose id space the value lives in, named the way a reader would look it
+    # up. Not the same as the tool's ``source_name``: federally the source is
+    # parlament.ch and P14527's values live in OpenParlData's.
+    register: str
+
+    def url_for(self, value: object, language: str = "en") -> str:
+        return self.url_template.format(id=value, language=language)
+
+    @property
+    def property_url(self) -> str:
+        """The property's own Wikidata page.
+
+        The only link available for a property this run has no *value* for —
+        which is the whole of what ``MISSING_IDENTIFIER`` can offer.
+        """
+        return f"https://www.wikidata.org/wiki/Property:{self.property_id}"
+
 
 # The identifier properties a source can be joined on, and what each one's
 # value is. ``QID_FROM_IDENTIFIER`` — the provenance ``quickstatements`` gates
@@ -126,10 +184,31 @@ P_ZH_MEMBER_ID = "P13468"
 #   OpenParlData holds one record per person **per body**. That is the federal
 #   bias in miniature — it misfires on exactly the members who also sat
 #   elsewhere — so P14527 is no longer claimed as verified either.
+P_OPENPARLDATA_ID = "P14527"
+
 IDENTIFIER_PROPERTIES = {
-    "P1307": "Swiss parliament ID (MemberCouncil.PersonNumber)",
-    "P14527": "OpenParlData ID (per person *record*, so per body)",
-    P_ZH_MEMBER_ID: "Zurich Kantonsrat and Regierungsrat member ID",
+    P_PARLIAMENT_ID: IdentifierProperty(
+        P_PARLIAMENT_ID,
+        "Swiss parliament ID",
+        # Wikidata's own formatter URL (P1630) is the English page; the
+        # language segment is substituted from the config so a de/fr/it run
+        # links to the page in the language it read the source in.
+        "https://www.parlament.ch/{language}/biografie/wd/{id}",
+        "parlament.ch's own member register (MemberCouncil.PersonNumber)",
+    ),
+    P_OPENPARLDATA_ID: IdentifierProperty(
+        P_OPENPARLDATA_ID,
+        "OpenParlData ID",
+        "https://openparldata.ch/item/persons/{id}",
+        "OpenParlData's register at api.openparldata.ch, which holds one "
+        "record per person per body",
+    ),
+    P_ZH_MEMBER_ID: IdentifierProperty(
+        P_ZH_MEMBER_ID,
+        "Zurich Kantonsrat and Regierungsrat member ID",
+        "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id={id}",
+        "the canton of Zürich's own member register, kept by the Staatsarchiv",
+    ),
 }
 
 # Identifier properties whose value has been shown to equal the source's person
@@ -437,7 +516,14 @@ class WikidataPerson:
 
     qid: str
     label: str = ""
-    parliament_id: Optional[str] = None  # P1307, as the raw string
+    parliament_id: Optional[str] = None  # the *join* property, as the raw string
+    # Every other configured identifier property this item carries, property →
+    # value. Kept apart from ``parliament_id`` on purpose: that one is the
+    # property the run joins on, and ``resolve`` and the duplicate-identifier
+    # checks read it as "the source's person id". A P14527 value on a federal
+    # run is neither, and folding it in would make an OpenParlData record id
+    # look like a PersonNumber to every one of them.
+    identifiers: Dict[str, str] = field(default_factory=dict)
     birth_date: Optional[date] = None  # P569
     death_date: Optional[date] = None  # P570
     parties: List[str] = field(default_factory=list)  # open P102 Q-ids
@@ -456,6 +542,16 @@ class WikidataPerson:
 
     def has_property(self, property_id: str) -> bool:
         return property_id in self.properties
+
+    def identifier_value(self, property_id: str) -> Optional[str]:
+        """This item's value for a **non-join** identifier property, or None.
+
+        The join property's value is :attr:`parliament_id`, and a caller must
+        read it there: this map is filled from a separate query per property,
+        and it does not know which of them the run joined on.
+        """
+        value = (self.identifiers.get(property_id) or "").strip()
+        return value or None
 
 
 # Where a name other than the item's label came from. An alias is Wikidata's

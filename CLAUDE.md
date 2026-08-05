@@ -191,6 +191,37 @@ Two more findings from the same run, both load-bearing:
   sample is not a coverage rate over the chamber**, the same sampling trap that
   put the National Council at the top of the position ranking one level up.
 
+**A parliament has two identifiers and only one of them can be the join, so the
+other has to be *reported* or it is never recorded at all.** Federally that is
+P1307 (the join) beside P14527; cantonally P14527 (the join) beside P13468.
+`config.identifiers` lists both and `diff._identifier_suggestions` raises one of
+two kinds per property, differing in exactly one thing — whether the run has the
+**value**. `ADD_IDENTIFIER` (priority 1) is the join property, whose value *is*
+the source's person id. `MISSING_IDENTIFIER` (priority 5) is the other one, and
+it deliberately offers **no number**: no source this pipeline reads publishes
+those values (run 20 searched every column for P13468), and a number from the
+wrong id space is the exact failure `identifier_verified` guards against.
+Never "improve" it by supplying one from `enrich` — that module produces no
+values by construction, and widening it is a decision, not a tidy-up. Three
+rules hold this together:
+
+- **the URL template belongs to the property** (`models.IDENTIFIER_PROPERTIES`),
+  because the number printed beside a member is one particular property's value.
+  Linking it through another property's template sends the reader to a page that
+  cannot resolve it — which is what the ZH report did, an OpenParlData person id
+  (P14527) linked to the Kantonsrat's member list. `biography_url` now defaults
+  to the **join property's** record page; a config that overrides it owns the
+  same correspondence.
+- **`WikidataPerson.identifiers` must never reach `parliament_id`.** That field
+  is read as "the source's person id" by `resolve.index_by_identifier`, by
+  `_identifier_collisions` and by the reverse walk's bridge back to the source;
+  another register's number landing there would be read as one.
+- **`get_identifier_values` is global, not bounded by the seat**, because
+  absence is the finding: a population narrowed to seat holders would report
+  every item outside it as missing the property. It widens `people` with items
+  that carry only that identifier — they hold no statements and no
+  `parliament_id`, so every pass that walks by either ignores them.
+
 **Provenance and value are two separate measurements**, and the config records
 the second with `identifier_verified: false`. That flag is load-bearing, not
 documentation:
@@ -416,7 +447,12 @@ expensive one.
   `diff.py`. `PERSON_DATA_CHECKS` is the single place the presence checks live
   — property, label, the `Member` field the source's value arrives in, and
   what a reader has to do with it; adding one means adding a source field for
-  it, not just a line in a config. `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
+  it, not just a line in a config. `IDENTIFIER_PROPERTIES` is the same shape for
+  the identifier properties — id, label, the **URL template its values resolve
+  through**, and the register they live in. That template is what makes a
+  printed number clickable and correct; adding a property without one would
+  leave the report linking a number through somebody else's template.
+  `QID_FROM_IDENTIFIER` / `QID_FROM_NAME` record how a member's Q-ID
   was established, and that provenance is what gates QuickStatements. `Member`
   is "who sits today"; `Tenure` is "when did this person hold this seat", asked
   about people the members table does not contain, and keyed
@@ -431,6 +467,12 @@ expensive one.
   an error. `person_data` is the exception to that leniency: an unknown
   property id there is an **error**, because it selects a code path rather than
   supplying a value, and a typo would silently drop a check somebody asked for.
+  `identifiers` is the same kind of key and the same kind of error: it lists the
+  parliament's *two* identifier properties, and a typo would drop the one that
+  is only ever reported. The join property is always included whatever the list
+  says — it is the only one whose value the run holds. `biography_url_for`
+  defaults to the join property's record page, so a config that says nothing
+  cannot print a number linked through the wrong register.
 - **`http_client.py`** — the single shared HTTP layer: required User-Agent,
   `request_delay` throttle, 429/5xx exponential backoff. Its `requests.Session`
   is also handed to `SwissParlClient`, so parlament.ch sees the same UA.
@@ -453,13 +495,18 @@ expensive one.
   produce a cartesian product per statement. They are joined on the Q-ID in
   Python. A fourth query answers the personal-data checks and runs only when a
   config asks for them; `?prop` is bound from a `VALUES` list so each row is
-  one (person, property) pair — a union, not a product. The P39 query deliberately fetches statements for **everyone** with
+  one (person, property) pair — a union, not a product.
+  `get_identifier_values` re-asks the identifier query for a property the run
+  reports but does **not** join on, and its answer goes to
+  `WikidataPerson.identifiers`, never to `parliament_id` — that field means
+  "the source's person id" to three separate passes. It is global rather than
+  seat-bounded because absence is the finding. The P39 query deliberately fetches statements for **everyone** with
   those positions, not just P1307 holders, because the diff's second pass needs
   people who are *not* in the current-members set. Query builders are static
  methods so they are unit-testable. `get_name_variants` is **not** one of the
  three: it is asked on demand, by the step 8 probe only, for a Q-ID list the
  caller has already narrowed — the pipeline's own path is unchanged.
-- **`resolve.py`** — the identifier join first (exact; P1307 federally, P13468
+- **`resolve.py`** — the identifier join first (exact; P1307 federally, P14527
  for the Kantonsrat). Under `identifier_verified: false` every match must also
  be corroborated by the item's own birth date or label (`corroborates`), and
  the rejects are recorded and counted — that is the guard against two id
@@ -474,7 +521,12 @@ expensive one.
   members.
 - **`diff.py`** — pure. Seat checks compare *values*; `_person_data_suggestions`
   compares *presence* only, and is the one part of the diff that is about the
-  person rather than the mandate (see above).
+  person rather than the mandate (see above). `_identifier_suggestions` is the
+  one place both identifier kinds are raised, and the *only* thing separating
+  them is whether the run has the value: the join property gets
+  `ADD_IDENTIFIER` with a number, every other configured property gets
+  `MISSING_IDENTIFIER` with none. Never give the second one a value from
+  anywhere — a number from another register is the failure mode, not the fix.
   `expected_statements` is the **single place** the
   `tenure` vs `period` statement model lives; the rest of the diff works off
   whatever it returns. Walks members → Wikidata, then Wikidata's open

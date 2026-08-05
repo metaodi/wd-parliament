@@ -304,3 +304,45 @@ def test_describe_qids_reports_labels_and_instances():
     assert described["Q11943"]["label"] == "Canton of Zürich"
     # An item that came back with nothing is still reported, as unresolved.
     assert described["Q999999999"]["label"] is None
+
+
+# --- the identifier the run reports on but does not join on ------------------
+def test_a_second_identifier_is_read_without_touching_the_join_value():
+    """The join's value is read as the source's person id by `resolve` and by
+    both duplicate checks. Another register's id must never land there."""
+    identifier_rows = [
+        {"person": uri("Q121160"), "personLabel": lit("Guy Parmelin"),
+         "parliamentId": lit("1108")},
+    ]
+    extra_rows = [
+        {"person": uri("Q121160"), "parliamentId": lit("3901")},
+        {"person": uri("Q555"), "parliamentId": lit("4002")},
+    ]
+    client = FakeClient([identifier_rows, extra_rows, [], []])
+    people = client.get_position_holders(
+        POSITIONS, "de", "P1307", extra_identifiers=["P14527"]
+    )
+    parmelin = people["Q121160"]
+    assert parmelin.parliament_id == "1108"
+    assert parmelin.identifier_value("P14527") == "3901"
+    # An item carrying only the second identifier joins the map with no
+    # statements and no join value, so every pass that walks by either ignores
+    # it.
+    assert people["Q555"].parliament_id is None
+    assert people["Q555"].statements == []
+    assert "wdt:P14527 ?parliamentId" in client.queries[1]
+
+
+def test_the_join_property_is_never_queried_twice():
+    client = FakeClient([[], [], [], []])
+    client.get_position_holders(
+        POSITIONS, "de", "P1307", extra_identifiers=["P1307", "P14527"]
+    )
+    identifier_query = WikidataClient.identifier_query("de", "P1307")
+    assert client.queries.count(identifier_query) == 1
+
+
+def test_no_second_identifier_means_no_extra_query():
+    client = FakeClient([[], [], []])
+    client.get_position_holders(POSITIONS)
+    assert len(client.queries) == 3

@@ -24,6 +24,7 @@ from .models import (
     STATEMENT_MODELS,
     VERIFIED_IDENTIFIER_PROPERTIES,
     Body,
+    IdentifierProperty,
     PersonDataCheck,
 )
 
@@ -35,7 +36,10 @@ SOURCE_OPENPARLDATA = "openparldata"
 SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA)
 
 DEFAULT_USER_AGENT = "wd-parliament/0.1 (+https://github.com/metaodi/wd-parliament)"
-DEFAULT_BIOGRAPHY_URL = "https://www.parlament.ch/{language}/biografie/wd/{person_number}"
+# Left unset, the biography link is the record page of the property the run
+# joins on — which is what the number beside a member in the report *is*. See
+# ``Config.biography_url_for``.
+DEFAULT_BIOGRAPHY_URL = ""
 
 # Placeholder fragments that mark a User-Agent as not-yet-filled-in. The
 # Wikimedia APIs require a real contact, so the tool refuses to run with one.
@@ -100,6 +104,20 @@ class Config:
     # Flipping it to true is a measurement, not an opinion: run the probe named
     # in the config comments and read CONFIRMED first.
     identifier_verified: bool = True
+    # Every identifier property this run reports as missing, the join property
+    # included. A parliament has **two** identifiers worth recording on an item
+    # and they are different things: its own member id (P1307 federally, P13468
+    # for the Kantonsrat) and the OpenParlData id (P14527) of the record an
+    # aggregator keeps about the same person. Whichever of them this run joins
+    # on, the other is still a fact the item ought to carry, and only one of
+    # them can be joined on at a time — so reporting is the only way the second
+    # one ever gets recorded.
+    #
+    # Only ``identifier_property``'s value is in hand (it is the source's own
+    # person id, which is what the join *means*); the rest are reported without
+    # one, because no source this pipeline reads publishes them. That is the
+    # whole difference between ``ADD_IDENTIFIER`` and ``MISSING_IDENTIFIER``.
+    identifiers: List[str] = field(default_factory=list)
     user_agent: str = DEFAULT_USER_AGENT
     request_delay: float = 1.0
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
@@ -174,9 +192,53 @@ class Config:
             return None
         return self.parl_groups.get(abbreviation.strip())
 
+    @property
+    def identifier_checks(self) -> List[IdentifierProperty]:
+        """The identifier properties to report on, the join property first.
+
+        The join property is always included, whatever ``identifiers`` says:
+        it is the one whose value the run holds, so its ``ADD_IDENTIFIER`` is
+        the highest-leverage edit in the report and dropping it silently would
+        be a strange thing for a config key to be able to do.
+        """
+        wanted = [self.identifier_property] + [
+            p for p in self.identifiers if p != self.identifier_property
+        ]
+        return [IDENTIFIER_PROPERTIES[p] for p in wanted if p in IDENTIFIER_PROPERTIES]
+
+    @property
+    def join_identifier(self) -> Optional[IdentifierProperty]:
+        """The registry entry for the property this run joins on."""
+        return IDENTIFIER_PROPERTIES.get(self.identifier_property)
+
+    def identifier_url(self, property_id: str, value: object) -> Optional[str]:
+        """The record page for one identifier value, or ``None`` if unknown."""
+        prop = IDENTIFIER_PROPERTIES.get(property_id)
+        if prop is None or value in (None, ""):
+            return None
+        return prop.url_for(value, self.language)
+
     def biography_url_for(self, person_number: int) -> str:
-        return self.biography_url.format(
-            language=self.language, person_number=person_number
+        """The source record for a person, as the reports link it.
+
+        The number the reports print beside a member is the **join property's**
+        value, so left unconfigured this is that property's record page — the
+        one page guaranteed to know that number. A config may override it, and
+        one that does is responsible for the same correspondence: the ZH report
+        used to print an OpenParlData person id linked to the Kantonsrat's
+        member list, which knows nothing about it.
+
+        Both ``{person_number}`` and ``{id}`` name the value, so a template
+        copied from :data:`~.models.IDENTIFIER_PROPERTIES` works as it stands.
+        """
+        template = self.biography_url
+        if not template:
+            prop = self.join_identifier
+            if prop is None:  # pragma: no cover - load_config rejects these
+                return ""
+            template = prop.url_template
+        return template.format(
+            language=self.language, person_number=person_number, id=person_number
         )
 
     @property
@@ -224,6 +286,38 @@ def _as_term_map(raw: Optional[dict]) -> Dict[int, str]:
         if not qid.startswith("Q") or not qid[1:].isdigit():
             raise ValueError(f"terms: '{key}' maps to '{qid}', which is not a Q-ID.")
         out[number] = qid
+    return out
+
+
+def _as_identifiers(raw: object, identifier_property: str) -> List[str]:
+    """Normalise the ``identifiers`` list of identifier property ids.
+
+    Absent means "just the one this run joins on", which is what the tool did
+    before the key existed. An unknown property is an **error** for the same
+    reason it is in ``person_data``: it selects a code path rather than
+    supplying a value, and a typo would silently drop a check somebody asked
+    for — here, the second of a parliament's two identifiers, which is the only
+    way that one ever gets reported at all.
+    """
+    if raw is None:
+        return [identifier_property]
+    if isinstance(raw, str) or not isinstance(raw, (list, tuple)):
+        raise ValueError(
+            "identifiers must be a list of property ids, e.g. [P1307, P14527]; "
+            f"got {raw!r}."
+        )
+    out: List[str] = [identifier_property]
+    for item in raw:
+        prop = str(item).strip().upper()
+        if prop not in IDENTIFIER_PROPERTIES:
+            raise ValueError(
+                f"identifiers: '{prop}' is not a known identifier property. "
+                f"Known: {', '.join(sorted(IDENTIFIER_PROPERTIES))}. Adding one "
+                "means adding an IdentifierProperty in models.py — with the URL "
+                "template its values resolve through — not just a line here."
+            )
+        if prop not in out:
+            out.append(prop)
     return out
 
 
@@ -400,6 +494,7 @@ def load_config(path: str | Path) -> Config:
         body_key=str(data.get("body_key", "") or "").strip(),
         identifier_property=identifier_property,
         identifier_verified=identifier_verified,
+        identifiers=_as_identifiers(data.get("identifiers"), identifier_property),
         user_agent=str(data.get("user_agent", DEFAULT_USER_AGENT)),
         request_delay=float(data.get("request_delay", 1.0)),
         statement_model=statement_model,

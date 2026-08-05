@@ -268,6 +268,14 @@ def process(
         config.language,
         config.identifier_property,
         config.person_data,
+        # The identifier properties reported but not joined on — a
+        # parliament's own member id beside the OpenParlData id, or the
+        # reverse. One query each, read for presence only.
+        extra_identifiers=[
+            c.property_id
+            for c in config.identifier_checks
+            if c.property_id != config.identifier_property
+        ],
     )
     resolve_members(
         members,
