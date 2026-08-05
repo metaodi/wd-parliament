@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-04 22:42 UTC
+Generated: 2026-08-05 06:43 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,15 +8,21 @@ Generated: 2026-08-04 22:42 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 1900
-- Suggested edits: 1874
+- Suggested edits: 1878
 
 ## By kind
 
 - One Wikidata item claimed by several source records: **3**
 - Recorded as sitting, but the member has left: **1702**
+- Missing the parliament's other identifier — value to be looked up: **4**
 - Personal data the source publishes and Wikidata does not record: **169**
 
-## Canton: AG (18)
+## Canton: AG (20)
+
+### Missing the parliament's other identifier — value to be looked up (2)
+
+- **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
+- **[Barbara Portmann](https://www.wikidata.org/wiki/Q138767069)** ([#17101](https://www.parlament.ch/de/biografie/wd/17101)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
 ### Personal data the source publishes and Wikidata does not record (18)
 
@@ -238,7 +244,11 @@ Generated: 2026-08-04 22:42 UTC
 
 - **[Simon Stadler](https://www.wikidata.org/wiki/Q29803308)** ([#4292](https://www.parlament.ch/de/biografie/wd/4292)) — No 'place of origin' (P1321) statement, but parlament.ch gives Altdorf (UR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 
-## Canton: VD (17)
+## Canton: VD (18)
+
+### Missing the parliament's other identifier — value to be looked up (1)
+
+- **[Brenda Tuosto](https://www.wikidata.org/wiki/Q123172174)** ([#10825](https://www.parlament.ch/de/biografie/wd/10825)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
 ### Personal data the source publishes and Wikidata does not record (17)
 
@@ -271,7 +281,11 @@ Generated: 2026-08-04 22:42 UTC
 - **[Philipp Matthias Bregy](https://www.wikidata.org/wiki/Q60485089)** ([#4230](https://www.parlament.ch/de/biografie/wd/4230)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Sidney Kamerzin](https://www.wikidata.org/wiki/Q71794148)** ([#4271](https://www.parlament.ch/de/biografie/wd/4271)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
-## Canton: ZH (29)
+## Canton: ZH (30)
+
+### Missing the parliament's other identifier — value to be looked up (1)
+
+- **[Priska Seiler Graf](https://www.wikidata.org/wiki/Q23059252)** ([#4199](https://www.parlament.ch/de/biografie/wd/4199)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
 ### Personal data the source publishes and Wikidata does not record (29)
 

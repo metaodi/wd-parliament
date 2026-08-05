@@ -1,6 +1,6 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-08-04 22:42 UTC
+Generated: 2026-08-05 06:43 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46

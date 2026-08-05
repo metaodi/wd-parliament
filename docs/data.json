@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-04 22:42 UTC",
-  "total_suggestions": 2194,
+  "generated": "2026-08-05 06:43 UTC",
+  "total_suggestions": 2198,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -37484,6 +37484,86 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/3106",
             "start": "1914-06-02",
             "end": "1922-12-03"
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Andreas Meier",
+          "person_qid": "Q116963195",
+          "person_number": 4333,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "M-E",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q116963195",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "https://www.parlament.ch/de/biografie/wd/4333"
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Barbara Portmann",
+          "person_qid": "Q138767069",
+          "person_number": 17101,
+          "qid_source": "identifier",
+          "canton": "AG",
+          "parl_group": "GL",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q138767069",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "https://www.parlament.ch/de/biografie/wd/17101"
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Brenda Tuosto",
+          "person_qid": "Q123172174",
+          "person_number": 10825,
+          "qid_source": "identifier",
+          "canton": "VD",
+          "parl_group": "S",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q123172174",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "https://www.parlament.ch/de/biografie/wd/10825"
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Priska Seiler Graf",
+          "person_qid": "Q23059252",
+          "person_number": 4199,
+          "qid_source": "identifier",
+          "canton": "ZH",
+          "parl_group": "S",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q23059252",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "https://www.parlament.ch/de/biografie/wd/4199"
           }
         },
         {
