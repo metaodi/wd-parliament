@@ -27,8 +27,11 @@ make here:
 
 ## ⚠️ What the live service actually returns — read before touching QuickStatements
 
-See **Open verification steps** in the README. The `Verify assumptions`
-workflow ran against live parlament.ch on 2026-07-29 and settled most of these.
+See **What has been verified** in the README for the settled findings and
+**Open verification steps** for what is left (steps 5, 6, 7 and the departed
+members' gates). The `Verify assumptions` workflow has been dispatched 22 times
+since 2026-07-29; run 22 (2026-08-05) is the current measurement of everything
+below.
 
 Two facts about the source, both learned the hard way, both now enforced in
 `parliament.py`. **Do not "simplify" either away:**
@@ -547,11 +550,16 @@ expensive one.
   does not fail, it prints another person's spell under this name. It stays **report-only** and is gated twice: no `qid_source`, and no
   `position` in the payload. Removing either would turn it into a P582 backfill
   across every open membership on Wikidata. `scripts/verify_departures.py`
-  (README step 8) is the probe that would license removing them; **runs 16-18
-  (2026-08-04) say not yet, and have found more wrong with the probe than with
-  the data** — run 18 has the leaving dates agreeing **1,960 of 1,960**, and
-  what is left is five identities one character apart (`Zünd`/`Zündt`), which a
-  name comparison cannot settle and so reports as `near` without accepting.
+  (README step 8) is the probe that would license removing them; **run 22
+  (2026-08-05) returned `CONFIRMED` in all four sections** — reach 1,968 of
+  1,983, identity 0 contradicting and 0 unsettled, leaving dates **1,959 of
+  1,959** agreeing exactly, statement ambiguity 3 excludable — so the gates now
+  stand on a decision rather than on missing evidence. Removing them is still a
+  deliberate act, after README step 5, and it would turn ~1,965 report-only
+  findings into mechanical P582 commands in one file. Runs 16-18 found more
+  wrong with the probe than with the data (every `CONTRADICTED` it ever returned
+  was its own), which is why its verdicts are read rather than wired into a
+  gate.
   **Its identity check compares every name Wikidata gives the item, not the
   label alone**: aliases and the P1810 `subject named as` qualifier on the
   identifier statement, fetched by `WikidataClient.get_name_variants` (a fourth
@@ -619,33 +627,36 @@ expensive one.
 are **build artifacts** produced by a run and by the `Update parliament TODO`
 Action. Do not hand-edit them; regenerate by running the tool. They are
 committed so the Markdown diffs are reviewable in git history and Pages can
-serve `docs/`. The versions currently committed are placeholders stating that
-no run has happened yet.
+serve `docs/`. Regenerate them by running the tool; never hand-edit them.
 
 ## GitHub Actions
 
 - `tests.yml` — `uv run --extra dev pytest -q` on every push/PR.
 - `verify.yml` — `workflow_dispatch` only, `contents: read`. Runs
   `scripts/verify_source.py`, `--verify-config`,
-  `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
-  `--validate-periods`, `scripts/verify_departures.py`,
-  `scripts/verify_kantonsrat.py` and `scripts/verify_person_data.py`, writes
-  all eight to
-  the run summary, and writes nothing to the repo. Keep it read-only: it is
-  the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other six report without gating and are deliberately
-  excluded from the job's pass/fail — do not wire their outcomes into the
-  gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
-  `--validate-periods` answer whether a *bulk apply* is safe,
-  `verify_departures` answers whether the departed members' report-only gates
-  could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
-  never wire it into a gate),
-  `verify_kantonsrat` measures a parliament no config here processes, so it
-  cannot bear on the federal run by construction, and `verify_person_data`
-  measures checks that are never mechanical, so no verdict it returns can
-  change what reaches `suggestions.qs`. The file must be on the
-  default branch to appear in the dispatch UI, though a dispatch then runs the
-  selected ref's version.
+  `scripts/compare_tenure_dates.py`, `--validate-periods`,
+  `scripts/verify_departures.py`, `scripts/verify_kantonsrat.py` and
+  `scripts/verify_person_data.py`, writes all seven to the run summary, and
+  writes nothing to the repo. Keep it read-only: it is the diagnostic you run
+  *before* trusting `update.yml`'s output. **Only the first two gate**; the
+  other five report without gating and are deliberately excluded from the job's
+  pass/fail — do not wire their outcomes into the gate. The gate says whether
+  the pipeline may run; `compare_tenure_dates` and `--validate-periods` answer
+  whether a *bulk apply* is safe, `verify_departures` answers whether the
+  departed members' report-only gates could be removed (its `INCONCLUSIVE` is
+  the *expected* answer on tidy data — never wire it into a gate),
+  `verify_kantonsrat` measures the cantonal config, so no verdict it returns can
+  bear on the *federal* run, and `verify_person_data` measures checks that are
+  never mechanical, so nothing it returns can change what reaches
+  `suggestions.qs`. `scripts/verify_openparldata.py` is deliberately **not**
+  wired in any more — every verdict it returns is settled (README step 6); run
+  it by hand after a `swissparlpy` upgrade, since its section E is what measures
+  the library's defaults. The file must be on the default branch to appear in
+  the dispatch UI, though a dispatch then runs the selected ref's version.
+  Only two dispatch inputs remain (`last_name`, `expect_person_number`): the
+  vote ids are discovered, and the cantonal body and position Q-ID are settled,
+  so those four inputs were removed rather than left as dials nobody should
+  turn.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits
   `reports/` and `docs/` back (`contents: write`).
 - `pages.yml` — deploys `docs/` to Pages, chained off `update.yml`'s completion
