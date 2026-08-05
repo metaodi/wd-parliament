@@ -75,9 +75,20 @@ import re
 import sys
 import unicodedata
 import xml.etree.ElementTree as ET
+from datetime import date
 from itertools import combinations
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+)
 
 # Make the ``src`` layout importable without installing the package.
 SRC = Path(__file__).resolve().parents[1] / "src"
@@ -162,6 +173,16 @@ FIELD_CANDIDATES: Dict[str, Tuple[str, Tuple[str, ...]]] = {
 # one. Named so the report says which it found instead of printing a coverage
 # number that reads like a date column.
 YEAR_ONLY_COLUMNS = frozenset({"person_kontakt_geburtsjahr"})
+
+# A birth year that could belong to a member of a parliament whose oldest rows
+# start in 1991. Run 24 is why this exists: it reported two of its "namesakes"
+# off a ``person_kontakt_geburtsjahr`` of **``'1'``** against a real year, and
+# ``'1'`` is not a birth year — it is a placeholder that reads as data, the
+# cantonal cousin of ``parliament.NULL_DATE``'s ``1753-01-01``. Left unfiltered
+# it makes the disagreement test fire on a value that says nothing, which turns
+# "we cannot tell" into "definitely two different people" — the strongest
+# reading, from the weakest evidence, in the direction that exonerates the key.
+MIN_BIRTH_YEAR = 1850
 
 # The person's name on a record. Measured, and not top-level: see above.
 NAME_FIELDS = ("person_kontakt_name",)
@@ -534,10 +555,29 @@ def field_coverage(
     return total
 
 
+def plausible_year(value: Any) -> bool:
+    """Could this be somebody's birth year? Pure.
+
+    Run 24's finding, and a rule this repo has paid for once already at the
+    federal level: a source's "no value" is not always a null. ``'1'`` sits in
+    ``person_kontakt_geburtsjahr`` the way ``1753-01-01`` sits in
+    ``DateLeaving``, and anything that reads it as a year draws a conclusion
+    from a placeholder. Only a four-digit year in a range a sitting member
+    could have been born in counts as *a value at all*; everything else is
+    absence, which :func:`classify_row_key` reports as undecided rather than as
+    a disagreement.
+    """
+    text = str(value).strip()
+    if not text.isdigit() or len(text) != 4:
+        return False
+    return MIN_BIRTH_YEAR <= int(text) <= date.today().year
+
+
 def classify_row_key(
     index: Dict[str, List[Dict[str, Any]]],
     field: str = "person_kontakt_obj_guid",
     distinguisher: str = "person_kontakt_geburtsjahr",
+    valid: Callable[[Any], bool] = plausible_year,
 ) -> Tuple[str, str, List[str]]:
     """Is this field a key for the person, or only for the row? Pure.
 
@@ -580,9 +620,10 @@ def classify_row_key(
         by_key: Dict[str, Set[str]] = {}
         for record in rows:
             values = record_values(record)
+            usable = [v for v in values.get(distinguisher, []) if valid(v)]
             for key in values.get(field, []):
                 marks = by_key.setdefault(key, set())
-                marks.update(values.get(distinguisher, []))
+                marks.update(usable)
         if len(by_key) < 2:
             continue
 

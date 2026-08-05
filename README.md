@@ -1321,7 +1321,32 @@ entirely ordinary in a file spanning 1991 to today (959 distinct person GUIDs).
 `classify_row_key` now separates them by asking the birth year: disagreeing
 years mean namesakes and the key is fine, agreeing years mean a genuinely split
 person, and a missing year on either side is counted as **undecided** rather
-than assigned to whichever reading is convenient. Run 24 will say which.
+than assigned to whichever reading is convenient.
+
+**Run 24 split the 14 into 9 namesakes, 3 split people and 2 undecided** — and
+then showed that even that was too generous. Two of its nine read:
+
+```
+brunner roland: 9 row(s), 2 distinct person_kontakt_obj_guid
+                — namesakes (person_kontakt_geburtsjahr 1, 1952)
+```
+
+**`1` is not a birth year.** It is a placeholder that reads as data — the
+cantonal cousin of `1753-01-01` in `DateLeaving` — and taking it as a
+disagreement turns "we cannot tell" into "definitely two different people":
+the strongest reading, from the weakest evidence, in the direction that
+exonerates the key. `plausible_year` now requires a four-digit year from 1850
+to the current one, and anything else counts as *absence*, which lands in the
+undecided bucket where it belongs. Re-measured counts are pending the next
+dispatch; the verdict itself does not turn on them, since **3 genuinely split
+people are enough for CONTRADICTED on their own** — the row key `obj_guid`
+answers the same way at 737 of 748, as a row key should.
+
+So: `person_kontakt_obj_guid` is *nearly* a person key and not one. An adapter
+grouping rows by it would silently split a handful of real people, and one
+grouping by name would silently merge the namesakes. Neither is fatal for a
+report-only source — but both are reasons a Gever-sourced config would need its
+own duplicate handling rather than inheriting `resolve`'s.
 
 #### What run 22 (2026-08-05) measured first
 

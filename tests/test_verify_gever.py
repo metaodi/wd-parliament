@@ -46,6 +46,7 @@ from verify_gever import (  # noqa: E402
     name_key,
     parse_records,
     parse_search_fields,
+    plausible_year,
     present_columns,
     record_values,
     resolve_column,
@@ -337,6 +338,35 @@ def test_two_keys_and_no_birth_year_is_undecided_not_a_failure():
     verdict, detail, _ = classify_row_key(index, "person_key", "birth_year")
     assert verdict == INCONCLUSIVE
     assert "0 split, 1 undecided" in detail
+
+
+def test_a_placeholder_year_is_absence_not_a_disagreement():
+    """Run 24 called two of its namesakes off a geburtsjahr of '1'.
+
+    A placeholder that reads as data is the cantonal ``1753-01-01``. Reading
+    it as a year turns "we cannot tell" into "definitely two people", which is
+    the strongest reading from the weakest evidence — and in the direction
+    that lets the key off.
+    """
+    index = {
+        name_key("Brunner", "Roland"): [
+            keyed("a", "1", gremium="KR"),
+            keyed("b", "1952", gremium="FRASP"),
+        ]
+    }
+    verdict, detail, lines = classify_row_key(index, "person_key", "birth_year")
+    assert verdict == INCONCLUSIVE
+    assert "0 namesake(s), 0 split, 1 undecided" in detail
+    assert "undecided" in lines[0]
+
+
+@pytest.mark.parametrize(
+    "value,ok",
+    [("1936", True), ("1", False), ("0001", False), ("19366", False),
+     ("", False), (None, False), ("1800", False), ("neunzehn", False)],
+)
+def test_plausible_year(value, ok):
+    assert plausible_year(value) is ok
 
 
 def test_one_split_outweighs_any_number_of_namesakes():

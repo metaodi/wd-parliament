@@ -233,6 +233,17 @@ person, and a missing year is **undecided** rather than assigned to whichever
 reading is convenient. Do not collapse the third bucket into either of the
 others.
 
+Run 24 then split those 14 into 9 / 3 / 2 and showed the discriminator needed
+one of its own: two "namesakes" rested on a `person_kontakt_geburtsjahr` of
+**`'1'`**. A placeholder that reads as data is `1753-01-01` again, one canton
+down — and reading it as a year takes the *strongest* conclusion from the
+weakest evidence, in the direction that lets the key off. `plausible_year`
+requires four digits in 1850..today and everything else is absence. **The
+verdict does not turn on the recount**: 3 genuinely split people are enough for
+CONTRADICTED, so `person_kontakt_obj_guid` is *nearly* a person key and not
+one, and a Gever-sourced config would need its own duplicate handling rather
+than inheriting `resolve`'s.
+
 Run 22 (2026-08-05) answered the first two sections and **crashed on the
 third**, and the crash is the more useful half. The index is real and rich —
 3,862 rows back to 1991, 55 columns, the Kantonsrat's own seat among the
