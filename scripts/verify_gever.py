@@ -101,6 +101,11 @@ DEFAULT_QUERY = "seq > 0"
 DEFAULT_LANG = "de-CH"
 PAGE_SIZE = 500
 
+# Columns printed without ``--verbose``. Run 22 returned 55 and cut 15 of them,
+# which is the wrong trade for the one section whose entire job is to print the
+# list — the head is a guard against a pathological schema, not a summary.
+COLUMN_HEAD = 200
+
 # ``xsi:nil="true"`` marks an element as empty rather than absent — the same
 # distinction ``parliament.NULL_DATE`` draws for the federal service, and the
 # reason an empty field is reported as a column that exists.
@@ -114,23 +119,56 @@ WORD_RE = re.compile(r"[^\w]+", re.UNICODE)
 # ``geschlecht`` is listed under no property on purpose — P21 is not a check
 # this tool has, and adding a column to a probe is not the same as adding a
 # check to the diff.
+# **These names are measured (run 22), and the first draft of them was wrong
+# in a way worth keeping in view.** They were taken from ``goifer``'s published
+# example output — a *flat* record with ``name``, ``beruf``, ``wahlkreis`` at
+# the top level — while this probe reads the raw XML, where the person sits
+# nested under ``Person/Kontakt``. So every one of them missed and section A
+# reported 3,862 rows with no name. That is this module's own warning arriving
+# from the other side: reading the service directly is what makes the column
+# report a fact about the service, and it equally means no field name borrowed
+# from a normaliser's output survives the trip unchecked.
+# :func:`resolve_column` is the guard — it falls back to the leaf segment, so a
+# path that gains or loses a level of nesting still resolves, and section B
+# prints which column each of these actually reached.
 FIELD_CANDIDATES: Dict[str, Tuple[str, Tuple[str, ...]]] = {
-    "P569": ("date of birth", ("geburtsdatum", "geburtsdatum_start")),
-    "P106": ("occupation", ("beruf",)),
+    "P569": (
+        "date of birth",
+        ("person_kontakt_geburtsdatum", "person_kontakt_geburtsjahr"),
+    ),
+    "P106": ("occupation", ("person_kontakt_beruf",)),
     "P102": (
         "political party",
-        ("parteizugehoerigkeit_kurzname", "parteizugehoerigkeit_name"),
+        (
+            "person_kontakt_parteizugehoerigkeiten_parteizugehoerigkeit_kurzname",
+            "person_kontakt_parteizugehoerigkeiten_parteizugehoerigkeit_name",
+        ),
     ),
-    "P768": ("electoral district", ("wahlkreis",)),
+    "P768": ("electoral district", ("person_kontakt_wahlkreis",)),
     "P580": ("start time", ("dauer_start",)),
     "P582": ("end time", ("dauer_end",)),
 }
 
-# Fields that identify the *row* rather than the person. Reported apart from
-# everything else because the difference decides whether this source could ever
-# be joined on at all: a per-membership key is not a person id, and the
-# Mitglieder index holds one row per person **per Gremium** (a faction seat, a
-# commission seat), which is how ``goifer``'s own example queries it.
+# A year is not a date, and P569 is a date. Run 22 found a birth *year*
+# (``'1936'``) where the first draft expected a birth date, and the difference
+# is not cosmetic: a year-precision statement is a different claim, and the
+# name fallback's birth-date corroboration cannot tell two namesakes apart with
+# one. Named so the report says which it found instead of printing a coverage
+# number that reads like a date column.
+YEAR_ONLY_COLUMNS = frozenset({"person_kontakt_geburtsjahr"})
+
+# The person's name on a record. Measured, and not top-level: see above.
+NAME_FIELDS = ("person_kontakt_name",)
+FIRST_NAME_FIELDS = ("person_kontakt_vorname",)
+
+# The key of the *person*, as against the key of the *row*. Run 22 settled that
+# a record carries both — its own ``OBJ_GUID`` and the person's, which is also
+# the stem of ``foto_id`` — and the difference is the whole question of whether
+# this source could be joined on at all. The Mitglieder index holds one row per
+# person **per Gremium** (a faction seat, a commission seat, the Kantonsrat
+# seat itself), which is how ``goifer``'s own examples query it, so the row key
+# necessarily varies within one person.
+PERSON_KEY_FIELDS = ("person_kontakt_obj_guid",)
 ROW_KEY_FIELDS = ("obj_guid", "seq")
 
 
@@ -445,6 +483,39 @@ def present_columns(
     return [c for c in candidates if c in columns]
 
 
+def resolve_column(seen: Sequence[str], candidate: str) -> Optional[str]:
+    """A candidate path → the column the service actually has. Pure.
+
+    Exact match first. Failing that, a column with the same **leaf segment** —
+    ``beruf`` finds ``person_kontakt_beruf`` and vice versa — because run 22's
+    one real defect in this probe was a set of field names that were right
+    about the field and wrong about its depth. The *shallowest* match wins,
+    which is what keeps ``name`` on the person rather than on
+    ``…behoerdenmandat_name``, whose value is the name of a Gremium.
+
+    This is a fallback and not a search: a leaf nobody publishes still resolves
+    to ``None``, and "no such column" stays sayable. Widening it to substring
+    matching would make that impossible, which is the whole point of the report
+    it feeds.
+    """
+    columns = list(seen)
+    if candidate in columns:
+        return candidate
+    leaf = candidate.rsplit("_", 1)[-1]
+    matches = [c for c in columns if c.rsplit("_", 1)[-1] == leaf]
+    if not matches:
+        return None
+    return min(matches, key=lambda c: (c.count("_"), c))
+
+
+def resolve_columns(
+    seen: Sequence[str], candidates: Sequence[str]
+) -> List[str]:
+    """:func:`resolve_column` over a candidate list, keeping the order. Pure."""
+    resolved = [resolve_column(seen, c) for c in candidates]
+    return list(dict.fromkeys(c for c in resolved if c))
+
+
 def field_coverage(
     records: Sequence[Dict[str, Any]], columns: Sequence[str]
 ) -> int:
@@ -458,15 +529,21 @@ def field_coverage(
 
 
 def classify_row_key(
-    index: Dict[str, List[Dict[str, Any]]], field: str = "obj_guid"
+    index: Dict[str, List[Dict[str, Any]]], field: str = "person_kontakt_obj_guid"
 ) -> Tuple[str, str, List[str]]:
-    """Is the record key a person or a row? Pure.
+    """Is this field a key for the person, or only for the row? Pure.
 
-    A person with several Gremium rows and one key would be identified by it;
-    a person with several rows and several keys would not, and a source with no
-    person-level key cannot be joined on an identifier at all — its own or
+    A person with several Gremium rows and one value is identified by it; a
+    person with several rows and several values is not, and a source with no
+    person-level key at all cannot be joined on an identifier — its own or
     anyone's. Reported apart from the P13468 question because it survives that
     question's answer.
+
+    The field is a parameter because a Gever record carries **two** GUIDs and
+    they answer differently: the record's own ``obj_guid`` is the membership
+    row, and ``person_kontakt_obj_guid`` is the person. Asking about both in
+    one run is what tells them apart — running it on the row key alone would
+    report "no person-level key" about a source that has one.
     """
     lines: List[str] = []
     multi_row = 0
@@ -496,9 +573,10 @@ def classify_row_key(
             CONTRADICTED,
             f"{multi_key} of {multi_row} people with several rows carry several "
             f"distinct {field!r} values, so {field!r} identifies a *membership "
-            "row*, not a person. This source has no person-level key of its "
-            "own, which is a stronger obstacle than a missing property: a "
-            "config reading it would have nothing to join on but names.",
+            "row*, not a person. If no other field of the record is stable per "
+            "person, that is a stronger obstacle than a missing property: a "
+            "config reading this source would have nothing to join on but "
+            "names.",
             lines,
         )
     return (
@@ -658,8 +736,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 1
 
     print(f"\nquery {args.query!r}: {total} record(s), {len(records)} read")
-    index, unnamed = index_by_name(records)
-    print(f"distinct people by name: {len(index)}; rows with no name: {unnamed}")
     if not records:
         print("\nThe index answered with nothing. Nothing below was measured.")
         return 1
@@ -670,20 +746,42 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("B. Which fields does the service actually return?")
     print("=" * 70)
     report = column_report(records)
-    shown = report if args.verbose else report[:40]
+    seen = [column for column, _, _ in report]
+    shown = report if args.verbose else report[:COLUMN_HEAD]
     print(f"{len(report)} column(s) over {len(records)} record(s):")
+    width = max((len(c) for c, _, _ in shown), default=38)
     for column, filled, sample in shown:
-        text = "" if sample is None else f"  e.g. {sample[:48]!r}"
-        print(f"  {column:<38} {filled:>5}/{len(records)}{text}")
+        text = "" if sample is None else f"  e.g. {sample[:40]!r}"
+        print(f"  {column:<{width}} {filled:>5}/{len(records)}{text}")
     if len(shown) < len(report):
         print(f"  ... {len(report) - len(shown)} more (--verbose for all)")
+
+    # The name is resolved from the columns the service returned rather than
+    # assumed. Run 22's own defect: the candidates were right about the field
+    # and wrong about its depth, and an index keyed on a field nobody has
+    # yields "0 distinct people" — which reads as a fact about the source and
+    # is a fact about the probe.
+    name_field = resolve_column(seen, NAME_FIELDS[0])
+    first_name_field = resolve_column(seen, FIRST_NAME_FIELDS[0])
+    print(f"\nname read from: {name_field!r} + {first_name_field!r}")
+    index, unnamed = index_by_name(
+        records,
+        name_field=name_field or NAME_FIELDS[0],
+        first_name_field=first_name_field or FIRST_NAME_FIELDS[0],
+    )
+    print(f"distinct people by name: {len(index)}; rows with no name: {unnamed}")
+    if not index:
+        print("  ! no row carried a name under those columns. Candidates:")
+        for column in seen:
+            if column.rsplit("_", 1)[-1] in ("name", "vorname", "nachname"):
+                print(f"    {column}")
 
     # --- C. P13468 ----------------------------------------------------------
     print()
     print("=" * 70)
     print(f"C. Does Gever carry {P_ZH_MEMBER_ID}, the canton's own member id?")
     print("=" * 70)
-    wikidata = WikidataClient(http, language=config.language)
+    wikidata = WikidataClient(http)
     try:
         bindings = wikidata.run_query(zh_member_id_query(config.language))
     except Exception as exc:
@@ -708,34 +806,46 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         verdict, detail = classify_identifier(counts, compared, compared)
     _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
 
-    print("\ndoes the record key identify a person or a Gremium row?")
-    key_verdict, key_detail, key_lines = classify_row_key(index)
+    # A record carries two GUIDs and they answer differently. Both are asked:
+    # the row key is expected to vary within a person (one row per Gremium),
+    # and it is the *person* key's answer that says whether this source could
+    # be joined on at all.
+    print("\nis there a key that identifies the person rather than the row?")
+    person_key = resolve_column(seen, PERSON_KEY_FIELDS[0]) or PERSON_KEY_FIELDS[0]
+    key_verdict, key_detail, key_lines = classify_row_key(index, person_key)
     for line in key_lines:
         print(f"  {line}")
-    _verdict("Verdict (is the record key a person?)", key_verdict, key_detail)
+    _verdict(f"Verdict ({person_key})", key_verdict, key_detail)
+
+    row_verdict, row_detail, _ = classify_row_key(index, ROW_KEY_FIELDS[0])
+    print(f"\n  for contrast, {ROW_KEY_FIELDS[0]}: {row_verdict}")
+    print(f"    {row_detail}")
 
     # --- D. what else -------------------------------------------------------
     print()
     print("=" * 70)
     print("D. What else could this source feed?")
     print("=" * 70)
-    seen = [column for column, _, _ in report]
     for prop, (label, candidates) in FIELD_CANDIDATES.items():
-        columns = present_columns(seen, candidates)
+        columns = resolve_columns(seen, candidates)
         if not columns:
             print(f"  {prop} {label:<20} no such column: {', '.join(candidates)}")
             continue
         covered = field_coverage(records, columns)
+        note = ""
+        if any(c in YEAR_ONLY_COLUMNS for c in columns):
+            note = "  ← a year, not a date"
         print(
             f"  {prop} {label:<20} {covered:>5}/{len(records)} "
-            f"via {', '.join(columns)}"
+            f"via {', '.join(columns)}{note}"
         )
     print()
-    print("  row keys (identify the row, not the person):")
-    for column in ROW_KEY_FIELDS:
-        if column in seen:
-            values = distinct_values(records, column)
-            print(f"    {column:<36} {len(values)} distinct")
+    print("  keys, and what each one counts:")
+    for column in PERSON_KEY_FIELDS + ROW_KEY_FIELDS:
+        resolved = resolve_column(seen, column)
+        if resolved:
+            values = distinct_values(records, resolved)
+            print(f"    {resolved:<40} {len(values)} distinct")
 
     gremien = distinct_values(records, "gremiumname") or distinct_values(
         records, "gremium"
@@ -753,7 +863,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     print()
     print("=" * 70)
-    print(f"{P_ZH_MEMBER_ID}: {verdict} | record key: {key_verdict}")
+    print(f"{P_ZH_MEMBER_ID}: {verdict} | person key: {key_verdict}")
     print("Nothing here gates the pipeline: no config reads this source.")
     print("=" * 70)
     return 0

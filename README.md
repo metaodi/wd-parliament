@@ -64,10 +64,13 @@ run 19 (2026-08-04) measured which personal data each source actually carries
 — four of six properties federally, three cantonally, 206 suggestions in the
 federal report — and found two long-standing bugs in the *cantonal adapter*
 along the way. It gates nothing, since none of those suggestions can ever be
-mechanical. **Step 10 is newly open and has never been dispatched**: it asks
-whether the canton's own Gever (`swissparlpy` PR #51) publishes P13468, the one
-identifier step 7 left without a source. Like step 7 it gates nothing here —
-it reads a service no config in this repo names.
+mechanical. **Step 10 is newly open**: it asks whether the canton's own Gever
+(`swissparlpy` PR #51) publishes P13468, the one identifier step 7 left without
+a source. Run 22 (2026-08-05) read the `MITGLIEDER` index — 3,862 rows, 55
+columns, the Kantonsrat's own seat among them — and then **crashed before it
+could ask about P13468**, on two bugs in the probe rather than anything about
+the data. Like step 7 it gates nothing here: it reads a service no config in
+this repo names.
 
 ⚠️ **Runs 13 and 14 both failed their first gating check on a parlament.ch
 timeout** reading the full `MemberCouncil` table — `! MemberCouncil: The server
@@ -1219,7 +1222,7 @@ source said nothing, or Wikidata already has it — and reading the first as the
 second is how a missing column comes to look like a well-maintained property.
 `volume_note` now takes the source coverage and says which it is.
 
-### 10. ⬜ Can the canton's own Gever supply P13468? — *asked, not yet answered*
+### 10. 🔶 Can the canton's own Gever supply P13468? — *the index is measured; the identifier question is still open*
 
 Step 7 ended with P13468 as "the right property and the wrong join": 28 of 35
 linked ZH items carry it, **0 of 28** values are OpenParlData's person id, and
@@ -1262,21 +1265,52 @@ uv run python scripts/verify_gever.py --limit 200 --verbose
 Section C asks a second question that survives the first one's answer: **is the
 record key a person or a row?** The index holds one row per person per
 *Gremium* (a faction seat, a commission seat), which is how `goifer` — the
-client PR #51 is adapted from — queries it. If a person's rows carry different
-`OBJ_GUID`s then the source has no person-level key at all, which is a harder
-obstacle than a missing property: no Wikidata property holds a Gever GUID
-either way, so a config reading it would have nothing to join on but names.
+client PR #51 is adapted from — queries it, so the row key necessarily varies
+within a person. If *nothing* on the record is stable per person then the
+source has no person-level key at all, which is a harder obstacle than a
+missing property: no Wikidata property holds a Gever GUID either way, so a
+config reading it would have nothing to join on but names.
 
-**Unmeasured as of 2026-08-05** — the environment this was written in has no
-egress to `parlzhcdws.cmicloud.ch`, so nothing here is a finding yet. What the
-`MITGLIEDER` record is known to contain comes from `goifer`'s own live example
-output (`dauer_start`/`dauer_end`, `funktion`, `gremium`, `gremiumname`,
-`name`, `vorname`, `geschlecht`, `wahlkreis`, `beruf`, `geburtsdatum`,
-`parteizugehoerigkeit.*`, `foto_id`, plus `obj_guid`/`seq`), and **no field in
-that list is a member id in P13468's range** — which is a reason to run the
-probe, not a substitute for running it. Wired into `Verify assumptions` as
-section 9; it **never gates**, for the plainest reason in that file: no config
-here names this service.
+#### What run 22 (2026-08-05) measured
+
+Sections A and B answered; **section C crashed on a bug in the probe**, so
+P13468 itself is still open. What is now known:
+
+- **the index answers, and it is the whole history**: `q=seq>0` returns
+  **3,862 rows**, with `dauer_start` as far back as 1991 and `dauer_end`
+  `9999-12-31` for the open ones. 55 columns.
+- **the Kantonsrat's own seat is in there** — `gremium` = `KR`,
+  `gremiumname` = `Kantonsrat`, alongside the commissions and factions. The
+  seat row does not have to be inferred from a faction.
+- **the record is nested, not flat**: the person sits under `Person/Kontakt`
+  (`person_kontakt_name`, `person_kontakt_beruf`,
+  `person_kontakt_wahlkreis`, `person_kontakt_parteizugehoerigkeiten_…`),
+  while the mandate's own fields (`dauer_*`, `funktion`, `gremium`) are at the
+  top level.
+- **a record carries two GUIDs.** Its own `OBJ_GUID` is the *membership row*;
+  `person_kontakt_obj_guid` is the *person* (3,857 of 3,862, and the stem of
+  `foto_id`). So the source does have a person-level key — a fact the first
+  draft of this step guessed the other way.
+- **it is a birth *year*, not a birth date**: `person_kontakt_geburtsjahr`
+  (3,818 of 3,862) reads `'1936'`. Year precision is a different claim from a
+  P569 date, and it cannot tell two namesakes apart the way the name
+  fallback's birth-date check does.
+- coverage of the rest, over all 3,862 rows: `person_kontakt_beruf` 3,596,
+  `person_kontakt_geschlecht` 3,658, `dauer_start`/`dauer_end` 3,862.
+
+**And the probe was wrong twice, in one instructive way and one dull one.**
+The instructive one: its field names (`name`, `beruf`, `wahlkreis`) were copied
+from `goifer`'s *normalised* example output while the probe reads raw XML, so
+every one of them missed and section A reported "3,862 rows with no name" —
+a line that reads as a fact about the source and was a fact about the probe.
+That is the module's own warning arriving from the other side, and
+`resolve_column` is the guard: candidates now fall back to the leaf segment, so
+a path that gains or loses a level of nesting still resolves, and the report
+prints which column each one reached. The dull one: `WikidataClient` takes no
+`language` argument, which ended section C in a `TypeError`.
+
+Wired into `Verify assumptions` as section 9; it **never gates**, for the
+plainest reason in that file: no config here names this service.
 
 ---
 

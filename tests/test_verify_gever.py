@@ -30,6 +30,11 @@ from verify_gever import (  # noqa: E402
     CONTRADICTED,
     INCONCLUSIVE,
     FIELD_CANDIDATES,
+    FIRST_NAME_FIELDS,
+    NAME_FIELDS,
+    PERSON_KEY_FIELDS,
+    ROW_KEY_FIELDS,
+    YEAR_ONLY_COLUMNS,
     classify_identifier,
     classify_row_key,
     column_report,
@@ -43,10 +48,15 @@ from verify_gever import (  # noqa: E402
     parse_search_fields,
     present_columns,
     record_values,
+    resolve_column,
+    resolve_columns,
     strip_ns,
     wanted_by_name,
     zh_member_id_query,
 )
+
+# How the probe reads a person's name off a record, measured by run 22.
+PERSON_NAME_COLUMNS = (NAME_FIELDS[0], FIRST_NAME_FIELDS[0])
 
 
 @pytest.fixture
@@ -84,22 +94,33 @@ def test_attributes_are_fields_too(records):
 
 
 def test_nesting_is_flattened_with_underscores(records):
-    assert records[0]["dauer_start"] == "2019-05-06T00:00:00"
-    assert records[0]["dauer_end"] == "9999-12-31T23:59:59"
-    assert records[0]["parteizugehoerigkeit_kurzname"] == "SP"
+    """The person is under Person/Kontakt, which run 22 measured."""
+    assert records[0]["dauer_start"] == "2019-05-06T00:00:00.000"
+    assert records[0]["person_kontakt_name"] == "Muster"
+    assert (
+        records[0][
+            "person_kontakt_parteizugehoerigkeiten_parteizugehoerigkeit_kurzname"
+        ]
+        == "SP"
+    )
     # an attribute on a nested element keeps its parent's path
     assert (
-        records[0]["parteizugehoerigkeit_obj_guid"]
-        == "2c7f8e1373594fb5bf6cf07bed46a154"
+        records[0]["person_kontakt_obj_guid"] == "2c74bdac96f444719f08bddc6c596917"
     )
+
+
+def test_a_record_carries_a_row_key_and_a_person_key(records):
+    """Two GUIDs, and the whole join question turns on the difference."""
+    assert records[0]["obj_guid"] != records[0]["person_kontakt_obj_guid"]
+    assert records[0]["person_kontakt_obj_guid"] == records[1]["person_kontakt_obj_guid"]
 
 
 def test_a_nil_element_is_an_empty_column_not_a_missing_one(records):
     """The run-19 distinction: no such column and a null column differ."""
     assert "sitz" in records[0]
     assert records[0]["sitz"] is None
-    assert records[2]["beruf"] is None
-    assert records[0]["beruf"] == "Juristin"
+    assert records[2]["person_kontakt_beruf"] is None
+    assert records[0]["person_kontakt_beruf"] == "Juristin"
 
 
 def test_a_repeated_element_becomes_a_list():
@@ -133,18 +154,14 @@ def test_parse_search_fields_reads_the_query_side():
 # --- the column report ------------------------------------------------------
 def test_column_report_counts_filled_records_and_keeps_empty_columns(records):
     report = dict((column, filled) for column, filled, _ in column_report(records))
-    assert report["name"] == 3
-    assert report["beruf"] == 2  # one member's is nil
+    assert report["person_kontakt_name"] == 3
+    assert report["person_kontakt_beruf"] == 2  # one member's is nil
     assert report["sitz"] == 0  # present in every record, filled in none
     assert "sitz" in report
 
 
 def test_distinct_values_counts_the_gremien(records):
-    assert distinct_values(records, "gremium") == [
-        ("FRASP", 1),
-        ("FRGRU", 1),
-        ("KJS", 1),
-    ]
+    assert distinct_values(records, "gremium") == [("KR", 2), ("KJS", 1)]
 
 
 # --- names ------------------------------------------------------------------
@@ -157,10 +174,17 @@ def test_name_key_folds_accents():
 
 
 def test_index_by_name_groups_a_persons_rows(records):
-    index, unnamed = index_by_name(records)
+    index, unnamed = index_by_name(records, *PERSON_NAME_COLUMNS)
     assert unnamed == 0
     assert len(index) == 2
     assert len(index[name_key("Muster", "Anna")]) == 2
+
+
+def test_index_by_name_on_the_wrong_columns_finds_nobody(records):
+    """Run 22's defect, pinned: right field, wrong depth, and it reads as
+    a fact about the source."""
+    index, unnamed = index_by_name(records, "name", "vorname")
+    assert index == {} and unnamed == 3
 
 
 def test_index_by_name_counts_rows_with_no_name():
@@ -247,42 +271,87 @@ def test_a_partial_match_is_not_an_identifier():
     assert "collides" in detail
 
 
-# --- is the record key a person? --------------------------------------------
-def test_two_rows_with_two_guids_mean_the_key_is_a_row(records):
-    index, _ = index_by_name(records)
-    verdict, detail, lines = classify_row_key(index)
+# --- is the record key a person, or only a row? ------------------------------
+# The two questions one record answers differently, and asking only the second
+# would report "no person-level key" about a source that has one.
+def test_the_row_guid_varies_within_a_person(records):
+    index, _ = index_by_name(records, *PERSON_NAME_COLUMNS)
+    verdict, detail, lines = classify_row_key(index, ROW_KEY_FIELDS[0])
     assert verdict == CONTRADICTED
     assert "membership row" in detail
     assert lines
 
 
-def test_two_rows_with_one_guid_mean_the_key_is_a_person():
-    index = {
-        name_key("Muster", "Anna"): [
-            person(gremium="FRASP"),
-            person(gremium="KJS"),
-        ]
-    }
-    verdict, _, _ = classify_row_key(index)
+def test_the_person_guid_does_not(records):
+    index, _ = index_by_name(records, *PERSON_NAME_COLUMNS)
+    verdict, detail, _ = classify_row_key(index, PERSON_KEY_FIELDS[0])
     assert verdict == CONFIRMED
+    assert "person-level key" in detail
 
 
 def test_one_row_each_tests_nothing():
-    verdict, _, _ = classify_row_key({name_key("Muster", "Anna"): [person()]})
+    verdict, _, _ = classify_row_key(
+        {name_key("Muster", "Anna"): [person()]}, "obj_guid"
+    )
     assert verdict == INCONCLUSIVE
 
 
+# --- resolving a candidate to a real column ----------------------------------
+# Run 22's one real defect in this probe, and the guard against its recurrence:
+# the field names were right about the field and wrong about its depth.
+@pytest.fixture
+def seen(records):
+    return [column for column, _, _ in column_report(records)]
+
+
+def test_an_exact_column_wins(seen):
+    assert resolve_column(seen, "person_kontakt_beruf") == "person_kontakt_beruf"
+
+
+def test_a_flat_candidate_finds_the_nested_column(seen):
+    assert resolve_column(seen, "beruf") == "person_kontakt_beruf"
+    assert resolve_column(seen, "wahlkreis") == "person_kontakt_wahlkreis"
+
+
+def test_a_nested_candidate_finds_a_flat_column(seen):
+    assert resolve_column(seen, "person_kontakt_dauer_start") == "dauer_start"
+
+
+def test_the_shallowest_match_wins(seen):
+    """``…behoerdenmandat_name`` is the name of a Gremium, not of a person."""
+    assert resolve_column(seen, "name") == "person_kontakt_name"
+
+
+def test_a_leaf_nobody_publishes_stays_unresolved(seen):
+    """"No such column" has to remain sayable, or section D says nothing."""
+    assert resolve_column(seen, "person_kontakt_website") is None
+    assert resolve_columns(seen, ("website", "buergerort")) == []
+
+
+def test_every_configured_candidate_resolves_against_a_real_record(seen):
+    """Every property in section D must reach a column of the live shape."""
+    for prop, (_, candidates) in FIELD_CANDIDATES.items():
+        assert resolve_columns(seen, candidates), prop
+
+
+def test_the_birth_column_is_a_year_and_is_flagged(seen):
+    columns = resolve_columns(seen, FIELD_CANDIDATES["P569"][1])
+    assert columns == ["person_kontakt_geburtsjahr"]
+    assert any(c in YEAR_ONLY_COLUMNS for c in columns)
+
+
 # --- what else --------------------------------------------------------------
-def test_present_columns_reports_only_columns_the_service_returns(records):
-    seen = [column for column, _, _ in column_report(records)]
-    assert present_columns(seen, ("beruf", "occupation_de")) == ["beruf"]
-    assert present_columns(seen, ("occupation_de",)) == []
+def test_present_columns_reports_only_columns_the_service_returns(seen):
+    assert present_columns(seen, ("person_kontakt_beruf", "occupation_de")) == [
+        "person_kontakt_beruf"
+    ]
+    assert present_columns(seen, ("beruf",)) == []
 
 
 def test_field_coverage_counts_records_with_a_value(records):
-    assert field_coverage(records, ["beruf"]) == 2
+    assert field_coverage(records, ["person_kontakt_beruf"]) == 2
     assert field_coverage(records, ["sitz"]) == 0
-    assert field_coverage(records, ["beruf", "wahlkreis"]) == 3
+    assert field_coverage(records, ["person_kontakt_beruf", "gremium"]) == 3
 
 
 def test_every_candidate_names_a_property_and_at_least_one_column():

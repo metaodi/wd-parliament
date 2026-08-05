@@ -205,9 +205,29 @@ rather than going through `GeverBackend`, because a column report taken through
 a normaliser measures the normaliser; it searches **every field** for the
 value, since "kept elsewhere" and "never heard of it" mean opposite things; and
 it asks a second question that survives the first one's answer — the index
-holds one row per person per *Gremium*, so if a person's rows carry different
-`OBJ_GUID`s the source has no person-level key at all, which no property could
-fix. Nothing about it gates: no config here names that service.
+holds one row per person per *Gremium*, so the row key necessarily varies
+within a person and only a field that does *not* could ever be joined on.
+Nothing about it gates: no config here names that service.
+
+Run 22 (2026-08-05) answered the first two sections and **crashed on the
+third**, and the crash is the more useful half. The index is real and rich —
+3,862 rows back to 1991, 55 columns, the Kantonsrat's own seat among the
+Gremien (`KR` / `Kantonsrat`), and **two GUIDs per record**: the row's
+`OBJ_GUID` is the membership and `person_kontakt_obj_guid` is the person, so
+the source does have a person-level key. But **the probe's field names were
+copied from `goifer`'s normalised output while the probe reads raw XML**, and
+the real record nests the person under `Person/Kontakt` — so every candidate
+missed and section A printed "3,862 rows with no name", a line that reads as a
+fact about the source and was a fact about the probe. `resolve_column` is the
+guard: a candidate falls back to its **leaf segment**, shallowest match wins
+(`name` must reach the person, not `…behoerdenmandat_name`, whose value is a
+Gremium), and an unmatched leaf still resolves to `None` so "no such column"
+stays sayable. Never widen it to substring matching — that would take away the
+only answer section D exists to give. Two more things measured there: it is a
+birth **year** (`person_kontakt_geburtsjahr`, `'1936'`), not a date, so it is
+not a P569 value and cannot corroborate a name match; and the fixtures are now
+built to the *service's* column list rather than a client's, which is the only
+kind that could have caught this.
 
 **A parliament has two identifiers and only one of them can be the join, so the
 other has to be *reported* or it is never recorded at all.** Federally that is
