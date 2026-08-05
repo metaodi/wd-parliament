@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hand-built against the CMI CDWS response shape, NOT captured. See
+  tests/fixtures/README.md.
+
+  The **structure** is measured: run 22 (2026-08-05) read the live
+  canton_zurich MITGLIEDER index and section B printed its 55 columns, so the
+  nesting here is the real one. That matters, because the first version of this
+  file had it wrong: it put the person's fields at the top level, copied from
+  `goifer`'s *normalised* output, when the service nests them under
+  Person/Kontakt. The probe's field names were wrong the same way and the live
+  run reported "3,862 rows with no name" — which reads as a fact about the
+  source and was a fact about the probe.
+
+  The **people are invented** and hold no seat anywhere. So are the values of
+  every contact field.
+
+  Three things this fixture deliberately encodes, because the probe's answers
+  turn on them:
+
+  - a record carries TWO GUIDs. Anna Muster has two rows — one Kantonsrat seat,
+    one commission — with two different `OBJ_GUID`s and ONE
+    `Person/Kontakt/@OBJ_GUID`, which is what makes the row key a row and the
+    person key a person.
+  - `Geburtsjahr` is a birth *year*, not a date. That is what the live index
+    returns, and a year-precision value is a different claim from P569.
+  - NO element carries anything resembling a Staatsarchiv member id. That is
+    not an assertion about the live service — run 22's section C crashed before
+    it could ask — it is the shape the parsing tests need.
+-->
+<SearchDetailResponse IDXSEQ="2244279" q="seq &gt; 0" l="de-CH" s="1" m="500"
+    numHits="3" indexName="Mitglieder"
+    xmlns="http://www.cmiag.ch/cdws/searchDetailResponse"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Hit Guid="c180bdd8c294436ca373a46168449b38" SEQ="2244279" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="c180bdd8c294436ca373a46168449b38" SEQ="2244279"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2019-05-06T00:00:00.000</Start>
+        <End>9999-12-31T23:59:59.000</End>
+        <Text>06.05.2019 -</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Mitglied</Funktion>
+      <Gremium>KR</Gremium>
+      <GremiumName>Kantonsrat</GremiumName>
+      <GremiumGuid xsi:nil="true"/>
+      <Person>
+        <Kontakt OBJ_GUID="2c74bdac96f444719f08bddc6c596917">
+          <Anrede>Frau</Anrede>
+          <Name>Muster</Name>
+          <Vorname>Anna</Vorname>
+          <Geschlecht>weiblich</Geschlecht>
+          <Geburtsjahr>1975</Geburtsjahr>
+          <Beruf>Juristin</Beruf>
+          <Wahlkreis>I      Zürich 1+2</Wahlkreis>
+          <Ort>Zürich</Ort>
+          <Emailprivat>anna.muster@example.org</Emailprivat>
+          <Foto>
+            <Filename>Foto</Filename>
+            <ID>2c74bdac96f444719f08bddc6c596917-1664</ID>
+            <Version>
+              <Nr>1</Nr>
+              <Rendition>
+                <Ansicht>Original</Ansicht>
+                <Extension>jpg</Extension>
+              </Rendition>
+            </Version>
+          </Foto>
+          <Parteizugehoerigkeiten>
+            <Parteizugehoerigkeit>
+              <Dauer>
+                <Start>2009-01-01T00:00:00.000</Start>
+                <End>9999-12-31T23:59:59.000</End>
+                <Text>01.01.2009 -</Text>
+              </Dauer>
+              <Name>Sozialdemokratische Partei</Name>
+              <Kurzname>SP</Kurzname>
+            </Parteizugehoerigkeit>
+          </Parteizugehoerigkeiten>
+          <Behoerdenmandate>
+            <Behoerdenmandat OBJ_GUID="c180bdd8c294436ca373a46168449b38">
+              <Dauer>
+                <Start>2019-05-06T00:00:00.000</Start>
+                <End>9999-12-31T23:59:59.000</End>
+                <Text>06.05.2019 -</Text>
+              </Dauer>
+              <Funktion>Mitglied</Funktion>
+              <Gremiumtyp>Kantonsrat</Gremiumtyp>
+              <Kurzname>KR</Kurzname>
+              <Name>Kantonsrat</Name>
+            </Behoerdenmandat>
+          </Behoerdenmandate>
+        </Kontakt>
+      </Person>
+    </Mitglied>
+  </Hit>
+  <Hit Guid="19c7adbecb5241a0b82605f71c8d8445" SEQ="2246449" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="19c7adbecb5241a0b82605f71c8d8445" SEQ="2246449"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2020-02-24T00:00:00.000</Start>
+        <End>9999-12-31T23:59:59.000</End>
+        <Text>24.02.2020 -</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Präsidentin</Funktion>
+      <Gremium>KJS</Gremium>
+      <GremiumName>Kommission für Justiz und öffentliche Sicherheit</GremiumName>
+      <GremiumGuid xsi:nil="true"/>
+      <Person>
+        <Kontakt OBJ_GUID="2c74bdac96f444719f08bddc6c596917">
+          <Anrede>Frau</Anrede>
+          <Name>Muster</Name>
+          <Vorname>Anna</Vorname>
+          <Geschlecht>weiblich</Geschlecht>
+          <Geburtsjahr>1975</Geburtsjahr>
+          <Beruf>Juristin</Beruf>
+          <Wahlkreis>I      Zürich 1+2</Wahlkreis>
+          <Ort>Zürich</Ort>
+          <Emailprivat>anna.muster@example.org</Emailprivat>
+          <Foto/>
+          <Parteizugehoerigkeiten>
+            <Parteizugehoerigkeit>
+              <Dauer>
+                <Start>2009-01-01T00:00:00.000</Start>
+                <End>9999-12-31T23:59:59.000</End>
+                <Text>01.01.2009 -</Text>
+              </Dauer>
+              <Name>Sozialdemokratische Partei</Name>
+              <Kurzname>SP</Kurzname>
+            </Parteizugehoerigkeit>
+          </Parteizugehoerigkeiten>
+        </Kontakt>
+      </Person>
+    </Mitglied>
+  </Hit>
+  <Hit Guid="d3f337f849c945f683a47304c3f1d9d5" SEQ="2247057" Relevance="0.94">
+    <Snippet/>
+    <Mitglied OBJ_GUID="d3f337f849c945f683a47304c3f1d9d5" SEQ="2247057"
+        IDX="Mitglieder" xmlns="http://www.cmiag.ch/cdws/Mitglieder">
+      <Dauer>
+        <Start>2015-05-18T00:00:00.000</Start>
+        <End>2022-04-11T00:00:00.000</End>
+        <Text>18.05.2015 - 10.04.2022</Text>
+      </Dauer>
+      <Sitz xsi:nil="true"/>
+      <Funktion>Mitglied</Funktion>
+      <Gremium>KR</Gremium>
+      <GremiumName>Kantonsrat</GremiumName>
+      <GremiumGuid xsi:nil="true"/>
+      <Person>
+        <Kontakt OBJ_GUID="9b1f0c7a4e2d4a6f8c3b5d7e1a2f4c60">
+          <Anrede>Frau</Anrede>
+          <Name>Bäumli-Roth</Name>
+          <Vorname>Rita</Vorname>
+          <Geschlecht>weiblich</Geschlecht>
+          <Geburtsjahr xsi:nil="true"/>
+          <Beruf xsi:nil="true"/>
+          <Wahlkreis>IX     Horgen</Wahlkreis>
+          <Ort>Horgen</Ort>
+          <Parteizugehoerigkeiten>
+            <Parteizugehoerigkeit>
+              <Dauer>
+                <Start>1998-01-01T00:00:00.000</Start>
+                <End>9999-12-31T23:59:59.000</End>
+                <Text>01.01.1998 -</Text>
+              </Dauer>
+              <Name>Grüne Partei</Name>
+              <Kurzname>GP</Kurzname>
+            </Parteizugehoerigkeit>
+          </Parteizugehoerigkeiten>
+        </Kontakt>
+      </Person>
+    </Mitglied>
+  </Hit>
+</SearchDetailResponse>

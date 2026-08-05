@@ -191,6 +191,79 @@ Two more findings from the same run, both load-bearing:
   sample is not a coverage rate over the chamber**, the same sampling trap that
   put the National Council at the top of the position ranking one level up.
 
+**The canton's Gever is the next candidate for P13468's value, and it is
+unmeasured** (README step 10). `swissparlpy` PR #51 adds a backend for the CMI
+CDWS API behind `kantonsrat.zh.ch` — `parlzhcdws.cmicloud.ch`, instance
+`canton_zurich`, with a `MITGLIEDER` index. `scripts/verify_gever.py` asks
+whether it publishes P13468, and it exists rather than an assumption because
+**whose system a service is says nothing about which register's numbers it
+publishes**: P13468's values live in the *Staatsarchiv's* KR-Daten database
+(`wahlen.zh.ch/krdaten_staatsarchiv/`), and the Gever is the chamber's
+business-management system. Two systems of one canton are two id spaces. Three
+things about the probe that are deliberate: it reads the **raw CDWS XML**
+rather than going through `GeverBackend`, because a column report taken through
+a normaliser measures the normaliser; it searches **every field** for the
+value, since "kept elsewhere" and "never heard of it" mean opposite things; and
+it asks a second question that survives the first one's answer — the index
+holds one row per person per *Gremium*, so the row key necessarily varies
+within a person and only a field that does *not* could ever be joined on.
+Nothing about it gates: no config here names that service.
+
+**Run 23 (2026-08-05) answered it: CONTRADICTED, 130 of 130.** Every P13468
+value Wikidata holds, compared against every field of every row belonging to
+that person, appears **nowhere** in Gever. So the canton's own business system
+does not publish the canton's own member id, `config.load_config`'s refusal of
+`identifier_property: P13468` stands for a Gever-sourced config too, and the
+way to that property is still the Staatsarchiv's KR-Daten dataset. **Never
+re-open this on the grounds that Gever belongs to the canton — that is the
+inference the run falsified.** The same run makes Gever the richest *data*
+source measured for the Kantonsrat (3,862 rows back to 1991; `dauer_start` /
+`dauer_end` 3,862 of 3,862, party 3,735, district 3,716, occupation 3,596,
+`Kantonsrat` 986 rows against OpenParlData's 913) — a separate finding, and one
+that still cannot supply a *join*: no Wikidata property holds a Gever GUID, so
+a Gever-sourced config would be name-matched throughout.
+
+**A name is not a person, and `classify_row_key` learned it the way everything
+else here did.** Run 23 found 14 of 748 multi-row names carrying two
+`person_kontakt_obj_guid`s and the probe called all 14 a failure of the key.
+Two opposite readings fit: one human recorded twice, or **two humans sharing a
+name** — ordinary in a file spanning 35 years. It now asks the birth year:
+disagreeing years mean namesakes and the key holds, agreeing years mean a split
+person, and a missing year is **undecided** rather than assigned to whichever
+reading is convenient. Do not collapse the third bucket into either of the
+others.
+
+Run 24 then split those 14 into 9 / 3 / 2 and showed the discriminator needed
+one of its own: two "namesakes" rested on a `person_kontakt_geburtsjahr` of
+**`'1'`**. A placeholder that reads as data is `1753-01-01` again, one canton
+down — and reading it as a year takes the *strongest* conclusion from the
+weakest evidence, in the direction that lets the key off. `plausible_year`
+requires four digits in 1850..today and everything else is absence. **The
+verdict does not turn on the recount**: 3 genuinely split people are enough for
+CONTRADICTED, so `person_kontakt_obj_guid` is *nearly* a person key and not
+one, and a Gever-sourced config would need its own duplicate handling rather
+than inheriting `resolve`'s.
+
+Run 22 (2026-08-05) answered the first two sections and **crashed on the
+third**, and the crash is the more useful half. The index is real and rich —
+3,862 rows back to 1991, 55 columns, the Kantonsrat's own seat among the
+Gremien (`KR` / `Kantonsrat`), and **two GUIDs per record**: the row's
+`OBJ_GUID` is the membership and `person_kontakt_obj_guid` is the person, so
+the source does have a person-level key. But **the probe's field names were
+copied from `goifer`'s normalised output while the probe reads raw XML**, and
+the real record nests the person under `Person/Kontakt` — so every candidate
+missed and section A printed "3,862 rows with no name", a line that reads as a
+fact about the source and was a fact about the probe. `resolve_column` is the
+guard: a candidate falls back to its **leaf segment**, shallowest match wins
+(`name` must reach the person, not `…behoerdenmandat_name`, whose value is a
+Gremium), and an unmatched leaf still resolves to `None` so "no such column"
+stays sayable. Never widen it to substring matching — that would take away the
+only answer section D exists to give. Two more things measured there: it is a
+birth **year** (`person_kontakt_geburtsjahr`, `'1936'`), not a date, so it is
+not a P569 value and cannot corroborate a name match; and the fixtures are now
+built to the *service's* column list rather than a client's, which is the only
+kind that could have caught this.
+
 **A parliament has two identifiers and only one of them can be the join, so the
 other has to be *reported* or it is never recorded at all.** Federally that is
 P1307 (the join) beside P14527; cantonally P14527 (the join) beside P13468.
@@ -629,11 +702,11 @@ no run has happened yet.
   `scripts/verify_source.py`, `--verify-config`,
   `scripts/verify_openparldata.py`, `scripts/compare_tenure_dates.py`,
   `--validate-periods`, `scripts/verify_departures.py`,
-  `scripts/verify_kantonsrat.py` and `scripts/verify_person_data.py`, writes
-  all eight to
+  `scripts/verify_kantonsrat.py`, `scripts/verify_person_data.py` and
+  `scripts/verify_gever.py`, writes all nine to
   the run summary, and writes nothing to the repo. Keep it read-only: it is
   the diagnostic you run *before* trusting `update.yml`'s output. **Only the
-  first two gate**; the other six report without gating and are deliberately
+  first two gate**; the other seven report without gating and are deliberately
   excluded from the job's pass/fail — do not wire their outcomes into the
   gate. The gate says whether the pipeline may run; `compare_tenure_dates` and
   `--validate-periods` answer whether a *bulk apply* is safe,
@@ -641,9 +714,10 @@ no run has happened yet.
   could be removed (its `INCONCLUSIVE` is the *expected* answer on tidy data —
   never wire it into a gate),
   `verify_kantonsrat` measures a parliament no config here processes, so it
-  cannot bear on the federal run by construction, and `verify_person_data`
+  cannot bear on the federal run by construction, `verify_person_data`
   measures checks that are never mechanical, so no verdict it returns can
-  change what reaches `suggestions.qs`. The file must be on the
+  change what reaches `suggestions.qs`, and `verify_gever` reads a service no
+  config here names at all. The file must be on the
   default branch to appear in the dispatch UI, though a dispatch then runs the
   selected ref's version.
 - `update.yml` — weekly (Mon 06:00 UTC) + manual; runs the pipeline and commits

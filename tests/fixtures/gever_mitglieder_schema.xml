@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hand-built against the CMI CDWS schema shape, NOT captured. The
+  `searchfield` names are the real ones — `goifer`'s pandas example prints
+  exactly this annotation block back from the live canton_zurich MITGLIEDER
+  index — because `parse_search_fields` is only interesting if the names it
+  reads are the names the service uses.
+
+  Note what is NOT here: no searchfield names a member id. The API can be
+  filtered on names, districts, dates and Gremien, which is a fact about the
+  *query* side and says nothing about which fields a record carries — that is
+  what section B of scripts/verify_gever.py measures against the live index.
+-->
+<xsd:schema targetNamespace="http://www.cmiag.ch/cdws/Mitglieder"
+    elementFormDefault="qualified"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:annotation>
+    <xsd:documentation>
+      <searchfield type="SearchFieldText" Name="ParteiKurzname" BoostFactor="1" Nrs="35"/>
+      <searchfield type="SearchFieldDate" Name="ParteiDauer" BoostFactor="1" Nrs="33"/>
+      <searchfield type="SearchFieldText" Name="MandantKurzname" BoostFactor="1" Nrs="40"/>
+      <searchfield type="SearchFieldDate" Name="MandatDauer" BoostFactor="1" Nrs="37"/>
+      <searchfield type="SearchFieldText" Name="VorNachname" BoostFactor="1" Nrs="26;27"/>
+      <searchfield type="SearchFieldText" Name="Wahlkreis" BoostFactor="1" Nrs="29"/>
+      <searchfield type="SearchFieldText" Name="Geschlecht" BoostFactor="1" Nrs="28"/>
+      <searchfield type="SearchFieldNumeric" Name="Sitz" BoostFactor="1" Nrs="23"/>
+      <searchfield type="SearchFieldText" Name="Funktion" BoostFactor="1" Nrs="42"/>
+      <searchfield type="SearchFieldDate" Name="Dauer" BoostFactor="2.00" Nrs="22"/>
+      <searchfield type="SearchFieldText" Name="Gremium" BoostFactor="1" Nrs="46"/>
+      <searchfield type="SearchFieldText" Name="Vorname" BoostFactor="1" Nrs="27"/>
+      <searchfield type="SearchFieldText" Name="Name" BoostFactor="1" Nrs="26"/>
+      <searchfield type="SearchFieldText" Name="GremiumGuid" BoostFactor="1" Nrs="122"/>
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:complexType name="Mitglied">
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:string"/>
+      <xsd:element name="Vorname" type="xsd:string"/>
+    </xsd:sequence>
+    <xsd:attribute name="OBJ_GUID" type="xsd:string" use="required"/>
+    <xsd:attribute name="SEQ" type="xsd:string" use="optional"/>
+    <xsd:attribute name="IDX" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  <xsd:element name="Mitglied" type="Mitglied"/>
+</xsd:schema>
