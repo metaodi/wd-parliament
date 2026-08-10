@@ -1,23 +1,23 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-05 06:44 UTC
+Generated: 2026-08-10 06:34 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (OpenParlData): 180
-- Matched by P14527: 1 (0.6%)
-- Matched by name + birth date: 34
+- Matched by P14527: 3 (1.7%)
+- Matched by name + birth date: 32
 - Not matched at all: 145
 - Open memberships on Wikidata: 167
-- Suggested edits: 375
+- Suggested edits: 371
 
 ## By kind
 
-- Item matched by name but has no unique ID (the source's own): **29**
+- Item matched by name but has no unique ID (the source's own): **27**
 - Recorded as sitting, but the member has left: **146**
 - Sitting member, but no position held (P39) statement: **14**
-- Open membership without a start date (P580): **13**
+- Open membership without a start date (P580): **12**
 - Sitting member, but no Wikidata item could be found: **145**
-- Missing the parliament's other identifier — value to be looked up: **28**
+- Missing the parliament's other identifier — value to be looked up: **27**
 
 ## Electoral district: I Zürich 1+2 (5)
 
@@ -32,22 +32,19 @@ Generated: 2026-08-05 06:44 UTC
 - **Stephan Hegetschweiler** ([#18176](https://openparldata.ch/item/persons/18176)) — 'Stephan Hegetschweiler' sits in the Cantonal Council of Zürich (OpenParlData #18176) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Ueli Bamert** ([#18162](https://openparldata.ch/item/persons/18162)) — 'Ueli Bamert' sits in the Cantonal Council of Zürich (OpenParlData #18162) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: II Zürich 3+9 (17)
+## Electoral district: II Zürich 3+9 (13)
 
-### Item matched by name but has no unique ID (the source's own) (4)
+### Item matched by name but has no unique ID (the source's own) (2)
 
-- **[Nicole Wyss](https://www.wikidata.org/wiki/Q116923222)** ([#18189](https://openparldata.ch/item/persons/18189)) ⚠️ — Add P14527 (OpenParlData ID) '18189'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Pia Ackermann](https://www.wikidata.org/wiki/Q131452322)** ([#18218](https://openparldata.ch/item/persons/18218)) ⚠️ — Add P14527 (OpenParlData ID) '18218'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#17748](https://openparldata.ch/item/persons/17748)) ⚠️ — Add P14527 (OpenParlData ID) '17748'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
-- **[Silvia Rigoni](https://www.wikidata.org/wiki/Q116052409)** ([#17831](https://openparldata.ch/item/persons/17831)) ⚠️ — Add P14527 (OpenParlData ID) '17831'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
 ### Sitting member, but no position held (P39) statement (1)
 
-- **[Silvia Rigoni](https://www.wikidata.org/wiki/Q116052409)** ([#17831](https://openparldata.ch/item/persons/17831)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-09-12. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Silvia Rigoni](https://www.wikidata.org/wiki/Q116052409)** ([#17831](https://openparldata.ch/item/persons/17831)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-09-12.
 
-### Open membership without a start date (P580) (2)
+### Open membership without a start date (P580) (1)
 
-- **[Nicole Wyss](https://www.wikidata.org/wiki/Q116923222)** ([#18189](https://openparldata.ch/item/persons/18189)) ⚠️ — Add a start date (P580) of 2021-09-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#17748](https://openparldata.ch/item/persons/17748)) ⚠️ — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
 ### Sitting member, but no Wikidata item could be found (8)
@@ -61,10 +58,9 @@ Generated: 2026-08-05 06:44 UTC
 - **Mandy Abou Shoak** ([#17820](https://openparldata.ch/item/persons/17820)) — 'Mandy Abou Shoak' sits in the Cantonal Council of Zürich (OpenParlData #17820) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roland Scheck** ([#17522](https://openparldata.ch/item/persons/17522)) — 'Roland Scheck' sits in the Cantonal Council of Zürich (OpenParlData #17522) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (2)
+### Missing the parliament's other identifier — value to be looked up (1)
 
-- **[Nicole Wyss](https://www.wikidata.org/wiki/Q116923222)** ([#18189](https://openparldata.ch/item/persons/18189)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
-- **[Silvia Rigoni](https://www.wikidata.org/wiki/Q116052409)** ([#17831](https://openparldata.ch/item/persons/17831)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
+- **[Silvia Rigoni](https://www.wikidata.org/wiki/Q116052409)** ([#17831](https://openparldata.ch/item/persons/17831)) — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 
 ## Electoral district: III Zürich 4+5 (5)
 

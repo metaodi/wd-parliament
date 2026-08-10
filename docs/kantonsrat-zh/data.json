@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-05 06:44 UTC",
-  "total_suggestions": 375,
+  "generated": "2026-08-10 06:34 UTC",
+  "total_suggestions": 371,
   "total_members": 180,
   "quickstatements": 0,
   "bodies": [
@@ -9,12 +9,12 @@
       "label": "Cantonal Council of Zürich",
       "position_qid": "Q21518678",
       "member_count": 180,
-      "matched_by_identifier": 1,
-      "matched_by_name": 34,
+      "matched_by_identifier": 3,
+      "matched_by_name": 32,
       "unmatched": 145,
       "wikidata_open": 167,
       "identifier_mismatches": 0,
-      "identifier_hit_rate": 0.6,
+      "identifier_hit_rate": 1.7,
       "error": null,
       "suggestions": [
         {
@@ -350,28 +350,6 @@
         {
           "kind": "ADD_IDENTIFIER",
           "priority": 1,
-          "member": "Nicole Wyss",
-          "person_qid": "Q116923222",
-          "person_number": 18189,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '18189'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116923222"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "18189",
-            "biography": "https://openparldata.ch/item/persons/18189",
-            "source_url": "https://openparldata.ch/item/persons/18189",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
           "member": "Pia Ackermann",
           "person_qid": "Q131452322",
           "person_number": 18218,
@@ -498,28 +476,6 @@
             "parliament_id": "17748",
             "biography": "https://openparldata.ch/item/persons/17748",
             "source_url": "https://openparldata.ch/item/persons/17748",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Silvia Rigoni",
-          "person_qid": "Q116052409",
-          "person_number": 17831,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17831'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116052409"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17831",
-            "biography": "https://openparldata.ch/item/persons/17831",
-            "source_url": "https://openparldata.ch/item/persons/17831",
             "identifier_unverified": true
           }
         },
@@ -3388,10 +3344,10 @@
           "member": "Silvia Rigoni",
           "person_qid": "Q116052409",
           "person_number": 17831,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "II Zürich 3+9",
           "parl_group": null,
-          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-09-12. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-09-12.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q116052409"
@@ -3731,29 +3687,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/q131942957-d238c6b9-4990-f700-ad40-fa426275e1f5",
             "biography": "https://openparldata.ch/item/persons/17452",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
-          "member": "Nicole Wyss",
-          "person_qid": "Q116923222",
-          "person_number": 18189,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "Add a start date (P580) of 2021-09-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116923222"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2021-09-06",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q116923222-b032789c-4de3-7b2e-c94c-cf942ac7298e",
-            "biography": "https://openparldata.ch/item/persons/18189",
             "identifier_unverified": true
           }
         },
@@ -5865,27 +5798,6 @@
         {
           "kind": "MISSING_IDENTIFIER",
           "priority": 5,
-          "member": "Nicole Wyss",
-          "person_qid": "Q116923222",
-          "person_number": 18189,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116923222",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/18189",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
           "member": "Patricia Bernet",
           "person_qid": "Q131349456",
           "person_number": 17548,
@@ -6470,10 +6382,10 @@
           "member": "Silvia Rigoni",
           "person_qid": "Q116052409",
           "person_number": 17831,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "II Zürich 3+9",
           "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q116052409",
