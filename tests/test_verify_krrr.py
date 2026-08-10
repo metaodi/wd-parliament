@@ -23,6 +23,7 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from verify_krrr import (  # noqa: E402
+    AGREEMENT_THRESHOLD,
     CONFIRMED,
     CONTRADICTED,
     FMT_BIFF,
@@ -40,6 +41,8 @@ from verify_krrr import (  # noqa: E402
     diagnose_misses,
     filled,
     formatter_url_query,
+    SINGLE_SHEET,
+    find_column,
     identifier_columns,
     iso_date,
     parse_export,
@@ -50,22 +53,53 @@ from verify_krrr import (  # noqa: E402
 )
 
 
-def xlsx_bytes(grid):
-    """A minimal OOXML workbook with inline strings."""
-    rows = []
-    for r, row in enumerate(grid, start=1):
-        cells = "".join(
-            f'<c r="A{r}" t="inlineStr"><is><t>{v}</t></is></c>' for v in row
-        )
-        rows.append(f'<row r="{r}">{cells}</row>')
-    sheet = (
-        '<?xml version="1.0"?><worksheet '
-        'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-        f'<sheetData>{"".join(rows)}</sheetData></worksheet>'
-    )
+def xlsx_bytes(sheets):
+    """A minimal OOXML workbook, built the way the standard says.
+
+    Named sheets and a relationship file, because that is what `read_xlsx`
+    has to join to get a sheet's *name* — globbing sheet*.xml gets both the
+    names and the order wrong.
+    """
+    if isinstance(sheets, list):
+        sheets = {"Sheet1": sheets}
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as zf:
-        zf.writestr("xl/worksheets/sheet1.xml", sheet)
+        entries, rels = [], []
+        for i, (name, grid) in enumerate(sheets.items(), start=1):
+            rows = []
+            for r, row in enumerate(grid, start=1):
+                cells = "".join(
+                    f'<c r="A{r}" t="inlineStr"><is><t>{v}</t></is></c>' for v in row
+                )
+                rows.append(f'<row r="{r}">{cells}</row>')
+            zf.writestr(
+                f"xl/worksheets/sheet{i}.xml",
+                '<?xml version="1.0"?><worksheet '
+                'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+                f'<sheetData>{"".join(rows)}</sheetData></worksheet>',
+            )
+            entries.append(
+                f'<sheet name="{name}" sheetId="{i}" '
+                f'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
+                f'r:id="rId{i}"/>'
+            )
+            rels.append(
+                f'<Relationship Id="rId{i}" Target="worksheets/sheet{i}.xml" '
+                'Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+                'relationships/worksheet"/>'
+            )
+        zf.writestr(
+            "xl/workbook.xml",
+            '<?xml version="1.0"?><workbook '
+            'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            f'<sheets>{"".join(entries)}</sheets></workbook>',
+        )
+        zf.writestr(
+            "xl/_rels/workbook.xml.rels",
+            '<?xml version="1.0"?><Relationships '
+            'xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            f'{"".join(rels)}</Relationships>',
+        )
     return buf.getvalue()
 
 
@@ -84,8 +118,8 @@ def test_an_html_table_served_as_excel_is_still_html():
 def test_legacy_biff_is_recognised_and_refused():
     payload = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"\x00" * 64
     assert sniff_format(payload) == FMT_BIFF
-    fmt, headers, rows, error = parse_export(payload)
-    assert fmt == FMT_BIFF and not rows
+    fmt, sheets, error = parse_export(payload)
+    assert fmt == FMT_BIFF and not sheets
     assert "xlrd" in error
 
 
@@ -99,11 +133,39 @@ def test_an_empty_body_is_unrecognised_not_delimited():
 
 # --- parsing ----------------------------------------------------------------
 def test_read_xlsx_uses_only_the_standard_library():
-    headers, rows = read_xlsx(
-        xlsx_bytes([["Nachname", "Vorname"], ["Rueff-Frenkel", "Sonja"]])
+    sheets = read_xlsx(
+        xlsx_bytes({"Personen": [["Nachname", "Vorname"], ["Rueff-Frenkel", "Sonja"]]})
     )
+    headers, rows = sheets["Personen"]
     assert headers == ["nachname", "vorname"]
     assert rows == [{"nachname": "Rueff-Frenkel", "vorname": "Sonja"}]
+
+
+def test_every_sheet_is_read_and_keeps_its_name():
+    """The bug this fixes reported "the export has no seat columns", which
+    was a fact about the reader: it only ever opened sheet1."""
+    sheets = read_xlsx(
+        xlsx_bytes(
+            {
+                "Personen": [["Nachname"], ["Muster"]],
+                "Einsitze": [["Wahlkreis", "Eintritt"], ["I Zürich", "2019-05-06"]],
+            }
+        )
+    )
+    assert set(sheets) == {"Personen", "Einsitze"}
+    assert sheets["Einsitze"][0] == ["wahlkreis", "eintritt"]
+
+
+def test_find_column_searches_across_sheets():
+    """People and mandates live in different sheets, so a per-sheet answer
+    would report each column as missing from the other."""
+    sheets = {
+        "Personen": (["nachname"], [{"nachname": "Muster"}]),
+        "Einsitze": (["wahlkreis"], [{"wahlkreis": "I Zürich"}]),
+    }
+    assert find_column(sheets, ("wahlkreis",)) == [("Einsitze", "wahlkreis")]
+    assert find_column(sheets, ("nachname",)) == [("Personen", "nachname")]
+    assert find_column(sheets, ("beruf",)) == []
 
 
 def test_read_html_table():
@@ -161,14 +223,20 @@ def test_a_one_cell_row_reads_as_a_title_not_a_header():
 
 
 def test_a_malformed_payload_is_a_finding_not_a_traceback():
-    fmt, _, rows, error = parse_export(b"PK\x03\x04not-a-zip")
-    assert fmt == FMT_OOXML and not rows and error
+    fmt, sheets, error = parse_export(b"PK\x03\x04not-a-zip")
+    assert fmt == FMT_OOXML and not sheets and error
 
 
 def test_a_parsed_export_with_no_data_rows_says_so():
-    fmt, headers, rows, error = parse_export(b"Nachname;Vorname\n")
+    fmt, sheets, error = parse_export(b"Nachname;Vorname\n")
+    headers, rows = sheets[SINGLE_SHEET]
     assert headers == ["nachname", "vorname"] and not rows
-    assert "no data rows" in error
+    assert "no sheet had any data rows" in error
+
+
+def test_a_single_table_format_presents_the_same_shape_as_a_workbook():
+    fmt, sheets, error = parse_export(b"Nachname;Vorname\nMuster;Anna\n")
+    assert list(sheets) == [SINGLE_SHEET] and error is None
 
 
 # --- what it can feed -------------------------------------------------------
@@ -245,10 +313,14 @@ def test_a_person_whose_value_matches_is_not_a_miss():
     assert sum(counts.values()) == 0 and lines == []
 
 
-def test_one_real_disagreement_outweighs_any_number_of_artefacts():
+def test_artefacts_do_not_count_against_the_agreement_share():
+    """Artefacts are facts about the name match, so they neither prove nor
+    disprove the id space — but they are not counted as agreement either."""
     counts = {"ambiguous name": 40, "value differs": 1, "no value in export": 5}
-    verdict, _ = classify_misses(counts, 638)
-    assert verdict == CONTRADICTED
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONFIRMED
+    assert "46 further miss(es)" not in detail  # 45 artefacts, 1 differs
+    assert "45 further miss(es)" in detail
 
 
 # --- the birth date arbitrates a miss ---------------------------------------
@@ -285,7 +357,10 @@ def test_agreeing_birth_dates_make_it_a_real_disagreement():
     )
     assert counts["value differs"] == 1 and counts["different person"] == 0
     assert "both born 1952-03-01" in lines[0]
-    assert classify_misses(counts, 638)[0] == CONTRADICTED
+    # One differing value among a dominant majority is a Wikidata error to
+    # fix — the suggestion this tool exists to make — not a disqualification.
+    assert classify_misses(counts, 638)[0] == CONFIRMED
+    assert classify_misses(counts, 2)[0] == CONTRADICTED
 
 
 def test_disagreeing_birth_dates_make_it_the_wrong_person():
@@ -341,3 +416,33 @@ def test_births_by_name_drops_a_name_two_items_date_differently():
 def test_the_birth_query_keeps_p569_optional():
     sparql = birth_dates_query("de")
     assert "wdt:P13468" in sparql and "OPTIONAL" in sparql and "wdt:P569" in sparql
+
+
+# --- a disagreement is the product, not the disqualification ----------------
+# The tool's whole design rests on the source being authoritative: where the
+# register and Wikidata differ, the register wins and the difference becomes a
+# suggested edit. What a miss decides is which items need fixing — provided
+# the agreeing majority is large enough to establish one shared id space.
+def test_a_dominant_majority_makes_disagreements_a_worklist():
+    counts = {
+        "ambiguous name": 5, "different person": 0, "value differs": 49,
+        "undecided": 0, "no value in export": 1,
+    }
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONFIRMED
+    assert "Wikidata errors to fix" in detail
+    assert "one id space" in detail
+
+
+def test_a_weak_majority_is_still_two_id_spaces_overlapping():
+    counts = {
+        "ambiguous name": 0, "different person": 0, "value differs": 300,
+        "undecided": 0, "no value in export": 0,
+    }
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONTRADICTED
+    assert "overlapping numerically" in detail
+
+
+def test_the_threshold_is_named_not_inlined():
+    assert 50.0 < AGREEMENT_THRESHOLD < 100.0

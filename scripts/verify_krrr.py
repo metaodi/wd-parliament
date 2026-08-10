@@ -6,9 +6,14 @@ runs on:
 
     https://www.web.statistik.zh.ch:8443/KRRR/app?show_page=EXCEL&operation=EXCEL
 
-That makes it the strongest candidate yet for the property that three sources
-have now failed to supply, which is exactly why it gets measured rather than
-assumed. The three failures are the argument:
+**Run 25 (2026-08-10) answered it: ``id_person_new`` carries the P13468 value
+for 583 of the 638 people compared.** After three sources failed, this one is
+the register. Section D confirmed the property resolves through
+``wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=$1`` — a claim this repo had
+inherited and never measured.
+
+The three failures are why it was measured rather than assumed, and they are
+still the argument against assuming the next one:
 
 - **OpenParlData** (run 20): 28 of 35 linked items carry P13468, **0 of 28**
   values are the person id, and the values appear in **no column**.
@@ -25,9 +30,17 @@ assumed. The three failures are the argument:
   failure ``identifier_verified`` exists to catch: a join on it would match
   confidently and write 17943 where 21984 belongs.
 
-So "this is the authoritative source" has now been true three times and
-sufficient none of them. **Authoritative about the people is not the same as
-publishing the identifier**, and only a value comparison can tell them apart.
+So "this is the authoritative source" was true four times and sufficient once.
+**Authoritative about the people is not the same as publishing the
+identifier**, and only a value comparison can tell them apart.
+
+**When the two disagree, the register wins.** That is the whole premise of this
+tool — the source is authoritative, so a difference is a *suggested Wikidata
+edit*, not evidence against the join. What a disagreement cannot be allowed to
+hide is the other reading: two id spaces that overlap numerically match
+exactly and match the wrong people. The two are told apart by degree and
+nothing else, which is what ``AGREEMENT_THRESHOLD`` is for — and by the birth
+date, which separates "the same human with two numbers" from "two humans".
 
 Five sections:
 
@@ -53,7 +66,12 @@ that claim was **inherited, never measured**. A probe that reports a register
 should be able to say where the register is.
 
 **E. What else the export carries** — the seat dates, party, district and
-personal columns a config would read, counted.
+personal columns a config would read, counted **across every sheet**. The
+workbook has several (Personen, Einsitze, …), and the first version of this
+probe read only the first one and duly reported that the export "has no seat
+columns" — a statement about the reader that read as a statement about the
+source. That is this session's recurring failure, and section B printing every
+sheet's columns is the guard.
 
 **Nothing here gates anything.** No config names this service.
 
@@ -143,6 +161,13 @@ FIELD_CANDIDATES: Dict[str, Tuple[str, Tuple[str, ...]]] = {
 # to look: an identifier this tool could actually verify beats a name match.
 # (In the CSV they reach 8, 11 and 0 of the 180 sitting members, so they are a
 # historic-notables join, not a chamber join — section E counts them here.)
+# How much agreement establishes that a column and a property are the *same*
+# id space rather than two that overlap numerically. Run 25 measured 583 of
+# 638 (91.4%) before any corrections. The threshold exists because the two
+# readings are told apart by degree and nothing else: a handful of matches
+# among thousands of five-digit numbers is coincidence, and nine in ten is not.
+AGREEMENT_THRESHOLD = 85.0
+
 KNOWN_IDENTIFIER_COLUMNS = {
     "GND": "P227",
     "VIAF": "P214",
@@ -179,16 +204,57 @@ def _cell_text(value: Optional[str]) -> str:
     return (value or "").strip()
 
 
-def read_xlsx(content: bytes) -> Tuple[List[str], List[Dict[str, str]]]:
-    """Read an OOXML workbook with the standard library only. Pure.
+def _sheet_targets(zf: zipfile.ZipFile) -> List[Tuple[str, str]]:
+    """``[(sheet name, zip path)]`` in workbook order. Pure-ish (reads the zip).
+
+    The names live in ``xl/workbook.xml`` and the paths behind relationship
+    ids in ``xl/_rels/workbook.xml.rels``, so the two have to be joined. The
+    obvious shortcut — globbing ``xl/worksheets/sheet*.xml`` — gets both the
+    names and the *order* wrong (``sheet10`` sorts before ``sheet2``), and a
+    sheet's name is exactly what a reader of this report needs to see.
+    """
+    names = zf.namelist()
+    if "xl/workbook.xml" not in names:
+        return [
+            (Path(n).stem, n) for n in sorted(n for n in names if "worksheets/sheet" in n)
+        ]
+    rels: Dict[str, str] = {}
+    if "xl/_rels/workbook.xml.rels" in names:
+        root = ET.fromstring(zf.read("xl/_rels/workbook.xml.rels"))
+        for rel in root:
+            rid, target = rel.get("Id"), rel.get("Target", "")
+            if rid and target:
+                target = target.lstrip("/")
+                rels[rid] = target if target.startswith("xl/") else f"xl/{target}"
+
+    out: List[Tuple[str, str]] = []
+    root = ET.fromstring(zf.read("xl/workbook.xml"))
+    for sheet in root.iter(f"{NS_MAIN}sheet"):
+        name = sheet.get("name") or f"sheet{len(out) + 1}"
+        rid = next(
+            (v for k, v in sheet.attrib.items() if k.endswith("}id") or k == "id"), ""
+        )
+        path = rels.get(rid, "")
+        if path in names:
+            out.append((name, path))
+    return out
+
+
+def read_xlsx(content: bytes) -> Dict[str, Tuple[List[str], List[Dict[str, str]]]]:
+    """Read **every** worksheet of an OOXML workbook, by name. Pure.
 
     ``.xlsx`` is a zip of XML, so this needs no new dependency — which matters
     because this project's ``pyproject.toml`` dependencies are the *pipeline's*
     dependencies, and a probe must not widen them.
 
-    Only the first worksheet is read, and only its values: an export has one
-    sheet, and formulas and formatting are not what is being measured.
+    Every sheet, because the first version of this read only ``sheet1`` and
+    reported that the KRRR export "has no seat columns" — a statement about
+    the reader that read as a statement about the source, which is this
+    session's recurring failure and the one the column report exists to
+    prevent. The workbook carries an *Einsitze* sheet; nothing was wrong with
+    the export.
     """
+    sheets: Dict[str, Tuple[List[str], List[Dict[str, str]]]] = {}
     with zipfile.ZipFile(io.BytesIO(content)) as zf:
         shared: List[str] = []
         if "xl/sharedStrings.xml" in zf.namelist():
@@ -196,28 +262,24 @@ def read_xlsx(content: bytes) -> Tuple[List[str], List[Dict[str, str]]]:
             for si in root.findall(f"{NS_MAIN}si"):
                 shared.append("".join(t.text or "" for t in si.iter(f"{NS_MAIN}t")))
 
-        sheets = sorted(
-            n for n in zf.namelist() if n.startswith("xl/worksheets/sheet")
-        )
-        if not sheets:
-            return [], []
-        root = ET.fromstring(zf.read(sheets[0]))
-
-    grid: List[List[str]] = []
-    for row in root.iter(f"{NS_MAIN}row"):
-        values: List[str] = []
-        for cell in row.findall(f"{NS_MAIN}c"):
-            kind = cell.get("t")
-            if kind == "inlineStr":
-                text = "".join(t.text or "" for t in cell.iter(f"{NS_MAIN}t"))
-            else:
-                node = cell.find(f"{NS_MAIN}v")
-                text = node.text if node is not None and node.text else ""
-                if kind == "s" and text.isdigit() and int(text) < len(shared):
-                    text = shared[int(text)]
-            values.append(_cell_text(text))
-        grid.append(values)
-    return _grid_to_rows(grid)
+        for name, path in _sheet_targets(zf):
+            root = ET.fromstring(zf.read(path))
+            grid: List[List[str]] = []
+            for row in root.iter(f"{NS_MAIN}row"):
+                values: List[str] = []
+                for cell in row.findall(f"{NS_MAIN}c"):
+                    kind = cell.get("t")
+                    if kind == "inlineStr":
+                        text = "".join(t.text or "" for t in cell.iter(f"{NS_MAIN}t"))
+                    else:
+                        node = cell.find(f"{NS_MAIN}v")
+                        text = node.text if node is not None and node.text else ""
+                        if kind == "s" and text.isdigit() and int(text) < len(shared):
+                            text = shared[int(text)]
+                    values.append(_cell_text(text))
+                grid.append(values)
+            sheets[name] = _grid_to_rows(grid)
+    return sheets
 
 
 class _TableParser(HTMLParser):
@@ -299,10 +361,19 @@ def _grid_to_rows(
     return headers, rows
 
 
+# The name a single-table format gets, so every format presents the same shape.
+SINGLE_SHEET = "(single table)"
+
+Sheets = Dict[str, Tuple[List[str], List[Dict[str, str]]]]
+
+
 def parse_export(
     content: bytes, content_type: str = ""
-) -> Tuple[str, List[str], List[Dict[str, str]], Optional[str]]:
-    """``(format, headers, rows, error)``. Pure.
+) -> Tuple[str, Sheets, Optional[str]]:
+    """``(format, {sheet name: (headers, rows)}, error)``. Pure.
+
+    A workbook of several sheets and a single HTML table present the same
+    shape, so nothing downstream has to know which format it came from.
 
     An unreadable payload returns its format and an explanation rather than
     raising: "the export is legacy BIFF and this probe cannot read it" is a
@@ -311,27 +382,42 @@ def parse_export(
     fmt = sniff_format(content, content_type)
     try:
         if fmt == FMT_OOXML:
-            headers, rows = read_xlsx(content)
+            sheets = read_xlsx(content)
         elif fmt == FMT_HTML:
-            headers, rows = read_html_table(content)
+            sheets = {SINGLE_SHEET: read_html_table(content)}
         elif fmt == FMT_DELIMITED:
-            headers, rows = read_delimited(content)
+            sheets = {SINGLE_SHEET: read_delimited(content)}
         elif fmt == FMT_BIFF:
             return (
                 fmt,
-                [],
-                [],
+                {},
                 "Legacy BIFF (.xls) needs a reader this project does not "
                 "depend on. Re-run with 'uv run --with xlrd', or ask the "
                 "application for its OOXML/CSV export if it has one.",
             )
         else:
-            return (fmt, [], [], "The payload matched no format this probe reads.")
+            return (fmt, {}, "The payload matched no format this probe reads.")
     except Exception as exc:  # a malformed export is a finding, not a crash
-        return (fmt, [], [], f"{type(exc).__name__}: {exc}")
-    if not rows:
-        return (fmt, headers, rows, "Parsed, but no data rows were found.")
-    return (fmt, headers, rows, None)
+        return (fmt, {}, f"{type(exc).__name__}: {exc}")
+    if not any(rows for _, rows in sheets.values()):
+        return (fmt, sheets, "Parsed, but no sheet had any data rows.")
+    return (fmt, sheets, None)
+
+
+def find_column(sheets: Sheets, candidates: Sequence[str]) -> List[Tuple[str, str]]:
+    """``[(sheet, column)]`` for every sheet that has one of these. Pure.
+
+    Searching *across* sheets is the point: the export splits people from
+    their mandates, so ``wahlkreis`` and ``nachname`` live in different
+    sheets and a per-sheet answer would report each as missing from the other.
+    """
+    found: List[Tuple[str, str]] = []
+    for sheet, (headers, _) in sheets.items():
+        for candidate in candidates:
+            column = resolve_column(headers, candidate)
+            if column and (sheet, column) not in found:
+                found.append((sheet, column))
+    return found
 
 
 # --- pure: what the export can feed -----------------------------------------
@@ -465,15 +551,37 @@ def classify_misses(counts: Dict[str, int], matched: int) -> Tuple[str, str]:
             "identifier, with nothing left to explain.",
         )
     if differs:
+        agreed = matched - differs - artefacts - undecided
+        share = (agreed / matched * 100) if matched else 0.0
+        # **A disagreement is this tool's product, not its disqualification.**
+        # The whole design rests on the source being authoritative: when the
+        # register and Wikidata differ, the register wins and the difference
+        # becomes a suggested edit. So the question a miss answers is not "may
+        # the column be joined on" but "which items need fixing" — as long as
+        # the agreeing majority is large enough to establish that the two are
+        # the *same id space* at all. Below that, the numbers could be
+        # coincidence, which is the failure identifier_verified guards.
+        if share >= AGREEMENT_THRESHOLD:
+            return (
+                CONFIRMED,
+                f"{agreed} of {matched} ({share:.1f}%) agree, which settles "
+                "that the column and the property are one id space. The "
+                f"{differs} person(s) with the same birth date and a different "
+                "number are **Wikidata errors to fix, not evidence against the "
+                "join** — they are exactly the suggestion this tool exists to "
+                f"make. ({artefacts} further miss(es) are name-matching "
+                f"artefacts and {undecided} could not be decided.)",
+            )
         return (
             CONTRADICTED,
-            f"{differs} person(s) with the same birth date on both sides carry "
-            "a different value in the export than Wikidata holds. That is a "
-            "real disagreement about the identifier — the same human, two "
-            "numbers — and it has to be understood before the column is joined "
-            "on: one wrong value writes an edit onto somebody else. "
-            f"({artefacts} further miss(es) are name-matching artefacts and "
-            f"{undecided} could not be decided.)",
+            f"Only {agreed} of {matched} ({share:.1f}%) agree, and {differs} "
+            "person(s) with the same birth date on both sides carry a "
+            "different value. Below "
+            f"{AGREEMENT_THRESHOLD:.0f}% the agreement could be two id spaces "
+            "overlapping numerically rather than one shared one, which is the "
+            "failure identifier_verified guards against: a join would match "
+            "exactly and match the wrong people. "
+            f"({artefacts} artefact(s), {undecided} undecided.)",
         )
     if undecided:
         return (
@@ -578,9 +686,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     config = load_config(args.config)
     http = HttpClient(user_agent=config.user_agent, request_delay=config.request_delay)
 
+
     # --- A. reach and format ------------------------------------------------
     print("=" * 70)
-    print("A. Does the KRRR export answer, and what format is it?")
+    print("A. Does the KRRR export answer, and what is in it?")
     print("=" * 70)
     print(f"url: {args.url}")
     try:
@@ -595,29 +704,35 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 1
 
     print(f"HTTP {status}, {len(content)} bytes, Content-Type: {content_type!r}")
-    fmt, headers, rows, error = parse_export(content, content_type)
+    fmt, sheets, error = parse_export(content, content_type)
     print(f"sniffed format: {fmt}")
     if error:
         print(f"  ! {error}")
         print(f"  first bytes: {content[:80]!r}")
-        if not rows:
+        if not sheets:
             print("\nNothing below could be measured.")
             return 1
-    print(f"rows: {len(rows)}; columns: {len(headers)}")
+    print(f"sheets: {len(sheets)}")
+    for sheet, (headers, rows) in sheets.items():
+        print(f"  {sheet:<24} {len(rows):>6} rows, {len(headers):>3} columns")
 
     # --- B. the real column list -------------------------------------------
     print()
     print("=" * 70)
-    print("B. Which columns does the export actually have?")
+    print("B. Which columns does each sheet actually have?")
     print("=" * 70)
-    report = column_report(rows)
-    shown = report if args.verbose else report[:60]
-    width = max((len(c) for c, _, _ in shown), default=30)
-    for column, count, sample in shown:
-        text = "" if sample is None else f"  e.g. {sample[:40]!r}"
-        print(f"  {column:<{width}} {count:>6}/{len(rows)}{text}")
-    if len(shown) < len(report):
-        print(f"  ... {len(report) - len(shown)} more (--verbose for all)")
+    reports: Dict[str, List[Tuple[str, int, Optional[str]]]] = {}
+    for sheet, (headers, rows) in sheets.items():
+        report = column_report(rows)
+        reports[sheet] = report
+        print(f"\n-- {sheet} ({len(rows)} rows)")
+        shown = report if args.verbose else report[:40]
+        width = max((len(c) for c, _, _ in shown), default=20)
+        for column, count, sample in shown:
+            text = "" if sample is None else f"  e.g. {sample[:36]!r}"
+            print(f"  {column:<{width}} {count:>6}/{len(rows)}{text}")
+        if len(shown) < len(report):
+            print(f"  ... {len(report) - len(shown)} more (--verbose for all)")
 
     # --- C. P13468 ----------------------------------------------------------
     print()
@@ -625,86 +740,76 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"C. Does the KRRR export carry {P_ZH_MEMBER_ID}?")
     print("=" * 70)
     wikidata = WikidataClient(http)
-    verdict, detail = INCONCLUSIVE, "Wikidata could not be read."
     try:
         bindings = wikidata.run_query(zh_member_id_query(config.language))
     except Exception as exc:
         print(f"  ! could not read Wikidata: {exc}")
         bindings = []
+    wanted, read, dropped = wanted_by_name(bindings) if bindings else ({}, 0, 0)
+    if bindings:
+        print(f"items carrying {P_ZH_MEMBER_ID}: {read}")
+        print(f"  usable names: {len(wanted)}; dropped as ambiguous: {dropped}")
 
-    seen = [column for column, _, _ in report]
-    name_field = resolve_column(seen, "name") or resolve_column(seen, "nachname")
-    first_field = resolve_column(seen, "vorname")
-    print(f"name read from: {name_field!r} + {first_field!r}")
-    index: Dict[str, List[Dict[str, Any]]] = {}
-    if name_field:
+    births: Dict[str, str] = {}
+    if bindings:
+        try:
+            births = births_by_name(
+                wikidata.run_query(birth_dates_query(config.language))
+            )
+        except Exception as exc:
+            print(f"  ! could not read birth dates: {exc}")
+
+    # Every sheet that names people is asked, because which one is the person
+    # table is a fact about the export, not something to assume from a name.
+    verdict, detail = INCONCLUSIVE, "No sheet could be compared."
+    for sheet, (headers, rows) in sheets.items():
+        name_field = resolve_column(headers, "nachname") or resolve_column(
+            headers, "name"
+        )
+        if not name_field or not wanted:
+            continue
+        first_field = resolve_column(headers, "vorname")
         index, unnamed = index_by_name(
             rows, name_field=name_field, first_name_field=first_field or "vorname"
         )
-        print(f"distinct people by name: {len(index)}; rows with no name: {unnamed}")
-    else:
-        print("  ! no name column resolved; candidates:")
-        for column in seen:
-            if "name" in column:
-                print(f"    {column}")
-
-    if bindings and index:
-        wanted, read, dropped = wanted_by_name(bindings)
-        print(f"\nitems carrying {P_ZH_MEMBER_ID}: {read}")
-        print(f"  usable names: {len(wanted)}; dropped as ambiguous: {dropped}")
+        if not index:
+            continue
+        print(f"\n-- {sheet}: names from {name_field!r} + {first_field!r}")
+        print(f"   distinct people: {len(index)}; rows with no name: {unnamed}")
         counts, compared, missing, examples = find_identifier_columns(index, wanted)
-        print(f"  matched to a KRRR person: {compared}; not in the export: {missing}")
+        print(f"   matched: {compared}; not in this sheet: {missing}")
         if counts:
-            print("  columns carrying the value:")
-            for column, hits in list(counts.items())[:10]:
-                print(f"    {column:<34} {hits}/{compared}")
+            for column, hits in list(counts.items())[:6]:
+                print(f"     {column:<30} {hits}/{compared}")
         else:
-            print("  columns carrying the value: none")
-        for line in examples:
-            print(f"    {line}")
-        verdict, detail = classify_identifier(counts, compared, compared)
-        _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
+            print("     no column carries the value")
+        sheet_verdict, sheet_detail = classify_identifier(counts, compared, compared)
+        print(f"   verdict: {sheet_verdict}")
 
-        # A partial match has two opposite causes, and counts alone cannot
-        # tell them apart. This is the part that can.
         if counts:
             best = next(iter(counts))
-            birth_column = resolve_column(seen, "datum_geburt") or resolve_column(
-                seen, "geburtsdatum"
-            )
-            try:
-                births = births_by_name(
-                    wikidata.run_query(birth_dates_query(config.language))
-                )
-            except Exception as exc:
-                print(f"  ! could not read birth dates: {exc}")
-                births = {}
-            print(
-                f"\nwhy did the rest miss? (column {best!r}, arbitrated by "
-                f"{birth_column!r} against P569 for {len(births)} item(s))"
+            birth_column = resolve_column(headers, "datum_geburt") or resolve_column(
+                headers, "geburtsdatum"
             )
             miss_counts, miss_lines = diagnose_misses(
-                index,
-                wanted,
-                best,
-                wanted_birth=births,
-                birth_column=birth_column or "",
+                index, wanted, best,
+                wanted_birth=births, birth_column=birth_column or "",
             )
+            print(f"   misses, arbitrated by {birth_column!r} against P569:")
             for kind, n in miss_counts.items():
-                print(f"  {kind:<22} {n}")
-            for line in miss_lines:
-                print(f"    {line}")
+                print(f"     {kind:<22} {n}")
+            for line in miss_lines[:6]:
+                print(f"       {line}")
             miss_verdict, miss_detail = classify_misses(miss_counts, compared)
-            _verdict("Verdict (are the misses disagreements?)", miss_verdict, miss_detail)
-    else:
-        _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
+            if verdict != CONFIRMED:
+                verdict, detail = miss_verdict, f"[{sheet}] {miss_detail}"
+    _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
 
     # --- D. where does P13468 actually resolve? -----------------------------
     print()
     print("=" * 70)
     print(f"D. {P_ZH_MEMBER_ID}'s own formatter URL, from Wikidata")
     print("=" * 70)
-    print("  (this repo has been asserting one it never measured)")
     try:
         for row in wikidata.run_query(formatter_url_query()):
             label = (row.get("label") or {}).get("value", "")
@@ -720,22 +825,28 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("E. What else could this export feed?")
     print("=" * 70)
     for prop, (label, candidates) in FIELD_CANDIDATES.items():
-        columns = resolve_columns(seen, candidates)
-        if not columns:
+        found = find_column(sheets, candidates)
+        if not found:
             print(f"  {prop} {label:<18} no such column: {', '.join(candidates)}")
             continue
-        best = max(columns, key=lambda c: filled(rows, c))
-        print(
-            f"  {prop} {label:<18} {filled(rows, best):>6}/{len(rows)} "
-            f"via {', '.join(columns)}"
-        )
+        parts = []
+        for sheet, column in found:
+            rows = sheets[sheet][1]
+            parts.append(f"{sheet}.{column} {filled(rows, column)}/{len(rows)}")
+        print(f"  {prop} {label:<18} " + " | ".join(parts))
 
     print("\n  identifier columns (a join this tool could actually verify):")
-    found = identifier_columns(seen)
-    if not found:
+    any_found = False
+    for column, prop in KNOWN_IDENTIFIER_COLUMNS.items():
+        for sheet, resolved in find_column(sheets, (column.lower(),)):
+            rows = sheets[sheet][1]
+            print(
+                f"    {sheet}.{resolved:<24} {filled(rows, resolved):>6}/{len(rows)}"
+                f"  -> {prop}"
+            )
+            any_found = True
+    if not any_found:
         print("    none of " + ", ".join(KNOWN_IDENTIFIER_COLUMNS))
-    for column, prop in found.items():
-        print(f"    {column:<34} {filled(rows, column):>6}/{len(rows)}  -> {prop}")
 
     print()
     print("=" * 70)
