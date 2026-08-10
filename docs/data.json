@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-05 06:43 UTC",
-  "total_suggestions": 2198,
+  "generated": "2026-08-10 06:34 UTC",
+  "total_suggestions": 2199,
   "total_members": 246,
   "quickstatements": 0,
   "bodies": [
@@ -20,22 +20,44 @@
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
-          "member": "Q1668723 (2 source records)",
-          "person_qid": "Q1668723",
+          "member": "Q1 (2 source records)",
+          "person_qid": "Q1",
           "person_number": null,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1: #19893, #21989. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
           "links": {
-            "item": "https://www.wikidata.org/wiki/Q1668723",
+            "item": "https://www.wikidata.org/wiki/Q1",
             "position": "https://www.wikidata.org/wiki/Q18510612"
           },
           "payload": {
-            "wikidata_qid": "Q1668723",
+            "wikidata_qid": "Q1",
             "source_person_ids": [
-              20389,
-              20390
+              19893,
+              21989
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q18683253 (2 source records)",
+          "person_qid": "Q18683253",
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q18683253: #19697, #19700. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q18683253",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q18683253",
+            "source_person_ids": [
+              19697,
+              19700
             ]
           }
         },
@@ -64,22 +86,22 @@
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
-          "member": "Q51879989 (2 source records)",
-          "person_qid": "Q51879989",
+          "member": "Q99305159 (2 source records)",
+          "person_qid": "Q99305159",
           "person_number": null,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q51879989: #19708, #19738. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q99305159: #20952, #21038. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
           "links": {
-            "item": "https://www.wikidata.org/wiki/Q51879989",
+            "item": "https://www.wikidata.org/wiki/Q99305159",
             "position": "https://www.wikidata.org/wiki/Q18510612"
           },
           "payload": {
-            "wikidata_qid": "Q51879989",
+            "wikidata_qid": "Q99305159",
             "source_person_ids": [
-              19708,
-              19738
+              20952,
+              21038
             ]
           }
         },
@@ -41333,22 +41355,22 @@
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
-          "member": "Q1668723 (2 source records)",
-          "person_qid": "Q1668723",
+          "member": "Q18683253 (2 source records)",
+          "person_qid": "Q18683253",
           "person_number": null,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q18683253: #19697, #19700. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
           "links": {
-            "item": "https://www.wikidata.org/wiki/Q1668723",
+            "item": "https://www.wikidata.org/wiki/Q18683253",
             "position": "https://www.wikidata.org/wiki/Q18510613"
           },
           "payload": {
-            "wikidata_qid": "Q1668723",
+            "wikidata_qid": "Q18683253",
             "source_person_ids": [
-              20389,
-              20390
+              19697,
+              19700
             ]
           }
         },
