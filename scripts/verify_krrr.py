@@ -350,6 +350,93 @@ def filled(rows: Sequence[Dict[str, str]], column: str) -> int:
     return sum(1 for row in rows if (row.get(column) or "").strip())
 
 
+def diagnose_misses(
+    index: Dict[str, List[Dict[str, str]]],
+    wanted: Dict[str, str],
+    id_column: str,
+    limit: int = 12,
+) -> Tuple[Dict[str, int], List[str]]:
+    """Why did a name match but its identifier not? Pure.
+
+    Run 25 found ``id_person_new`` carrying the P13468 value for 583 of 638
+    people and nothing carrying it for the other 55, and
+    :func:`classify_identifier` calls that a partial match — correctly, because
+    from counts alone it cannot be told from a column that merely *collides*
+    numerically. But a miss has two opposite causes and only one of them is
+    about the data:
+
+    - **the name reached the wrong person.** The index is keyed by name, and a
+      register spanning 1803 to today is full of namesakes. Comparing
+      Wikidata's value for one Hans Müller against the register's id for
+      another says nothing about the column.
+    - **the register really holds a different value** for a person the name
+      identifies unambiguously. *That* is a disagreement, and the thing an
+      identifier claim cannot survive.
+
+    So each miss is sorted by whether the name is unique in the export. Same
+    discipline as ``verify_gever.classify_row_key``'s namesake test, and the
+    same refusal to arbitrate: an ambiguous name is reported as ambiguous
+    rather than resolved in whichever direction flatters the column.
+    """
+    counts = {"ambiguous name": 0, "value differs": 0, "no value in export": 0}
+    lines: List[str] = []
+    for name, value in sorted(wanted.items()):
+        rows = index.get(name)
+        if not rows:
+            continue
+        held = {
+            (row.get(id_column) or "").strip()
+            for row in rows
+            if (row.get(id_column) or "").strip()
+        }
+        if str(value).strip() in held:
+            continue
+        if len(held) > 1:
+            kind = "ambiguous name"
+            detail = f"the export has {len(held)} people so named: {sorted(held)}"
+        elif not held:
+            kind = "no value in export"
+            detail = f"the export's {id_column} is empty for this person"
+        else:
+            kind = "value differs"
+            detail = f"export {id_column}={held.pop()!r} against Wikidata {value!r}"
+        counts[kind] += 1
+        if len(lines) < limit:
+            lines.append(f"{name}: {detail}  [{kind}]")
+    return counts, lines
+
+
+def classify_misses(counts: Dict[str, int], matched: int) -> Tuple[str, str]:
+    """What the miss breakdown means for the join. Pure."""
+    differs = counts.get("value differs", 0)
+    ambiguous = counts.get("ambiguous name", 0)
+    empty = counts.get("no value in export", 0)
+    if not (differs or ambiguous or empty):
+        return (
+            CONFIRMED,
+            f"Every one of the {matched} people compared carries the "
+            "identifier, with nothing left to explain.",
+        )
+    if differs:
+        return (
+            CONTRADICTED,
+            f"{differs} person(s) whose name the export identifies "
+            "unambiguously carry a different value there than Wikidata holds. "
+            "That is a real disagreement about the identifier, not a matching "
+            "artefact, and it has to be understood before the column can be "
+            "joined on — one wrong value writes an edit onto somebody else.",
+        )
+    return (
+        CONFIRMED,
+        f"All {ambiguous + empty} unexplained people are matching artefacts "
+        f"rather than disagreements ({ambiguous} name(s) the export gives to "
+        f"several people, {empty} with no value there). No person the export "
+        "identifies unambiguously disagrees with Wikidata, so the column is "
+        "the identifier and the shortfall belongs to the *name* match this "
+        "probe uses to line the two lists up.",
+    )
+
+
 # --- the SPARQL side ---------------------------------------------------------
 def formatter_url_query() -> str:
     """P13468's own formatter URL (P1630) and its label.
@@ -480,7 +567,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for line in examples:
             print(f"    {line}")
         verdict, detail = classify_identifier(counts, compared, compared)
-    _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
+        _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
+
+        # A partial match has two opposite causes, and counts alone cannot
+        # tell them apart. This is the part that can.
+        if counts:
+            best = next(iter(counts))
+            print(f"\nwhy did the rest miss? (column {best!r})")
+            miss_counts, miss_lines = diagnose_misses(index, wanted, best)
+            for kind, n in miss_counts.items():
+                print(f"  {kind:<22} {n}")
+            for line in miss_lines:
+                print(f"    {line}")
+            miss_verdict, miss_detail = classify_misses(miss_counts, compared)
+            _verdict("Verdict (are the misses disagreements?)", miss_verdict, miss_detail)
+    else:
+        _verdict(f"Verdict ({P_ZH_MEMBER_ID})", verdict, detail)
 
     # --- D. where does P13468 actually resolve? -----------------------------
     print()

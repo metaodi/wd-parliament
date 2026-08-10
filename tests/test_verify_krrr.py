@@ -23,6 +23,8 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from verify_krrr import (  # noqa: E402
+    CONFIRMED,
+    CONTRADICTED,
     FMT_BIFF,
     FMT_DELIMITED,
     FMT_HTML,
@@ -31,6 +33,8 @@ from verify_krrr import (  # noqa: E402
     KNOWN_IDENTIFIER_COLUMNS,
     FIELD_CANDIDATES,
     _grid_to_rows,
+    classify_misses,
+    diagnose_misses,
     filled,
     formatter_url_query,
     identifier_columns,
@@ -195,3 +199,48 @@ def test_the_formatter_query_asks_for_p1630_optionally():
     sparql = formatter_url_query()
     assert "wdt:P1630" in sparql and "wd:P13468" in sparql
     assert sparql.count("OPTIONAL") == 2
+
+
+# --- why did a name match but its identifier not? ---------------------------
+# Run 25's 583-of-638: a partial match has two opposite causes and only one of
+# them is about the data.
+def krrr_row(pid, last="Müller", first="Hans"):
+    return {"id_person_new": pid, "nachname": last, "vorname": first}
+
+
+def test_a_name_the_export_gives_to_several_people_is_an_artefact():
+    index = {"hans muller": [krrr_row("111"), krrr_row("222")]}
+    counts, lines = diagnose_misses(index, {"hans muller": "333"}, "id_person_new")
+    assert counts["ambiguous name"] == 1 and counts["value differs"] == 0
+    assert "2 people so named" in lines[0]
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONFIRMED
+    assert "matching artefacts" in detail
+
+
+def test_a_unique_name_with_another_value_is_a_real_disagreement():
+    index = {"hans muller": [krrr_row("111")]}
+    counts, lines = diagnose_misses(index, {"hans muller": "333"}, "id_person_new")
+    assert counts["value differs"] == 1
+    assert "against Wikidata" in lines[0]
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONTRADICTED
+    assert "real disagreement" in detail
+
+
+def test_an_empty_id_column_is_neither():
+    index = {"hans muller": [krrr_row("")]}
+    counts, _ = diagnose_misses(index, {"hans muller": "333"}, "id_person_new")
+    assert counts["no value in export"] == 1
+
+
+def test_a_person_whose_value_matches_is_not_a_miss():
+    index = {"hans muller": [krrr_row("333")]}
+    counts, lines = diagnose_misses(index, {"hans muller": "333"}, "id_person_new")
+    assert sum(counts.values()) == 0 and lines == []
+
+
+def test_one_real_disagreement_outweighs_any_number_of_artefacts():
+    counts = {"ambiguous name": 40, "value differs": 1, "no value in export": 5}
+    verdict, _ = classify_misses(counts, 638)
+    assert verdict == CONTRADICTED
