@@ -181,19 +181,31 @@ def test_a_measured_property_is_verified_by_default(tmp_path):
 def test_an_unmeasured_property_defaults_to_unverified(tmp_path):
     """Provenance and value are two questions, and only the first is settled.
 
-    Wikidata asserts P13468, which is what ``is_mechanical`` can see. That its
-    value equals the source's person id is what nothing has measured, and a
-    config joining on it must default to saying so rather than to silence.
+    Wikidata asserts P14527, which is what ``is_mechanical`` can see. That its
+    value equals the source's person id is the other question, and run 20
+    answered it *no* — one record per person per body, so it identifies a
+    record. A config joining on it must default to saying so rather than to
+    silence.
+
+    P13468 used to be this test's example and is no longer: run 28 measured it
+    against the register that publishes it (591 of 638), which is what
+    membership of VERIFIED_IDENTIFIER_PROPERTIES costs.
     """
-    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P13468\n"))
+    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P14527\n"))
     assert cfg.identifier_verified is False
 
 
 def test_claiming_an_unmeasured_property_is_verified_is_rejected(tmp_path):
     """The one claim ``is_mechanical`` writes real edits off the back of."""
-    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    text = MINIMAL + "identifier_property: P14527\nidentifier_verified: true\n"
     with pytest.raises(ValueError, match="has not been measured"):
         load_config(write(tmp_path, text))
+
+
+def test_a_measured_property_may_be_claimed_verified(tmp_path):
+    """The other side of the same rule: measurement is what unlocks it."""
+    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    assert load_config(write(tmp_path, text)).identifier_verified is True
 
 
 def test_an_unknown_identifier_property_is_rejected(tmp_path):
@@ -228,14 +240,19 @@ identifier_property: P13468
         load_config(write(tmp_path, text))
 
 
-def test_p14527_lost_its_verified_status_to_a_single_disagreement():
-    """One is enough, and the reason generalises: OpenParlData holds one person
-    record per person *per body*, so P14527 identifies a record. Q131948095
-    carries 1411 where the ZH record is 17436 — another parliament's id for the
-    same human."""
+def test_only_measured_properties_are_verified():
+    """P14527 lost its status to a single disagreement, and the reason
+    generalises: OpenParlData holds one person record per person *per body*, so
+    it identifies a record. Q131948095 carries 1411 where the ZH record is
+    17436 — another parliament's id for the same human.
+
+    P13468 joined on 2026-08-10 by the opposite route: run 28 measured its
+    value against the register that publishes it, 591 of 638 (92.6%).
+    """
     from wd_parliament.models import VERIFIED_IDENTIFIER_PROPERTIES
 
-    assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307"})
+    assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307", "P13468"})
+    assert "P14527" not in VERIFIED_IDENTIFIER_PROPERTIES
 
 
 # --- the two identifiers a member has ---------------------------------------

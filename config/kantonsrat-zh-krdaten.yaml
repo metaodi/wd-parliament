@@ -1,0 +1,158 @@
+# Kantonsrat Zürich, read from the Staatsarchiv's own KR-Daten register.
+#
+# The register behind P13468, exported by the KRRR application ("Kantonsrat und
+# Regierungsrat"). This is the **third** cantonal config and the first whose
+# identifier join is verified, so read the difference from
+# `kantonsrat-zh.yaml` before changing either.
+#
+# ── Why this config exists ──────────────────────────────────────────────────
+#
+# `kantonsrat-zh.yaml` reads OpenParlData and joins on P14527, which matched
+# **0 of the 180 sitting members** on its first real run: the linked people are
+# mostly members notable enough to have gone federal. Everything it reports is
+# carried by the name fallback, which `is_mechanical` refuses — so that config
+# ships `quickstatements: false` and could never do otherwise.
+#
+# This one joins on **P13468 against `id_person_new`**, and run 28 (2026-08-10)
+# measured that pairing end to end:
+#
+#     items carrying P13468: 887 | matched to a KRRR person: 638
+#     id_person_new carries the value: 591/638 (92.6%)
+#     misses: 29 value differs · 8 different person · 6 ambiguous name · 4 undecided
+#     P1630: https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=$1
+#
+# The 29 are Wikidata values this register disagrees with — the suggestion this
+# tool exists to make, not evidence against the join. The 8 are name-matching
+# artefacts the birth date exposed. **Three other sources publish this value
+# nowhere at all**: OpenParlData (run 20), the canton's Gever (run 23) and the
+# openZH LOD CSV, whose `ID_PERSON_NEW` is a *third* id space in the same
+# numeric band — which is why `config.load_config` still refuses P13468 with
+# `source: openparldata` outright.
+#
+# ── What this source cannot do ──────────────────────────────────────────────
+#
+# **It has no legislative periods and no P2937.** No sheet carries them, so
+# `terms:` stays empty and none is ever suggested. Do not invent four-year
+# windows: the register records mandates, not terms.
+#
+# **Most of its dates are incomplete.** Every date is split into day, month and
+# year, and a register reaching back to 1803 knows the year far more often than
+# the day. `krdaten.compose_date` returns nothing unless all three are present,
+# because P569/P580/P582 are *dates* and 1 January is a precision the register
+# never claimed. Expect historic members to carry no P580 — that is correct,
+# not a gap to fill.
+#
+# **Its person id may not be stable across exports.** The openZH CSV dumped in
+# January 2023 gives Sonja Rueff-Frenkel 17943 where the live export and
+# Wikidata agree on 21984. Whatever happened between the two, an identifier
+# that gets renumbered would quietly rot on Wikidata — so re-run
+# `scripts/verify_krrr.py` before any bulk apply and read the agreement share.
+
+language: de
+user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
+request_delay: 1.0
+
+source: krdaten
+
+# P13468 "Zurich Kantonsrat and Regierungsrat member ID" — the canton's own
+# member id, and this source's `id_person_new`. In
+# `models.VERIFIED_IDENTIFIER_PROPERTIES` since run 28 measured the value.
+identifier_property: P13468
+identifier_verified: true
+
+# Both of the parliament's identifiers. The join property is reported with its
+# value (ADD_IDENTIFIER); P14527 is reported without one (MISSING_IDENTIFIER),
+# because no source *this* config reads publishes an OpenParlData person id.
+# Note the inversion against `kantonsrat-zh.yaml`, where these swap roles.
+identifiers: [P13468, P14527]
+
+# The register's own query page — P13468's formatter URL, read from Wikidata
+# (P1630) by run 28 rather than assumed. `{id}` is the join property's value.
+biography_url: "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id={person_number}"
+
+# ⚠️ OFF until a human has pasted one line into QuickStatements by hand and
+# watched where it landed (README step 5). The join being verified removes the
+# *blanket* refusal `identifier_verified: false` imposes — it does not remove
+# the need to look at the first edit.
+quickstatements: false
+
+# One P39 statement per *tenure*, not one per term. The Einsitze rows are
+# per tenure (4,421 seats across 3,367 people, ~1.3 each), which is the same
+# shape `kantonsrat-zh.yaml` reads from OpenParlData and matches the census in
+# README step 2: 97.2% of items carry exactly one statement for a seat.
+#
+# ⚠️ Leaving this at the default (`period`) is not a smaller claim, it is a
+# **silent nothing**: this source has no legislative periods, so
+# `expected_statements` would return an empty list and the run would emit no
+# seat suggestion at all while reporting success. The first version of this
+# config did exactly that, and only the pipeline test noticed.
+statement_model: tenure
+
+# Group the report by electoral district — the Wahlkreis, for a cantonal body.
+group_by: canton
+
+bodies:
+  - council: KR
+    label: Cantonal Council of Zürich
+    position: Q21518678    # member of the Cantonal Council of Zürich
+
+# The 18 Wahlkreise, exactly as the register spells them after `_tidy`
+# collapses its runs of spaces. Counted from the register's own open seats:
+# 18 districts, 180 members. **Empty values are deliberate**: an unmapped
+# district makes no suggestion, which is the rule that keeps a wrong Q-ID out
+# of a real item. Fill one in only after checking it on Wikidata, and note that
+# run 15 found P768 on 3 of 270 statements for this seat — all three naming
+# *city quarters* rather than Wahlkreise — so there is no convention here yet
+# and populating this map is a decision, not a chore.
+cantons:
+  "1. Wahlkreis (Zürich 1+2)": ""
+  "2. Wahlkreis (Zürich 3+9)": ""
+  "3. Wahlkreis (Zürich 4+5)": ""
+  "4. Wahlkreis (Zürich 6 + 10)": ""
+  "5. Wahlkreis (Zürich 7+8)": ""
+  "6. Wahlkreis (Zürich 11 + 12)": ""
+  "7. Wahlkreis (Dietikon)": ""
+  "8. Wahlkreis (Affoltern)": ""
+  "9. Wahlkreis (Horgen)": ""
+  "10. Wahlkreis (Meilen)": ""
+  "11. Wahlkreis (Hinwil)": ""
+  "12. Wahlkreis (Uster)": ""
+  "13. Wahlkreis (Pfäffikon)": ""
+  "14. Wahlkreis (Winterthur Stadt)": ""
+  "15. Wahlkreis (Winterthur Land)": ""
+  "16. Wahlkreis (Andelfingen)": ""
+  "17. Wahlkreis (Bülach)": ""
+  "18. Wahlkreis (Dielsdorf)": ""
+
+# Parties come from the Parteien sheet as the register's own abbreviations
+# (FDP, SP, SVP, …), one row per affiliation *spell*. Empty until each is
+# checked: the cantonal party is often a different item from the federal one
+# of the same name, and mapping "SP" to the national party would put a wrong
+# statement on 40-odd people at once.
+parties: {}
+
+# `fraktion` is filled on 376 of 7,129 rows, so it is nearly always absent.
+# Nothing to map yet.
+parl_groups: {}
+
+# No periods in this source, so no P2937 can be suggested whatever is here.
+terms: {}
+
+# The personal data this register publishes, of the checks `models` defines.
+# P106 comes from `beruf` (4,427 of 4,665). It carries no birthplace, no
+# Bürgerort, no website and no children — so those checks are absent rather
+# than empty, and adding them would make no suggestion.
+person_data: [P106]
+
+# The fresher roster, read only to contradict this one. The register's export
+# is a snapshot, and `enrich` is bounded so that a disagreement can only
+# *withhold* a mechanical edit — never supply a value. That is exactly the
+# right shape for a freshness cross-check.
+enrich:
+  source: openparldata
+  body_key: ZH
+  # The group that IS this chamber in the second source, matched by EXACT
+  # name — `Präsidium des Kantonsrates` and `Büro KR` are not the chamber, and
+  # a substring match would take a committee of it for it.
+  groups:
+    KR: Kantonsrat Zürich

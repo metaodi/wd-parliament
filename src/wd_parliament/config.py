@@ -33,7 +33,12 @@ from .models import (
 # which covers the cantons and cities as well.
 SOURCE_PARLAMENT = "parlament"
 SOURCE_OPENPARLDATA = "openparldata"
-SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA)
+# The Staatsarchiv's KR-Daten register, read from the KRRR application's Excel
+# export. The only cantonal source whose identifier join is *verified*: run 28
+# (2026-08-10) found P13468's value in ``id_person_new`` for 591 of 638 people
+# (92.6%). See ``krdaten.py``.
+SOURCE_KRDATEN = "krdaten"
+SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA, SOURCE_KRDATEN)
 
 DEFAULT_USER_AGENT = "wd-parliament/0.1 (+https://github.com/metaodi/wd-parliament)"
 # Left unset, the biography link is the record page of the property the run
@@ -69,7 +74,11 @@ class EnrichmentConfig:
 
     @property
     def source_name(self) -> str:
-        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else self.source
+        if self.source == SOURCE_OPENPARLDATA:
+            return "OpenParlData"
+        if self.source == SOURCE_KRDATEN:
+            return "KR-Daten"
+        return self.source
 
 
 @dataclass
@@ -155,7 +164,11 @@ class Config:
         tells a reader to go and check a service that has never heard of this
         member.
         """
-        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else "parlament.ch"
+        if self.source == SOURCE_OPENPARLDATA:
+            return "OpenParlData"
+        if self.source == SOURCE_KRDATEN:
+            return "the Staatsarchiv's KR-Daten register"
+        return "parlament.ch"
 
     @property
     def district_label(self) -> str:

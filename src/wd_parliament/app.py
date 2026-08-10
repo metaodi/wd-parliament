@@ -13,7 +13,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-from .config import SOURCE_OPENPARLDATA, Config, load_config
+from .config import SOURCE_KRDATEN, SOURCE_OPENPARLDATA, Config, load_config
 from .diff import compute_suggestions
 from .enrich import Enrichment
 from .http_client import HttpClient
@@ -39,6 +39,14 @@ def build_source(config: Config, http: HttpClient):
     descriptive User-Agent as the Wikimedia ones do, and both return the same
     dataclasses — everything after this point cannot tell which it got.
     """
+    if config.source == SOURCE_KRDATEN:
+        from .krdaten import KrDatenClient
+
+        log.info(
+            "Source: the Staatsarchiv's KR-Daten register, joined on %s",
+            config.identifier_property,
+        )
+        return KrDatenClient(session=http.session, language=config.language)
     if config.source == SOURCE_OPENPARLDATA:
         from .openparldata import OpenParlDataClient
 
@@ -196,11 +204,10 @@ def process(
     # produces thousands of confident, wrong suggestions. Fail loudly instead,
     # so the Action stops before committing anything.
     if not members:
-        probe = (
-            "scripts/verify_kantonsrat.py"
-            if config.source == SOURCE_OPENPARLDATA
-            else "scripts/verify_source.py"
-        )
+        probe = {
+            SOURCE_OPENPARLDATA: "scripts/verify_kantonsrat.py",
+            SOURCE_KRDATEN: "scripts/verify_krrr.py",
+        }.get(config.source, "scripts/verify_source.py")
         raise RuntimeError(
             f"The source returned no sitting members for "
             f"{', '.join(config.councils)}. Either the filters or the "
