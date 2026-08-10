@@ -1,48 +1,34 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-10 13:32 UTC
+Generated: 2026-08-10 14:39 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (the Staatsarchiv's KR-Daten register): 180
-- Matched by P13468: 57 (31.7%)
-- Matched by name + birth date: 62
+- Matched by P13468: 59 (32.8%)
+- Matched by name + birth date: 60
 - Not matched at all: 61
 - Open memberships on Wikidata: 167
-- Suggested edits: 380
+- Suggested edits: 371
 
 ## By kind
 
-- Item matched by name but has no unique ID (the source's own): **47**
+- Item matched by name but has no unique ID (the source's own): **45**
 - Recorded as sitting, but the member has left: **58**
 - Sitting member, but no position held (P39) statement: **10**
 - Start date (P580) disagrees with source: **1**
-- Open membership without a start date (P580): **91**
+- Open membership without a start date (P580): **89**
 - Sitting member, but no Wikidata item could be found: **61**
-- Missing the parliament's other identifier — value to be looked up: **111**
+- Missing the parliament's other identifier — value to be looked up: **106**
 - Personal data the source publishes and Wikidata does not record: **1**
 
-## Electoral district: 1. Wahlkreis (Zürich 1+2) (6)
-
-### Open membership without a start date (P580) (2)
-
-- **[Sonja Rueff-Frenkel](https://www.wikidata.org/wiki/Q110402390)** ([#21984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21984)) — Add a start date (P580) of 2014-06-16; the membership is open but undated, which makes 'who sits today' queries unreliable.
-- **[Stephan Hegetschweiler](https://www.wikidata.org/wiki/Q131940639)** ([#22678](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678)) — Add a start date (P580) of 2025-01-13; the membership is open but undated, which makes 'who sits today' queries unreliable.
+## Electoral district: 1. Wahlkreis (Zürich 1+2) (2)
 
 ### Sitting member, but no Wikidata item could be found (2)
 
 - **Marion Schmid** ([#22970](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22970)) — 'Marion Schmid' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22970) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Sabine Arnold** ([#22979](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22979)) — 'Sabine Arnold' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22979) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (2)
-
-- **[Stephan Hegetschweiler](https://www.wikidata.org/wiki/Q131940639)** ([#22678](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-- **[Ueli Bamert](https://www.wikidata.org/wiki/Q131937829)** ([#22505](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22505)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-
-## Electoral district: 10. Wahlkreis (Meilen) (23)
-
-### Item matched by name but has no unique ID (the source's own) (1)
-
-- **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23227'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+## Electoral district: 10. Wahlkreis (Meilen) (20)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -57,10 +43,10 @@ Generated: 2026-08-10 13:32 UTC
 - **[Marzena Kopp](https://www.wikidata.org/wiki/Q131940591)** ([#21502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21502)) — Add a start date (P580) of 2022-04-25; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Reto Agosti](https://www.wikidata.org/wiki/Q125949007)** ([#22350](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22350)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Sarah Fuchs](https://www.wikidata.org/wiki/Q131946048)** ([#22473](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22473)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
-- **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) ⚠️ — Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) — Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Tumasch Mischol](https://www.wikidata.org/wiki/Q131940588)** ([#22467](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Missing the parliament's other identifier — value to be looked up (11)
+### Missing the parliament's other identifier — value to be looked up (9)
 
 - **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#23336](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23336)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Corinne Hoss-Blatter](https://www.wikidata.org/wiki/Q131940632)** ([#23303](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23303)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -70,8 +56,6 @@ Generated: 2026-08-10 13:32 UTC
 - **[Rafael Mörgeli](https://www.wikidata.org/wiki/Q131938303)** ([#21711](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21711)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Reto Agosti](https://www.wikidata.org/wiki/Q125949007)** ([#22350](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22350)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Sarah Fuchs](https://www.wikidata.org/wiki/Q131946048)** ([#22473](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22473)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-- **[Thomas Forrer](https://www.wikidata.org/wiki/Q116003298)** ([#22353](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22353)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-- **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Tumasch Mischol](https://www.wikidata.org/wiki/Q131940588)** ([#22467](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
 ### Sitting member, but no Wikidata item could be found (1)
@@ -572,12 +556,11 @@ Generated: 2026-08-10 13:32 UTC
 
 - **Roger Schmutz** ([#22972](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22972)) — 'Roger Schmutz' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22972) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 9. Wahlkreis (Horgen) (27)
+## Electoral district: 9. Wahlkreis (Horgen) (25)
 
-### Item matched by name but has no unique ID (the source's own) (4)
+### Item matched by name but has no unique ID (the source's own) (3)
 
 - **[Alexia Bischof](https://www.wikidata.org/wiki/Q131938284)** ([#22984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22984)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22984'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22206'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22024'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#22181](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22181)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22181'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
@@ -589,19 +572,18 @@ Generated: 2026-08-10 13:32 UTC
 
 - **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#22189](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22189)) — Add a start date (P580) of 2014-05-26; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Christina Zurfluh Fraefel](https://www.wikidata.org/wiki/Q131940623)** ([#22055](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22055)) — Add a start date (P580) of 2018-09-03; the membership is open but undated, which makes 'who sits today' queries unreliable.
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) ⚠️ — Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) — Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — Add a start date (P580) of 2019-01-07; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Gabriel Mäder](https://www.wikidata.org/wiki/Q131940543)** ([#23309](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23309)) ⚠️ — Add a start date (P580) of 2019-11-25; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Marcel Suter](https://www.wikidata.org/wiki/Q131940613)** ([#22500](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22500)) — Add a start date (P580) of 2017-05-22; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Mario Senn](https://www.wikidata.org/wiki/Q131940541)** ([#21864](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21864)) — Add a start date (P580) of 2022-11-28; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Urs Waser](https://www.wikidata.org/wiki/Q131940589)** ([#22498](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22498)) — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Missing the parliament's other identifier — value to be looked up (10)
+### Missing the parliament's other identifier — value to be looked up (9)
 
 - **[Alexia Bischof](https://www.wikidata.org/wiki/Q131938284)** ([#22984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22984)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#22189](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22189)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Christina Zurfluh Fraefel](https://www.wikidata.org/wiki/Q131940623)** ([#22055](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22055)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Gabriel Mäder](https://www.wikidata.org/wiki/Q131940543)** ([#23309](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23309)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#22181](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22181)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)

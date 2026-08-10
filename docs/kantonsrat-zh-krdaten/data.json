@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-10 13:32 UTC",
-  "total_suggestions": 380,
+  "generated": "2026-08-10 14:39 UTC",
+  "total_suggestions": 371,
   "total_members": 180,
   "quickstatements": 48,
   "bodies": [
@@ -9,12 +9,12 @@
       "label": "Cantonal Council of Zürich",
       "position_qid": "Q21518678",
       "member_count": 180,
-      "matched_by_identifier": 57,
-      "matched_by_name": 62,
+      "matched_by_identifier": 59,
+      "matched_by_name": 60,
       "unmatched": 61,
       "wikidata_open": 167,
       "identifier_mismatches": 0,
-      "identifier_hit_rate": 31.7,
+      "identifier_hit_rate": 32.8,
       "error": null,
       "suggestions": [
         {
@@ -288,27 +288,6 @@
             "parliament_id": "22506",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22506",
             "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22506"
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Davide Loss",
-          "person_qid": "Q131939960",
-          "person_number": 22206,
-          "qid_source": "name",
-          "canton": "9. Wahlkreis (Horgen)",
-          "parl_group": "SP",
-          "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22206'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939960"
-          },
-          "payload": {
-            "property": "P13468",
-            "parliament_id": "22206",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206",
-            "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206"
           }
         },
         {
@@ -918,27 +897,6 @@
             "parliament_id": "23316",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316",
             "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316"
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Thomas Wirth",
-          "person_qid": "Q131948099",
-          "person_number": 23227,
-          "qid_source": "name",
-          "canton": "10. Wahlkreis (Meilen)",
-          "parl_group": null,
-          "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23227'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131948099"
-          },
-          "payload": {
-            "property": "P13468",
-            "parliament_id": "23227",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227",
-            "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227"
           }
         },
         {
@@ -2837,10 +2795,10 @@
           "member": "Davide Loss",
           "person_qid": "Q131939960",
           "person_number": 22206,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "9. Wahlkreis (Horgen)",
           "parl_group": "SP",
-          "detail": "Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "detail": "Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q131939960"
@@ -3934,28 +3892,6 @@
         {
           "kind": "ADD_START_DATE",
           "priority": 3,
-          "member": "Sonja Rueff-Frenkel",
-          "person_qid": "Q110402390",
-          "person_number": 21984,
-          "qid_source": "identifier",
-          "canton": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": null,
-          "detail": "Add a start date (P580) of 2014-06-16; the membership is open but undated, which makes 'who sits today' queries unreliable.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q110402390"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2014-06-16",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q110402390-60c2df8c-4f10-8aa4-3a60-c5571fab1cbc",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21984"
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
           "member": "Stefan Schmid",
           "person_qid": "Q131948084",
           "person_number": 22502,
@@ -3973,28 +3909,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131948084-99126C94-4F00-40B5-BFC7-7194A881A80B",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22502"
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
-          "member": "Stephan Hegetschweiler",
-          "person_qid": "Q131940639",
-          "person_number": 22678,
-          "qid_source": "identifier",
-          "canton": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": "GLP",
-          "detail": "Add a start date (P580) of 2025-01-13; the membership is open but undated, which makes 'who sits today' queries unreliable.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131940639"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2025-01-13",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940639-552DCCF2-F7B7-4449-A764-40F2AB94B4EA",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678"
           }
         },
         {
@@ -4157,10 +4071,10 @@
           "member": "Thomas Wirth",
           "person_qid": "Q131948099",
           "person_number": 23227,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "10. Wahlkreis (Meilen)",
           "parl_group": null,
-          "detail": "Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "detail": "Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q131948099"
@@ -5176,26 +5090,6 @@
           },
           "payload": {
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22014"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Davide Loss",
-          "person_qid": "Q131939960",
-          "person_number": 22206,
-          "qid_source": "name",
-          "canton": "9. Wahlkreis (Horgen)",
-          "parl_group": "SP",
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939960",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206"
           }
         },
         {
@@ -7084,26 +6978,6 @@
         {
           "kind": "MISSING_IDENTIFIER",
           "priority": 5,
-          "member": "Stephan Hegetschweiler",
-          "person_qid": "Q131940639",
-          "person_number": 22678,
-          "qid_source": "identifier",
-          "canton": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": "GLP",
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131940639",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
           "member": "Stephan Weber",
           "person_qid": "Q131948097",
           "person_number": 23321,
@@ -7242,26 +7116,6 @@
           }
         },
         {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Thomas Forrer",
-          "person_qid": "Q116003298",
-          "person_number": 22353,
-          "qid_source": "identifier",
-          "canton": "10. Wahlkreis (Meilen)",
-          "parl_group": null,
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116003298",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22353"
-          }
-        },
-        {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
           "member": "Thomas Huber",
@@ -7316,26 +7170,6 @@
           "payload": {
             "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Thomas Wirth",
-          "person_qid": "Q131948099",
-          "person_number": 23227,
-          "qid_source": "name",
-          "canton": "10. Wahlkreis (Meilen)",
-          "parl_group": null,
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131948099",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227"
           }
         },
         {
@@ -7413,26 +7247,6 @@
           "payload": {
             "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Ueli Bamert",
-          "person_qid": "Q131937829",
-          "person_number": 22505,
-          "qid_source": "identifier",
-          "canton": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": "SVP",
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131937829",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22505"
           }
         },
         {
