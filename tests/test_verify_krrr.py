@@ -32,12 +32,16 @@ from verify_krrr import (  # noqa: E402
     FMT_UNKNOWN,
     KNOWN_IDENTIFIER_COLUMNS,
     FIELD_CANDIDATES,
+    INCONCLUSIVE,
     _grid_to_rows,
+    birth_dates_query,
+    births_by_name,
     classify_misses,
     diagnose_misses,
     filled,
     formatter_url_query,
     identifier_columns,
+    iso_date,
     parse_export,
     read_delimited,
     read_html_table,
@@ -218,14 +222,15 @@ def test_a_name_the_export_gives_to_several_people_is_an_artefact():
     assert "matching artefacts" in detail
 
 
-def test_a_unique_name_with_another_value_is_a_real_disagreement():
+def test_a_unique_name_with_another_value_needs_a_birth_date_to_be_a_disagreement():
+    """Export-side uniqueness alone cannot say it: run 26 called 49 misses
+    disagreements on that evidence, and a Wikidata item can still have
+    reached the wrong register person."""
     index = {"hans muller": [krrr_row("111")]}
     counts, lines = diagnose_misses(index, {"hans muller": "333"}, "id_person_new")
-    assert counts["value differs"] == 1
+    assert counts["undecided"] == 1 and counts["value differs"] == 0
     assert "against Wikidata" in lines[0]
-    verdict, detail = classify_misses(counts, 638)
-    assert verdict == CONTRADICTED
-    assert "real disagreement" in detail
+    assert classify_misses(counts, 638)[0] == INCONCLUSIVE
 
 
 def test_an_empty_id_column_is_neither():
@@ -244,3 +249,95 @@ def test_one_real_disagreement_outweighs_any_number_of_artefacts():
     counts = {"ambiguous name": 40, "value differs": 1, "no value in export": 5}
     verdict, _ = classify_misses(counts, 638)
     assert verdict == CONTRADICTED
+
+
+# --- the birth date arbitrates a miss ---------------------------------------
+# Run 26 reported 49 "real disagreements" using export-side ambiguity alone.
+# A Wikidata item can still reach the wrong register person, and only a birth
+# date on both sides can tell that from a register holding a different id.
+def test_iso_date_reads_both_shapes():
+    assert iso_date("1897-05-04 00:00:00.0") == "1897-05-04"
+    assert iso_date("1897-05-04T00:00:00Z") == "1897-05-04"
+
+
+@pytest.mark.parametrize("value", ["", None, "1897", "04.05.1897", "not-a-date"])
+def test_an_unreadable_date_is_absence(value):
+    assert iso_date(value) == ""
+
+
+def dated_row(pid, birth):
+    return {
+        "id_person_new": pid,
+        "nachname": "Müller",
+        "vorname": "Hans",
+        "datum_geburt": birth,
+    }
+
+
+def test_agreeing_birth_dates_make_it_a_real_disagreement():
+    index = {"hans muller": [dated_row("23384", "1952-03-01 00:00:00.0")]}
+    counts, lines = diagnose_misses(
+        index,
+        {"hans muller": "21620"},
+        "id_person_new",
+        wanted_birth={"hans muller": "1952-03-01"},
+        birth_column="datum_geburt",
+    )
+    assert counts["value differs"] == 1 and counts["different person"] == 0
+    assert "both born 1952-03-01" in lines[0]
+    assert classify_misses(counts, 638)[0] == CONTRADICTED
+
+
+def test_disagreeing_birth_dates_make_it_the_wrong_person():
+    index = {"hans muller": [dated_row("23384", "1952-03-01 00:00:00.0")]}
+    counts, lines = diagnose_misses(
+        index,
+        {"hans muller": "21620"},
+        "id_person_new",
+        wanted_birth={"hans muller": "1901-09-14"},
+        birth_column="datum_geburt",
+    )
+    assert counts["different person"] == 1 and counts["value differs"] == 0
+    assert "born 1952-03-01 here" in lines[0]
+    verdict, detail = classify_misses(counts, 638)
+    assert verdict == CONFIRMED and "matching artefacts" in detail
+
+
+def test_a_missing_birth_date_on_either_side_is_undecided():
+    index = {"hans muller": [dated_row("23384", "")]}
+    counts, _ = diagnose_misses(
+        index,
+        {"hans muller": "21620"},
+        "id_person_new",
+        wanted_birth={"hans muller": "1952-03-01"},
+        birth_column="datum_geburt",
+    )
+    assert counts["undecided"] == 1
+    assert classify_misses(counts, 638)[0] == INCONCLUSIVE
+
+
+def test_without_birth_dates_at_all_every_miss_is_undecided():
+    """The pre-run-26 behaviour must not silently return as 'value differs'."""
+    index = {"hans muller": [dated_row("23384", "1952-03-01")]}
+    counts, _ = diagnose_misses(index, {"hans muller": "21620"}, "id_person_new")
+    assert counts["undecided"] == 1 and counts["value differs"] == 0
+
+
+def test_births_by_name_drops_a_name_two_items_date_differently():
+    def b(label, birth):
+        return {
+            "personLabel": {"value": label},
+            "birth": {"value": birth},
+        }
+
+    assert births_by_name([b("Hans Müller", "1952-03-01T00:00:00Z")]) == {
+        "hans muller": "1952-03-01"
+    }
+    assert births_by_name(
+        [b("Hans Müller", "1952-03-01T00:00:00Z"), b("Hans Müller", "1901-09-14T00:00:00Z")]
+    ) == {}
+
+
+def test_the_birth_query_keeps_p569_optional():
+    sparql = birth_dates_query("de")
+    assert "wdt:P13468" in sparql and "OPTIONAL" in sparql and "wdt:P569" in sparql

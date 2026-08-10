@@ -350,11 +350,28 @@ def filled(rows: Sequence[Dict[str, str]], column: str) -> int:
     return sum(1 for row in rows if (row.get(column) or "").strip())
 
 
+def iso_date(value: Any) -> str:
+    """``'1897-05-04 00:00:00.0'`` and ``'1897-05-04T00:00:00Z'`` → the day.
+
+    Pure. Anything that is not a plain ``YYYY-MM-DD`` prefix is absence, for
+    the reason ``verify_gever.plausible_year`` gives: a value that cannot be
+    read is not evidence, and treating it as evidence takes the strongest
+    conclusion from the weakest input.
+    """
+    text = str(value or "").strip().replace("T", " ")[:10]
+    if len(text) == 10 and text[4] == "-" and text[7] == "-":
+        if text[:4].isdigit() and text[5:7].isdigit() and text[8:10].isdigit():
+            return text
+    return ""
+
+
 def diagnose_misses(
     index: Dict[str, List[Dict[str, str]]],
     wanted: Dict[str, str],
     id_column: str,
     limit: int = 12,
+    wanted_birth: Optional[Dict[str, str]] = None,
+    birth_column: str = "",
 ) -> Tuple[Dict[str, int], List[str]]:
     """Why did a name match but its identifier not? Pure.
 
@@ -378,8 +395,15 @@ def diagnose_misses(
     same refusal to arbitrate: an ambiguous name is reported as ambiguous
     rather than resolved in whichever direction flatters the column.
     """
-    counts = {"ambiguous name": 0, "value differs": 0, "no value in export": 0}
+    counts = {
+        "ambiguous name": 0,
+        "different person": 0,
+        "value differs": 0,
+        "undecided": 0,
+        "no value in export": 0,
+    }
     lines: List[str] = []
+    wanted_birth = wanted_birth or {}
     for name, value in sorted(wanted.items()):
         rows = index.get(name)
         if not rows:
@@ -398,8 +422,22 @@ def diagnose_misses(
             kind = "no value in export"
             detail = f"the export's {id_column} is empty for this person"
         else:
-            kind = "value differs"
-            detail = f"export {id_column}={held.pop()!r} against Wikidata {value!r}"
+            got = held.pop()
+            detail = f"export {id_column}={got!r} against Wikidata {value!r}"
+            # A name matching the *wrong* register person looks exactly like a
+            # register that holds a different id. The birth date is what tells
+            # them apart, and without one neither reading is available.
+            theirs = iso_date(wanted_birth.get(name))
+            ours = iso_date(rows[0].get(birth_column)) if birth_column else ""
+            if not theirs or not ours:
+                kind = "undecided"
+                detail += "  (no birth date on one side)"
+            elif theirs != ours:
+                kind = "different person"
+                detail += f"  (born {ours} here, {theirs} on Wikidata)"
+            else:
+                kind = "value differs"
+                detail += f"  (both born {ours})"
         counts[kind] += 1
         if len(lines) < limit:
             lines.append(f"{name}: {detail}  [{kind}]")
@@ -407,11 +445,20 @@ def diagnose_misses(
 
 
 def classify_misses(counts: Dict[str, int], matched: int) -> Tuple[str, str]:
-    """What the miss breakdown means for the join. Pure."""
+    """What the miss breakdown means for the join. Pure.
+
+    Only ``value differs`` — same human by birth date, different id — can
+    falsify the identifier. ``different person`` and ``ambiguous name`` are
+    facts about the *name* match this probe uses to line two lists up, and
+    ``undecided`` is the bucket that refuses to guess.
+    """
     differs = counts.get("value differs", 0)
+    wrong_person = counts.get("different person", 0)
     ambiguous = counts.get("ambiguous name", 0)
+    undecided = counts.get("undecided", 0)
     empty = counts.get("no value in export", 0)
-    if not (differs or ambiguous or empty):
+    artefacts = wrong_person + ambiguous + empty
+    if not (differs or artefacts or undecided):
         return (
             CONFIRMED,
             f"Every one of the {matched} people compared carries the "
@@ -420,24 +467,73 @@ def classify_misses(counts: Dict[str, int], matched: int) -> Tuple[str, str]:
     if differs:
         return (
             CONTRADICTED,
-            f"{differs} person(s) whose name the export identifies "
-            "unambiguously carry a different value there than Wikidata holds. "
-            "That is a real disagreement about the identifier, not a matching "
-            "artefact, and it has to be understood before the column can be "
-            "joined on — one wrong value writes an edit onto somebody else.",
+            f"{differs} person(s) with the same birth date on both sides carry "
+            "a different value in the export than Wikidata holds. That is a "
+            "real disagreement about the identifier — the same human, two "
+            "numbers — and it has to be understood before the column is joined "
+            "on: one wrong value writes an edit onto somebody else. "
+            f"({artefacts} further miss(es) are name-matching artefacts and "
+            f"{undecided} could not be decided.)",
+        )
+    if undecided:
+        return (
+            INCONCLUSIVE,
+            f"No miss is a disagreement between two people the birth date "
+            f"shows to be the same ({artefacts} are matching artefacts), but "
+            f"{undecided} lack a birth date on one side and so cannot be told "
+            "apart from one. The column looks like the identifier; what is "
+            "missing is the evidence to say so about those people.",
         )
     return (
         CONFIRMED,
-        f"All {ambiguous + empty} unexplained people are matching artefacts "
-        f"rather than disagreements ({ambiguous} name(s) the export gives to "
-        f"several people, {empty} with no value there). No person the export "
-        "identifies unambiguously disagrees with Wikidata, so the column is "
+        f"All {artefacts} unexplained people are matching artefacts rather "
+        f"than disagreements ({ambiguous} name(s) the export gives to several "
+        f"people, {wrong_person} where the birth dates show the name reached a "
+        f"different person, {empty} with no value there). No person the birth "
+        "date confirms is the same disagrees with Wikidata, so the column is "
         "the identifier and the shortfall belongs to the *name* match this "
         "probe uses to line the two lists up.",
     )
 
 
 # --- the SPARQL side ---------------------------------------------------------
+def birth_dates_query(language: str = "de") -> str:
+    """P13468 holders with their birth dates, to arbitrate the misses.
+
+    Asked as a second bounded query rather than folded into
+    ``zh_member_id_query``: that one is shared with ``verify_gever``, and
+    widening a query two probes read to serve one of them is how they stop
+    being comparable. P569 is ``OPTIONAL`` because an item without one is the
+    *undecided* answer, not an absent row.
+    """
+    return f"""
+SELECT ?person ?personLabel ?birth WHERE {{
+  ?person wdt:{P_ZH_MEMBER_ID} ?value .
+  OPTIONAL {{ ?person wdt:P569 ?birth . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en". }}
+}}
+"""
+
+
+def births_by_name(bindings: Sequence[dict]) -> Dict[str, str]:
+    """WDQS rows → ``name key -> birth date``. Pure.
+
+    A name several items claim with *different* birth dates is dropped, the
+    same refusal :func:`verify_gever.wanted_by_name` applies to the values: a
+    birth date read off the wrong item would arbitrate the miss in a direction
+    nobody measured.
+    """
+    seen: Dict[str, set] = {}
+    for row in bindings:
+        label = (row.get("personLabel") or {}).get("value", "")
+        birth = iso_date((row.get("birth") or {}).get("value", ""))
+        key = name_key(label)
+        if not key or not birth:
+            continue
+        seen.setdefault(key, set()).add(birth)
+    return {k: v.pop() for k, v in seen.items() if len(v) == 1}
+
+
 def formatter_url_query() -> str:
     """P13468's own formatter URL (P1630) and its label.
 
@@ -573,8 +669,27 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         # tell them apart. This is the part that can.
         if counts:
             best = next(iter(counts))
-            print(f"\nwhy did the rest miss? (column {best!r})")
-            miss_counts, miss_lines = diagnose_misses(index, wanted, best)
+            birth_column = resolve_column(seen, "datum_geburt") or resolve_column(
+                seen, "geburtsdatum"
+            )
+            try:
+                births = births_by_name(
+                    wikidata.run_query(birth_dates_query(config.language))
+                )
+            except Exception as exc:
+                print(f"  ! could not read birth dates: {exc}")
+                births = {}
+            print(
+                f"\nwhy did the rest miss? (column {best!r}, arbitrated by "
+                f"{birth_column!r} against P569 for {len(births)} item(s))"
+            )
+            miss_counts, miss_lines = diagnose_misses(
+                index,
+                wanted,
+                best,
+                wanted_birth=births,
+                birth_column=birth_column or "",
+            )
             for kind, n in miss_counts.items():
                 print(f"  {kind:<22} {n}")
             for line in miss_lines:
