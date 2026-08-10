@@ -152,8 +152,14 @@ FIELD_CANDIDATES: Dict[str, Tuple[str, Tuple[str, ...]]] = {
     "P106": ("occupation", ("beruf",)),
     "P102": ("political party", ("partei", "parteibezeichnung", "fraktion")),
     "P768": ("electoral district", ("wahlkreis",)),
-    "P580": ("start time", ("eintritt", "datum_eintritt", "von")),
-    "P582": ("end time", ("austritt", "datum_austritt", "bis")),
+    # The register splits every date into three columns, because a record
+    # going back to 1803 routinely knows the year and not the day. So the
+    # candidates name the *year* part: it is the one always present, and a
+    # year-only date is a real value at reduced precision rather than a gap.
+    # Run 28 reported "no such column" for `eintritt`/`datum_eintritt` — a
+    # gap in this list, not in the export.
+    "P580": ("start time", ("datum_eintritt_jahr", "eintritt_jahr")),
+    "P582": ("end time", ("datum_austritt_jahr", "austritt_jahr")),
 }
 
 # Identifier columns the openZH CSV of this same register carries, which a
