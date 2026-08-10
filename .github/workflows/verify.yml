@@ -10,7 +10,7 @@ name: Verify assumptions
 #   3. do the hand-maintained Q-ID maps in config/parliament.yaml resolve to
 #      the items they claim to?
 #
-# It also runs six things that report without gating:
+# It also runs seven things that report without gating:
 #
 #   * whether swissparlpy's OpenParlData backend could source this tool's
 #     data, and whether P14527 is a better join key than P1307 — a "no" there
@@ -40,7 +40,11 @@ name: Verify assumptions
 #   * README step 10, asking whether the canton of Zürich's own Gever can
 #     supply P13468 — the property run 20 found OpenParlData cannot. It reads
 #     a service no config here names, so like step 7 it cannot bear on any
-#     pipeline run by construction.
+#     pipeline run by construction;
+#   * README step 11, asking the same of the Staatsarchiv's own KRRR export —
+#     "Kantonsrat und Regierungsrat", the two bodies P13468 names. It also
+#     re-measures P13468's formatter URL, which this repo has been asserting
+#     without ever checking.
 #
 # Deliberately NOT what "Update parliament TODO" does: nothing is generated,
 # nothing is committed, and nothing is published. Run this before trusting
@@ -311,6 +315,31 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # README step 11: does the Staatsarchiv's own KRRR application export
+      # carry P13468? KRRR is "Kantonsrat und Regierungsrat" — the two bodies
+      # the property names — so it is the strongest candidate yet, and that is
+      # precisely why it is measured: three sources have now been "the
+      # authoritative source" and supplied the value none of the times.
+      #
+      # Reports, does not gate, for the same reason as steps 7 and 10: no
+      # config here names this service. Its section D also re-measures
+      # something this repo asserts about itself — P13468's formatter URL,
+      # which was written down once and never checked.
+      - name: Probe the Staatsarchiv's KRRR export for P13468 (step 11)
+        id: krrr
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python scripts/verify_krrr.py \
+            --config config/kantonsrat-zh.yaml 2>&1 | tee krrr.txt
+          {
+            echo "## 10. Staatsarchiv KRRR export — README step 11"
+            echo
+            echo '```'
+            cat krrr.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -329,6 +358,7 @@ jobs:
             echo "| Cantonal extension (step 7) | \`${{ steps.kantonsrat.outcome }}\` (does not gate) |"
             echo "| Personal-data checks (step 9) | \`${{ steps.persondata.outcome }}\` (does not gate) |"
             echo "| Gever / P13468 (step 10) | \`${{ steps.gever.outcome }}\` (does not gate) |"
+            echo "| KRRR export / P13468 (step 11) | \`${{ steps.krrr.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both gating checks passed: the members are readable, the"
