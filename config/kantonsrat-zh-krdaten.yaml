@@ -98,12 +98,37 @@ bodies:
 
 # The 18 Wahlkreise, exactly as the register spells them after `_tidy`
 # collapses its runs of spaces. Counted from the register's own open seats:
-# 18 districts, 180 members. **Empty values are deliberate**: an unmapped
-# district makes no suggestion, which is the rule that keeps a wrong Q-ID out
-# of a real item. Fill one in only after checking it on Wikidata, and note that
-# run 15 found P768 on 3 of 270 statements for this seat — all three naming
-# *city quarters* rather than Wahlkreise — so there is no convention here yet
-# and populating this map is a decision, not a chore.
+# 18 districts, 180 members, `wahlkreis` filled on 6,767 of 6,767 Einsitze.
+#
+# ⚠️ **They stay empty because the items do not exist, and the obvious
+# substitute is wrong.** Run 30 (2026-08-11) searched Wikidata for each of the
+# 18 and found no electoral district among the candidates — only the *place*
+# each one is named after:
+#
+#     11. Wahlkreis (Hinwil)   Q69383  Hinwil         Stadt gemäss BFS
+#                              Q660382 Bezirk Hinwil  Bezirk des Kantons Zürich
+#     14. Wahlkreis (Winterthur Stadt)   (no candidate found)
+#
+# **Never map these to the Bezirk items.** The register's own rows disprove
+# that pairing without any outside knowledge: six Wahlkreise cover the city of
+# Zürich (1+2, 3+9, 4+5, 6+10, 7+8, 11+12) and the city is ONE Bezirk;
+# Winterthur is one Bezirk and two Wahlkreise (Stadt, Land). A Wahlkreis is
+# not a Bezirk. Twelve of the eighteen share a name with one, which is what
+# makes the mistake plausible rather than obvious — and it would put a false
+# P768 on fifteen people at a time.
+#
+# The two districts the search could not find anything for at all are exactly
+# the two whose names are not a municipality, which is the tell: it was
+# finding places, never districts.
+#
+# So filling this map needs **items to be created on Wikidata first** — a
+# modelling decision about the Kantonsrat's electoral geography, not a lookup.
+# Until then an unmapped district makes no suggestion, which is correct.
+#
+# Note also what the seat's statements carry today: P768 appears on 3 of them,
+# naming Kreis 4, Kreis 5 and Kreis 11 — *city of Zürich quarters*, a third
+# kind of thing again. Those three want fixing by hand; this tool only adds,
+# so it would leave them with two values rather than correct them.
 cantons:
   "1. Wahlkreis (Zürich 1+2)": ""
   "2. Wahlkreis (Zürich 3+9)": ""

@@ -339,6 +339,22 @@ Three traps paid for along the way, all now enforced in
   role seen, because neither an allowlist nor a denylist self-corrects when the
   source adds a role — only the 180 check does.
 
+**The ZH Wahlkreise have no Wikidata items, and the Bezirke are not them.**
+Run 30 (2026-08-11) searched for each of the register's 18 districts and every
+candidate was the *place* it is named after — the municipality, the Bezirk, and
+once a `Meilenstein`. Two returned nothing at all, and those two are exactly
+the ones whose names are not a municipality (`Winterthur Stadt`, `Winterthur
+Land`), which is the tell. **Never map a Wahlkreis to a Bezirk item**: the
+register's own rows disprove the pairing without outside knowledge — six
+Wahlkreise cover the city of Zürich and the city is one Bezirk. Twelve of the
+eighteen share a name with a Bezirk, which is what makes it plausible rather
+than obviously wrong, and it would put a false P768 on fifteen people at once.
+Filling `cantons:` for ZH needs items *created* on Wikidata first; that is a
+modelling decision, not a lookup. The source side is otherwise ready —
+`wahlkreis` is filled on 6,767 of 6,767 Einsitze and `ADD_QUALIFIER` is
+mechanical, so the map is the only thing standing between here and ~180 P768
+edits.
+
 Run 15 closed the two Q-ID maps, and both answers are "leave it empty":
 **P768** appears on 3 of 270 statements for the seat and those three are
 `Kreis 4/5/11`, *city of Zürich quarters* rather than any of the 18 Wahlkreise
