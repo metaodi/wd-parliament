@@ -398,6 +398,79 @@ def births_by_name(bindings: Sequence[dict]) -> Dict[str, str]:
     return {k: v.pop() for k, v in seen.items() if len(v) == 1}
 
 
+# Q11943 is the canton of Zürich. Used to *bound* the district query rather
+# than to match a name: run 13 spent a whole run on a Q-ID taken from a web
+# search that turned out to be a Wikimedia category held by nobody, and the
+# rule that came out of it is to derive candidates from the data and read the
+# list — never to trust a name.
+CANTON_ZURICH = "Q11943"
+
+
+def district_candidates_query(language: str = "de") -> str:
+    """Everything that looks like an electoral district in the canton of Zürich.
+
+    Deliberately *not* a search for the register's own spellings. The register
+    says ``'1. Wahlkreis (Zürich 1+2)'`` and Wikidata will not; asking by name
+    would return nothing and be read as "these districts have no items", which
+    is the same shape of wrong answer as run 22's "3,862 rows with no name".
+
+    So the population is derived: anything located in (P131) the canton of
+    Zürich whose type (P31) mentions a constituency or Wahlkreis. The type and
+    the label come back with it, because deciding which of these is the
+    register's ``3. Wahlkreis`` is a judgement for a reader — this probe prints
+    the list and fills nothing in.
+    """
+    return f"""
+SELECT ?item ?itemLabel ?typeLabel ?inLabel WHERE {{
+  ?item wdt:P31 ?type .
+  ?type rdfs:label ?typeName .
+  FILTER(LANG(?typeName) = "en")
+  FILTER(CONTAINS(LCASE(?typeName), "constituency")
+      || CONTAINS(LCASE(?typeName), "electoral district"))
+  {{ ?item wdt:P131 wd:{CANTON_ZURICH} . BIND(wd:{CANTON_ZURICH} AS ?in) }}
+  UNION
+  {{ ?item wdt:P131/wdt:P131 wd:{CANTON_ZURICH} . ?item wdt:P131 ?in . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en". }}
+}}
+"""
+
+
+def district_usage_query(position_qid: str) -> str:
+    """How many P39 statements for the seat already carry a P768, and which.
+
+    Run 15 found 3 of 270, and all three naming *city of Zürich quarters*
+    rather than Wahlkreise — the wrong kind of thing, which is why the config's
+    map ships empty. Re-asked here because "there is no convention yet" is a
+    claim with a date on it, and because this tool only ever *adds*: a member
+    already carrying a wrong P768 would end up with two values, not a fix.
+    """
+    return f"""
+SELECT ?district ?districtLabel (COUNT(?person) AS ?count) WHERE {{
+  ?person p:P39 ?st .
+  ?st ps:P39 wd:{position_qid} .
+  ?st pq:P768 ?district .
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "de,en". }}
+}}
+GROUP BY ?district ?districtLabel
+ORDER BY DESC(?count)
+"""
+
+
+def district_numbers(values: Sequence[str]) -> Dict[str, str]:
+    """``'3. Wahlkreis (Zürich 4+5)'`` → ``{'3': the whole string}``. Pure.
+
+    The register numbers its districts and Wikidata will not, so the number is
+    the only token the two sides can be lined up on by machine. Everything
+    else about the alignment is a reader's job.
+    """
+    out: Dict[str, str] = {}
+    for value in values:
+        head = str(value).strip().split(".", 1)[0].strip()
+        if head.isdigit():
+            out.setdefault(head, str(value).strip())
+    return out
+
+
 def formatter_url_query() -> str:
     """P13468's own formatter URL (P1630) and its label.
 
@@ -603,6 +676,70 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             any_found = True
     if not any_found:
         print("    none of " + ", ".join(KNOWN_IDENTIFIER_COLUMNS))
+
+    # --- F. can the districts be mapped? ------------------------------------
+    print()
+    print("=" * 70)
+    print("F. Could P768 be filled in from the register's Wahlkreis?")
+    print("=" * 70)
+    district_cols = find_column(sheets, ("wahlkreis",))
+    districts: List[str] = []
+    for sheet, column in district_cols:
+        rows = sheets[sheet][1]
+        open_year = resolve_column(sheets[sheet][0], "datum_austritt_jahr")
+        for row in rows:
+            if open_year and (row.get(open_year) or "").strip():
+                continue  # a seat somebody has left; its district may be historic
+            value = " ".join((row.get(column) or "").split())
+            if value and value not in districts:
+                districts.append(value)
+    print(f"districts among *open* seats: {len(districts)}")
+    numbered = district_numbers(districts)
+    for number, name in sorted(numbered.items(), key=lambda kv: int(kv[0])):
+        print(f"  {number:>2}. {name}")
+    if len(districts) != len(numbered):
+        print(f"  ({len(districts) - len(numbered)} not numbered, so unalignable)")
+
+    print("\ndoes Wikidata have items for them? (candidates, not answers)")
+    try:
+        rows = wikidata.run_query(district_candidates_query(config.language))
+    except Exception as exc:
+        print(f"  ! could not read Wikidata: {exc}")
+        rows = []
+    print(f"  electoral districts in the canton of Zürich: {len(rows)}")
+    for row in rows[: (len(rows) if args.verbose else 30)]:
+        label = (row.get("itemLabel") or {}).get("value", "")
+        qid = (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1]
+        kind = (row.get("typeLabel") or {}).get("value", "")
+        where = (row.get("inLabel") or {}).get("value", "")
+        print(f"    {qid:<12} {label[:44]:<44} {kind[:22]:<22} in {where[:20]}")
+    if not args.verbose and len(rows) > 30:
+        print(f"    ... {len(rows) - 30} more (--verbose for all)")
+    print(
+        "\n  Which of these is the register's '3. Wahlkreis' is a reader's\n"
+        "  judgement, and this probe fills nothing in — run 13 spent a whole\n"
+        "  run on a Q-ID that turned out to be a Wikimedia category."
+    )
+
+    print("\nwhat do the seat's statements already carry?")
+    position = config.bodies[0].position_qid if config.bodies else ""
+    try:
+        used = wikidata.run_query(district_usage_query(position)) if position else []
+    except Exception as exc:
+        print(f"  ! could not read Wikidata: {exc}")
+        used = []
+    if not used:
+        print("  no P39 statement for this seat carries a P768 at all.")
+    for row in used[:10]:
+        label = (row.get("districtLabel") or {}).get("value", "")
+        qid = (row.get("district") or {}).get("value", "").rsplit("/", 1)[-1]
+        count = (row.get("count") or {}).get("value", "?")
+        print(f"    {count:>4}x  {qid:<12} {label}")
+    print(
+        "\n  Run 15 found 3 of 270, all naming *city of Zürich quarters* rather\n"
+        "  than Wahlkreise. This tool only ever ADDS, so a member carrying a\n"
+        "  wrong P768 ends up with two values rather than a correction."
+    )
 
     print()
     print("=" * 70)

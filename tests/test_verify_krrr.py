@@ -24,6 +24,7 @@ if str(SCRIPTS) not in sys.path:
 
 from verify_krrr import (  # noqa: E402
     AGREEMENT_THRESHOLD,
+    CANTON_ZURICH,
     CONFIRMED,
     CONTRADICTED,
     FMT_BIFF,
@@ -39,6 +40,9 @@ from verify_krrr import (  # noqa: E402
     births_by_name,
     classify_misses,
     diagnose_misses,
+    district_candidates_query,
+    district_numbers,
+    district_usage_query,
     filled,
     formatter_url_query,
     SINGLE_SHEET,
@@ -446,3 +450,35 @@ def test_a_weak_majority_is_still_two_id_spaces_overlapping():
 
 def test_the_threshold_is_named_not_inlined():
     assert 50.0 < AGREEMENT_THRESHOLD < 100.0
+
+
+# --- can the districts be mapped? -------------------------------------------
+def test_district_numbers_keys_on_the_only_alignable_token():
+    """The register numbers its districts and Wikidata does not, so the number
+    is the only thing two sides can be lined up on by machine."""
+    assert district_numbers(["3. Wahlkreis (Zürich 4+5)"]) == {
+        "3": "3. Wahlkreis (Zürich 4+5)"
+    }
+
+
+def test_an_unnumbered_district_is_left_out_rather_than_guessed():
+    assert district_numbers(["Wahlkreis Zürich", ""]) == {}
+
+
+def test_the_first_spelling_of_a_number_wins_and_none_is_lost():
+    names = ["1. Wahlkreis (Zürich 1+2)", "1.  Wahlkreis  (Zürich 1+2)"]
+    assert district_numbers(names) == {"1": names[0]}
+
+
+def test_the_candidate_query_derives_the_population_instead_of_matching_names():
+    """Asking Wikidata for '1. Wahlkreis (Zürich 1+2)' would return nothing and
+    read as 'these have no items' — run 22's failure shape."""
+    sparql = district_candidates_query("de")
+    assert "Wahlkreis (" not in sparql
+    assert "wdt:P131" in sparql and CANTON_ZURICH in sparql
+    assert "constituency" in sparql
+
+
+def test_the_usage_query_counts_what_the_seat_already_carries():
+    sparql = district_usage_query("Q21518678")
+    assert "pq:P768" in sparql and "Q21518678" in sparql
