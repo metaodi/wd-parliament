@@ -40,9 +40,10 @@ from verify_krrr import (  # noqa: E402
     births_by_name,
     classify_misses,
     diagnose_misses,
-    district_candidates_query,
+    district_detail_query,
     district_numbers,
     district_usage_query,
+    search_terms,
     filled,
     formatter_url_query,
     SINGLE_SHEET,
@@ -470,15 +471,48 @@ def test_the_first_spelling_of_a_number_wins_and_none_is_lost():
     assert district_numbers(names) == {"1": names[0]}
 
 
-def test_the_candidate_query_derives_the_population_instead_of_matching_names():
-    """Asking Wikidata for '1. Wahlkreis (Zürich 1+2)' would return nothing and
-    read as 'these have no items' — run 22's failure shape."""
-    sparql = district_candidates_query("de")
-    assert "Wahlkreis (" not in sparql
-    assert "wdt:P131" in sparql and CANTON_ZURICH in sparql
-    assert "constituency" in sparql
+def test_the_search_drops_the_registers_numbering():
+    """'9. Wahlkreis (Horgen)' is not a name anybody else uses; the bracketed
+    part is, and it is tried first."""
+    assert search_terms("9. Wahlkreis (Horgen)")[0] == "Wahlkreis Horgen"
+    assert "Horgen" in search_terms("9. Wahlkreis (Horgen)")
+
+
+def test_a_district_with_no_brackets_is_searched_as_written():
+    assert search_terms("Wahlkreis Zürich") == ["Wahlkreis Zürich"]
+
+
+def test_search_terms_of_nothing_is_nothing():
+    assert search_terms("") == [] and search_terms(None) == []
+
+
+def test_the_detail_query_is_bounded_by_the_qids_in_hand():
+    """Run 29's class-first query timed out; this one asks about a handful of
+    known items, which is cheap."""
+    sparql = district_detail_query(["Q1", "Q2"], "de")
+    assert "VALUES ?item { wd:Q1 wd:Q2 }" in sparql
+    assert "wdt:P31" in sparql and "wdt:P131" in sparql
 
 
 def test_the_usage_query_counts_what_the_seat_already_carries():
     sparql = district_usage_query("Q21518678")
     assert "pq:P768" in sparql and "Q21518678" in sparql
+
+
+def test_an_exact_match_suppresses_the_leaf_fallback():
+    """Run 29 asked for `datum_eintritt_jahr` and got nine columns: the leaf is
+    `jahr`, which every date column in a register that splits its dates ends
+    with. The fallback is for a name that is absent, not one that is present.
+    """
+    sheets = {
+        "Einsitze": (["datum_eintritt_jahr", "datum_austritt_jahr"], []),
+        "Personen": (["datum_geburt_jahr"], []),
+    }
+    assert find_column(sheets, ("datum_eintritt_jahr",)) == [
+        ("Einsitze", "datum_eintritt_jahr")
+    ]
+
+
+def test_the_fallback_still_runs_when_nothing_matches_exactly():
+    sheets = {"Personen": (["person_kontakt_beruf"], [])}
+    assert find_column(sheets, ("beruf",)) == [("Personen", "person_kontakt_beruf")]

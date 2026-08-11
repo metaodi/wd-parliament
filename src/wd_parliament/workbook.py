@@ -294,6 +294,20 @@ def find_column(sheets: Sheets, candidates: Sequence[str]) -> List[Tuple[str, st
     mandates, so ``wahlkreis`` and ``nachname`` live in different sheets and a
     per-sheet answer would report each as missing from the other.
     """
+    # **An exact match anywhere suppresses the leaf fallback everywhere.**
+    # Run 29 asked for ``datum_eintritt_jahr`` and got nine columns back: the
+    # leaf is ``jahr``, which every date column in every sheet ends with, so a
+    # register that splits its dates makes the fallback match almost anything.
+    # The fallback exists for a name that is *absent*, not for one that is
+    # present — so it only runs when nothing matched exactly.
+    exact: List[Tuple[str, str]] = []
+    for sheet, (headers, _) in sheets.items():
+        for candidate in candidates:
+            if candidate in headers and (sheet, candidate) not in exact:
+                exact.append((sheet, candidate))
+    if exact:
+        return exact
+
     found: List[Tuple[str, str]] = []
     for sheet, (headers, _) in sheets.items():
         for candidate in candidates:

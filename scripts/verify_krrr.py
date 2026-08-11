@@ -398,41 +398,90 @@ def births_by_name(bindings: Sequence[dict]) -> Dict[str, str]:
     return {k: v.pop() for k, v in seen.items() if len(v) == 1}
 
 
-# Q11943 is the canton of Zürich. Used to *bound* the district query rather
-# than to match a name: run 13 spent a whole run on a Q-ID taken from a web
-# search that turned out to be a Wikimedia category held by nobody, and the
-# rule that came out of it is to derive candidates from the data and read the
-# list — never to trust a name.
+# The canton of Zürich, kept so a reader of section F can tell at a glance
+# whether a candidate district is even in the right canton. Not used to bound
+# a query any more: run 29's class-first attempt timed out on WDQS, and the
+# search API answers 18 cheap questions where SPARQL could not answer one.
 CANTON_ZURICH = "Q11943"
 
 
-def district_candidates_query(language: str = "de") -> str:
-    """Everything that looks like an electoral district in the canton of Zürich.
+def search_entities(
+    http: HttpClient, term: str, language: str = "de", limit: int = 5
+) -> List[Dict[str, str]]:
+    """Ask Wikidata's search for items matching a name. Bounded, not SPARQL.
 
-    Deliberately *not* a search for the register's own spellings. The register
-    says ``'1. Wahlkreis (Zürich 1+2)'`` and Wikidata will not; asking by name
-    would return nothing and be read as "these districts have no items", which
-    is the same shape of wrong answer as run 22's "3,862 rows with no name".
+    Run 29's candidate query timed out, and deservedly: it asked for every
+    item with any ``P31`` whose type label mentions a constituency and only
+    then narrowed to the canton, which is a scan of Wikidata before the
+    selective clause runs. The search API asks 18 cheap questions instead of
+    one impossible one.
 
-    So the population is derived: anything located in (P131) the canton of
-    Zürich whose type (P31) mentions a constituency or Wahlkreis. The type and
-    the label come back with it, because deciding which of these is the
-    register's ``3. Wahlkreis`` is a judgement for a reader — this probe prints
-    the list and fills nothing in.
+    **This is a search, and run 13's rule about searches still holds**: the
+    Q-ID it returns is a *candidate*. The probe prints it with its description
+    and fills nothing in — a name that looks right is how ``Q19479543``, a
+    Wikimedia category held by nobody, got as far as being a default.
     """
+    data = http.get_json(
+        "https://www.wikidata.org/w/api.php",
+        params={
+            "action": "wbsearchentities",
+            "search": term,
+            "language": language,
+            "uselang": language,
+            "type": "item",
+            "limit": limit,
+            "format": "json",
+        },
+    )
+    out = []
+    for hit in data.get("search", []):
+        out.append(
+            {
+                "qid": hit.get("id", ""),
+                "label": hit.get("label", ""),
+                "description": hit.get("description", ""),
+            }
+        )
+    return out
+
+
+def district_detail_query(qids: Sequence[str], language: str = "de") -> str:
+    """What *are* these candidates? Bounded by the Q-IDs already in hand.
+
+    A label alone cannot tell a Wahlkreis from a district of the same name, a
+    Wikimedia category or a municipality. Type (P31) and container (P131) can,
+    and asking about a handful of known items is cheap where asking about a
+    class was not.
+    """
+    values = " ".join(f"wd:{q}" for q in qids)
     return f"""
 SELECT ?item ?itemLabel ?typeLabel ?inLabel WHERE {{
-  ?item wdt:P31 ?type .
-  ?type rdfs:label ?typeName .
-  FILTER(LANG(?typeName) = "en")
-  FILTER(CONTAINS(LCASE(?typeName), "constituency")
-      || CONTAINS(LCASE(?typeName), "electoral district"))
-  {{ ?item wdt:P131 wd:{CANTON_ZURICH} . BIND(wd:{CANTON_ZURICH} AS ?in) }}
-  UNION
-  {{ ?item wdt:P131/wdt:P131 wd:{CANTON_ZURICH} . ?item wdt:P131 ?in . }}
+  VALUES ?item {{ {values} }}
+  OPTIONAL {{ ?item wdt:P31 ?type . }}
+  OPTIONAL {{ ?item wdt:P131 ?in . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en". }}
 }}
 """
+
+
+def search_terms(district: str) -> List[str]:
+    """The register's spelling → what to actually search for. Pure.
+
+    ``'9. Wahlkreis (Horgen)'`` is not a name anybody else uses. The part in
+    brackets is the district's real name and the prefix is the register's
+    numbering, so both are tried: the bracketed name first, because
+    ``'Wahlkreis Horgen'`` is the form a Wikidata label would take.
+    """
+    text = " ".join(str(district or "").split())
+    terms: List[str] = []
+    if "(" in text and ")" in text:
+        inner = text[text.index("(") + 1 : text.rindex(")")].strip()
+        if inner:
+            terms.append(f"Wahlkreis {inner}")
+            terms.append(inner)
+    if text and text not in terms:
+        terms.append(text)
+    return terms
 
 
 def district_usage_query(position_qid: str) -> str:
@@ -697,24 +746,52 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     numbered = district_numbers(districts)
     for number, name in sorted(numbered.items(), key=lambda kv: int(kv[0])):
         print(f"  {number:>2}. {name}")
-    if len(districts) != len(numbered):
-        print(f"  ({len(districts) - len(numbered)} not numbered, so unalignable)")
+    unnumbered = [d for d in districts if d not in numbered.values()]
+    if unnumbered:
+        # Naming it rather than counting it: run 29 reported "1 not numbered"
+        # and left a reader unable to tell a stray blank from a real district
+        # the alignment would silently drop.
+        print(f"  not numbered, so unalignable ({len(unnumbered)}):")
+        for value in unnumbered:
+            print(f"      {value!r}")
 
     print("\ndoes Wikidata have items for them? (candidates, not answers)")
-    try:
-        rows = wikidata.run_query(district_candidates_query(config.language))
-    except Exception as exc:
-        print(f"  ! could not read Wikidata: {exc}")
-        rows = []
-    print(f"  electoral districts in the canton of Zürich: {len(rows)}")
-    for row in rows[: (len(rows) if args.verbose else 30)]:
-        label = (row.get("itemLabel") or {}).get("value", "")
-        qid = (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1]
-        kind = (row.get("typeLabel") or {}).get("value", "")
-        where = (row.get("inLabel") or {}).get("value", "")
-        print(f"    {qid:<12} {label[:44]:<44} {kind[:22]:<22} in {where[:20]}")
-    if not args.verbose and len(rows) > 30:
-        print(f"    ... {len(rows) - 30} more (--verbose for all)")
+    candidates: Dict[str, List[Dict[str, str]]] = {}
+    for number, name in sorted(numbered.items(), key=lambda kv: int(kv[0])):
+        hits: List[Dict[str, str]] = []
+        for term in search_terms(name):
+            try:
+                hits = search_entities(http, term, config.language, limit=3)
+            except Exception as exc:
+                print(f"  ! search failed for {term!r}: {exc}")
+                hits = []
+            if hits:
+                break
+        candidates[number] = hits
+
+    detail: Dict[str, Tuple[str, str]] = {}
+    qids = [h["qid"] for hits in candidates.values() for h in hits if h.get("qid")]
+    if qids:
+        try:
+            for row in wikidata.run_query(
+                district_detail_query(sorted(set(qids)), config.language)
+            ):
+                qid = (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1]
+                detail[qid] = (
+                    (row.get("typeLabel") or {}).get("value", ""),
+                    (row.get("inLabel") or {}).get("value", ""),
+                )
+        except Exception as exc:
+            print(f"  ! could not read the candidates' types: {exc}")
+
+    for number, hits in sorted(candidates.items(), key=lambda kv: int(kv[0])):
+        print(f"  {number:>2}. {numbered[number]}")
+        if not hits:
+            print("      (no candidate found)")
+        for hit in hits:
+            kind, where = detail.get(hit["qid"], ("", ""))
+            note = f"{kind} · {where}".strip(" ·") or hit.get("description", "")
+            print(f"      {hit['qid']:<11} {hit['label'][:34]:<34} {note[:34]}")
     print(
         "\n  Which of these is the register's '3. Wahlkreis' is a reader's\n"
         "  judgement, and this probe fills nothing in — run 13 spent a whole\n"
