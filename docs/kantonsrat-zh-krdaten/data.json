@@ -1,20 +1,20 @@
 {
-  "generated": "2026-08-10 18:51 UTC",
-  "total_suggestions": 371,
+  "generated": "2026-08-11 10:59 UTC",
+  "total_suggestions": 370,
   "total_members": 180,
-  "quickstatements": 48,
+  "quickstatements": 51,
   "bodies": [
     {
       "council": "KR",
       "label": "Cantonal Council of Zürich",
       "position_qid": "Q21518678",
       "member_count": 180,
-      "matched_by_identifier": 59,
+      "matched_by_identifier": 63,
       "matched_by_name": 60,
-      "unmatched": 61,
+      "unmatched": 57,
       "wikidata_open": 167,
       "identifier_mismatches": 0,
-      "identifier_hit_rate": 32.8,
+      "identifier_hit_rate": 35.0,
       "error": null,
       "suggestions": [
         {
@@ -963,6 +963,30 @@
           }
         },
         {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Advije Delihasani-Ajdari",
+          "person_qid": "Q140987126",
+          "person_number": 23283,
+          "qid_source": "identifier",
+          "canton": "11. Wahlkreis (Hinwil)",
+          "parl_group": "SP",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2025-12-08.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q140987126"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2025-12-08",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23283"
+          }
+        },
+        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Alan David Sangines",
@@ -1032,6 +1056,30 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/q131939893-a46e3ee9-48b7-b0b8-5db3-9bcecb67e818"
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Benjamin Walder",
+          "person_qid": "Q116046000",
+          "person_number": 23320,
+          "qid_source": "identifier",
+          "canton": "11. Wahlkreis (Hinwil)",
+          "parl_group": "Grüne",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2019-12-02.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q116046000"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2019-12-02",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23320"
           }
         },
         {
@@ -1464,6 +1512,30 @@
           }
         },
         {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Karin Fehr Thoma",
+          "person_qid": "Q115929594",
+          "person_number": 22185,
+          "qid_source": "identifier",
+          "canton": "12. Wahlkreis (Uster)",
+          "parl_group": "Grüne",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2015-05-18.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q115929594"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2015-05-18",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22185"
+          }
+        },
+        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Laura Huonker",
@@ -1483,24 +1555,6 @@
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22782",
             "start": "2015-05-18",
             "end": "2020-08-14"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Leandra Columberg",
-          "person_qid": "Q65771072",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q65771072",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/q65771072-194e9acc-4e14-b9c9-1cf9-814d32e401ef"
           }
         },
         {
@@ -3039,7 +3093,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "canton": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "Die Mitte",
+          "parl_group": "CVP",
           "detail": "Add a start date (P580) of 2014-08-18; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -4264,19 +4318,22 @@
           }
         },
         {
-          "kind": "NO_WIKIDATA_ITEM",
+          "kind": "MISSING_IDENTIFIER",
           "priority": 5,
           "member": "Advije Delihasani-Ajdari",
-          "person_qid": null,
+          "person_qid": "Q140987126",
           "person_number": 23283,
-          "qid_source": null,
+          "qid_source": "identifier",
           "canton": "11. Wahlkreis (Hinwil)",
           "parl_group": "SP",
-          "detail": "'Advije Delihasani-Ajdari' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23283) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q140987126",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
           },
           "payload": {
+            "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23283"
           }
         },
@@ -4657,23 +4714,6 @@
           },
           "payload": {
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22000"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Benjamin Walder",
-          "person_qid": null,
-          "person_number": 23320,
-          "qid_source": null,
-          "canton": "11. Wahlkreis (Hinwil)",
-          "parl_group": "Grüne",
-          "detail": "'Benjamin Walder' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23320) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23320"
           }
         },
         {
@@ -5533,7 +5573,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "canton": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "Die Mitte",
+          "parl_group": "CVP",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -5580,23 +5620,6 @@
           "payload": {
             "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22204"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Karin Fehr Thoma",
-          "person_qid": null,
-          "person_number": 22185,
-          "qid_source": null,
-          "canton": "12. Wahlkreis (Uster)",
-          "parl_group": "Grüne",
-          "detail": "'Karin Fehr Thoma' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22185) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22185"
           }
         },
         {
@@ -5654,23 +5677,6 @@
           },
           "payload": {
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23378"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Leandra Columberg",
-          "person_qid": null,
-          "person_number": 23289,
-          "qid_source": null,
-          "canton": "12. Wahlkreis (Uster)",
-          "parl_group": "SP",
-          "detail": "'Leandra Columberg' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23289) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23289"
           }
         },
         {
