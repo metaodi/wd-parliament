@@ -433,10 +433,20 @@ def district_class_query(class_qid: str = DISTRICT_CLASS, language: str = "de") 
 
     Bounded by the class, so it is cheap — unlike run 29's attempt to find the
     class by filtering type *labels*, which scanned Wikidata and timed out.
+
+    **P4565 "electoral district number" is what the items are aligned on**, and
+    it is a different class of evidence from anything used before it: an
+    explicit statement of *which* district this is, rather than a name two
+    parties spell independently. It is ``OPTIONAL`` because an item without one
+    is a fact to report, not a row to lose — and the name alignment still runs
+    beside it, because run 31 proved a number can be the wrong number. Two
+    independent signals agreeing is the claim worth acting on; one contradicting
+    the other is a finding, not a tie to break.
     """
     return f"""
-SELECT ?item ?itemLabel ?itemDescription WHERE {{
+SELECT ?item ?itemLabel ?itemDescription ?number WHERE {{
   ?item wdt:P31 wd:{class_qid} .
+  OPTIONAL {{ ?item wdt:P4565 ?number . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en,mul". }}
 }}
 """
@@ -482,36 +492,82 @@ def district_key(text: str) -> Optional[Tuple[str, ...]]:
 
 def align_districts(
     register: Dict[str, str], items: Sequence[Dict[str, str]]
-) -> Tuple[Dict[str, Tuple[str, str]], List[str], List[Dict[str, str]]]:
+) -> Tuple[
+    Dict[str, Tuple[str, str, str]],
+    List[str],
+    List[Dict[str, str]],
+    List[str],
+]:
     """Line the register's districts up with the class's items. Pure.
 
-    Returns ``(register name -> (qid, label), register names with no item,
-    items with no register district)``. Both leftovers are returned rather than
-    dropped: "eighteen of eighteen" is only meaningful next to what did not
-    match, and an item nobody claims is as much a finding as a district nobody
-    has.
+    Two independent signals, and the point is that they check each other:
 
-    A key claimed by two items is left **unaligned** — this repo does not
-    arbitrate a duplicate, and a wrong district would be written onto every
-    member who sits in it.
+    * **P4565**, the item's own electoral-district number, against the
+      register's ordinal. An explicit identifier on both sides.
+    * **the place both sides name**, folded to tokens.
+
+    Returns ``(name -> (qid, label, how), unmatched, spare, conflicts)``.
+    ``how`` records which signals agreed, so the pasted config says on every
+    line what backs it.
+
+    A district where the two signals name **different items** is a conflict and
+    is *not* mapped. That is the whole reason for keeping both: run 31 aligned
+    on a number alone and was five-sixths wrong, because the digits in a label
+    were city quarter numbers. A number that disagrees with the place is
+    exactly that failure announcing itself, and picking a side would hide it.
     """
-    by_key: Dict[Tuple[str, ...], List[Dict[str, str]]] = {}
+    by_number: Dict[int, List[Dict[str, str]]] = {}
+    by_name: Dict[Tuple[str, ...], List[Dict[str, str]]] = {}
     for item in items:
+        number = _as_district_number(item.get("number"))
+        if number is not None:
+            by_number.setdefault(number, []).append(item)
         key = district_key(item.get("label", ""))
         if key:
-            by_key.setdefault(key, []).append(item)
+            by_name.setdefault(key, []).append(item)
 
-    mapping: Dict[str, Tuple[str, str]] = {}
+    def only(hits: Sequence[Dict[str, str]]) -> Optional[Dict[str, str]]:
+        # A key two items claim is no key: this repo does not arbitrate a
+        # duplicate, and a wrong district lands on every member who sits in it.
+        return hits[0] if len(hits) == 1 else None
+
+    mapping: Dict[str, Tuple[str, str, str]] = {}
     unmatched: List[str] = []
-    for name in register.values():
-        hits = by_key.get(district_key(name) or (), [])
-        if len(hits) == 1:
-            mapping[name] = (hits[0]["qid"], hits[0].get("label", ""))
-        else:
+    conflicts: List[str] = []
+    for number, name in register.items():
+        by_num = only(by_number.get(int(number), []))
+        by_nam = only(by_name.get(district_key(name) or (), []))
+        if by_num and by_nam and by_num["qid"] != by_nam["qid"]:
+            conflicts.append(
+                f"{name}: P4565 says {by_num['qid']} {by_num.get('label', '')!r}, "
+                f"the name says {by_nam['qid']} {by_nam.get('label', '')!r}"
+            )
+            continue
+        chosen = by_num or by_nam
+        if not chosen:
             unmatched.append(name)
-    claimed = {q for q, _ in mapping.values()}
+            continue
+        how = "P4565 + name" if (by_num and by_nam) else (
+            "P4565 only" if by_num else "name only"
+        )
+        mapping[name] = (chosen["qid"], chosen.get("label", ""), how)
+    claimed = {q for q, _, _ in mapping.values()}
     spare = [i for i in items if i.get("qid") and i["qid"] not in claimed]
-    return mapping, unmatched, spare
+    return mapping, unmatched, spare, conflicts
+
+
+def _as_district_number(value: object) -> Optional[int]:
+    """A P4565 value → the district number. Pure.
+
+    Range-checked to the canton's eighteen: a value outside it is not this
+    canton's district number, whatever else it may be.
+    """
+    text = " ".join(str(value or "").split())
+    try:
+        number = int(float(text))
+    except (TypeError, ValueError):
+        return None
+    return number if 1 <= number <= 18 else None
 
 
 def district_order(name: str) -> int:
@@ -532,10 +588,10 @@ def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
     step that has caught every Q-ID mistake this repo has made.
     """
     lines = ["cantons:"]
-    for name, (qid, label) in sorted(
+    for name, (qid, label, how) in sorted(
         mapping.items(), key=lambda kv: district_order(kv[0])
     ):
-        lines.append(f'  "{name}": {qid}    # {label}')
+        lines.append(f'  "{name}": {qid}    # {label} [{how}]')
     return lines
 
 
@@ -910,24 +966,50 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     "qid": (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1],
                     "label": (row.get("itemLabel") or {}).get("value", ""),
                     "description": (row.get("itemDescription") or {}).get("value", ""),
+                    "number": (row.get("number") or {}).get("value", ""),
                 }
             )
     except Exception as exc:
         print(f"  ! could not read Wikidata: {exc}")
     print(f"  {len(items)} item(s)")
     for item in items[: (len(items) if args.verbose else 20)]:
-        print(f"    {item['qid']:<11} {item['label'][:40]:<40} {item['description'][:30]}")
+        number = item.get("number") or "-"
+        print(
+            f"    {item['qid']:<11} P4565={number:<4} {item['label'][:38]:<38} "
+            f"{item['description'][:26]}"
+        )
     if not args.verbose and len(items) > 20:
         print(f"    ... {len(items) - 20} more (--verbose for all)")
 
-    mapping, unmatched, spare = align_districts(numbered, items)
+    mapping, unmatched, spare, conflicts = align_districts(numbered, items)
+    agreed = sum(1 for _, _, how in mapping.values() if how == "P4565 + name")
     print(
-        f"\naligned on the place both sides name: {len(mapping)} of {len(numbered)}"
+        f"\naligned: {len(mapping)} of {len(numbered)} "
+        f"({agreed} with P4565 and the name agreeing)"
     )
+    for line in conflicts:
+        print(f"    ⚠ CONFLICT  {line}")
     for name in unmatched:
         print(f"    no single item for {name!r}")
     for item in spare:
         print(f"    no register district for {item['qid']} {item['label']!r}")
+
+    # Does the committed config already say this? Filling `cantons:` by hand
+    # from a previous run's output is exactly the step that needs checking,
+    # and the probe is holding both halves right here.
+    print("\nagainst the config as committed:")
+    same = differ = absent = 0
+    for name, (qid, _, _) in sorted(mapping.items(), key=lambda kv: district_order(kv[0])):
+        configured = config.canton_qid(name)
+        if configured is None:
+            absent += 1
+            print(f"    {name!r}: not in the config (derived {qid})")
+        elif configured == qid:
+            same += 1
+        else:
+            differ += 1
+            print(f"    ⚠ {name!r}: config {configured}, derived {qid}")
+    print(f"    agree {same} · differ {differ} · missing from config {absent}")
     if mapping:
         print("\n  paste into config/kantonsrat-zh-krdaten.yaml:\n")
         for line in render_cantons_yaml(mapping):

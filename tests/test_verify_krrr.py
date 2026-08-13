@@ -43,6 +43,7 @@ from verify_krrr import (  # noqa: E402
     align_districts,
     district_class_query,
     district_detail_query,
+    _as_district_number,
     district_key,
     district_numbers,
     render_cantons_yaml,
@@ -528,95 +529,101 @@ def test_the_fallback_still_runs_when_nothing_matches_exactly():
 REGISTER = {
     "1": "1. Wahlkreis (Zürich 1+2)",
     "2": "2. Wahlkreis (Zürich 3+9)",
-    "4": "4. Wahlkreis (Zürich 6 + 10)",
     "7": "7. Wahlkreis (Dietikon)",
     "14": "14. Wahlkreis (Winterthur Stadt)",
     "15": "15. Wahlkreis (Winterthur Land)",
 }
+
+
+def wk(qid, label, number=None):
+    return {"qid": qid, "label": label, "number": number, "description": ""}
+
+
 ITEMS = [
-    {"qid": "Q117787833", "label": "Wahlkreis Stadt Zürich 1+2"},
-    {"qid": "Q141024892", "label": "Wahlkreis Stadt Zürich 3+9"},
-    {"qid": "Q141045392", "label": "Wahlkreis Stadt Zürich 6+10"},
-    {"qid": "Q117787912", "label": "Wahlkreis Stadt Zürich 7+8"},
-    {"qid": "Q141046009", "label": "Wahlkreis Stadt Winterthur"},
-    {"qid": "Q141046014", "label": "Wahlkreis Winterthur-Land"},
+    wk("Q117787833", "Wahlkreis Stadt Zürich 1+2", "1"),
+    wk("Q141024892", "Wahlkreis Stadt Zürich 3+9", "2"),
+    wk("Q141045570", "Wahlkreis Dietikon", "7"),
+    wk("Q141046009", "Wahlkreis Stadt Winterthur", "14"),
+    wk("Q141046014", "Wahlkreis Winterthur-Land", "15"),
 ]
 
 
-def test_the_quarter_numbers_are_not_district_numbers():
-    """Run 31's exact failure: 'Wahlkreis Stadt Zürich 3+9' is the register's
-    SECOND district, and keying it on the 3 matched it to the third."""
-    mapping, _, _ = align_districts(REGISTER, ITEMS)
-    assert mapping["2. Wahlkreis (Zürich 3+9)"][0] == "Q141024892"
-    assert mapping["1. Wahlkreis (Zürich 1+2)"][0] == "Q117787833"
-
-
-def test_a_city_district_never_lands_on_a_rural_one():
-    """The worst of run 31's output: 'Wahlkreis Stadt Zürich 7+8' onto
-    '7. Wahlkreis (Dietikon)', which is not in the city at all."""
-    mapping, unmatched, spare = align_districts(REGISTER, ITEMS)
-    assert "7. Wahlkreis (Dietikon)" not in mapping
-    assert "7. Wahlkreis (Dietikon)" in unmatched
-    assert any(i["qid"] == "Q117787912" for i in spare)
-
-
-def test_spacing_around_the_plus_does_not_matter():
-    """The register writes '6 + 10' and the item '6+10'."""
-    mapping, _, _ = align_districts(REGISTER, ITEMS)
-    assert mapping["4. Wahlkreis (Zürich 6 + 10)"][0] == "Q141045392"
-
-
-def test_word_order_and_the_kind_word_do_not_matter():
-    """'Winterthur Stadt' and 'Wahlkreis Stadt Winterthur' are one district."""
-    mapping, _, _ = align_districts(REGISTER, ITEMS)
-    assert mapping["14. Wahlkreis (Winterthur Stadt)"][0] == "Q141046009"
-    assert mapping["15. Wahlkreis (Winterthur Land)"][0] == "Q141046014"
-
-
-def test_stadt_and_land_stay_distinct_after_the_stopwords_go():
-    """Dropping 'Stadt' must not collapse two real districts into one."""
-    assert district_key("14. Wahlkreis (Winterthur Stadt)") != district_key(
-        "15. Wahlkreis (Winterthur Land)"
+def test_the_two_signals_agree_and_say_so():
+    """P4565 and the place are independent, and their agreement is the claim
+    worth acting on."""
+    mapping, unmatched, spare, conflicts = align_districts(REGISTER, ITEMS)
+    assert len(mapping) == 5 and not unmatched and not spare and not conflicts
+    assert mapping["2. Wahlkreis (Zürich 3+9)"] == (
+        "Q141024892", "Wahlkreis Stadt Zürich 3+9", "P4565 + name"
     )
 
 
-def test_the_registers_ordinal_is_not_part_of_the_name():
-    assert district_key("9. Wahlkreis (Horgen)") == district_key("Wahlkreis Horgen")
+def test_p4565_carries_a_district_whose_name_does_not_match():
+    """An item labelled unlike the register still aligns, on the number."""
+    items = [wk("Q1", "Kantonsratswahlkreis Nummer sieben", "7")]
+    mapping, _, _, conflicts = align_districts({"7": "7. Wahlkreis (Dietikon)"}, items)
+    assert mapping["7. Wahlkreis (Dietikon)"][2] == "P4565 only"
+    assert not conflicts
 
 
-def test_a_key_two_items_claim_is_left_unaligned():
-    """This repo does not arbitrate a duplicate, and a wrong district would be
-    written onto every member who sits in it."""
+def test_the_name_carries_a_district_with_no_p4565():
+    items = [wk("Q1", "Wahlkreis Dietikon", None)]
+    mapping, _, _, _ = align_districts({"7": "7. Wahlkreis (Dietikon)"}, items)
+    assert mapping["7. Wahlkreis (Dietikon)"][2] == "name only"
+
+
+def test_the_signals_disagreeing_is_a_conflict_not_a_tie_to_break():
+    """Run 31's failure announcing itself: a number that means something else
+    points at a different item than the place does. Picking a side hides it."""
     items = [
-        {"qid": "Q1", "label": "Wahlkreis Horgen"},
-        {"qid": "Q2", "label": "Wahlkreis Horgen"},
+        wk("Q7", "Wahlkreis Stadt Zürich 7+8", "5"),   # its own number is 5
+        wk("QD", "Wahlkreis Dietikon", None),
     ]
-    mapping, unmatched, spare = align_districts({"9": "9. Wahlkreis (Horgen)"}, items)
-    assert mapping == {} and unmatched == ["9. Wahlkreis (Horgen)"]
-    assert {i["qid"] for i in spare} == {"Q1", "Q2"}
+    # A register district numbered 5, whose *place* is the city 7+8 district.
+    register = {"5": "5. Wahlkreis (Zürich 7+8)"}
+    items = [wk("QA", "Wahlkreis Stadt Zürich 7+8", None), wk("QB", "Etwas anderes", "5")]
+    mapping, unmatched, spare, conflicts = align_districts(register, items)
+    assert mapping == {} and unmatched == []
+    assert conflicts and "P4565 says QB" in conflicts[0]
+    assert {i["qid"] for i in spare} == {"QA", "QB"}
 
 
-def test_both_leftovers_are_reported():
-    mapping, unmatched, spare = align_districts(
-        {"9": "9. Wahlkreis (Horgen)"}, [{"qid": "Q9", "label": "Wahlkreis Bülach"}]
+def test_a_number_two_items_claim_is_no_number():
+    items = [wk("Q1", "Wahlkreis Dietikon", "7"), wk("Q2", "Wahlkreis Anderes", "7")]
+    mapping, unmatched, _, conflicts = align_districts(
+        {"7": "7. Wahlkreis (Dietikon)"}, items
     )
-    assert mapping == {} and unmatched == ["9. Wahlkreis (Horgen)"]
-    assert [i["qid"] for i in spare] == ["Q9"]
+    # The number is ambiguous, so the name decides on its own.
+    assert mapping["7. Wahlkreis (Dietikon)"] == ("Q1", "Wahlkreis Dietikon", "name only")
+    assert not conflicts
 
 
-def test_a_name_with_nothing_identifying_has_no_key():
-    assert district_key("Wahlkreis") is None and district_key("") is None
+@pytest.mark.parametrize("value,expected", [
+    ("7", 7), (" 7 ", 7), ("07", 7), (7, 7), ("18", 18),
+    ("0", None), ("19", None), ("", None), (None, None), ("sieben", None),
+])
+def test_a_p4565_value_outside_the_cantons_range_is_not_a_district_number(value, expected):
+    assert _as_district_number(value) == expected
+
+
+def test_the_yaml_block_records_what_backed_each_line():
+    mapping = {"2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis Stadt Zürich 3+9", "P4565 + name")}
+    assert "[P4565 + name]" in render_cantons_yaml(mapping)[1]
 
 
 def test_the_yaml_block_is_ordered_by_the_registers_ordinal():
     mapping = {
-        "10. Wahlkreis (Meilen)": ("Q10", "Wahlkreis Meilen"),
-        "2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis Stadt Zürich 3+9"),
+        "10. Wahlkreis (Meilen)": ("Q10", "Wahlkreis Meilen", "P4565 + name"),
+        "2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis Stadt Zürich 3+9", "P4565 + name"),
     }
     lines = render_cantons_yaml(mapping)
-    assert lines[0] == "cantons:"
-    assert lines[1].startswith('  "2. Wahlkreis') and "Q2" in lines[1]
-    assert lines[2].startswith('  "10. Wahlkreis')
+    assert lines[1].startswith('  "2. Wahlkreis') and lines[2].startswith('  "10. Wahlkreis')
+
+
+def test_the_class_query_asks_for_p4565_optionally():
+    """An item without a number is a fact to report, not a row to lose."""
+    sparql = district_class_query("Q141021240", "de")
+    assert "wdt:P4565" in sparql and "OPTIONAL" in sparql
 
 
 def test_the_class_query_is_bounded_by_the_class():
