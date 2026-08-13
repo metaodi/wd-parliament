@@ -744,7 +744,13 @@ def _verdict(name: str, verdict: str, detail: str) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("-c", "--config", default="config/kantonsrat-zh.yaml")
+    # The KRRR config, because this probe is about the KRRR source. Run 33
+    # ran with the OpenParlData one and reported "missing from config 18"
+    # about a file whose `cantons:` is empty on purpose — a statement about
+    # the probe's arguments dressed as a statement about the config.
+    parser.add_argument(
+        "-c", "--config", default="config/kantonsrat-zh-krdaten.yaml"
+    )
     parser.add_argument("--url", default=KRRR_URL, help="The KRRR Excel export.")
     parser.add_argument(
         "--district-class",
@@ -1015,10 +1021,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for line in render_cantons_yaml(mapping):
             print(f"  {line}")
         print(
-            "\n  Read it before pasting. The alignment is on the place both\n"
-            "  sides name, which is what run 31 got wrong by using the number:\n"
-            "  the digits in an item's label are city QUARTER numbers, so\n"
-            "  'Wahlkreis Stadt Zürich 3+9' is the register's 2nd district."
+            "\n  Read it before pasting. [P4565 + name] means the item's own\n"
+            "  electoral-district number and the place it names agree. A line\n"
+            "  backed by only one of them is still worth a look: run 31 used\n"
+            "  the number alone and was five-sixths wrong, because the digits\n"
+            "  in a label are city QUARTER numbers — 'Wahlkreis Stadt Zürich\n"
+            "  3+9' is the register's 2nd district, not its 3rd."
         )
 
     print("\nwhat do the seat's statements already carry?")
