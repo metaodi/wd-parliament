@@ -339,7 +339,20 @@ Three traps paid for along the way, all now enforced in
   role seen, because neither an allowlist nor a denylist self-corrects when the
   source adds a role — only the 180 check does.
 
-**The ZH Wahlkreise have no Wikidata items, and the Bezirke are not them.**
+**The ZH Wahlkreise now have Wikidata items** (class `Q141021240`), and
+`config/kantonsrat-zh-krdaten.yaml` maps all 18 — derived from the class and
+aligned on **the place both sides name**, never on a number. Run 31 aligned on
+the number and was five-sixths wrong: the digits in an item's label are city
+*quarter* numbers, so `Wahlkreis Stadt Zürich 3+9` is the register's **2nd**
+district and keying on the 3 pushed `…7+8` onto `7. Wahlkreis (Dietikon)`,
+which is not in the city. Filling the map also exposed that `Config.canton_qid`
+upper-cased its lookup — right for `ZH`, and matching nothing for a district
+name, so all 18 entries would have been silently dead. It folds case and
+collapses whitespace on both sides now.
+
+The history below is why the derivation is not shortcut:
+
+**Before the items existed, the Bezirke were the tempting wrong answer.**
 Run 30 (2026-08-11) searched for each of the register's 18 districts and every
 candidate was the *place* it is named after — the municipality, the Bezirk, and
 once a `Meilenstein`. Two returned nothing at all, and those two are exactly

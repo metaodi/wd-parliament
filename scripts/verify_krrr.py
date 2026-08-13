@@ -922,7 +922,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     mapping, unmatched, spare = align_districts(numbered, items)
     print(
-        f"\naligned on the district number: {len(mapping)} of {len(numbered)}"
+        f"\naligned on the place both sides name: {len(mapping)} of {len(numbered)}"
     )
     for name in unmatched:
         print(f"    no single item for {name!r}")

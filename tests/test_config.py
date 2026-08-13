@@ -338,3 +338,40 @@ def test_the_shipped_configs_report_both_identifiers():
     assert zurich.biography_url_for(18172) == (
         "https://openparldata.ch/item/persons/18172"
     )
+
+
+# --- the map key is not always an abbreviation ------------------------------
+def test_a_district_name_key_is_found_despite_its_case(tmp_path):
+    """Found the moment the ZH map was first filled: `canton_qid` upper-cased
+    the lookup, which is right for `ZH` and matches nothing for a whole
+    district name. Eighteen entries, zero lookups, no error — a run that would
+    have reported no districts while holding all of them.
+    """
+    text = MINIMAL + '''
+cantons:
+  "9. Wahlkreis (Horgen)": Q141045940
+'''
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.canton_qid("9. Wahlkreis (Horgen)") == "Q141045940"
+
+
+def test_the_registers_untidy_spacing_still_finds_the_district(tmp_path):
+    """The source writes `'I      Zürich 1+2'`; a config will not."""
+    text = MINIMAL + '''
+cantons:
+  "9. Wahlkreis (Horgen)": Q141045940
+'''
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.canton_qid("9.  Wahlkreis   (Horgen)") == "Q141045940"
+
+
+def test_a_canton_abbreviation_still_matches_either_case(tmp_path):
+    """The federal behaviour the upper-casing existed for, unchanged."""
+    cfg = load_config(write(tmp_path, MINIMAL + "\ncantons:\n  ZH: Q11943\n"))
+    assert cfg.canton_qid("zh") == cfg.canton_qid("ZH") == "Q11943"
+
+
+def test_an_unmapped_district_is_still_none(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL + "\ncantons:\n  ZH: Q11943\n"))
+    assert cfg.canton_qid("9. Wahlkreis (Horgen)") is None
+    assert cfg.canton_qid("") is None

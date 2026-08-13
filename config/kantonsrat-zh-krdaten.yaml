@@ -100,54 +100,54 @@ bodies:
 # collapses its runs of spaces. Counted from the register's own open seats:
 # 18 districts, 180 members, `wahlkreis` filled on 6,767 of 6,767 Einsitze.
 #
-# ⚠️ **They stay empty because the items do not exist, and the obvious
-# substitute is wrong.** Run 30 (2026-08-11) searched Wikidata for each of the
-# 18 and found no electoral district among the candidates — only the *place*
-# each one is named after:
+# Filled from run 32 (2026-08-13), which derived the items from their class
+# (`Q141021240`, "Wahlkreis des Kantons Zürich") and aligned all 18 with none
+# left over on either side. Two earlier attempts are the reason to keep the
+# derivation and not to shortcut it:
 #
-#     11. Wahlkreis (Hinwil)   Q69383  Hinwil         Stadt gemäss BFS
-#                              Q660382 Bezirk Hinwil  Bezirk des Kantons Zürich
-#     14. Wahlkreis (Winterthur Stadt)   (no candidate found)
+#   * run 30 had no class to work from and searched by name. Every candidate
+#     was the *place* a district is named after, and the tempting answer was
+#     the Bezirk. **Never map a Wahlkreis to a Bezirk item**: the register's
+#     own rows disprove it — six Wahlkreise cover the city of Zürich and the
+#     city is ONE Bezirk; Winterthur is one Bezirk and two Wahlkreise.
+#   * run 31 had the class and aligned on the district *number*, producing a
+#     block that was five-sixths wrong. The digits in an item's label are city
+#     QUARTER numbers: `Wahlkreis Stadt Zürich 3+9` is the register's SECOND
+#     district, so keying on the 3 matched it to the third and pushed
+#     `…Zürich 7+8` onto `7. Wahlkreis (Dietikon)`, which is not in the city
+#     at all. The alignment is on the place both sides name.
 #
-# **Never map these to the Bezirk items.** The register's own rows disprove
-# that pairing without any outside knowledge: six Wahlkreise cover the city of
-# Zürich (1+2, 3+9, 4+5, 6+10, 7+8, 11+12) and the city is ONE Bezirk;
-# Winterthur is one Bezirk and two Wahlkreise (Stadt, Land). A Wahlkreis is
-# not a Bezirk. Twelve of the eighteen share a name with one, which is what
-# makes the mistake plausible rather than obvious — and it would put a false
-# P768 on fifteen people at a time.
-#
-# The two districts the search could not find anything for at all are exactly
-# the two whose names are not a municipality, which is the tell: it was
-# finding places, never districts.
-#
-# So filling this map needs **items to be created on Wikidata first** — a
-# modelling decision about the Kantonsrat's electoral geography, not a lookup.
-# Until then an unmapped district makes no suggestion, which is correct.
+# `--verify-config` re-checks every one of these against Wikidata, which is
+# what turns a pasted block into a checked one.
+cantons:
+  "1. Wahlkreis (Zürich 1+2)": Q117787833       # Wahlkreis Stadt Zürich 1+2
+  "2. Wahlkreis (Zürich 3+9)": Q141024892       # Wahlkreis Stadt Zürich 3+9
+  "3. Wahlkreis (Zürich 4+5)": Q117787885       # Wahlkreis Stadt Zürich 4+5
+  "4. Wahlkreis (Zürich 6 + 10)": Q141045392    # Wahlkreis Stadt Zürich 6+10
+  "5. Wahlkreis (Zürich 7+8)": Q117787912       # Wahlkreis Stadt Zürich 7+8
+  "6. Wahlkreis (Zürich 11 + 12)": Q141045475   # Wahlkreis Stadt Zürich 11+12
+  "7. Wahlkreis (Dietikon)": Q141045570         # Wahlkreis Dietikon
+  "8. Wahlkreis (Affoltern)": Q141045868        # Wahlkreis Affoltern
+  "9. Wahlkreis (Horgen)": Q141045940           # Wahlkreis Horgen
+  "10. Wahlkreis (Meilen)": Q141045943          # Wahlkreis Meilen
+  "11. Wahlkreis (Hinwil)": Q141045999          # Wahlkreis Hinwil
+  "12. Wahlkreis (Uster)": Q141045946           # Wahlkreis Uster
+  "13. Wahlkreis (Pfäffikon)": Q141046002       # Wahlkreis Pfäffikon
+  "14. Wahlkreis (Winterthur Stadt)": Q141046009  # Wahlkreis Stadt Winterthur
+  "15. Wahlkreis (Winterthur Land)": Q141046014   # Wahlkreis Winterthur-Land
+  "16. Wahlkreis (Andelfingen)": Q141046020     # Wahlkreis Andelfingen
+  "17. Wahlkreis (Bülach)": Q141046072          # Wahlkreis Bülach
+  "18. Wahlkreis (Dielsdorf)": Q141046076       # Wahlkreis Dielsdorf
+
+# ⚠️ Historic tenures use districts from before the 2007 reorganisation — 220
+# distinct spellings across the register's 6,767 seats — and those have no
+# items and no entries here. They make no suggestion, which is correct: an
+# unmapped district is skipped, never guessed at.
 #
 # Note also what the seat's statements carry today: P768 appears on 3 of them,
 # naming Kreis 4, Kreis 5 and Kreis 11 — *city of Zürich quarters*, a third
 # kind of thing again. Those three want fixing by hand; this tool only adds,
-# so it would leave them with two values rather than correct them.
-cantons:
-  "1. Wahlkreis (Zürich 1+2)": ""
-  "2. Wahlkreis (Zürich 3+9)": ""
-  "3. Wahlkreis (Zürich 4+5)": ""
-  "4. Wahlkreis (Zürich 6 + 10)": ""
-  "5. Wahlkreis (Zürich 7+8)": ""
-  "6. Wahlkreis (Zürich 11 + 12)": ""
-  "7. Wahlkreis (Dietikon)": ""
-  "8. Wahlkreis (Affoltern)": ""
-  "9. Wahlkreis (Horgen)": ""
-  "10. Wahlkreis (Meilen)": ""
-  "11. Wahlkreis (Hinwil)": ""
-  "12. Wahlkreis (Uster)": ""
-  "13. Wahlkreis (Pfäffikon)": ""
-  "14. Wahlkreis (Winterthur Stadt)": ""
-  "15. Wahlkreis (Winterthur Land)": ""
-  "16. Wahlkreis (Andelfingen)": ""
-  "17. Wahlkreis (Bülach)": ""
-  "18. Wahlkreis (Dielsdorf)": ""
+# so it would leave those members with two values rather than correct them.
 
 # Parties come from the Parteien sheet as the register's own abbreviations
 # (FDP, SP, SVP, …), one row per affiliation *spell*. Empty until each is
