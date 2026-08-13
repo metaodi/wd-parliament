@@ -84,6 +84,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -441,24 +442,42 @@ SELECT ?item ?itemLabel ?itemDescription WHERE {{
 """
 
 
-def district_key(text: str) -> Optional[int]:
-    """The district *number* in a name, arabic or roman. Pure.
+# Words that say what kind of thing this is rather than which one. Dropped
+# before comparing, because the register writes ``14. Wahlkreis (Winterthur
+# Stadt)`` and the item is labelled ``Wahlkreis Stadt Winterthur`` — same
+# district, and the only difference is decoration.
+_DISTRICT_STOPWORDS = {"wahlkreis", "stadt", "kreis", "kanton", "zh"}
 
-    ``'9. Wahlkreis (Horgen)'`` and ``'Wahlkreis IX Horgen'`` are the same
-    district, and the number is the only token both sides reliably carry. A
-    name with no number returns ``None`` rather than a guess — an unaligned
-    district is reported as unaligned, never mapped to whatever was nearest.
+
+def district_key(text: str) -> Optional[Tuple[str, ...]]:
+    """A district name → the tokens that identify *which* district. Pure.
+
+    **Not the number.** Run 31 aligned on the first number in each name and
+    produced a mapping that was five-sixths wrong, because the numbers in the
+    item labels are city *quarter* numbers: ``Wahlkreis Stadt Zürich 3+9`` is
+    the register's **2.** Wahlkreis, so keying it on ``3`` matched it to the
+    register's third — and pushed ``Wahlkreis Stadt Zürich 7+8`` onto
+    ``7. Wahlkreis (Dietikon)``, a district that is not in the city at all.
+
+    That is this repo's oldest lesson in a new costume: a token that *looks*
+    like the join key is not the join key. Both sides do name the same place —
+    ``Zürich 1+2``, ``Uster``, ``Winterthur Land`` — so the place is what they
+    are lined up on, as a set of folded tokens with the kind-words removed.
+    ``6 + 10`` and ``6+10`` become the same tokens, which is the whole reason
+    to split rather than to compare strings.
+
+    Returns ``None`` for a name with nothing identifying left in it, which is
+    reported as unaligned rather than matched to whatever was nearest.
     """
-    for token in re.split(r"[^\w]+", str(text or "")):
-        if not token:
-            continue
-        if token.isdigit():
-            value = int(token)
-            return value if 1 <= value <= 18 else None
-        roman = _ROMAN.get(token.lower())
-        if roman:
-            return roman
-    return None
+    folded = unicodedata.normalize("NFKD", str(text or ""))
+    folded = "".join(c for c in folded if not unicodedata.combining(c))
+    tokens = [t for t in re.split(r"[^0-9A-Za-z]+", folded.lower()) if t]
+    # The register prefixes its own ordinal ("9. Wahlkreis (Horgen)"). It is a
+    # position in a list, not part of the name, and the items do not carry it.
+    if tokens and tokens[0].isdigit() and "wahlkreis" in tokens[:2]:
+        tokens = tokens[1:]
+    significant = tuple(sorted(t for t in tokens if t not in _DISTRICT_STOPWORDS))
+    return significant or None
 
 
 def align_districts(
@@ -466,27 +485,26 @@ def align_districts(
 ) -> Tuple[Dict[str, Tuple[str, str]], List[str], List[Dict[str, str]]]:
     """Line the register's districts up with the class's items. Pure.
 
-    Returns ``(number -> (qid, label), register names with no item, items with
-    no register district)``. Both leftovers are returned rather than dropped:
-    "eighteen of eighteen" is only meaningful next to what did not match, and
-    an item nobody claims is as much a finding as a district nobody has.
+    Returns ``(register name -> (qid, label), register names with no item,
+    items with no register district)``. Both leftovers are returned rather than
+    dropped: "eighteen of eighteen" is only meaningful next to what did not
+    match, and an item nobody claims is as much a finding as a district nobody
+    has.
 
-    A number claimed by two items is left **unaligned** — this repo does not
+    A key claimed by two items is left **unaligned** — this repo does not
     arbitrate a duplicate, and a wrong district would be written onto every
     member who sits in it.
     """
-    by_number: Dict[int, List[Dict[str, str]]] = {}
+    by_key: Dict[Tuple[str, ...], List[Dict[str, str]]] = {}
     for item in items:
-        key = district_key(item.get("label", "")) or district_key(
-            item.get("description", "")
-        )
-        if key is not None:
-            by_number.setdefault(key, []).append(item)
+        key = district_key(item.get("label", ""))
+        if key:
+            by_key.setdefault(key, []).append(item)
 
     mapping: Dict[str, Tuple[str, str]] = {}
     unmatched: List[str] = []
-    for number, name in register.items():
-        hits = by_number.get(int(number), [])
+    for name in register.values():
+        hits = by_key.get(district_key(name) or (), [])
         if len(hits) == 1:
             mapping[name] = (hits[0]["qid"], hits[0].get("label", ""))
         else:
@@ -494,6 +512,16 @@ def align_districts(
     claimed = {q for q, _ in mapping.values()}
     spare = [i for i in items if i.get("qid") and i["qid"] not in claimed]
     return mapping, unmatched, spare
+
+
+def district_order(name: str) -> int:
+    """The register's own ordinal, for printing in its order. Pure.
+
+    Used only to sort the YAML block — never to align, which is what run 31
+    got wrong.
+    """
+    head = str(name or "").strip().split(".", 1)[0].strip()
+    return int(head) if head.isdigit() else 99
 
 
 def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
@@ -505,7 +533,7 @@ def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
     """
     lines = ["cantons:"]
     for name, (qid, label) in sorted(
-        mapping.items(), key=lambda kv: district_key(kv[0]) or 99
+        mapping.items(), key=lambda kv: district_order(kv[0])
     ):
         lines.append(f'  "{name}": {qid}    # {label}')
     return lines
@@ -905,9 +933,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for line in render_cantons_yaml(mapping):
             print(f"  {line}")
         print(
-            "\n  Read it before pasting. The alignment is on the number alone,\n"
-            "  and a number is not a meaning — run 30's candidates were all\n"
-            "  plausible and all wrong."
+            "\n  Read it before pasting. The alignment is on the place both\n"
+            "  sides name, which is what run 31 got wrong by using the number:\n"
+            "  the digits in an item's label are city QUARTER numbers, so\n"
+            "  'Wahlkreis Stadt Zürich 3+9' is the register's 2nd district."
         )
 
     print("\nwhat do the seat's statements already carry?")
