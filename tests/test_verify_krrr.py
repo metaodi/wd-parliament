@@ -40,8 +40,12 @@ from verify_krrr import (  # noqa: E402
     births_by_name,
     classify_misses,
     diagnose_misses,
+    align_districts,
+    district_class_query,
     district_detail_query,
+    district_key,
     district_numbers,
+    render_cantons_yaml,
     district_usage_query,
     search_terms,
     filled,
@@ -516,3 +520,86 @@ def test_an_exact_match_suppresses_the_leaf_fallback():
 def test_the_fallback_still_runs_when_nothing_matches_exactly():
     sheets = {"Personen": (["person_kontakt_beruf"], [])}
     assert find_column(sheets, ("beruf",)) == [("Personen", "person_kontakt_beruf")]
+
+
+# --- aligning the register's districts with the new Wahlkreis items ---------
+# Run 30 could not find the districts because no class existed; one does now,
+# so the population is derived from it rather than searched for by name.
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("9. Wahlkreis (Horgen)", 9),
+        ("Wahlkreis IX Horgen", 9),
+        ("IX     Horgen", 9),
+        ("18. Wahlkreis (Dielsdorf)", 18),
+        ("Wahlkreis Horgen", None),
+        ("", None),
+    ],
+)
+def test_district_key_reads_arabic_and_roman(text, expected):
+    """This register numbers in arabic, OpenParlData's ZH rows in roman, and
+    the number is the only token both sides carry."""
+    assert district_key(text) == expected
+
+
+def test_a_number_outside_the_cantons_range_is_not_a_district_number():
+    assert district_key("Wahlkreis 2024") is None
+
+
+def item(qid, label, description=""):
+    return {"qid": qid, "label": label, "description": description}
+
+
+def test_districts_align_on_the_number():
+    register = {"9": "9. Wahlkreis (Horgen)", "3": "3. Wahlkreis (Zürich 4+5)"}
+    items = [item("Q1", "Wahlkreis IX Horgen"), item("Q2", "Wahlkreis III Zürich 4+5")]
+    mapping, unmatched, spare = align_districts(register, items)
+    assert mapping == {
+        "9. Wahlkreis (Horgen)": ("Q1", "Wahlkreis IX Horgen"),
+        "3. Wahlkreis (Zürich 4+5)": ("Q2", "Wahlkreis III Zürich 4+5"),
+    }
+    assert unmatched == [] and spare == []
+
+
+def test_a_number_two_items_claim_is_left_unaligned():
+    """This repo does not arbitrate a duplicate, and a wrong district would be
+    written onto every member who sits in it."""
+    register = {"9": "9. Wahlkreis (Horgen)"}
+    items = [item("Q1", "Wahlkreis IX Horgen"), item("Q2", "Wahlkreis 9 Horgen")]
+    mapping, unmatched, spare = align_districts(register, items)
+    assert mapping == {} and unmatched == ["9. Wahlkreis (Horgen)"]
+    assert {i["qid"] for i in spare} == {"Q1", "Q2"}
+
+
+def test_both_leftovers_are_reported():
+    """'Eighteen of eighteen' means nothing without what did not match, and an
+    item nobody claims is as much a finding as a district nobody has."""
+    register = {"9": "9. Wahlkreis (Horgen)", "7": "7. Wahlkreis (Dietikon)"}
+    items = [item("Q1", "Wahlkreis IX Horgen"), item("Q9", "Wahlkreis XVII Bülach")]
+    mapping, unmatched, spare = align_districts(register, items)
+    assert list(mapping) == ["9. Wahlkreis (Horgen)"]
+    assert unmatched == ["7. Wahlkreis (Dietikon)"]
+    assert [i["qid"] for i in spare] == ["Q9"]
+
+
+def test_an_unnumbered_item_falls_back_to_its_description():
+    items = [item("Q1", "Wahlkreis Horgen", "9. Wahlkreis des Kantons Zürich")]
+    mapping, _, _ = align_districts({"9": "9. Wahlkreis (Horgen)"}, items)
+    assert mapping["9. Wahlkreis (Horgen)"][0] == "Q1"
+
+
+def test_the_yaml_block_is_ordered_by_district_number():
+    mapping = {
+        "10. Wahlkreis (Meilen)": ("Q10", "Wahlkreis X"),
+        "2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis II"),
+    }
+    lines = render_cantons_yaml(mapping)
+    assert lines[0] == "cantons:"
+    assert lines[1].startswith('  "2. Wahlkreis') and "Q2" in lines[1]
+    assert lines[2].startswith('  "10. Wahlkreis')
+
+
+def test_the_class_query_is_bounded_by_the_class():
+    sparql = district_class_query("Q141021240", "de")
+    assert "wdt:P31 wd:Q141021240" in sparql
+    assert "CONTAINS" not in sparql  # run 29's scan, not repeated

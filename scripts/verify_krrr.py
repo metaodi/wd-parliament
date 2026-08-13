@@ -82,6 +82,7 @@ sheet's columns is the guard.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -405,6 +406,111 @@ def births_by_name(bindings: Sequence[dict]) -> Dict[str, str]:
 CANTON_ZURICH = "Q11943"
 
 
+# The class the canton's Kantonsrat electoral districts were created under.
+# Deriving the population from it is strictly better than searching for names:
+# a class is what run 30 looked for and could not find, and every candidate it
+# returned was the *place* a district is named after — the municipality, the
+# Bezirk, once a `Meilenstein`. **The Bezirke are not the Wahlkreise**, and the
+# register's own rows prove it: six Wahlkreise cover the city of Zürich and the
+# city is one Bezirk. With a class in hand none of that guessing is needed.
+DISTRICT_CLASS = "Q141021240"
+
+# Roman numerals up to XVIII, because the canton has eighteen districts and
+# both spellings are in circulation: this register numbers them in arabic
+# (``9. Wahlkreis (Horgen)``) while OpenParlData's ZH rows use roman
+# (``IX     Horgen``). Aligning on the number is the whole trick, so it has to
+# survive either.
+_ROMAN = {
+    "i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7, "viii": 8,
+    "ix": 9, "x": 10, "xi": 11, "xii": 12, "xiii": 13, "xiv": 14, "xv": 15,
+    "xvi": 16, "xvii": 17, "xviii": 18,
+}
+
+
+def district_class_query(class_qid: str = DISTRICT_CLASS, language: str = "de") -> str:
+    """Every item of the district class, with its label and description.
+
+    Bounded by the class, so it is cheap — unlike run 29's attempt to find the
+    class by filtering type *labels*, which scanned Wikidata and timed out.
+    """
+    return f"""
+SELECT ?item ?itemLabel ?itemDescription WHERE {{
+  ?item wdt:P31 wd:{class_qid} .
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en,mul". }}
+}}
+"""
+
+
+def district_key(text: str) -> Optional[int]:
+    """The district *number* in a name, arabic or roman. Pure.
+
+    ``'9. Wahlkreis (Horgen)'`` and ``'Wahlkreis IX Horgen'`` are the same
+    district, and the number is the only token both sides reliably carry. A
+    name with no number returns ``None`` rather than a guess — an unaligned
+    district is reported as unaligned, never mapped to whatever was nearest.
+    """
+    for token in re.split(r"[^\w]+", str(text or "")):
+        if not token:
+            continue
+        if token.isdigit():
+            value = int(token)
+            return value if 1 <= value <= 18 else None
+        roman = _ROMAN.get(token.lower())
+        if roman:
+            return roman
+    return None
+
+
+def align_districts(
+    register: Dict[str, str], items: Sequence[Dict[str, str]]
+) -> Tuple[Dict[str, Tuple[str, str]], List[str], List[Dict[str, str]]]:
+    """Line the register's districts up with the class's items. Pure.
+
+    Returns ``(number -> (qid, label), register names with no item, items with
+    no register district)``. Both leftovers are returned rather than dropped:
+    "eighteen of eighteen" is only meaningful next to what did not match, and
+    an item nobody claims is as much a finding as a district nobody has.
+
+    A number claimed by two items is left **unaligned** — this repo does not
+    arbitrate a duplicate, and a wrong district would be written onto every
+    member who sits in it.
+    """
+    by_number: Dict[int, List[Dict[str, str]]] = {}
+    for item in items:
+        key = district_key(item.get("label", "")) or district_key(
+            item.get("description", "")
+        )
+        if key is not None:
+            by_number.setdefault(key, []).append(item)
+
+    mapping: Dict[str, Tuple[str, str]] = {}
+    unmatched: List[str] = []
+    for number, name in register.items():
+        hits = by_number.get(int(number), [])
+        if len(hits) == 1:
+            mapping[name] = (hits[0]["qid"], hits[0].get("label", ""))
+        else:
+            unmatched.append(name)
+    claimed = {q for q, _ in mapping.values()}
+    spare = [i for i in items if i.get("qid") and i["qid"] not in claimed]
+    return mapping, unmatched, spare
+
+
+def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
+    """The ``cantons:`` block, ready to paste. Pure.
+
+    Printed rather than written: the config is a human's statement about what
+    the data means, and a probe that edited it would remove the one review
+    step that has caught every Q-ID mistake this repo has made.
+    """
+    lines = ["cantons:"]
+    for name, (qid, label) in sorted(
+        mapping.items(), key=lambda kv: district_key(kv[0]) or 99
+    ):
+        lines.append(f'  "{name}": {qid}    # {label}')
+    return lines
+
+
 def search_entities(
     http: HttpClient, term: str, language: str = "de", limit: int = 5
 ) -> List[Dict[str, str]]:
@@ -556,6 +662,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-c", "--config", default="config/kantonsrat-zh.yaml")
     parser.add_argument("--url", default=KRRR_URL, help="The KRRR Excel export.")
+    parser.add_argument(
+        "--district-class",
+        default=DISTRICT_CLASS,
+        help=(
+            "The Wikidata class the Kantonsrat's electoral districts are "
+            "instances of. Section F derives its candidates from this rather "
+            "than searching for names — run 30 showed a name search returns "
+            "the *place* a district is named after, never the district."
+        ),
+    )
     parser.add_argument(
         "--verbose", action="store_true", help="Print every column, not the head."
     )
@@ -755,48 +871,44 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for value in unnumbered:
             print(f"      {value!r}")
 
-    print("\ndoes Wikidata have items for them? (candidates, not answers)")
-    candidates: Dict[str, List[Dict[str, str]]] = {}
-    for number, name in sorted(numbered.items(), key=lambda kv: int(kv[0])):
-        hits: List[Dict[str, str]] = []
-        for term in search_terms(name):
-            try:
-                hits = search_entities(http, term, config.language, limit=3)
-            except Exception as exc:
-                print(f"  ! search failed for {term!r}: {exc}")
-                hits = []
-            if hits:
-                break
-        candidates[number] = hits
+    print(f"\nitems of class {args.district_class} (the Wahlkreis class):")
+    items: List[Dict[str, str]] = []
+    try:
+        for row in wikidata.run_query(
+            district_class_query(args.district_class, config.language)
+        ):
+            items.append(
+                {
+                    "qid": (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1],
+                    "label": (row.get("itemLabel") or {}).get("value", ""),
+                    "description": (row.get("itemDescription") or {}).get("value", ""),
+                }
+            )
+    except Exception as exc:
+        print(f"  ! could not read Wikidata: {exc}")
+    print(f"  {len(items)} item(s)")
+    for item in items[: (len(items) if args.verbose else 20)]:
+        print(f"    {item['qid']:<11} {item['label'][:40]:<40} {item['description'][:30]}")
+    if not args.verbose and len(items) > 20:
+        print(f"    ... {len(items) - 20} more (--verbose for all)")
 
-    detail: Dict[str, Tuple[str, str]] = {}
-    qids = [h["qid"] for hits in candidates.values() for h in hits if h.get("qid")]
-    if qids:
-        try:
-            for row in wikidata.run_query(
-                district_detail_query(sorted(set(qids)), config.language)
-            ):
-                qid = (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1]
-                detail[qid] = (
-                    (row.get("typeLabel") or {}).get("value", ""),
-                    (row.get("inLabel") or {}).get("value", ""),
-                )
-        except Exception as exc:
-            print(f"  ! could not read the candidates' types: {exc}")
-
-    for number, hits in sorted(candidates.items(), key=lambda kv: int(kv[0])):
-        print(f"  {number:>2}. {numbered[number]}")
-        if not hits:
-            print("      (no candidate found)")
-        for hit in hits:
-            kind, where = detail.get(hit["qid"], ("", ""))
-            note = f"{kind} · {where}".strip(" ·") or hit.get("description", "")
-            print(f"      {hit['qid']:<11} {hit['label'][:34]:<34} {note[:34]}")
+    mapping, unmatched, spare = align_districts(numbered, items)
     print(
-        "\n  Which of these is the register's '3. Wahlkreis' is a reader's\n"
-        "  judgement, and this probe fills nothing in — run 13 spent a whole\n"
-        "  run on a Q-ID that turned out to be a Wikimedia category."
+        f"\naligned on the district number: {len(mapping)} of {len(numbered)}"
     )
+    for name in unmatched:
+        print(f"    no single item for {name!r}")
+    for item in spare:
+        print(f"    no register district for {item['qid']} {item['label']!r}")
+    if mapping:
+        print("\n  paste into config/kantonsrat-zh-krdaten.yaml:\n")
+        for line in render_cantons_yaml(mapping):
+            print(f"  {line}")
+        print(
+            "\n  Read it before pasting. The alignment is on the number alone,\n"
+            "  and a number is not a meaning — run 30's candidates were all\n"
+            "  plausible and all wrong."
+        )
 
     print("\nwhat do the seat's statements already carry?")
     position = config.bodies[0].position_qid if config.bodies else ""
