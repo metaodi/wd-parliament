@@ -190,10 +190,28 @@ class Config:
         return None
 
     def canton_qid(self, abbreviation: Optional[str]) -> Optional[str]:
-        """The Q-ID for a canton abbreviation, or ``None`` when unmapped."""
+        """The Q-ID for a canton or electoral district, or ``None``. 
+
+        **The key is not always an abbreviation.** Federally it is ``ZH``, and
+        upper-casing the lookup is what makes ``zh`` from the source match.
+        Cantonally it is the district's whole name — ``9. Wahlkreis
+        (Horgen)`` — and upper-casing that matches nothing at all, which was
+        found the moment the ZH map was first filled in: eighteen entries, zero
+        lookups, no error, and a run that would have reported "no districts to
+        suggest" while holding all of them.
+
+        So the comparison folds case and collapses whitespace on both sides.
+        That keeps the federal behaviour exactly (``ZH`` still matches ``zh``)
+        and makes the cantonal one work, including the register's untidy
+        spacing (``'I      Zürich 1+2'``).
+        """
         if not abbreviation:
             return None
-        return self.cantons.get(abbreviation.strip().upper())
+        wanted = _fold_key(abbreviation)
+        for key, qid in self.cantons.items():
+            if _fold_key(key) == wanted:
+                return qid
+        return None
 
     def party_qid(self, abbreviation: Optional[str]) -> Optional[str]:
         if not abbreviation:
@@ -263,6 +281,17 @@ class Config:
         """The enabled personal-data checks, in the canonical order."""
         enabled = set(self.person_data)
         return [c for c in PERSON_DATA_BY_PROPERTY.values() if c.property_id in enabled]
+
+
+def _fold_key(value: object) -> str:
+    """A map key and a source value, made comparable. Pure.
+
+    Case-folded with runs of whitespace collapsed, because the two sides are
+    written by different hands: a config says ``9. Wahlkreis (Horgen)`` and a
+    source may say ``9.  Wahlkreis  (Horgen)``, and a canton is ``ZH`` in one
+    place and ``zh`` in another.
+    """
+    return " ".join(str(value or "").split()).casefold()
 
 
 def _as_qid_map(raw: Optional[dict], what: str) -> Dict[str, str]:

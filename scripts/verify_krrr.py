@@ -82,7 +82,9 @@ sheet's columns is the guard.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -398,6 +400,316 @@ def births_by_name(bindings: Sequence[dict]) -> Dict[str, str]:
     return {k: v.pop() for k, v in seen.items() if len(v) == 1}
 
 
+# The canton of Zürich, kept so a reader of section F can tell at a glance
+# whether a candidate district is even in the right canton. Not used to bound
+# a query any more: run 29's class-first attempt timed out on WDQS, and the
+# search API answers 18 cheap questions where SPARQL could not answer one.
+CANTON_ZURICH = "Q11943"
+
+
+# The class the canton's Kantonsrat electoral districts were created under.
+# Deriving the population from it is strictly better than searching for names:
+# a class is what run 30 looked for and could not find, and every candidate it
+# returned was the *place* a district is named after — the municipality, the
+# Bezirk, once a `Meilenstein`. **The Bezirke are not the Wahlkreise**, and the
+# register's own rows prove it: six Wahlkreise cover the city of Zürich and the
+# city is one Bezirk. With a class in hand none of that guessing is needed.
+DISTRICT_CLASS = "Q141021240"
+
+# Roman numerals up to XVIII, because the canton has eighteen districts and
+# both spellings are in circulation: this register numbers them in arabic
+# (``9. Wahlkreis (Horgen)``) while OpenParlData's ZH rows use roman
+# (``IX     Horgen``). Aligning on the number is the whole trick, so it has to
+# survive either.
+_ROMAN = {
+    "i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7, "viii": 8,
+    "ix": 9, "x": 10, "xi": 11, "xii": 12, "xiii": 13, "xiv": 14, "xv": 15,
+    "xvi": 16, "xvii": 17, "xviii": 18,
+}
+
+
+def district_class_query(class_qid: str = DISTRICT_CLASS, language: str = "de") -> str:
+    """Every item of the district class, with its label and description.
+
+    Bounded by the class, so it is cheap — unlike run 29's attempt to find the
+    class by filtering type *labels*, which scanned Wikidata and timed out.
+
+    **P4565 "electoral district number" is what the items are aligned on**, and
+    it is a different class of evidence from anything used before it: an
+    explicit statement of *which* district this is, rather than a name two
+    parties spell independently. It is ``OPTIONAL`` because an item without one
+    is a fact to report, not a row to lose — and the name alignment still runs
+    beside it, because run 31 proved a number can be the wrong number. Two
+    independent signals agreeing is the claim worth acting on; one contradicting
+    the other is a finding, not a tie to break.
+    """
+    return f"""
+SELECT ?item ?itemLabel ?itemDescription ?number WHERE {{
+  ?item wdt:P31 wd:{class_qid} .
+  OPTIONAL {{ ?item wdt:P4565 ?number . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en,mul". }}
+}}
+"""
+
+
+# Words that say what kind of thing this is rather than which one. Dropped
+# before comparing, because the register writes ``14. Wahlkreis (Winterthur
+# Stadt)`` and the item is labelled ``Wahlkreis Stadt Winterthur`` — same
+# district, and the only difference is decoration.
+_DISTRICT_STOPWORDS = {"wahlkreis", "stadt", "kreis", "kanton", "zh"}
+
+
+def district_key(text: str) -> Optional[Tuple[str, ...]]:
+    """A district name → the tokens that identify *which* district. Pure.
+
+    **Not the number.** Run 31 aligned on the first number in each name and
+    produced a mapping that was five-sixths wrong, because the numbers in the
+    item labels are city *quarter* numbers: ``Wahlkreis Stadt Zürich 3+9`` is
+    the register's **2.** Wahlkreis, so keying it on ``3`` matched it to the
+    register's third — and pushed ``Wahlkreis Stadt Zürich 7+8`` onto
+    ``7. Wahlkreis (Dietikon)``, a district that is not in the city at all.
+
+    That is this repo's oldest lesson in a new costume: a token that *looks*
+    like the join key is not the join key. Both sides do name the same place —
+    ``Zürich 1+2``, ``Uster``, ``Winterthur Land`` — so the place is what they
+    are lined up on, as a set of folded tokens with the kind-words removed.
+    ``6 + 10`` and ``6+10`` become the same tokens, which is the whole reason
+    to split rather than to compare strings.
+
+    Returns ``None`` for a name with nothing identifying left in it, which is
+    reported as unaligned rather than matched to whatever was nearest.
+    """
+    folded = unicodedata.normalize("NFKD", str(text or ""))
+    folded = "".join(c for c in folded if not unicodedata.combining(c))
+    tokens = [t for t in re.split(r"[^0-9A-Za-z]+", folded.lower()) if t]
+    # The register prefixes its own ordinal ("9. Wahlkreis (Horgen)"). It is a
+    # position in a list, not part of the name, and the items do not carry it.
+    if tokens and tokens[0].isdigit() and "wahlkreis" in tokens[:2]:
+        tokens = tokens[1:]
+    significant = tuple(sorted(t for t in tokens if t not in _DISTRICT_STOPWORDS))
+    return significant or None
+
+
+def align_districts(
+    register: Dict[str, str], items: Sequence[Dict[str, str]]
+) -> Tuple[
+    Dict[str, Tuple[str, str, str]],
+    List[str],
+    List[Dict[str, str]],
+    List[str],
+]:
+    """Line the register's districts up with the class's items. Pure.
+
+    Two independent signals, and the point is that they check each other:
+
+    * **P4565**, the item's own electoral-district number, against the
+      register's ordinal. An explicit identifier on both sides.
+    * **the place both sides name**, folded to tokens.
+
+    Returns ``(name -> (qid, label, how), unmatched, spare, conflicts)``.
+    ``how`` records which signals agreed, so the pasted config says on every
+    line what backs it.
+
+    A district where the two signals name **different items** is a conflict and
+    is *not* mapped. That is the whole reason for keeping both: run 31 aligned
+    on a number alone and was five-sixths wrong, because the digits in a label
+    were city quarter numbers. A number that disagrees with the place is
+    exactly that failure announcing itself, and picking a side would hide it.
+    """
+    by_number: Dict[int, List[Dict[str, str]]] = {}
+    by_name: Dict[Tuple[str, ...], List[Dict[str, str]]] = {}
+    for item in items:
+        number = _as_district_number(item.get("number"))
+        if number is not None:
+            by_number.setdefault(number, []).append(item)
+        key = district_key(item.get("label", ""))
+        if key:
+            by_name.setdefault(key, []).append(item)
+
+    def only(hits: Sequence[Dict[str, str]]) -> Optional[Dict[str, str]]:
+        # A key two items claim is no key: this repo does not arbitrate a
+        # duplicate, and a wrong district lands on every member who sits in it.
+        return hits[0] if len(hits) == 1 else None
+
+    mapping: Dict[str, Tuple[str, str, str]] = {}
+    unmatched: List[str] = []
+    conflicts: List[str] = []
+    for number, name in register.items():
+        by_num = only(by_number.get(int(number), []))
+        by_nam = only(by_name.get(district_key(name) or (), []))
+        if by_num and by_nam and by_num["qid"] != by_nam["qid"]:
+            conflicts.append(
+                f"{name}: P4565 says {by_num['qid']} {by_num.get('label', '')!r}, "
+                f"the name says {by_nam['qid']} {by_nam.get('label', '')!r}"
+            )
+            continue
+        chosen = by_num or by_nam
+        if not chosen:
+            unmatched.append(name)
+            continue
+        how = "P4565 + name" if (by_num and by_nam) else (
+            "P4565 only" if by_num else "name only"
+        )
+        mapping[name] = (chosen["qid"], chosen.get("label", ""), how)
+    claimed = {q for q, _, _ in mapping.values()}
+    spare = [i for i in items if i.get("qid") and i["qid"] not in claimed]
+    return mapping, unmatched, spare, conflicts
+
+
+def _as_district_number(value: object) -> Optional[int]:
+    """A P4565 value → the district number. Pure.
+
+    Range-checked to the canton's eighteen: a value outside it is not this
+    canton's district number, whatever else it may be.
+    """
+    text = " ".join(str(value or "").split())
+    try:
+        number = int(float(text))
+    except (TypeError, ValueError):
+        return None
+    return number if 1 <= number <= 18 else None
+
+
+def district_order(name: str) -> int:
+    """The register's own ordinal, for printing in its order. Pure.
+
+    Used only to sort the YAML block — never to align, which is what run 31
+    got wrong.
+    """
+    head = str(name or "").strip().split(".", 1)[0].strip()
+    return int(head) if head.isdigit() else 99
+
+
+def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
+    """The ``cantons:`` block, ready to paste. Pure.
+
+    Printed rather than written: the config is a human's statement about what
+    the data means, and a probe that edited it would remove the one review
+    step that has caught every Q-ID mistake this repo has made.
+    """
+    lines = ["cantons:"]
+    for name, (qid, label, how) in sorted(
+        mapping.items(), key=lambda kv: district_order(kv[0])
+    ):
+        lines.append(f'  "{name}": {qid}    # {label} [{how}]')
+    return lines
+
+
+def search_entities(
+    http: HttpClient, term: str, language: str = "de", limit: int = 5
+) -> List[Dict[str, str]]:
+    """Ask Wikidata's search for items matching a name. Bounded, not SPARQL.
+
+    Run 29's candidate query timed out, and deservedly: it asked for every
+    item with any ``P31`` whose type label mentions a constituency and only
+    then narrowed to the canton, which is a scan of Wikidata before the
+    selective clause runs. The search API asks 18 cheap questions instead of
+    one impossible one.
+
+    **This is a search, and run 13's rule about searches still holds**: the
+    Q-ID it returns is a *candidate*. The probe prints it with its description
+    and fills nothing in — a name that looks right is how ``Q19479543``, a
+    Wikimedia category held by nobody, got as far as being a default.
+    """
+    data = http.get_json(
+        "https://www.wikidata.org/w/api.php",
+        params={
+            "action": "wbsearchentities",
+            "search": term,
+            "language": language,
+            "uselang": language,
+            "type": "item",
+            "limit": limit,
+            "format": "json",
+        },
+    )
+    out = []
+    for hit in data.get("search", []):
+        out.append(
+            {
+                "qid": hit.get("id", ""),
+                "label": hit.get("label", ""),
+                "description": hit.get("description", ""),
+            }
+        )
+    return out
+
+
+def district_detail_query(qids: Sequence[str], language: str = "de") -> str:
+    """What *are* these candidates? Bounded by the Q-IDs already in hand.
+
+    A label alone cannot tell a Wahlkreis from a district of the same name, a
+    Wikimedia category or a municipality. Type (P31) and container (P131) can,
+    and asking about a handful of known items is cheap where asking about a
+    class was not.
+    """
+    values = " ".join(f"wd:{q}" for q in qids)
+    return f"""
+SELECT ?item ?itemLabel ?typeLabel ?inLabel WHERE {{
+  VALUES ?item {{ {values} }}
+  OPTIONAL {{ ?item wdt:P31 ?type . }}
+  OPTIONAL {{ ?item wdt:P131 ?in . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "{language},en". }}
+}}
+"""
+
+
+def search_terms(district: str) -> List[str]:
+    """The register's spelling → what to actually search for. Pure.
+
+    ``'9. Wahlkreis (Horgen)'`` is not a name anybody else uses. The part in
+    brackets is the district's real name and the prefix is the register's
+    numbering, so both are tried: the bracketed name first, because
+    ``'Wahlkreis Horgen'`` is the form a Wikidata label would take.
+    """
+    text = " ".join(str(district or "").split())
+    terms: List[str] = []
+    if "(" in text and ")" in text:
+        inner = text[text.index("(") + 1 : text.rindex(")")].strip()
+        if inner:
+            terms.append(f"Wahlkreis {inner}")
+            terms.append(inner)
+    if text and text not in terms:
+        terms.append(text)
+    return terms
+
+
+def district_usage_query(position_qid: str) -> str:
+    """How many P39 statements for the seat already carry a P768, and which.
+
+    Run 15 found 3 of 270, and all three naming *city of Zürich quarters*
+    rather than Wahlkreise — the wrong kind of thing, which is why the config's
+    map ships empty. Re-asked here because "there is no convention yet" is a
+    claim with a date on it, and because this tool only ever *adds*: a member
+    already carrying a wrong P768 would end up with two values, not a fix.
+    """
+    return f"""
+SELECT ?district ?districtLabel (COUNT(?person) AS ?count) WHERE {{
+  ?person p:P39 ?st .
+  ?st ps:P39 wd:{position_qid} .
+  ?st pq:P768 ?district .
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "de,en". }}
+}}
+GROUP BY ?district ?districtLabel
+ORDER BY DESC(?count)
+"""
+
+
+def district_numbers(values: Sequence[str]) -> Dict[str, str]:
+    """``'3. Wahlkreis (Zürich 4+5)'`` → ``{'3': the whole string}``. Pure.
+
+    The register numbers its districts and Wikidata will not, so the number is
+    the only token the two sides can be lined up on by machine. Everything
+    else about the alignment is a reader's job.
+    """
+    out: Dict[str, str] = {}
+    for value in values:
+        head = str(value).strip().split(".", 1)[0].strip()
+        if head.isdigit():
+            out.setdefault(head, str(value).strip())
+    return out
+
+
 def formatter_url_query() -> str:
     """P13468's own formatter URL (P1630) and its label.
 
@@ -432,8 +744,24 @@ def _verdict(name: str, verdict: str, detail: str) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("-c", "--config", default="config/kantonsrat-zh.yaml")
+    # The KRRR config, because this probe is about the KRRR source. Run 33
+    # ran with the OpenParlData one and reported "missing from config 18"
+    # about a file whose `cantons:` is empty on purpose — a statement about
+    # the probe's arguments dressed as a statement about the config.
+    parser.add_argument(
+        "-c", "--config", default="config/kantonsrat-zh-krdaten.yaml"
+    )
     parser.add_argument("--url", default=KRRR_URL, help="The KRRR Excel export.")
+    parser.add_argument(
+        "--district-class",
+        default=DISTRICT_CLASS,
+        help=(
+            "The Wikidata class the Kantonsrat's electoral districts are "
+            "instances of. Section F derives its candidates from this rather "
+            "than searching for names — run 30 showed a name search returns "
+            "the *place* a district is named after, never the district."
+        ),
+    )
     parser.add_argument(
         "--verbose", action="store_true", help="Print every column, not the head."
     )
@@ -603,6 +931,123 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             any_found = True
     if not any_found:
         print("    none of " + ", ".join(KNOWN_IDENTIFIER_COLUMNS))
+
+    # --- F. can the districts be mapped? ------------------------------------
+    print()
+    print("=" * 70)
+    print("F. Could P768 be filled in from the register's Wahlkreis?")
+    print("=" * 70)
+    district_cols = find_column(sheets, ("wahlkreis",))
+    districts: List[str] = []
+    for sheet, column in district_cols:
+        rows = sheets[sheet][1]
+        open_year = resolve_column(sheets[sheet][0], "datum_austritt_jahr")
+        for row in rows:
+            if open_year and (row.get(open_year) or "").strip():
+                continue  # a seat somebody has left; its district may be historic
+            value = " ".join((row.get(column) or "").split())
+            if value and value not in districts:
+                districts.append(value)
+    print(f"districts among *open* seats: {len(districts)}")
+    numbered = district_numbers(districts)
+    for number, name in sorted(numbered.items(), key=lambda kv: int(kv[0])):
+        print(f"  {number:>2}. {name}")
+    unnumbered = [d for d in districts if d not in numbered.values()]
+    if unnumbered:
+        # Naming it rather than counting it: run 29 reported "1 not numbered"
+        # and left a reader unable to tell a stray blank from a real district
+        # the alignment would silently drop.
+        print(f"  not numbered, so unalignable ({len(unnumbered)}):")
+        for value in unnumbered:
+            print(f"      {value!r}")
+
+    print(f"\nitems of class {args.district_class} (the Wahlkreis class):")
+    items: List[Dict[str, str]] = []
+    try:
+        for row in wikidata.run_query(
+            district_class_query(args.district_class, config.language)
+        ):
+            items.append(
+                {
+                    "qid": (row.get("item") or {}).get("value", "").rsplit("/", 1)[-1],
+                    "label": (row.get("itemLabel") or {}).get("value", ""),
+                    "description": (row.get("itemDescription") or {}).get("value", ""),
+                    "number": (row.get("number") or {}).get("value", ""),
+                }
+            )
+    except Exception as exc:
+        print(f"  ! could not read Wikidata: {exc}")
+    print(f"  {len(items)} item(s)")
+    for item in items[: (len(items) if args.verbose else 20)]:
+        number = item.get("number") or "-"
+        print(
+            f"    {item['qid']:<11} P4565={number:<4} {item['label'][:38]:<38} "
+            f"{item['description'][:26]}"
+        )
+    if not args.verbose and len(items) > 20:
+        print(f"    ... {len(items) - 20} more (--verbose for all)")
+
+    mapping, unmatched, spare, conflicts = align_districts(numbered, items)
+    agreed = sum(1 for _, _, how in mapping.values() if how == "P4565 + name")
+    print(
+        f"\naligned: {len(mapping)} of {len(numbered)} "
+        f"({agreed} with P4565 and the name agreeing)"
+    )
+    for line in conflicts:
+        print(f"    ⚠ CONFLICT  {line}")
+    for name in unmatched:
+        print(f"    no single item for {name!r}")
+    for item in spare:
+        print(f"    no register district for {item['qid']} {item['label']!r}")
+
+    # Does the committed config already say this? Filling `cantons:` by hand
+    # from a previous run's output is exactly the step that needs checking,
+    # and the probe is holding both halves right here.
+    print("\nagainst the config as committed:")
+    same = differ = absent = 0
+    for name, (qid, _, _) in sorted(mapping.items(), key=lambda kv: district_order(kv[0])):
+        configured = config.canton_qid(name)
+        if configured is None:
+            absent += 1
+            print(f"    {name!r}: not in the config (derived {qid})")
+        elif configured == qid:
+            same += 1
+        else:
+            differ += 1
+            print(f"    ⚠ {name!r}: config {configured}, derived {qid}")
+    print(f"    agree {same} · differ {differ} · missing from config {absent}")
+    if mapping:
+        print("\n  paste into config/kantonsrat-zh-krdaten.yaml:\n")
+        for line in render_cantons_yaml(mapping):
+            print(f"  {line}")
+        print(
+            "\n  Read it before pasting. [P4565 + name] means the item's own\n"
+            "  electoral-district number and the place it names agree. A line\n"
+            "  backed by only one of them is still worth a look: run 31 used\n"
+            "  the number alone and was five-sixths wrong, because the digits\n"
+            "  in a label are city QUARTER numbers — 'Wahlkreis Stadt Zürich\n"
+            "  3+9' is the register's 2nd district, not its 3rd."
+        )
+
+    print("\nwhat do the seat's statements already carry?")
+    position = config.bodies[0].position_qid if config.bodies else ""
+    try:
+        used = wikidata.run_query(district_usage_query(position)) if position else []
+    except Exception as exc:
+        print(f"  ! could not read Wikidata: {exc}")
+        used = []
+    if not used:
+        print("  no P39 statement for this seat carries a P768 at all.")
+    for row in used[:10]:
+        label = (row.get("districtLabel") or {}).get("value", "")
+        qid = (row.get("district") or {}).get("value", "").rsplit("/", 1)[-1]
+        count = (row.get("count") or {}).get("value", "?")
+        print(f"    {count:>4}x  {qid:<12} {label}")
+    print(
+        "\n  Run 15 found 3 of 270, all naming *city of Zürich quarters* rather\n"
+        "  than Wahlkreise. This tool only ever ADDS, so a member carrying a\n"
+        "  wrong P768 ends up with two values rather than a correction."
+    )
 
     print()
     print("=" * 70)

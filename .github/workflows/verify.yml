@@ -331,7 +331,7 @@ jobs:
         run: |
           set +e
           uv run python scripts/verify_krrr.py \
-            --config config/kantonsrat-zh.yaml 2>&1 | tee krrr.txt
+            --config config/kantonsrat-zh-krdaten.yaml 2>&1 | tee krrr.txt
           {
             echo "## 10. Staatsarchiv KRRR export — README step 11"
             echo
