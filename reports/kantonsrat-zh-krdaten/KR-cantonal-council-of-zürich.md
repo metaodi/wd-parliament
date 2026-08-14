@@ -1,34 +1,41 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-11 10:59 UTC
+Generated: 2026-08-14 09:03 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (the Staatsarchiv's KR-Daten register): 180
-- Matched by P13468: 63 (35.0%)
+- Matched by P13468: 67 (37.2%)
 - Matched by name + birth date: 60
-- Not matched at all: 57
+- Not matched at all: 53
 - Open memberships on Wikidata: 167
-- Suggested edits: 370
+- Suggested edits: 476
 
 ## By kind
 
 - Item matched by name but has no unique ID (the source's own): **45**
-- Sitting member, but no position held (P39) statement: **13**
-- Recorded as sitting, but the member has left: **57**
+- Sitting member, but no position held (P39) statement: **15**
+- Recorded as sitting, but the member has left: **55**
 - Start date (P580) disagrees with source: **1**
-- Open membership without a start date (P580): **89**
-- Missing the parliament's other identifier — value to be looked up: **107**
-- Sitting member, but no Wikidata item could be found: **57**
+- Open membership without a start date (P580): **88**
+- Membership missing an electoral district (P768) or group (P4100): **112**
+- Missing the parliament's other identifier — value to be looked up: **106**
+- Sitting member, but no Wikidata item could be found: **53**
 - Personal data the source publishes and Wikidata does not record: **1**
 
-## Electoral district: 1. Wahlkreis (Zürich 1+2) (2)
+## Electoral district: 1. Wahlkreis (Zürich 1+2) (5)
+
+### Membership missing an electoral district (P768) or group (P4100) (3)
+
+- **[Sonja Rueff-Frenkel](https://www.wikidata.org/wiki/Q110402390)** ([#21984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21984)) — Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).
+- **[Stephan Hegetschweiler](https://www.wikidata.org/wiki/Q131940639)** ([#22678](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678)) — Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).
+- **[Ueli Bamert](https://www.wikidata.org/wiki/Q131937829)** ([#22505](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22505)) — Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).
 
 ### Sitting member, but no Wikidata item could be found (2)
 
 - **Marion Schmid** ([#22970](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22970)) — 'Marion Schmid' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22970) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Sabine Arnold** ([#22979](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22979)) — 'Sabine Arnold' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22979) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 10. Wahlkreis (Meilen) (20)
+## Electoral district: 10. Wahlkreis (Meilen) (30)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -46,6 +53,19 @@ Generated: 2026-08-11 10:59 UTC
 - **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) — Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Tumasch Mischol](https://www.wikidata.org/wiki/Q131940588)** ([#22467](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
+### Membership missing an electoral district (P768) or group (P4100) (10)
+
+- **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#23336](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23336)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Corinne Hoss-Blatter](https://www.wikidata.org/wiki/Q131940632)** ([#23303](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23303)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Domenik Ledergerber](https://www.wikidata.org/wiki/Q131940583)** ([#22496](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22496)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Marion Matter](https://www.wikidata.org/wiki/Q131946071)** ([#22351](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22351)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Marzena Kopp](https://www.wikidata.org/wiki/Q131940591)** ([#21502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21502)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Rafael Mörgeli](https://www.wikidata.org/wiki/Q131938303)** ([#21711](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21711)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Reto Agosti](https://www.wikidata.org/wiki/Q125949007)** ([#22350](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22350)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Sarah Fuchs](https://www.wikidata.org/wiki/Q131946048)** ([#22473](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22473)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+- **[Tumasch Mischol](https://www.wikidata.org/wiki/Q131940588)** ([#22467](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
+
 ### Missing the parliament's other identifier — value to be looked up (9)
 
 - **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#23336](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23336)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -62,7 +82,7 @@ Generated: 2026-08-11 10:59 UTC
 
 - **Manuela Tremonte** ([#22973](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22973)) — 'Manuela Tremonte' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22973) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 11. Wahlkreis (Hinwil) (26)
+## Electoral district: 11. Wahlkreis (Hinwil) (35)
 
 ### Item matched by name but has no unique ID (the source's own) (5)
 
@@ -89,6 +109,18 @@ Generated: 2026-08-11 10:59 UTC
 - **[Tina Deplazes](https://www.wikidata.org/wiki/Q131940586)** ([#22446](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22446)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Walter Honegger](https://www.wikidata.org/wiki/Q131946054)** ([#23302](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23302)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (9)
+
+- **[Andrea Gisler](https://www.wikidata.org/wiki/Q131940579)** ([#23293](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23293)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Andrea Grossen-Aerni](https://www.wikidata.org/wiki/Q131940629)** ([#22455](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22455)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Daniel Wäfler](https://www.wikidata.org/wiki/Q131940581)** ([#22506](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22506)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Elisabeth Pflugshaupt](https://www.wikidata.org/wiki/Q131940580)** ([#22162](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22162)) — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999).
+- **[Jörg Kündig](https://www.wikidata.org/wiki/Q123060972)** ([#22204](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22204)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Roger Cadonau](https://www.wikidata.org/wiki/Q131940628)** ([#22450](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22450)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Stephan Weber](https://www.wikidata.org/wiki/Q131948097)** ([#23321](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23321)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Tina Deplazes](https://www.wikidata.org/wiki/Q131940586)** ([#22446](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22446)) — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999).
+- **[Walter Honegger](https://www.wikidata.org/wiki/Q131946054)** ([#23302](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23302)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 11. Wahlkreis (Hinwil) (Q141045999). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
 ### Missing the parliament's other identifier — value to be looked up (10)
 
 - **[Advije Delihasani-Ajdari](https://www.wikidata.org/wiki/Q140987126)** ([#23283](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23283)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -102,7 +134,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Tina Deplazes](https://www.wikidata.org/wiki/Q131940586)** ([#22446](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22446)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Walter Honegger](https://www.wikidata.org/wiki/Q131946054)** ([#23302](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23302)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 12. Wahlkreis (Uster) (24)
+## Electoral district: 12. Wahlkreis (Uster) (30)
 
 ### Item matched by name but has no unique ID (the source's own) (4)
 
@@ -124,6 +156,15 @@ Generated: 2026-08-11 10:59 UTC
 - **[Simon Vlk](https://www.wikidata.org/wiki/Q131940616)** ([#22085](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22085)) ⚠️ — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Tobias Infortuna](https://www.wikidata.org/wiki/Q131940574)** ([#22478](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22478)) ⚠️ — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (6)
+
+- **[Anita Borer](https://www.wikidata.org/wiki/Q131940617)** ([#22497](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22497)) — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946).
+- **[Jacqueline Hofer](https://www.wikidata.org/wiki/Q131940573)** ([#22197](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22197)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Leandra Columberg](https://www.wikidata.org/wiki/Q65771072)** ([#23289](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23289)) — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946).
+- **[Monika Keller](https://www.wikidata.org/wiki/Q131946062)** ([#22480](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22480)) — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946).
+- **[Simon Vlk](https://www.wikidata.org/wiki/Q131940616)** ([#22085](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22085)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Tobias Infortuna](https://www.wikidata.org/wiki/Q131940574)** ([#22478](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22478)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 12. Wahlkreis (Uster) (Q141045946). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
 ### Missing the parliament's other identifier — value to be looked up (6)
 
 - **[Anita Borer](https://www.wikidata.org/wiki/Q131940617)** ([#22497](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22497)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -143,7 +184,7 @@ Generated: 2026-08-11 10:59 UTC
 - **Stefanie Elisabeth Huber** ([#23304](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23304)) — 'Stefanie Elisabeth Huber' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23304) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Ulrich Pfister** ([#21539](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21539)) — 'Ulrich Pfister' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #21539) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 13. Wahlkreis (Pfäffikon) (12)
+## Electoral district: 13. Wahlkreis (Pfäffikon) (15)
 
 ### Item matched by name but has no unique ID (the source's own) (2)
 
@@ -155,6 +196,12 @@ Generated: 2026-08-11 10:59 UTC
 - **[Andreas Hasler](https://www.wikidata.org/wiki/Q131944827)** ([#23299](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23299)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Andreas Juchli](https://www.wikidata.org/wiki/Q131940606)** ([#23305](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23305)) ⚠️ — Add a start date (P580) of 2022-03-14; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Brigitte Röösli](https://www.wikidata.org/wiki/Q131939916)** ([#22048](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22048)) ⚠️ — Add a start date (P580) of 2018-05-14; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
+### Membership missing an electoral district (P768) or group (P4100) (3)
+
+- **[Andreas Hasler](https://www.wikidata.org/wiki/Q131944827)** ([#23299](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23299)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 13. Wahlkreis (Pfäffikon) (Q141046002). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Andreas Juchli](https://www.wikidata.org/wiki/Q131940606)** ([#23305](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23305)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 13. Wahlkreis (Pfäffikon) (Q141046002). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Brigitte Röösli](https://www.wikidata.org/wiki/Q131939916)** ([#22048](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22048)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 13. Wahlkreis (Pfäffikon) (Q141046002). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
 ### Missing the parliament's other identifier — value to be looked up (3)
 
@@ -169,7 +216,7 @@ Generated: 2026-08-11 10:59 UTC
 - **Paul Euw von** ([#23290](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23290)) — 'Paul Euw von' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23290) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **René Truninger** ([#20497](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=20497)) — 'René Truninger' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #20497) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 14. Wahlkreis (Winterthur Stadt) (23)
+## Electoral district: 14. Wahlkreis (Winterthur Stadt) (31)
 
 ### Item matched by name but has no unique ID (the source's own) (5)
 
@@ -191,6 +238,17 @@ Generated: 2026-08-11 10:59 UTC
 - **[René Isler](https://www.wikidata.org/wiki/Q123053752)** ([#22201](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22201)) ⚠️ — Add a start date (P580) of 2003-05-19; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Susanna Lisibach](https://www.wikidata.org/wiki/Q131940631)** ([#23307](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23307)) ⚠️ — Add a start date (P580) of 2020-08-17; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (8)
+
+- **[Andreas Daurù](https://www.wikidata.org/wiki/Q131939377)** ([#23396](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23396)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Florian Heer](https://www.wikidata.org/wiki/Q131946050)** ([#23300](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23300)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Manuel Sahli](https://www.wikidata.org/wiki/Q61642713)** ([#9060](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=9060)) — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009).
+- **[Priska Lötscher](https://www.wikidata.org/wiki/Q131939954)** ([#22092](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22092)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[René Isler](https://www.wikidata.org/wiki/Q123053752)** ([#22201](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22201)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Roland Kappeler](https://www.wikidata.org/wiki/Q113951767)** ([#21704](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21704)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Susanna Lisibach](https://www.wikidata.org/wiki/Q131940631)** ([#23307](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23307)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Thomas Anwander](https://www.wikidata.org/wiki/Q131937783)** ([#22335](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22335)) — Add the missing qualifier(s): electoral district (P768) → 14. Wahlkreis (Winterthur Stadt) (Q141046009).
+
 ### Missing the parliament's other identifier — value to be looked up (9)
 
 - **[Andreas Daurù](https://www.wikidata.org/wiki/Q131939377)** ([#23396](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23396)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -209,7 +267,7 @@ Generated: 2026-08-11 10:59 UTC
 - **Jonas Pfister** ([#23228](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23228)) — 'Jonas Pfister' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23228) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Urs Glättli** ([#23294](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23294)) — 'Urs Glättli' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23294) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 15. Wahlkreis (Winterthur Land) (13)
+## Electoral district: 15. Wahlkreis (Winterthur Land) (19)
 
 ### Item matched by name but has no unique ID (the source's own) (2)
 
@@ -222,6 +280,15 @@ Generated: 2026-08-11 10:59 UTC
 - **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#23284](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Ruth Büchi-Vögeli](https://www.wikidata.org/wiki/Q131940576)** ([#22464](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22464)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Urs Wegmann](https://www.wikidata.org/wiki/Q131940594)** ([#22507](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22507)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (6)
+
+- **[Christoph Ziegler](https://www.wikidata.org/wiki/Q131937600)** ([#22182](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22182)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Markus Schaaf](https://www.wikidata.org/wiki/Q131948275)** ([#22352](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22352)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
+- **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#23284](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Ruth Büchi-Vögeli](https://www.wikidata.org/wiki/Q131940576)** ([#22464](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22464)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
+- **[Theres Agosti Monn](https://www.wikidata.org/wiki/Q131452636)** ([#18357](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18357)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
+- **[Urs Wegmann](https://www.wikidata.org/wiki/Q131940594)** ([#22507](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22507)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
 
 ### Missing the parliament's other identifier — value to be looked up (6)
 
@@ -236,7 +303,7 @@ Generated: 2026-08-11 10:59 UTC
 
 - **Tobias Weidmann** ([#23322](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23322)) — 'Tobias Weidmann' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23322) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 16. Wahlkreis (Andelfingen) (8)
+## Electoral district: 16. Wahlkreis (Andelfingen) (10)
 
 ### Item matched by name but has no unique ID (the source's own) (2)
 
@@ -248,6 +315,11 @@ Generated: 2026-08-11 10:59 UTC
 - **[Paul Mayer](https://www.wikidata.org/wiki/Q131946072)** ([#23311](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23311)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Sibylle Jüttner](https://www.wikidata.org/wiki/Q131939457)** ([#23306](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23306)) ⚠️ — Add a start date (P580) of 2022-06-13; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (2)
+
+- **[Paul Mayer](https://www.wikidata.org/wiki/Q131946072)** ([#23311](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23311)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 16. Wahlkreis (Andelfingen) (Q141046020). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Sibylle Jüttner](https://www.wikidata.org/wiki/Q131939457)** ([#23306](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23306)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 16. Wahlkreis (Andelfingen) (Q141046020). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
 ### Sitting member, but no Wikidata item could be found (2)
 
 - **Jeannette Wibmer** ([#23066](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23066)) — 'Jeannette Wibmer' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23066) but no Wikidata item was found, by P13468 or by name. They may need a new item.
@@ -258,7 +330,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Paul Mayer](https://www.wikidata.org/wiki/Q131946072)** ([#23311](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23311)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Sibylle Jüttner](https://www.wikidata.org/wiki/Q131939457)** ([#23306](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23306)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 17. Wahlkreis (Bülach) (34)
+## Electoral district: 17. Wahlkreis (Bülach) (43)
 
 ### Item matched by name but has no unique ID (the source's own) (7)
 
@@ -285,6 +357,18 @@ Generated: 2026-08-11 10:59 UTC
 - **[Michael Biber](https://www.wikidata.org/wiki/Q131942957)** ([#22172](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22172)) ⚠️ — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Thomas Lamprecht](https://www.wikidata.org/wiki/Q131946066)** ([#22019](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22019)) ⚠️ — Add a start date (P580) of 2018-03-20; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (9)
+
+- **[Barbara Grüter](https://www.wikidata.org/wiki/Q131940604)** ([#23295](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23295)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Beat Hauser](https://www.wikidata.org/wiki/Q131940601)** ([#22475](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22475)) — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072).
+- **[Christian Pfaller](https://www.wikidata.org/wiki/Q131948074)** ([#22096](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22096)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Christoph Fischbach](https://www.wikidata.org/wiki/Q131937322)** ([#22186](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22186)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Doris Meier](https://www.wikidata.org/wiki/Q131946074)** ([#22043](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22043)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Kathrin Wydler](https://www.wikidata.org/wiki/Q131940624)** ([#22054](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22054)) — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072).
+- **[Linda Camenisch](https://www.wikidata.org/wiki/Q131940625)** ([#20496](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=20496)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Michael Biber](https://www.wikidata.org/wiki/Q131942957)** ([#22172](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22172)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Thomas Lamprecht](https://www.wikidata.org/wiki/Q131946066)** ([#22019](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22019)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 17. Wahlkreis (Bülach) (Q141046072). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
 ### Sitting member, but no Wikidata item could be found (8)
 
 - **Alex Seiler** ([#22985](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22985)) — 'Alex Seiler' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22985) but no Wikidata item was found, by P13468 or by name. They may need a new item.
@@ -309,7 +393,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Michael Biber](https://www.wikidata.org/wiki/Q131942957)** ([#22172](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22172)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Thomas Lamprecht](https://www.wikidata.org/wiki/Q131946066)** ([#22019](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22019)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 18. Wahlkreis (Dielsdorf) (21)
+## Electoral district: 18. Wahlkreis (Dielsdorf) (28)
 
 ### Item matched by name but has no unique ID (the source's own) (4)
 
@@ -326,6 +410,16 @@ Generated: 2026-08-11 10:59 UTC
 - **[Nadia Koch](https://www.wikidata.org/wiki/Q131946064)** ([#22481](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22481)) ⚠️ — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Priska Hänni-Mathis](https://www.wikidata.org/wiki/Q131940603)** ([#22160](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22160)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Stefan Schmid](https://www.wikidata.org/wiki/Q131948084)** ([#22502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22502)) ⚠️ — Add a start date (P580) of 2015-11-30; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
+### Membership missing an electoral district (P768) or group (P4100) (7)
+
+- **[Hans Egli](https://www.wikidata.org/wiki/Q131944820)** ([#22180](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22180)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Karl Heinz Meyer](https://www.wikidata.org/wiki/Q131946079)** ([#22157](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22157)) — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076).
+- **[Markus Bopp](https://www.wikidata.org/wiki/Q131940597)** ([#22508](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22508)) — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076).
+- **[Nadia Koch](https://www.wikidata.org/wiki/Q131946064)** ([#22481](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22481)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Priska Hänni-Mathis](https://www.wikidata.org/wiki/Q131940603)** ([#22160](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22160)) — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076).
+- **[Stefan Schmid](https://www.wikidata.org/wiki/Q131948084)** ([#22502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22502)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Wilma Willi](https://www.wikidata.org/wiki/Q115927501)** ([#23323](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23323)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 18. Wahlkreis (Dielsdorf) (Q141046076). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
 ### Sitting member, but no Wikidata item could be found (4)
 
@@ -344,7 +438,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Stefan Schmid](https://www.wikidata.org/wiki/Q131948084)** ([#22502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22502)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Wilma Willi](https://www.wikidata.org/wiki/Q115927501)** ([#23323](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23323)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 2. Wahlkreis (Zürich 3+9) (16)
+## Electoral district: 2. Wahlkreis (Zürich 3+9) (25)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -358,6 +452,18 @@ Generated: 2026-08-11 10:59 UTC
 - **[Lorenz Habicher](https://www.wikidata.org/wiki/Q131940644)** ([#22234](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22234)) — Add a start date (P580) of 2018-07-09; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Roland Scheck](https://www.wikidata.org/wiki/Q131940645)** ([#22233](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22233)) — Add a start date (P580) of 2011-08-22; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#22208](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22208)) — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (9)
+
+- **[Angie Romero](https://www.wikidata.org/wiki/Q131940637)** ([#23313](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23313)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Jasmin Pokerschnig](https://www.wikidata.org/wiki/Q116046870)** ([#23297](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23297)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Josef Widler](https://www.wikidata.org/wiki/Q131940634)** ([#22237](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22237)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Lorenz Habicher](https://www.wikidata.org/wiki/Q131940644)** ([#22234](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22234)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Mandy Abou Shoak](https://www.wikidata.org/wiki/Q123574393)** ([#23249](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23249)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Nicole Wyss](https://www.wikidata.org/wiki/Q116923222)** ([#23324](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23324)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Pia Ackermann](https://www.wikidata.org/wiki/Q131452322)** ([#22236](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22236)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Roland Scheck](https://www.wikidata.org/wiki/Q131940645)** ([#22233](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22233)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
+- **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#22208](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22208)) — Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).
 
 ### Sitting member, but no Wikidata item could be found (2)
 
@@ -374,7 +480,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Mandy Abou Shoak](https://www.wikidata.org/wiki/Q123574393)** ([#23249](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23249)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Roland Scheck](https://www.wikidata.org/wiki/Q131940645)** ([#22233](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22233)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 3. Wahlkreis (Zürich 4+5) (7)
+## Electoral district: 3. Wahlkreis (Zürich 4+5) (8)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -383,6 +489,10 @@ Generated: 2026-08-11 10:59 UTC
 ### Open membership without a start date (P580) (1)
 
 - **[Sandra Bienek](https://www.wikidata.org/wiki/Q118763557)** ([#21492](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21492)) — Add a start date (P580) of 2022-02-21; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (1)
+
+- **[Sandra Bienek](https://www.wikidata.org/wiki/Q118763557)** ([#21492](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21492)) — Add the missing qualifier(s): electoral district (P768) → 3. Wahlkreis (Zürich 4+5) (Q117787885).
 
 ### Sitting member, but no Wikidata item could be found (4)
 
@@ -395,7 +505,7 @@ Generated: 2026-08-11 10:59 UTC
 
 - **[Sandra Bienek](https://www.wikidata.org/wiki/Q118763557)** ([#21492](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21492)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 4. Wahlkreis (Zürich 6 + 10) (11)
+## Electoral district: 4. Wahlkreis (Zürich 6 + 10) (15)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -406,6 +516,13 @@ Generated: 2026-08-11 10:59 UTC
 - **[Christoph Marty](https://www.wikidata.org/wiki/Q131946068)** ([#23310](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23310)) ⚠️ — Add a start date (P580) of 2021-01-11; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Daniela Sun-Güller](https://www.wikidata.org/wiki/Q131940640)** ([#23319](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23319)) ⚠️ — Add a start date (P580) of 2020-07-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Sylvie Matter](https://www.wikidata.org/wiki/Q118287795)** ([#22536](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22536)) — Add a start date (P580) of 2014-11-10; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (4)
+
+- **[Christoph Marty](https://www.wikidata.org/wiki/Q131946068)** ([#23310](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23310)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 4. Wahlkreis (Zürich 6 + 10) (Q141045392). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Daniela Sun-Güller](https://www.wikidata.org/wiki/Q131940640)** ([#23319](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23319)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 4. Wahlkreis (Zürich 6 + 10) (Q141045392). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Nicola Siegrist](https://www.wikidata.org/wiki/Q113464256)** ([#23317](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23317)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 4. Wahlkreis (Zürich 6 + 10) (Q141045392). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Sylvie Matter](https://www.wikidata.org/wiki/Q118287795)** ([#22536](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22536)) — Add the missing qualifier(s): electoral district (P768) → 4. Wahlkreis (Zürich 6 + 10) (Q141045392).
 
 ### Sitting member, but no Wikidata item could be found (3)
 
@@ -420,7 +537,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Nicola Siegrist](https://www.wikidata.org/wiki/Q113464256)** ([#23317](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23317)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Sylvie Matter](https://www.wikidata.org/wiki/Q118287795)** ([#22536](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22536)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 5. Wahlkreis (Zürich 7+8) (9)
+## Electoral district: 5. Wahlkreis (Zürich 7+8) (11)
 
 ### Item matched by name but has no unique ID (the source's own) (1)
 
@@ -430,6 +547,11 @@ Generated: 2026-08-11 10:59 UTC
 
 - **[Claudio Zihlmann](https://www.wikidata.org/wiki/Q131940638)** ([#22441](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22441)) ⚠️ — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Susanne Brunner](https://www.wikidata.org/wiki/Q131944819)** ([#22499](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22499)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (2)
+
+- **[Claudio Zihlmann](https://www.wikidata.org/wiki/Q131940638)** ([#22441](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22441)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 5. Wahlkreis (Zürich 7+8) (Q117787912). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Susanne Brunner](https://www.wikidata.org/wiki/Q131944819)** ([#22499](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22499)) — Add the missing qualifier(s): electoral district (P768) → 5. Wahlkreis (Zürich 7+8) (Q117787912).
 
 ### Sitting member, but no Wikidata item could be found (4)
 
@@ -443,7 +565,7 @@ Generated: 2026-08-11 10:59 UTC
 - **[Claudio Zihlmann](https://www.wikidata.org/wiki/Q131940638)** ([#22441](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22441)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Susanne Brunner](https://www.wikidata.org/wiki/Q131944819)** ([#22499](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22499)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 6. Wahlkreis (Zürich 11 + 12) (22)
+## Electoral district: 6. Wahlkreis (Zürich 11 + 12) (28)
 
 ### Item matched by name but has no unique ID (the source's own) (2)
 
@@ -465,6 +587,15 @@ Generated: 2026-08-11 10:59 UTC
 - **[Monika Wicki](https://www.wikidata.org/wiki/Q25803851)** ([#23335](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23335)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Peter Schick](https://www.wikidata.org/wiki/Q131948081)** ([#22025](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22025)) — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Ruth Ackermann](https://www.wikidata.org/wiki/Q131452497)** ([#22145](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22145)) — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.
+
+### Membership missing an electoral district (P768) or group (P4100) (6)
+
+- **[Beat Habegger](https://www.wikidata.org/wiki/Q131940635)** ([#23373](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23373)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Birgit Tognella-Geertsen](https://www.wikidata.org/wiki/Q131939871)** ([#7956](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=7956)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Gianna Berger](https://www.wikidata.org/wiki/Q131938271)** ([#22983](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22983)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Monika Wicki](https://www.wikidata.org/wiki/Q25803851)** ([#23335](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23335)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Peter Schick](https://www.wikidata.org/wiki/Q131948081)** ([#22025](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22025)) — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475).
+- **[Ruth Ackermann](https://www.wikidata.org/wiki/Q131452497)** ([#22145](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22145)) — Add the missing qualifier(s): electoral district (P768) → 6. Wahlkreis (Zürich 11 + 12) (Q141045475).
 
 ### Missing the parliament's other identifier — value to be looked up (7)
 
@@ -488,7 +619,7 @@ Generated: 2026-08-11 10:59 UTC
 
 - **[Bernhard Im Oberdorf](https://www.wikidata.org/wiki/Q130770573)** ([#22477](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22477)) — No 'occupation' (P106) statement, but the Staatsarchiv's KR-Daten register gives Publizist. The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 
-## Electoral district: 7. Wahlkreis (Dietikon) (25)
+## Electoral district: 7. Wahlkreis (Dietikon) (34)
 
 ### Item matched by name but has no unique ID (the source's own) (5)
 
@@ -510,6 +641,18 @@ Generated: 2026-08-11 10:59 UTC
 - **[Rosmarie Joss](https://www.wikidata.org/wiki/Q131939444)** ([#18654](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654)) ⚠️ — Add a start date (P580) of 2010-05-17; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Yiea Wey Te](https://www.wikidata.org/wiki/Q131940614)** ([#22156](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22156)) — Add a start date (P580) of 2021-05-03; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
+### Membership missing an electoral district (P768) or group (P4100) (9)
+
+- **[André Bender](https://www.wikidata.org/wiki/Q131940595)** ([#22171](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22171)) — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570).
+- **[Janine Vannaz](https://www.wikidata.org/wiki/Q131940544)** ([#23298](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23298)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Livia Knüsel](https://www.wikidata.org/wiki/Q131940607)** ([#22366](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22366)) — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570).
+- **[Philipp Müller](https://www.wikidata.org/wiki/Q131948070)** ([#23074](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23074)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Pierre Dalcher](https://www.wikidata.org/wiki/Q131940609)** ([#22176](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22176)) — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570).
+- **[Rochus Burtscher](https://www.wikidata.org/wiki/Q131940571)** ([#18667](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18667)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Roger Schmidinger](https://www.wikidata.org/wiki/Q131940615)** ([#22077](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22077)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Rosmarie Joss](https://www.wikidata.org/wiki/Q131939444)** ([#18654](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Yiea Wey Te](https://www.wikidata.org/wiki/Q131940614)** ([#22156](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22156)) — Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570).
+
 ### Missing the parliament's other identifier — value to be looked up (9)
 
 - **[André Bender](https://www.wikidata.org/wiki/Q131940595)** ([#22171](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22171)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -527,7 +670,7 @@ Generated: 2026-08-11 10:59 UTC
 - **Markus Bärtschiger** ([#23286](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23286)) — 'Markus Bärtschiger' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23286) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Sonja Gehrig Schmidt** ([#22190](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22190)) — 'Sonja Gehrig Schmidt' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22190) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 8. Wahlkreis (Affoltern) (15)
+## Electoral district: 8. Wahlkreis (Affoltern) (21)
 
 ### Item matched by name but has no unique ID (the source's own) (3)
 
@@ -543,6 +686,15 @@ Generated: 2026-08-11 10:59 UTC
 - **[Thomas Schweizer](https://www.wikidata.org/wiki/Q131948086)** ([#23316](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Ursula Junker](https://www.wikidata.org/wiki/Q131940592)** ([#22479](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22479)) ⚠️ — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
+### Membership missing an electoral district (P768) or group (P4100) (6)
+
+- **[Daniel Sommer](https://www.wikidata.org/wiki/Q131948277)** ([#17370](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=17370)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Marc Bochsler](https://www.wikidata.org/wiki/Q131940627)** ([#21710](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21710)) — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868).
+- **[Ronald Alder](https://www.wikidata.org/wiki/Q131937757)** ([#23285](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23285)) — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868).
+- **[Tamara Fakhreddine](https://www.wikidata.org/wiki/Q131940568)** ([#22544](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22544)) — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868).
+- **[Thomas Schweizer](https://www.wikidata.org/wiki/Q131948086)** ([#23316](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Ursula Junker](https://www.wikidata.org/wiki/Q131940592)** ([#22479](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22479)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 8. Wahlkreis (Affoltern) (Q141045868). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
 ### Missing the parliament's other identifier — value to be looked up (6)
 
 - **[Daniel Sommer](https://www.wikidata.org/wiki/Q131948277)** ([#17370](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=17370)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -556,7 +708,7 @@ Generated: 2026-08-11 10:59 UTC
 
 - **Roger Schmutz** ([#22972](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22972)) — 'Roger Schmutz' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22972) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 9. Wahlkreis (Horgen) (25)
+## Electoral district: 9. Wahlkreis (Horgen) (33)
 
 ### Item matched by name but has no unique ID (the source's own) (3)
 
@@ -564,22 +716,38 @@ Generated: 2026-08-11 10:59 UTC
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22024'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#22181](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22181)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '22181'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 
-### Sitting member, but no position held (P39) statement (1)
+### Sitting member, but no position held (P39) statement (3)
 
+- **[Christa Isabelle Stünzi](https://www.wikidata.org/wiki/Q67203781)** ([#23318](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23318)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2019-05-06.
 - **[Edith Häusler-Michel](https://www.wikidata.org/wiki/Q115987764)** ([#22194](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22194)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2011-05-09.
+- **[Renato Mario Pfeffer](https://www.wikidata.org/wiki/Q140998430)** ([#23273](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23273)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2026-03-09.
 
-### Open membership without a start date (P580) (8)
+### Open membership without a start date (P580) (7)
 
 - **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#22189](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22189)) — Add a start date (P580) of 2014-05-26; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Christina Zurfluh Fraefel](https://www.wikidata.org/wiki/Q131940623)** ([#22055](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22055)) — Add a start date (P580) of 2018-09-03; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) — Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — Add a start date (P580) of 2019-01-07; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Gabriel Mäder](https://www.wikidata.org/wiki/Q131940543)** ([#23309](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23309)) ⚠️ — Add a start date (P580) of 2019-11-25; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
-- **[Marcel Suter](https://www.wikidata.org/wiki/Q131940613)** ([#22500](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22500)) — Add a start date (P580) of 2017-05-22; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Mario Senn](https://www.wikidata.org/wiki/Q131940541)** ([#21864](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21864)) — Add a start date (P580) of 2022-11-28; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Urs Waser](https://www.wikidata.org/wiki/Q131940589)** ([#22498](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22498)) — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Missing the parliament's other identifier — value to be looked up (9)
+### Membership missing an electoral district (P768) or group (P4100) (12)
+
+- **[Alexia Bischof](https://www.wikidata.org/wiki/Q131938284)** ([#22984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22984)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#22189](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22189)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Carmen Marty Fässler](https://www.wikidata.org/wiki/Q131939940)** ([#22209](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22209)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Christina Zurfluh Fraefel](https://www.wikidata.org/wiki/Q131940623)** ([#22055](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22055)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#22206](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22206)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Gabriel Mäder](https://www.wikidata.org/wiki/Q131940543)** ([#23309](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23309)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#22181](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22181)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+- **[Marcel Suter](https://www.wikidata.org/wiki/Q131940613)** ([#22500](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22500)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Mario Senn](https://www.wikidata.org/wiki/Q131940541)** ([#21864](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21864)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Sandra Bossert](https://www.wikidata.org/wiki/Q131940622)** ([#23287](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23287)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+- **[Urs Waser](https://www.wikidata.org/wiki/Q131940589)** ([#22498](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22498)) — Add the missing qualifier(s): electoral district (P768) → 9. Wahlkreis (Horgen) (Q141045940).
+
+### Missing the parliament's other identifier — value to be looked up (8)
 
 - **[Alexia Bischof](https://www.wikidata.org/wiki/Q131938284)** ([#22984](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22984)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Astrid Furrer](https://www.wikidata.org/wiki/Q131940621)** ([#22189](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22189)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
@@ -587,27 +755,18 @@ Generated: 2026-08-11 10:59 UTC
 - **[Fabian Müller](https://www.wikidata.org/wiki/Q131948072)** ([#22024](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22024)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Gabriel Mäder](https://www.wikidata.org/wiki/Q131940543)** ([#23309](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23309)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#22181](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22181)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-- **[Marcel Suter](https://www.wikidata.org/wiki/Q131940613)** ([#22500](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22500)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Mario Senn](https://www.wikidata.org/wiki/Q131940541)** ([#21864](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21864)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Urs Waser](https://www.wikidata.org/wiki/Q131940589)** ([#22498](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22498)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-### Sitting member, but no Wikidata item could be found (4)
+## Electoral district: Other (55)
 
-- **Carmen Marty Fässler** ([#22209](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22209)) — 'Carmen Marty Fässler' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22209) but no Wikidata item was found, by P13468 or by name. They may need a new item.
-- **Christa Isabelle Stünzi** ([#23318](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23318)) — 'Christa Isabelle Stünzi' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23318) but no Wikidata item was found, by P13468 or by name. They may need a new item.
-- **Renato Mario Pfeffer** ([#23273](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23273)) — 'Renato Mario Pfeffer' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23273) but no Wikidata item was found, by P13468 or by name. They may need a new item.
-- **Sandra Bossert** ([#23287](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23287)) — 'Sandra Bossert' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23287) but no Wikidata item was found, by P13468 or by name. They may need a new item.
-
-## Electoral district: Other (57)
-
-### Recorded as sitting, but the member has left (57)
+### Recorded as sitting, but the member has left (55)
 
 - **[Alan David Sangines](https://www.wikidata.org/wiki/Q131939905)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Albert Gattiker](https://www.wikidata.org/wiki/Q111207211)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Andrew Katumba](https://www.wikidata.org/wiki/Q131939334)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Beatrix Stüssi](https://www.wikidata.org/wiki/Q131939893)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Benno Scherrer](https://www.wikidata.org/wiki/Q115817581)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Carmen Marty Fässler](https://www.wikidata.org/wiki/Q131939940)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Christian Müller](https://www.wikidata.org/wiki/Q131948656)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Cristina Cortellini](https://www.wikidata.org/wiki/Q97345619)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Dieter Kläy](https://www.wikidata.org/wiki/Q119144397)** ([#21150](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21150)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
@@ -637,7 +796,6 @@ Generated: 2026-08-11 10:59 UTC
 - **[Q131940611](https://www.wikidata.org/wiki/Q131940611)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940618](https://www.wikidata.org/wiki/Q131940618)** ([#21438](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21438)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940620](https://www.wikidata.org/wiki/Q131940620)** ([#22207](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22207)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Q131940622](https://www.wikidata.org/wiki/Q131940622)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940626](https://www.wikidata.org/wiki/Q131940626)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940633](https://www.wikidata.org/wiki/Q131940633)** ([#22231](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22231)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940636](https://www.wikidata.org/wiki/Q131940636)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
