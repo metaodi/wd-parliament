@@ -1,22 +1,44 @@
 {
-  "generated": "2026-08-10 06:34 UTC",
-  "total_suggestions": 371,
-  "total_members": 180,
+  "generated": "2026-08-17 06:56 UTC",
+  "total_suggestions": 358,
+  "total_members": 184,
   "quickstatements": 0,
   "bodies": [
     {
       "council": "KR",
       "label": "Cantonal Council of Zürich",
       "position_qid": "Q21518678",
-      "member_count": 180,
-      "matched_by_identifier": 3,
-      "matched_by_name": 32,
+      "member_count": 184,
+      "matched_by_identifier": 12,
+      "matched_by_name": 27,
       "unmatched": 145,
       "wikidata_open": 167,
-      "identifier_mismatches": 0,
-      "identifier_hit_rate": 1.7,
+      "identifier_mismatches": 5,
+      "identifier_hit_rate": 6.5,
       "error": null,
       "suggestions": [
+        {
+          "kind": "ADD_IDENTIFIER",
+          "priority": 1,
+          "member": "Advije Delihasani-Ajdari",
+          "person_qid": "Q140987126",
+          "person_number": 23987,
+          "qid_source": "name",
+          "canton": "XI Hinwil",
+          "parl_group": null,
+          "detail": "Add P14527 (OpenParlData ID) '23987'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q140987126"
+          },
+          "payload": {
+            "property": "P14527",
+            "parliament_id": "23987",
+            "biography": "https://openparldata.ch/item/persons/23987",
+            "source_url": "https://openparldata.ch/item/persons/23987",
+            "identifier_unverified": true
+          }
+        },
         {
           "kind": "ADD_IDENTIFIER",
           "priority": 1,
@@ -152,28 +174,6 @@
         {
           "kind": "ADD_IDENTIFIER",
           "priority": 1,
-          "member": "Davide Loss",
-          "person_qid": "Q131939960",
-          "person_number": 17746,
-          "qid_source": "name",
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17746'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939960"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17746",
-            "biography": "https://openparldata.ch/item/persons/17746",
-            "source_url": "https://openparldata.ch/item/persons/17746",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
           "member": "Dieter Kläy",
           "person_qid": "Q119144397",
           "person_number": 17610,
@@ -190,28 +190,6 @@
             "parliament_id": "17610",
             "biography": "https://openparldata.ch/item/persons/17610",
             "source_url": "https://openparldata.ch/item/persons/17610",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Edith Häusler",
-          "person_qid": "Q115987764",
-          "person_number": 17760,
-          "qid_source": "name",
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17760'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q115987764"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17760",
-            "biography": "https://openparldata.ch/item/persons/17760",
-            "source_url": "https://openparldata.ch/item/persons/17760",
             "identifier_unverified": true
           }
         },
@@ -256,28 +234,6 @@
             "parliament_id": "17914",
             "biography": "https://openparldata.ch/item/persons/17914",
             "source_url": "https://openparldata.ch/item/persons/17914",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Jeannette Büsser",
-          "person_qid": "Q115931507",
-          "person_number": 17502,
-          "qid_source": "name",
-          "canton": "IV Zürich 6+10",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17502'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q115931507"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17502",
-            "biography": "https://openparldata.ch/item/persons/17502",
-            "source_url": "https://openparldata.ch/item/persons/17502",
             "identifier_unverified": true
           }
         },
@@ -344,28 +300,6 @@
             "parliament_id": "17663",
             "biography": "https://openparldata.ch/item/persons/17663",
             "source_url": "https://openparldata.ch/item/persons/17663",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Pia Ackermann",
-          "person_qid": "Q131452322",
-          "person_number": 18218,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '18218'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131452322"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "18218",
-            "biography": "https://openparldata.ch/item/persons/18218",
-            "source_url": "https://openparldata.ch/item/persons/18218",
             "identifier_unverified": true
           }
         },
@@ -454,50 +388,6 @@
             "parliament_id": "17762",
             "biography": "https://openparldata.ch/item/persons/17762",
             "source_url": "https://openparldata.ch/item/persons/17762",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Sibylle Marti",
-          "person_qid": "Q113835026",
-          "person_number": 17748,
-          "qid_source": "name",
-          "canton": "II Zürich 3+9",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17748'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q113835026"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17748",
-            "biography": "https://openparldata.ch/item/persons/17748",
-            "source_url": "https://openparldata.ch/item/persons/17748",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Thomas Forrer",
-          "person_qid": "Q116003298",
-          "person_number": 17468,
-          "qid_source": "name",
-          "canton": "X Meilen",
-          "parl_group": null,
-          "detail": "Add P14527 (OpenParlData ID) '17468'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116003298"
-          },
-          "payload": {
-            "property": "P14527",
-            "parliament_id": "17468",
-            "biography": "https://openparldata.ch/item/persons/17468",
-            "source_url": "https://openparldata.ch/item/persons/17468",
             "identifier_unverified": true
           }
         },
@@ -608,6 +498,31 @@
             "parliament_id": "17489",
             "biography": "https://openparldata.ch/item/persons/17489",
             "source_url": "https://openparldata.ch/item/persons/17489",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Advije Delihasani-Ajdari",
+          "person_qid": "Q140987126",
+          "person_number": 23987,
+          "qid_source": "name",
+          "canton": "XI Hinwil",
+          "parl_group": null,
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2025-12-08. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q140987126"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2025-12-08",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://openparldata.ch/item/persons/23987",
             "identifier_unverified": true
           }
         },
@@ -793,24 +708,6 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
-          "member": "Carmen Marty Fässler",
-          "person_qid": "Q131939940",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131939940",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/q131939940-e97f1957-4a47-5044-bbc4-8d6a0ebe45c8"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
           "member": "Christian Müller",
           "person_qid": "Q131948656",
           "person_number": null,
@@ -915,13 +812,38 @@
         {
           "kind": "ADD_MEMBERSHIP",
           "priority": 2,
+          "member": "David Garcia Nuñez",
+          "person_qid": "Q96766876",
+          "person_number": 25152,
+          "qid_source": "identifier",
+          "canton": "III Zürich 4+5",
+          "parl_group": null,
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2026-04-13.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q96766876"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2026-04-13",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://openparldata.ch/item/persons/25152",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
           "member": "Edith Häusler",
           "person_qid": "Q115987764",
           "person_number": 17760,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "IX Horgen",
           "parl_group": null,
-          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2011-05-09. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2011-05-09.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q115987764"
@@ -1095,10 +1017,10 @@
           "member": "Jeannette Büsser",
           "person_qid": "Q115931507",
           "person_number": 17502,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "IV Zürich 6+10",
           "parl_group": null,
-          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2019-05-06. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2019-05-06.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q115931507"
@@ -1389,24 +1311,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/q131939863-0f1b063d-4444-7b89-fc5c-9604bea48bce"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Q131937829",
-          "person_qid": "Q131937829",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131937829",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/q131937829-70ff3bbf-4413-564d-3abb-b5b3cd3dca49"
           }
         },
         {
@@ -2006,24 +1910,6 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
-          "member": "Q131940613",
-          "person_qid": "Q131940613",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131940613",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940613-6769E13B-C2C3-48AB-AC59-C6156BBD5C15"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
           "member": "Q131940614",
           "person_qid": "Q131940614",
           "person_number": null,
@@ -2145,24 +2031,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940621-E95A0265-A268-48B5-BD29-53D62EFC8A57"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Q131940622",
-          "person_qid": "Q131940622",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131940622",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940622-62244E82-A572-4429-A7B5-7C3E7863BB5E"
           }
         },
         {
@@ -2433,24 +2301,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940638-CB96AF89-D58C-42DA-9C82-AC505707B337"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Q131940639",
-          "person_qid": "Q131940639",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131940639",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940639-552DCCF2-F7B7-4449-A764-40F2AB94B4EA"
           }
         },
         {
@@ -3106,7 +2956,7 @@
           "priority": 2,
           "member": "Q131948099",
           "person_qid": "Q131948099",
-          "person_number": null,
+          "person_number": 18232,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
@@ -3116,7 +2966,9 @@
             "position": "https://www.wikidata.org/wiki/Q21518678"
           },
           "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131948099-80498E4E-71F0-4B8F-8460-B98265770C43"
+            "statement_id": "http://www.wikidata.org/entity/statement/Q131948099-80498E4E-71F0-4B8F-8460-B98265770C43",
+            "parliament_id": "18232",
+            "biography": "https://openparldata.ch/item/persons/18232"
           }
         },
         {
@@ -3189,6 +3041,31 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/q131938303-e0d5da80-447c-0980-fe8f-121d87b9dfb1"
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Renato Pfeffer-Becker",
+          "person_qid": "Q140998430",
+          "person_number": 24848,
+          "qid_source": "identifier",
+          "canton": "IX Horgen",
+          "parl_group": null,
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2026-03-09.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q140998430"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2026-03-09",
+            "end": null,
+            "district": null,
+            "group": null,
+            "terms": [],
+            "biography": "https://openparldata.ch/item/persons/24848",
+            "identifier_unverified": true
           }
         },
         {
@@ -3461,10 +3338,10 @@
           "member": "Thomas Forrer",
           "person_qid": "Q116003298",
           "person_number": 17468,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "X Meilen",
           "parl_group": null,
-          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-10-24. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-10-24.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q116003298"
@@ -3627,10 +3504,10 @@
           "member": "Davide Loss",
           "person_qid": "Q131939960",
           "person_number": 17746,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "IX Horgen",
           "parl_group": null,
-          "detail": "Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q131939960"
@@ -3811,10 +3688,10 @@
           "member": "Sibylle Marti",
           "person_qid": "Q113835026",
           "person_number": 17748,
-          "qid_source": "name",
+          "qid_source": "identifier",
           "canton": "II Zürich 3+9",
           "parl_group": null,
-          "detail": "Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
             "item": "https://www.wikidata.org/wiki/Q113835026"
@@ -3825,29 +3702,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/q113835026-f27ead07-483f-fcdd-2ba3-82f475712a6d",
             "biography": "https://openparldata.ch/item/persons/17748",
-            "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
-          "member": "Sonja Rueff-Frenkel",
-          "person_qid": "Q110402390",
-          "person_number": 18172,
-          "qid_source": "identifier",
-          "canton": "I Zürich 1+2",
-          "parl_group": null,
-          "detail": "Add a start date (P580) of 2014-06-16; the membership is open but undated, which makes 'who sits today' queries unreliable.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q110402390"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2014-06-16",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q110402390-60c2df8c-4f10-8aa4-3a60-c5571fab1cbc",
-            "biography": "https://openparldata.ch/item/persons/18172",
             "identifier_unverified": true
           }
         },
@@ -3872,23 +3726,6 @@
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940586-E75FC59D-4EC1-468A-9893-99ED8B1EDA4A",
             "biography": "https://openparldata.ch/item/persons/18049",
             "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Advije Delihasani-Ajdari",
-          "person_qid": null,
-          "person_number": 23987,
-          "qid_source": null,
-          "canton": "XI Hinwil",
-          "parl_group": null,
-          "detail": "'Advije Delihasani-Ajdari' sits in the Cantonal Council of Zürich (OpenParlData #23987) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://openparldata.ch/item/persons/23987"
           }
         },
         {
@@ -4134,6 +3971,23 @@
           }
         },
         {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Barbara Dietrich",
+          "person_qid": null,
+          "person_number": 27849,
+          "qid_source": null,
+          "canton": "IV Zürich 6+10",
+          "parl_group": null,
+          "detail": "'Barbara Dietrich' sits in the Cantonal Council of Zürich (OpenParlData #27849) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "biography": "https://openparldata.ch/item/persons/27849"
+          }
+        },
+        {
           "kind": "MISSING_IDENTIFIER",
           "priority": 5,
           "member": "Barbara Franzen",
@@ -4240,27 +4094,6 @@
           }
         },
         {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Benjamin Walder",
-          "person_qid": "Q116046000",
-          "person_number": 17518,
-          "qid_source": "name",
-          "canton": "XI Hinwil",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q116046000",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/17518",
-            "identifier_unverified": true
-          }
-        },
-        {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
           "member": "Benno Scherrer",
@@ -4330,23 +4163,6 @@
             "property": "P13468",
             "biography": "https://openparldata.ch/item/persons/17849",
             "identifier_unverified": true
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Carmen Marty Fässler",
-          "person_qid": null,
-          "person_number": 17638,
-          "qid_source": null,
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "'Carmen Marty Fässler' sits in the Cantonal Council of Zürich (OpenParlData #17638) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://openparldata.ch/item/persons/17638"
           }
         },
         {
@@ -4653,23 +4469,6 @@
         {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
-          "member": "David Garcia Nuñez",
-          "person_qid": null,
-          "person_number": 25152,
-          "qid_source": null,
-          "canton": "III Zürich 4+5",
-          "parl_group": null,
-          "detail": "'David Garcia Nuñez' sits in the Cantonal Council of Zürich (OpenParlData #25152) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://openparldata.ch/item/persons/25152"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
           "member": "David John Galeuchet",
           "person_qid": null,
           "person_number": 18148,
@@ -4682,27 +4481,6 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/18148"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Davide Loss",
-          "person_qid": "Q131939960",
-          "person_number": 17746,
-          "qid_source": "name",
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939960",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/17746",
-            "identifier_unverified": true
           }
         },
         {
@@ -4771,27 +4549,6 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/17909"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Edith Häusler",
-          "person_qid": "Q115987764",
-          "person_number": 17760,
-          "qid_source": "name",
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q115987764",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/17760",
-            "identifier_unverified": true
           }
         },
         {
@@ -5058,27 +4815,6 @@
           }
         },
         {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Jeannette Büsser",
-          "person_qid": "Q115931507",
-          "person_number": 17502,
-          "qid_source": "name",
-          "canton": "IV Zürich 6+10",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q115931507",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/17502",
-            "identifier_unverified": true
-          }
-        },
-        {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
           "member": "Jeannette Wibmer",
@@ -5250,27 +4986,6 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/25167"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Leandra Columberg",
-          "person_qid": "Q65771072",
-          "person_number": 18137,
-          "qid_source": "name",
-          "canton": "XII Uster",
-          "parl_group": null,
-          "detail": "No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q65771072",
-            "property": "https://www.wikidata.org/wiki/Property:P13468"
-          },
-          "payload": {
-            "property": "P13468",
-            "biography": "https://openparldata.ch/item/persons/18137",
-            "identifier_unverified": true
           }
         },
         {
@@ -5632,6 +5347,23 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/17734"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Matthias Stutz",
+          "person_qid": null,
+          "person_number": 27535,
+          "qid_source": null,
+          "canton": "XVI Andelfingen",
+          "parl_group": null,
+          "detail": "'Matthias Stutz' sits in the Cantonal Council of Zürich (OpenParlData #27535) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "biography": "https://openparldata.ch/item/persons/27535"
           }
         },
         {
@@ -6018,23 +5750,6 @@
         {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
-          "member": "Renato Pfeffer-Becker",
-          "person_qid": null,
-          "person_number": 24848,
-          "qid_source": null,
-          "canton": "IX Horgen",
-          "parl_group": null,
-          "detail": "'Renato Pfeffer-Becker' sits in the Cantonal Council of Zürich (OpenParlData #24848) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "biography": "https://openparldata.ch/item/persons/24848"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
           "member": "René Isler",
           "person_qid": null,
           "person_number": 17721,
@@ -6047,6 +5762,23 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/17721"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "René Schweizer",
+          "person_qid": null,
+          "person_number": 27534,
+          "qid_source": null,
+          "canton": "XI Hinwil",
+          "parl_group": null,
+          "detail": "'René Schweizer' sits in the Cantonal Council of Zürich (OpenParlData #27534) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "biography": "https://openparldata.ch/item/persons/27534"
           }
         },
         {
@@ -6412,6 +6144,23 @@
           },
           "payload": {
             "biography": "https://openparldata.ch/item/persons/17693"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Songül Viridén",
+          "person_qid": null,
+          "person_number": 27559,
+          "qid_source": null,
+          "canton": "VII Dietikon",
+          "parl_group": null,
+          "detail": "'Songül Viridén' sits in the Cantonal Council of Zürich (OpenParlData #27559) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "biography": "https://openparldata.ch/item/persons/27559"
           }
         },
         {

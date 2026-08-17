@@ -1,29 +1,26 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-10 06:34 UTC
+Generated: 2026-08-17 06:56 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
-- Sitting members (OpenParlData): 180
-- Matched by P14527: 3 (1.7%)
-- Matched by name + birth date: 32
+- Sitting members (OpenParlData): 184
+- Matched by P14527: 12 (6.5%)
+- Matched by name + birth date: 27
 - Not matched at all: 145
 - Open memberships on Wikidata: 167
-- Suggested edits: 371
+- Suggested edits: 358
+- ⚠️ P14527 matches rejected because the item names a different person: **5** of 17 attempted. P14527 is joined on unverified — a large share here means its values are not this source's person ids.
 
 ## By kind
 
-- Item matched by name but has no unique ID (the source's own): **27**
-- Recorded as sitting, but the member has left: **146**
-- Sitting member, but no position held (P39) statement: **14**
-- Open membership without a start date (P580): **12**
+- Item matched by name but has no unique ID (the source's own): **22**
+- Sitting member, but no position held (P39) statement: **17**
+- Recorded as sitting, but the member has left: **141**
+- Open membership without a start date (P580): **11**
 - Sitting member, but no Wikidata item could be found: **145**
-- Missing the parliament's other identifier — value to be looked up: **27**
+- Missing the parliament's other identifier — value to be looked up: **22**
 
-## Electoral district: I Zürich 1+2 (5)
-
-### Open membership without a start date (P580) (1)
-
-- **[Sonja Rueff-Frenkel](https://www.wikidata.org/wiki/Q110402390)** ([#18172](https://openparldata.ch/item/persons/18172)) — Add a start date (P580) of 2014-06-16; the membership is open but undated, which makes 'who sits today' queries unreliable.
+## Electoral district: I Zürich 1+2 (4)
 
 ### Sitting member, but no Wikidata item could be found (4)
 
@@ -32,12 +29,7 @@ Generated: 2026-08-10 06:34 UTC
 - **Stephan Hegetschweiler** ([#18176](https://openparldata.ch/item/persons/18176)) — 'Stephan Hegetschweiler' sits in the Cantonal Council of Zürich (OpenParlData #18176) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Ueli Bamert** ([#18162](https://openparldata.ch/item/persons/18162)) — 'Ueli Bamert' sits in the Cantonal Council of Zürich (OpenParlData #18162) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: II Zürich 3+9 (13)
-
-### Item matched by name but has no unique ID (the source's own) (2)
-
-- **[Pia Ackermann](https://www.wikidata.org/wiki/Q131452322)** ([#18218](https://openparldata.ch/item/persons/18218)) ⚠️ — Add P14527 (OpenParlData ID) '18218'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
-- **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#17748](https://openparldata.ch/item/persons/17748)) ⚠️ — Add P14527 (OpenParlData ID) '17748'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+## Electoral district: II Zürich 3+9 (11)
 
 ### Sitting member, but no position held (P39) statement (1)
 
@@ -45,7 +37,7 @@ Generated: 2026-08-10 06:34 UTC
 
 ### Open membership without a start date (P580) (1)
 
-- **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#17748](https://openparldata.ch/item/persons/17748)) ⚠️ — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Sibylle Marti](https://www.wikidata.org/wiki/Q113835026)** ([#17748](https://openparldata.ch/item/persons/17748)) — Add a start date (P580) of 2015-05-18; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
 ### Sitting member, but no Wikidata item could be found (8)
 
@@ -64,78 +56,75 @@ Generated: 2026-08-10 06:34 UTC
 
 ## Electoral district: III Zürich 4+5 (5)
 
-### Sitting member, but no Wikidata item could be found (5)
+### Sitting member, but no position held (P39) statement (1)
 
-- **David Garcia Nuñez** ([#25152](https://openparldata.ch/item/persons/25152)) — 'David Garcia Nuñez' sits in the Cantonal Council of Zürich (OpenParlData #25152) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **[David Garcia Nuñez](https://www.wikidata.org/wiki/Q96766876)** ([#25152](https://openparldata.ch/item/persons/25152)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2026-04-13.
+
+### Sitting member, but no Wikidata item could be found (4)
+
 - **Dimitri Witzig** ([#25191](https://openparldata.ch/item/persons/25191)) — 'Dimitri Witzig' sits in the Cantonal Council of Zürich (OpenParlData #25191) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Gabi Petri** ([#17957](https://openparldata.ch/item/persons/17957)) — 'Gabi Petri' sits in the Cantonal Council of Zürich (OpenParlData #17957) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Luisa Schwegler** ([#24681](https://openparldata.ch/item/persons/24681)) — 'Luisa Schwegler' sits in the Cantonal Council of Zürich (OpenParlData #24681) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sandra Bienek** ([#18145](https://openparldata.ch/item/persons/18145)) — 'Sandra Bienek' sits in the Cantonal Council of Zürich (OpenParlData #18145) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: IV Zürich 6+10 (12)
+## Electoral district: IV Zürich 6+10 (11)
 
-### Item matched by name but has no unique ID (the source's own) (2)
+### Item matched by name but has no unique ID (the source's own) (1)
 
-- **[Jeannette Büsser](https://www.wikidata.org/wiki/Q115931507)** ([#17502](https://openparldata.ch/item/persons/17502)) ⚠️ — Add P14527 (OpenParlData ID) '17502'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Renata Grünenfelder](https://www.wikidata.org/wiki/Q131939743)** ([#17655](https://openparldata.ch/item/persons/17655)) ⚠️ — Add P14527 (OpenParlData ID) '17655'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
 ### Sitting member, but no position held (P39) statement (1)
 
-- **[Jeannette Büsser](https://www.wikidata.org/wiki/Q115931507)** ([#17502](https://openparldata.ch/item/persons/17502)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2019-05-06. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Jeannette Büsser](https://www.wikidata.org/wiki/Q115931507)** ([#17502](https://openparldata.ch/item/persons/17502)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2019-05-06.
 
 ### Open membership without a start date (P580) (1)
 
 - **[Renata Grünenfelder](https://www.wikidata.org/wiki/Q131939743)** ([#17655](https://openparldata.ch/item/persons/17655)) ⚠️ — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
-### Sitting member, but no Wikidata item could be found (6)
+### Sitting member, but no Wikidata item could be found (7)
 
 - **Alexander Jäger** ([#18151](https://openparldata.ch/item/persons/18151)) — 'Alexander Jäger' sits in the Cantonal Council of Zürich (OpenParlData #18151) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **Barbara Dietrich** ([#27849](https://openparldata.ch/item/persons/27849)) — 'Barbara Dietrich' sits in the Cantonal Council of Zürich (OpenParlData #27849) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Christoph Marty** ([#18127](https://openparldata.ch/item/persons/18127)) — 'Christoph Marty' sits in the Cantonal Council of Zürich (OpenParlData #18127) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Daniela Sun-Güller** ([#17853](https://openparldata.ch/item/persons/17853)) — 'Daniela Sun-Güller' sits in the Cantonal Council of Zürich (OpenParlData #17853) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Judith Anna Stofer** ([#18199](https://openparldata.ch/item/persons/18199)) — 'Judith Anna Stofer' sits in the Cantonal Council of Zürich (OpenParlData #18199) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Nicola Siegrist** ([#18206](https://openparldata.ch/item/persons/18206)) — 'Nicola Siegrist' sits in the Cantonal Council of Zürich (OpenParlData #18206) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sylvie Matter** ([#17716](https://openparldata.ch/item/persons/17716)) — 'Sylvie Matter' sits in the Cantonal Council of Zürich (OpenParlData #17716) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (2)
+### Missing the parliament's other identifier — value to be looked up (1)
 
-- **[Jeannette Büsser](https://www.wikidata.org/wiki/Q115931507)** ([#17502](https://openparldata.ch/item/persons/17502)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 - **[Renata Grünenfelder](https://www.wikidata.org/wiki/Q131939743)** ([#17655](https://openparldata.ch/item/persons/17655)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 
-## Electoral district: IX Horgen (20)
+## Electoral district: IX Horgen (15)
 
-### Item matched by name but has no unique ID (the source's own) (3)
+### Item matched by name but has no unique ID (the source's own) (1)
 
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#17746](https://openparldata.ch/item/persons/17746)) ⚠️ — Add P14527 (OpenParlData ID) '17746'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
-- **[Edith Häusler](https://www.wikidata.org/wiki/Q115987764)** ([#17760](https://openparldata.ch/item/persons/17760)) ⚠️ — Add P14527 (OpenParlData ID) '17760'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#17660](https://openparldata.ch/item/persons/17660)) ⚠️ — Add P14527 (OpenParlData ID) '17660'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
-### Sitting member, but no position held (P39) statement (1)
+### Sitting member, but no position held (P39) statement (2)
 
-- **[Edith Häusler](https://www.wikidata.org/wiki/Q115987764)** ([#17760](https://openparldata.ch/item/persons/17760)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2011-05-09. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Edith Häusler](https://www.wikidata.org/wiki/Q115987764)** ([#17760](https://openparldata.ch/item/persons/17760)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2011-05-09.
+- **[Renato Pfeffer-Becker](https://www.wikidata.org/wiki/Q140998430)** ([#24848](https://openparldata.ch/item/persons/24848)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2026-03-09.
 
 ### Open membership without a start date (P580) (1)
 
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#17746](https://openparldata.ch/item/persons/17746)) ⚠️ — Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#17746](https://openparldata.ch/item/persons/17746)) — Add a start date (P580) of 2011-05-09; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Sitting member, but no Wikidata item could be found (12)
+### Sitting member, but no Wikidata item could be found (10)
 
 - **Alexia Bischof** ([#17767](https://openparldata.ch/item/persons/17767)) — 'Alexia Bischof' sits in the Cantonal Council of Zürich (OpenParlData #17767) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Astrid Furrer** ([#17435](https://openparldata.ch/item/persons/17435)) — 'Astrid Furrer' sits in the Cantonal Council of Zürich (OpenParlData #17435) but no Wikidata item was found, by P14527 or by name. They may need a new item.
-- **Carmen Marty Fässler** ([#17638](https://openparldata.ch/item/persons/17638)) — 'Carmen Marty Fässler' sits in the Cantonal Council of Zürich (OpenParlData #17638) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Christa Stünzi** ([#17665](https://openparldata.ch/item/persons/17665)) — 'Christa Stünzi' sits in the Cantonal Council of Zürich (OpenParlData #17665) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Christina Zurfluh Fraefel** ([#17500](https://openparldata.ch/item/persons/17500)) — 'Christina Zurfluh Fraefel' sits in the Cantonal Council of Zürich (OpenParlData #17500) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Fabian Müller** ([#17514](https://openparldata.ch/item/persons/17514)) — 'Fabian Müller' sits in the Cantonal Council of Zürich (OpenParlData #17514) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Gabriel Mäder** ([#17505](https://openparldata.ch/item/persons/17505)) — 'Gabriel Mäder' sits in the Cantonal Council of Zürich (OpenParlData #17505) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Marcel Suter** ([#18136](https://openparldata.ch/item/persons/18136)) — 'Marcel Suter' sits in the Cantonal Council of Zürich (OpenParlData #18136) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Mario Senn** ([#17643](https://openparldata.ch/item/persons/17643)) — 'Mario Senn' sits in the Cantonal Council of Zürich (OpenParlData #17643) but no Wikidata item was found, by P14527 or by name. They may need a new item.
-- **Renato Pfeffer-Becker** ([#24848](https://openparldata.ch/item/persons/24848)) — 'Renato Pfeffer-Becker' sits in the Cantonal Council of Zürich (OpenParlData #24848) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sandra Bossert** ([#17450](https://openparldata.ch/item/persons/17450)) — 'Sandra Bossert' sits in the Cantonal Council of Zürich (OpenParlData #17450) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Urs Waser** ([#17996](https://openparldata.ch/item/persons/17996)) — 'Urs Waser' sits in the Cantonal Council of Zürich (OpenParlData #17996) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (3)
+### Missing the parliament's other identifier — value to be looked up (1)
 
-- **[Davide Loss](https://www.wikidata.org/wiki/Q131939960)** ([#17746](https://openparldata.ch/item/persons/17746)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
-- **[Edith Häusler](https://www.wikidata.org/wiki/Q115987764)** ([#17760](https://openparldata.ch/item/persons/17760)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 - **[Jonas Erni](https://www.wikidata.org/wiki/Q131939392)** ([#17660](https://openparldata.ch/item/persons/17660)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 
 ## Electoral district: V Zürich 7+8 (6)
@@ -181,9 +170,9 @@ Generated: 2026-08-10 06:34 UTC
 
 - **[Daniel Heierli](https://www.wikidata.org/wiki/Q115982997)** ([#18028](https://openparldata.ch/item/persons/18028)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 
-## Electoral district: VII Dietikon (11)
+## Electoral district: VII Dietikon (12)
 
-### Sitting member, but no Wikidata item could be found (10)
+### Sitting member, but no Wikidata item could be found (11)
 
 - **André Bender** ([#18183](https://openparldata.ch/item/persons/18183)) — 'André Bender' sits in the Cantonal Council of Zürich (OpenParlData #18183) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Janine Vannaz** ([#17451](https://openparldata.ch/item/persons/17451)) — 'Janine Vannaz' sits in the Cantonal Council of Zürich (OpenParlData #17451) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -193,6 +182,7 @@ Generated: 2026-08-10 06:34 UTC
 - **Pierre Dalcher** ([#17572](https://openparldata.ch/item/persons/17572)) — 'Pierre Dalcher' sits in the Cantonal Council of Zürich (OpenParlData #17572) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Rochus Burtscher** ([#17852](https://openparldata.ch/item/persons/17852)) — 'Rochus Burtscher' sits in the Cantonal Council of Zürich (OpenParlData #17852) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roger Schmidinger** ([#17600](https://openparldata.ch/item/persons/17600)) — 'Roger Schmidinger' sits in the Cantonal Council of Zürich (OpenParlData #17600) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **Songül Viridén** ([#27559](https://openparldata.ch/item/persons/27559)) — 'Songül Viridén' sits in the Cantonal Council of Zürich (OpenParlData #27559) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sonja Gehrig** ([#17474](https://openparldata.ch/item/persons/17474)) — 'Sonja Gehrig' sits in the Cantonal Council of Zürich (OpenParlData #17474) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Yiea Wey Te** ([#17902](https://openparldata.ch/item/persons/17902)) — 'Yiea Wey Te' sits in the Cantonal Council of Zürich (OpenParlData #17902) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
@@ -225,15 +215,11 @@ Generated: 2026-08-10 06:34 UTC
 - **Tamara Fakhreddine** ([#17442](https://openparldata.ch/item/persons/17442)) — 'Tamara Fakhreddine' sits in the Cantonal Council of Zürich (OpenParlData #17442) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Ursula Junker** ([#17498](https://openparldata.ch/item/persons/17498)) — 'Ursula Junker' sits in the Cantonal Council of Zürich (OpenParlData #17498) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: X Meilen (13)
-
-### Item matched by name but has no unique ID (the source's own) (1)
-
-- **[Thomas Forrer](https://www.wikidata.org/wiki/Q116003298)** ([#17468](https://openparldata.ch/item/persons/17468)) ⚠️ — Add P14527 (OpenParlData ID) '17468'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+## Electoral district: X Meilen (12)
 
 ### Sitting member, but no position held (P39) statement (1)
 
-- **[Thomas Forrer](https://www.wikidata.org/wiki/Q116003298)** ([#17468](https://openparldata.ch/item/persons/17468)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-10-24. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+- **[Thomas Forrer](https://www.wikidata.org/wiki/Q116003298)** ([#17468](https://openparldata.ch/item/persons/17468)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2016-10-24.
 
 ### Sitting member, but no Wikidata item could be found (11)
 
@@ -249,14 +235,16 @@ Generated: 2026-08-10 06:34 UTC
 - **Sascha Ullmann** ([#22462](https://openparldata.ch/item/persons/22462)) — 'Sascha Ullmann' sits in the Cantonal Council of Zürich (OpenParlData #22462) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Tumasch Mischol** ([#17804](https://openparldata.ch/item/persons/17804)) — 'Tumasch Mischol' sits in the Cantonal Council of Zürich (OpenParlData #17804) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: XI Hinwil (13)
+## Electoral district: XI Hinwil (14)
 
-### Item matched by name but has no unique ID (the source's own) (1)
+### Item matched by name but has no unique ID (the source's own) (2)
 
+- **[Advije Delihasani-Ajdari](https://www.wikidata.org/wiki/Q140987126)** ([#23987](https://openparldata.ch/item/persons/23987)) ⚠️ — Add P14527 (OpenParlData ID) '23987'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Tina Deplazes](https://www.wikidata.org/wiki/Q131940586)** ([#18049](https://openparldata.ch/item/persons/18049)) ⚠️ — Add P14527 (OpenParlData ID) '18049'. The item was found by name and birth date; recording the identifier makes every future comparison exact. ⚠️ That P14527 values equal OpenParlData's person ids is asserted by this config and not yet measured (scripts/verify_kantonsrat.py section C) — check one by hand before applying these in bulk. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
-### Sitting member, but no position held (P39) statement (1)
+### Sitting member, but no position held (P39) statement (2)
 
+- **[Advije Delihasani-Ajdari](https://www.wikidata.org/wiki/Q140987126)** ([#23987](https://openparldata.ch/item/persons/23987)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2025-12-08. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 - **[Benjamin Walder](https://www.wikidata.org/wiki/Q116046000)** ([#17518](https://openparldata.ch/item/persons/17518)) ⚠️ — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. OpenParlData lists them as sitting since 2019-12-02. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
 ### Open membership without a start date (P580) (1)
@@ -265,21 +253,17 @@ Generated: 2026-08-10 06:34 UTC
 
 ### Sitting member, but no Wikidata item could be found (9)
 
-- **Advije Delihasani-Ajdari** ([#23987](https://openparldata.ch/item/persons/23987)) — 'Advije Delihasani-Ajdari' sits in the Cantonal Council of Zürich (OpenParlData #23987) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Andrea Gisler** ([#18045](https://openparldata.ch/item/persons/18045)) — 'Andrea Gisler' sits in the Cantonal Council of Zürich (OpenParlData #18045) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Andrea Grossen-Aerni** ([#17510](https://openparldata.ch/item/persons/17510)) — 'Andrea Grossen-Aerni' sits in the Cantonal Council of Zürich (OpenParlData #17510) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Daniel Wäfler** ([#17945](https://openparldata.ch/item/persons/17945)) — 'Daniel Wäfler' sits in the Cantonal Council of Zürich (OpenParlData #17945) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Elisabeth Pflugshaupt** ([#18072](https://openparldata.ch/item/persons/18072)) — 'Elisabeth Pflugshaupt' sits in the Cantonal Council of Zürich (OpenParlData #18072) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Jörg Kündig** ([#17885](https://openparldata.ch/item/persons/17885)) — 'Jörg Kündig' sits in the Cantonal Council of Zürich (OpenParlData #17885) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **René Schweizer** ([#27534](https://openparldata.ch/item/persons/27534)) — 'René Schweizer' sits in the Cantonal Council of Zürich (OpenParlData #27534) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roger Cadonau** ([#17790](https://openparldata.ch/item/persons/17790)) — 'Roger Cadonau' sits in the Cantonal Council of Zürich (OpenParlData #17790) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Stephan Weber** ([#18073](https://openparldata.ch/item/persons/18073)) — 'Stephan Weber' sits in the Cantonal Council of Zürich (OpenParlData #18073) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Walter Honegger** ([#17675](https://openparldata.ch/item/persons/17675)) — 'Walter Honegger' sits in the Cantonal Council of Zürich (OpenParlData #17675) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (1)
-
-- **[Benjamin Walder](https://www.wikidata.org/wiki/Q116046000)** ([#17518](https://openparldata.ch/item/persons/17518)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
-
-## Electoral district: XII Uster (17)
+## Electoral district: XII Uster (16)
 
 ### Open membership without a start date (P580) (1)
 
@@ -301,9 +285,8 @@ Generated: 2026-08-10 06:34 UTC
 - **Tobias Infortuna** ([#17563](https://openparldata.ch/item/persons/17563)) — 'Tobias Infortuna' sits in the Cantonal Council of Zürich (OpenParlData #17563) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Ulrich Pfister** ([#18242](https://openparldata.ch/item/persons/18242)) — 'Ulrich Pfister' sits in the Cantonal Council of Zürich (OpenParlData #18242) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-### Missing the parliament's other identifier — value to be looked up (3)
+### Missing the parliament's other identifier — value to be looked up (2)
 
-- **[Leandra Columberg](https://www.wikidata.org/wiki/Q65771072)** ([#18137](https://openparldata.ch/item/persons/18137)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 - **[Patricia Bernet](https://www.wikidata.org/wiki/Q131349456)** ([#17548](https://openparldata.ch/item/persons/17548)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 - **[Patrick Walder](https://www.wikidata.org/wiki/Q131948095)** ([#17436](https://openparldata.ch/item/persons/17436)) ⚠️ — No P13468 (Zurich Kantonsrat and Regierungsrat member ID) statement. That is this person's id in the canton of Zürich's own member register, kept by the Staatsarchiv, a different register from the one OpenParlData is joined on (P14527), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P13468](https://www.wikidata.org/wiki/Property:P13468)
 
@@ -385,7 +368,7 @@ Generated: 2026-08-10 06:34 UTC
 - **Urs Wegmann** ([#18210](https://openparldata.ch/item/persons/18210)) — 'Urs Wegmann' sits in the Cantonal Council of Zürich (OpenParlData #18210) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Viviane Kägi** ([#27319](https://openparldata.ch/item/persons/27319)) — 'Viviane Kägi' sits in the Cantonal Council of Zürich (OpenParlData #27319) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: XVI Andelfingen (6)
+## Electoral district: XVI Andelfingen (7)
 
 ### Item matched by name but has no unique ID (the source's own) (1)
 
@@ -395,9 +378,10 @@ Generated: 2026-08-10 06:34 UTC
 
 - **[Sibylle Jüttner](https://www.wikidata.org/wiki/Q131939457)** ([#17762](https://openparldata.ch/item/persons/17762)) ⚠️ — Add a start date (P580) of 2022-06-13; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
 
-### Sitting member, but no Wikidata item could be found (3)
+### Sitting member, but no Wikidata item could be found (4)
 
 - **Jeannette Wibmer** ([#17691](https://openparldata.ch/item/persons/17691)) — 'Jeannette Wibmer' sits in the Cantonal Council of Zürich (OpenParlData #17691) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **Matthias Stutz** ([#27535](https://openparldata.ch/item/persons/27535)) — 'Matthias Stutz' sits in the Cantonal Council of Zürich (OpenParlData #27535) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Paul Mayer** ([#17815](https://openparldata.ch/item/persons/17815)) — 'Paul Mayer' sits in the Cantonal Council of Zürich (OpenParlData #17815) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Walter Staub** ([#18125](https://openparldata.ch/item/persons/18125)) — 'Walter Staub' sits in the Cantonal Council of Zürich (OpenParlData #18125) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
@@ -469,9 +453,9 @@ Generated: 2026-08-10 06:34 UTC
 - **Stefan Schmid** ([#17592](https://openparldata.ch/item/persons/17592)) — 'Stefan Schmid' sits in the Cantonal Council of Zürich (OpenParlData #17592) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Wilma Willi** ([#17699](https://openparldata.ch/item/persons/17699)) — 'Wilma Willi' sits in the Cantonal Council of Zürich (OpenParlData #17699) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: Other (146)
+## Electoral district: Other (141)
 
-### Recorded as sitting, but the member has left (146)
+### Recorded as sitting, but the member has left (141)
 
 - **[Alan David Sangines](https://www.wikidata.org/wiki/Q131939905)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Albert Gattiker](https://www.wikidata.org/wiki/Q111207211)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -480,7 +464,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Beatrix Stüssi](https://www.wikidata.org/wiki/Q131939893)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Benno Scherrer](https://www.wikidata.org/wiki/Q115817581)** ([#640](https://openparldata.ch/item/persons/640)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Birgit Tognella-Geertsen](https://www.wikidata.org/wiki/Q131939871)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Carmen Marty Fässler](https://www.wikidata.org/wiki/Q131939940)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Christian Müller](https://www.wikidata.org/wiki/Q131948656)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Christoph Fischbach](https://www.wikidata.org/wiki/Q131937322)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Christoph Ziegler](https://www.wikidata.org/wiki/Q131937600)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -505,7 +488,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Nathalie Aeschbacher](https://www.wikidata.org/wiki/Q119169053)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Nicola Siegrist](https://www.wikidata.org/wiki/Q113464256)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Nicola Yuste](https://www.wikidata.org/wiki/Q131939863)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Q131937829](https://www.wikidata.org/wiki/Q131937829)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940382](https://www.wikidata.org/wiki/Q131940382)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940541](https://www.wikidata.org/wiki/Q131940541)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940543](https://www.wikidata.org/wiki/Q131940543)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -539,7 +521,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Q131940609](https://www.wikidata.org/wiki/Q131940609)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940610](https://www.wikidata.org/wiki/Q131940610)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940611](https://www.wikidata.org/wiki/Q131940611)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Q131940613](https://www.wikidata.org/wiki/Q131940613)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940614](https://www.wikidata.org/wiki/Q131940614)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940615](https://www.wikidata.org/wiki/Q131940615)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940616](https://www.wikidata.org/wiki/Q131940616)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -547,7 +528,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Q131940618](https://www.wikidata.org/wiki/Q131940618)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940620](https://www.wikidata.org/wiki/Q131940620)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940621](https://www.wikidata.org/wiki/Q131940621)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Q131940622](https://www.wikidata.org/wiki/Q131940622)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940623](https://www.wikidata.org/wiki/Q131940623)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940624](https://www.wikidata.org/wiki/Q131940624)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940625](https://www.wikidata.org/wiki/Q131940625)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -563,7 +543,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Q131940636](https://www.wikidata.org/wiki/Q131940636)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940637](https://www.wikidata.org/wiki/Q131940637)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940638](https://www.wikidata.org/wiki/Q131940638)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Q131940639](https://www.wikidata.org/wiki/Q131940639)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940640](https://www.wikidata.org/wiki/Q131940640)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940641](https://www.wikidata.org/wiki/Q131940641)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131940644](https://www.wikidata.org/wiki/Q131940644)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
@@ -600,7 +579,7 @@ Generated: 2026-08-10 06:34 UTC
 - **[Q131948086](https://www.wikidata.org/wiki/Q131948086)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131948088](https://www.wikidata.org/wiki/Q131948088)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131948097](https://www.wikidata.org/wiki/Q131948097)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
-- **[Q131948099](https://www.wikidata.org/wiki/Q131948099)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
+- **[Q131948099](https://www.wikidata.org/wiki/Q131948099)** ([#18232](https://openparldata.ch/item/persons/18232)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131948275](https://www.wikidata.org/wiki/Q131948275)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q131948277](https://www.wikidata.org/wiki/Q131948277)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
 - **[Q136579930](https://www.wikidata.org/wiki/Q136579930)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but OpenParlData does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates OpenParlData holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.
