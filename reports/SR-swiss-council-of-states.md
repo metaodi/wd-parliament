@@ -1,19 +1,19 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-08-10 06:34 UTC
+Generated: 2026-08-17 06:55 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
 - Matched by P1307: 46 (100.0%)
 - Matched by name + birth date: 0
 - Not matched at all: 0
-- Open memberships on Wikidata: 327
+- Open memberships on Wikidata: 326
 - Suggested edits: 320
 
 ## By kind
 
-- One Wikidata item claimed by several source records: **2**
-- Recorded as sitting, but the member has left: **281**
+- One Wikidata item claimed by several source records: **3**
+- Recorded as sitting, but the member has left: **280**
 - Personal data the source publishes and Wikidata does not record: **37**
 
 ## Canton: AG (3)
@@ -155,12 +155,13 @@ Generated: 2026-08-10 06:34 UTC
 
 ## Canton: Other (283)
 
-### One Wikidata item claimed by several source records (2)
+### One Wikidata item claimed by several source records (3)
 
-- **[Q18683253 (2 source records)](https://www.wikidata.org/wiki/Q18683253)** — parlament.ch has 2 person records pointing at the same Wikidata item Q18683253: #19697, #19700. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 - **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q2643719 (2 source records)](https://www.wikidata.org/wiki/Q2643719)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2643719: #19304, #19312. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q7 (2 source records)](https://www.wikidata.org/wiki/Q7)** — parlament.ch has 2 person records pointing at the same Wikidata item Q7: #20481, #21150. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 
-### Recorded as sitting, but the member has left (281)
+### Recorded as sitting, but the member has left (280)
 
 - **[Abraham Louis Tourte](https://www.wikidata.org/wiki/Q18683312)** ([#3432](https://www.parlament.ch/de/biografie/wd/3432)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1849-11-12 to 1851-10-01, so add an end date (P582) of 1851-10-01, and the statement has no start date (P580) either — 1849-11-12 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Abraham Stocker](https://www.wikidata.org/wiki/Q16146040)** ([#3342](https://www.parlament.ch/de/biografie/wd/3342)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1867-07-01 to 1871-06-01, so add an end date (P582) of 1871-06-01, and the statement has no start date (P580) either — 1867-07-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
@@ -414,7 +415,6 @@ Generated: 2026-08-10 06:34 UTC
 - **[Robert Reimann](https://www.wikidata.org/wiki/Q122438)** ([#2998](https://www.parlament.ch/de/biografie/wd/2998)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1963-12-02 to 1979-11-25, so add an end date (P582) of 1979-11-25, and the statement has no start date (P580) either — 1963-12-02 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Robert Schöpfer](https://www.wikidata.org/wiki/Q41165690)** ([#3208](https://www.parlament.ch/de/biografie/wd/3208)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1917-12-03 to 1939-12-03, so add an end date (P582) of 1939-12-03, and the statement has no start date (P580) either — 1917-12-03 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Robert Straub](https://www.wikidata.org/wiki/Q1494316)** ([#3358](https://www.parlament.ch/de/biografie/wd/3358)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1867-12-02 to 1868-06-01, so add an end date (P582) of 1868-06-01, and the statement has no start date (P580) either — 1867-12-02 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
-- **[Rudolf Meier](https://www.wikidata.org/wiki/Q2173417)** ([#2672](https://www.parlament.ch/de/biografie/wd/2672)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1960-06-07 to 1967-12-03, so add an end date (P582) of 1967-12-03, and the statement has no start date (P580) either — 1960-06-07 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Rudolf Mäder](https://www.wikidata.org/wiki/Q1618157)** ([#2634](https://www.parlament.ch/de/biografie/wd/2634)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1957-06-03 to 1966-06-01, so add an end date (P582) of 1966-06-01, and the statement has no start date (P580) either — 1957-06-03 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Samuel Friedrich Siegfried](https://www.wikidata.org/wiki/Q1744766)** ([#3256](https://www.parlament.ch/de/biografie/wd/3256)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1848-11-06 to 1849-02-01, so add an end date (P582) of 1849-02-01, and the statement has no start date (P580) either — 1848-11-06 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Samuel Schwarz](https://www.wikidata.org/wiki/Q2218845)** ([#3232](https://www.parlament.ch/de/biografie/wd/3232)) — Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1852-07-05 to 1857-12-06, so add an end date (P582) of 1857-12-06, and the statement has no start date (P580) either — 1852-07-05 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
