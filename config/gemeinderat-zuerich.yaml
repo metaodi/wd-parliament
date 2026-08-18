@@ -213,41 +213,51 @@ terms: {}
 # and must never be read as one), no Bürgerort and no number of children.
 person_data: [P102, P106, P856]
 
-# ── Enrichment ──────────────────────────────────────────────────────────────
+# ── Enrichment, and the bigger question behind it ───────────────────────────
 #
-# A *second* source, read only to contradict this one; it produces no members
-# and a disagreement can only withhold a mechanical edit, never supply a value.
+# An enricher is a *second* source read only to contradict the first: it
+# produces no members, and a disagreement can only withhold a mechanical edit,
+# never supply a value.
 #
-# None is configured yet, and `gever` is not yet a value `config.SOURCES`
-# accepts. What changed with **swissparlpy 2.1** (now the floor in
-# `pyproject.toml`) is that the client can reach it at all: `backends/gever.py`
-# ships, and `gever_config.INSTANCES` carries **`city_zurich`** beside the
-# canton's — `https://www.gemeinderat-zuerich.ch` with `/api/kontakt`,
-# `/api/behoerdenmandat`, `/api/wahlkreis`, `/api/partei`. So the city's own
-# Gever is reachable as `SwissParlClient(backend="gever_city_zurich")`.
+# **swissparlpy 2.1** (the floor in `pyproject.toml`) ships `backends/gever.py`
+# with a **`city_zurich`** instance — `www.gemeinderat-zuerich.ch`, reachable as
+# `SwissParlClient(backend="gever_city_zurich")` — and run 35 measured it
+# (README step 13). It carries exactly what OpenParlData does not:
 #
-# Note it is shaped differently from the canton's, which has one `MITGLIEDER`
-# index: here the person (`kontakt`) and the mandate (`behoerdenmandat`) are
-# separate. That matters, because a `behoerdenmandat` row is the thing that is
-# missing from OpenParlData for this body.
+#     behoerdenmandat  3,700 rows, 61 Gremien, dauer_start/dauer_end on all
+#                      870 of them name 'Gemeinderat' by equality
+#                      wahlkreis on 3,360 — ON THE MANDATE
+#     kontakt          708 people: partei 674, jahrgang 537, fraktion 125,
+#                      beruf 134, homepageprivat 65
 #
-# Two things have to be measured before an enricher is written, and neither is
-# guessable:
+# The district being on the *mandate* is strictly better than what this config
+# reads today, where it sits on the person and gave 17 values for 9 districts.
 #
-#   * **the columns**, read from the service and not from a client's
-#     normalised output. Run 22 spent a whole dispatch reporting "3,862 rows
-#     with no name" because the field names came from `goifer`'s flat output
-#     while the probe read raw XML.
-#   * **the join.** `enrich.OpenParlDataEnricher` joins through the source's
-#     own `wikidata_id`; Gever has none, and run 23 established that no
-#     Wikidata property holds a Gever GUID at all. So a Gever cross-check is
-#     name-matched throughout, and run 24 showed its person-level key
-#     (`person_kontakt_obj_guid`, cantonally) is *nearly* a person key and not
-#     one — 3 genuinely split people — so it would need duplicate handling of
-#     its own rather than inheriting `resolve`'s.
+# ⚠️ **An open mandate carries `9999-12-31 23:59:59`, not a null** — the
+# federal `1753-01-01` at the other end. Unmapped it files a P582 of 9999-12-31
+# on every sitting member. Any adapter needs it handled at its own mapping
+# boundary.
 #
-# And one thing to keep in view about what it would buy today: under
-# `identifier_verified: false` **nothing here is mechanical**, so a
-# disagreement has nothing left to withhold. A Gever cross-check would show up
-# in the report and change no output — which is a reason to measure it now and
-# a reason not to call it a blocker.
+# So no `enrich:` block is configured, and the honest reason is that
+# enrichment is probably the wrong shape for this parliament:
+#
+#   * as **enrichment** Gever would change nothing. Under
+#     `identifier_verified: false` no suggestion here is mechanical, so a
+#     disagreement has nothing left to withhold — it would appear in the report
+#     and alter no output;
+#   * as a **source** it is the only thing measured that can give this
+#     parliament members at all, since OpenParlData has none;
+#   * and `config.SOURCES` does not accept `gever` either way. Adding it means
+#     a `gever.py` beside `openparldata.py`, not a line in this file.
+#
+# Whichever it becomes, the join is by **name**: no Wikidata property holds a
+# Gever key (run 23 for the canton, run 35's six GUID columns for the city), so
+# `is_mechanical` refuses everything, and the duplicate handling has to be its
+# own rather than `resolve`'s — run 24 found the canton's person-level key was
+# *nearly* a person key and not one.
+#
+# One thing still to decide rather than measure: 125 seats against run 35's 134
+# people over 143 open rows. The cantonal equivalent was 186 → 180 once the
+# roles were read, and `verify_gever_city.py --seat-roles` is where that list
+# gets written — from this parliament's own `funktion` values, never copied
+# from the canton's.

@@ -1450,7 +1450,7 @@ What the same run **did** settle, and what is now in the config:
 Wired into `Verify assumptions` as sections 11 and 12; neither gates, for the
 same reason step 7 does not.
 
-### 13. ⬜ Can the *city's* own Gever supply the seats OpenParlData lacks? — *unmeasured; the probe exists*
+### 13. 🔶 Can the *city's* own Gever supply the seats OpenParlData lacks? — *yes, and richly; but the join would be by name*
 
 Step 12 leaves the Gemeinderat with people and no mandates. **swissparlpy 2.1**
 — now the floor in `pyproject.toml` — ships `backends/gever.py` with a
@@ -1486,13 +1486,48 @@ nothing about what it publishes.
 Wired into `Verify assumptions` as section 13; it never gates, for the same
 reason as steps 7, 10 and 11.
 
-One thing worth keeping in view about the **enrichment** framing: under
-`identifier_verified: false` nothing this config produces is mechanical, so a
-second source has nothing left to withhold. A Gever cross-check would show up
-in the report and change no output. That is a reason to measure it now and a
-reason not to call it a blocker — and, given step 12, the more interesting
-question may be whether Gever is this parliament's *source* rather than its
-second opinion. The probe measures; the choice belongs in a config.
+**Run 35 (2026-08-18) answered A, B and D, and found the probe's own bug in C.**
+
+| | |
+| --- | --- |
+| `behoerdenmandat` | **3,700 rows**, 61 Gremien, `dauer_start`/`dauer_end` on every one |
+| named `Gemeinderat` by equality | **870** — with the parties (`SP`, `FDP`, `SVP`…) and `Büro des Gemeinderats` correctly outside |
+| `wahlkreis` | 3,360 of 3,700 — **on the mandate** |
+| `kontakt` | 708 people: `partei` 674, `jahrgang` 537, `fraktion` 125, `beruf` 134, `homepageprivat` 65 |
+| a Wikidata-joinable id | none: six GUID columns, no property holds one |
+
+So the answer to the title is **yes**: this service carries exactly what
+OpenParlData is missing for body 261, and carries the electoral district on the
+*mandate* rather than on the person — which is strictly better, since it is
+free of the "somebody who also sat federally carries that seat's district here"
+problem step 12 ran into.
+
+⚠️ **An open mandate carries `9999-12-31 23:59:59`, not a null.** Section C
+printed "870 ended, 0 open-ended" directly above three sample rows of sitting
+members. That is the federal `1753-01-01` at the other end of the axis, and it
+would do the same kind of damage: in an adapter it files a P582 of 9999-12-31
+on every sitting member, and it reports a full chamber as departed. The probe
+now has an `end_date` of its own, with the threshold loose rather than an
+equality test on 9999-12-31 — the same shape as `NULL_DATE`'s "anything below",
+because a service that spells its infinity differently means the same by it.
+
+Left open, and needing a decision rather than a measurement:
+
+- **125 seats, and the probe counts 134 people across 143 open rows.** The
+  cantonal equivalent was 186 → 180 once the roles were read, so section C now
+  prints every `funktion` it sees against the chamber and takes an optional
+  `--seat-roles` allowlist. It ships with none: run 34's whole lesson is that a
+  role list belongs to the parliament that uses it.
+- **source or enrichment.** They differ in what they are allowed to do — an
+  enricher produces no members and can only *withhold* — and step 12 makes the
+  question live: as enrichment for this config, Gever would change no output at
+  all, because under `identifier_verified: false` nothing is mechanical and a
+  disagreement has nothing left to withhold. As a *source* it is the only thing
+  measured that can give this parliament members.
+- **either way the join is by name.** No Wikidata property holds a Gever key,
+  so `is_mechanical` refuses everything, and the duplicate handling cannot be
+  inherited from `resolve` — run 24 found the canton's person-level key was
+  *nearly* a person key and not one.
 
 ---
 

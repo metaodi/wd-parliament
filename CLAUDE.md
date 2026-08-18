@@ -487,15 +487,45 @@ columns the **records** carry and says the records win where they differ (run
 chamber by **equality** — the city's `Stadtrat` is its nine-member executive
 and sits in the same index.
 
-And the thing to say out loud before writing a Gever enricher: under
-`identifier_verified: false` **nothing this config produces is mechanical**, so
-a second source has nothing left to withhold. A Gever cross-check would appear
-in the report and change no output. Given that OpenParlData has no seats for
-this body at all, the live question is whether Gever is this parliament's
-*source* rather than its second opinion — and the join would be by **name**
-throughout, since run 23 established no Wikidata property holds a Gever key,
-with duplicate handling of its own rather than `resolve`'s (run 24: the
-canton's person-level key is *nearly* a person key and not one).
+**Run 35 measured it, and the city's Gever carries exactly what OpenParlData
+does not.** `behoerdenmandat`: 3,700 rows across 61 Gremien, `dauer_start` /
+`dauer_end` on every one, `gremium` / `gremiumguid` / `funktion` /
+`kontaktguid`, and **`wahlkreis` on the mandate** (3,360 of 3,700) rather than
+on the person — strictly better than OpenParlData, because it is free of the
+"somebody who also sat federally carries that seat's district here" problem
+that gave body 261 seventeen districts instead of nine. **870** rows name the
+Gemeinderat by equality, with the parties (`SP`, `FDP`, `SVP`…, which this
+service models as Gremien too) and `Büro des Gemeinderats` correctly outside.
+`kontakt`: 708 people with `partei` 674, `jahrgang` 537, `fraktion` 125, `beruf`
+134, `homepageprivat` 65.
+
+⚠️ **An open mandate carries `9999-12-31 23:59:59`, not a null.** This is
+`parliament.NULL_DATE` at the other end of the axis and it does the same kind
+of damage: run 35 printed "870 ended, 0 open-ended" one line above three sample
+rows of sitting members, and in an adapter it would file a P582 of 9999-12-31
+on every one of them. `verify_gever_city.end_date` maps it, with the threshold
+**loose** (`OPEN_END_FROM = 2900-01-01`) rather than an equality test — the
+same shape as NULL_DATE's "anything below", because a service that spells its
+infinity 2999-12-31 means the same by it. Any Gever adapter needs this at its
+own mapping boundary; nothing downstream can catch it.
+
+Two things it does **not** settle, and neither is a measurement:
+
+- **125 seats, 134 people across 143 open rows.** The cantonal equivalent was
+  186 → 180 once the roles were read, so section C prints every `funktion`
+  against the chamber and takes `--seat-roles`. It ships with **none** — run
+  34's lesson is that a role list belongs to the parliament that uses it, and
+  copying `DEFAULT_SEAT_ROLES` from the canton would be exactly the borrowing
+  this file keeps warning about.
+- **source or enrichment.** As *enrichment* for this config Gever would change
+  no output at all: under `identifier_verified: false` nothing is mechanical,
+  so a disagreement has nothing left to withhold. As a *source* it is the only
+  thing measured that can give this parliament members. Either way the join is
+  by **name** — run 23 established no Wikidata property holds a Gever key, run
+  35 found six GUID columns and confirmed it for the city — so `is_mechanical`
+  refuses everything and the duplicate handling cannot be inherited from
+  `resolve` (run 24: the canton's person-level key is *nearly* a person key and
+  not one).
 
 Two facts from the same census shape the diff's behaviour:
 

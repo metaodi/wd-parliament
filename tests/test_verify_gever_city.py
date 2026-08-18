@@ -28,11 +28,13 @@ from verify_gever_city import (  # noqa: E402
     CONFIRMED,
     CONTRADICTED,
     INCONCLUSIVE,
+    OPEN_END_FROM,
     _as_date,
     classify_dates,
     classify_join,
     classify_seat_count,
     columns_of,
+    end_date,
     is_the_chamber,
     resolve_column,
 )
@@ -172,3 +174,43 @@ def test_d_identifier_columns_still_do_not_make_a_join():
 def test_d_no_identifier_column_at_all_is_a_different_answer():
     verdict, _ = classify_join([])
     assert verdict == INCONCLUSIVE
+
+
+# --- C. the far-future sentinel ---------------------------------------------
+def test_c_the_9999_end_date_means_open_not_ended():
+    """`parliament.NULL_DATE` at the other end of the axis.
+
+    Run 35 read all 870 of the chamber's rows as ended and printed "0
+    open-ended" one line above a sample of three sitting members. Federally the
+    sentinel was SQL Server's `datetime` minimum standing for "no date"; here
+    it is the maximum standing for "no end", and reading it as a date reports a
+    full chamber as departed — or, in an adapter, files a P582 of 9999-12-31 on
+    every sitting member.
+    """
+    assert end_date("9999-12-31T23:59:59") is None
+    assert end_date("9999-12-31") is None
+    assert end_date(None) is None
+    assert end_date("2022-04-30") == date(2022, 4, 30)
+
+
+def test_c_the_sentinel_threshold_is_loose_rather_than_an_equality_test():
+    """A service that spells its infinity differently means the same by it, and
+    no parliament records a mandate ending in the 30th century. Same shape as
+    NULL_DATE's 'anything below'."""
+    assert end_date("2999-12-31") is None
+    assert OPEN_END_FROM.year > date.today().year + 100
+    # ...and a date a real mandate could carry is still a date.
+    assert end_date("2030-05-01") == date(2030, 5, 1)
+
+
+def test_c_the_open_rows_are_the_ones_the_sentinel_marks():
+    """The verdict this feeds: 'ended' must not count the sentinel."""
+    rows = [
+        {"s": "2026-05-06", "e": "9999-12-31T23:59:59"},
+        {"s": "2026-05-06", "e": "9999-12-31T23:59:59"},
+        {"s": "2022-05-01", "e": "2026-05-05"},
+    ]
+    _, _, lines = classify_dates(rows, "s", "e")
+    text = "\n".join(lines)
+    assert "1 ended, 2 open-ended" in text
+    assert "sentinel" in text

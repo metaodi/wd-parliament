@@ -63,8 +63,28 @@ produces no members and can only withhold — and the finding above (OpenParlDat
 has no seats for this body) is what makes the question live rather than
 settled. The probe measures; the choice is in the config.
 
+**Run 35 (2026-08-18) answered A, B and D, and found the probe's own bug in C.**
+The service is real and rich: ``behoerdenmandat`` holds 3,700 rows across 61
+Gremien with ``dauer_start`` / ``dauer_end`` on every one, ``gremium`` /
+``gremiumguid`` / ``funktion`` / ``kontaktguid``, and ``wahlkreis`` on 3,360 —
+**on the mandate**, which is better than OpenParlData's person-level district
+and free of the "somebody who also sat federally carries that district here"
+problem. ``kontakt`` holds 708 people with ``partei``, ``jahrgang``,
+``fraktion``, ``beruf`` and ``homepageprivat``. 870 rows name the Gemeinderat
+by equality, with the parties (``SP``, ``FDP``, ``SVP``…) and ``Büro des
+Gemeinderats`` correctly outside it. D came back as expected: six
+identifier-shaped columns, all GUIDs, none of them a value any Wikidata
+property holds.
+
+And C printed **"870 ended, 0 open-ended"** directly above three sample rows of
+sitting members, because **an open mandate carries ``9999-12-31 23:59:59``, not
+a null** — see :data:`OPEN_END_FROM`. That is the federal ``1753-01-01`` at the
+other end of the axis, and it is the reason this probe now has an
+:func:`end_date` of its own rather than reading the column directly.
+
     uv run python scripts/verify_gever_city.py
     uv run python scripts/verify_gever_city.py --limit 200 --verbose
+    uv run python scripts/verify_gever_city.py --seat-roles "Mitglied,Präsident"
 """
 
 from __future__ import annotations
@@ -131,6 +151,40 @@ CHAMBER_NAMES = (
 
 COLUMN_HEAD = 200
 SAMPLE_ROWS = 3
+
+# Rows to read from the **person** index. Bounded on purpose and the mandate
+# index is not: `kontakt` is read only for its column list and its identifier
+# shapes, which a few hundred rows answer as well as all of them, while
+# `behoerdenmandat` carries the counts section C's verdict is — and a truncated
+# count would be reported as a chamber that is the wrong size. Paging costs a
+# request per 500 records against `HttpClient`'s one-second throttle, so
+# "everything, twice" is minutes of a diagnostic doing nothing useful.
+PERSON_SAMPLE = 1000
+
+# **A mandate that has not ended carries 9999-12-31 23:59:59, not a null.**
+#
+# This is ``parliament.NULL_DATE`` at the other end of the axis, and it cost
+# the same kind of wrong line: run 35 read all 870 of the chamber's rows as
+# *ended* and printed "0 open-ended" one line above a sample of three sitting
+# members. Federally the sentinel was SQL Server's `datetime` minimum standing
+# for "no date"; here it is the maximum standing for "no end". Left unmapped it
+# would report a full chamber as entirely departed — and, in an adapter, hand
+# `diff` a P582 of 9999-12-31 for every sitting member.
+#
+# The threshold is deliberately loose rather than an equality test on
+# 9999-12-31, the same shape as NULL_DATE's "anything below": a service that
+# spells its infinity 9999-12-30 or 2999-12-31 means the same thing by it, and
+# no parliament records a mandate ending in the 30th century.
+OPEN_END_FROM = date(2900, 1, 1)
+
+# Mandate roles that hold a seat, or ``None`` for "every role counts".
+#
+# Empty by default and NOT an allowlist copied from the canton: run 34's whole
+# lesson is that a role list belongs to the parliament that uses it. The
+# probe prints every role it sees against the chamber, which is what lets a
+# human write one — the cantonal `DEFAULT_SEAT_ROLES` was derived exactly that
+# way, from 186 rows that had to become 180.
+DEFAULT_SEAT_ROLES: Optional[Tuple[str, ...]] = None
 
 
 def _text(value: Any) -> str:
@@ -210,6 +264,19 @@ def _as_date(value: Any) -> Optional[date]:
     return None
 
 
+def end_date(value: Any) -> Optional[date]:
+    """The end of a mandate, or ``None`` if it has not ended. Pure.
+
+    See :data:`OPEN_END_FROM`. ``None`` here means "open", and it is the only
+    thing that may ever mean open — a sentinel read as a date is how a sitting
+    member becomes a departed one.
+    """
+    parsed = _as_date(value)
+    if parsed is None or parsed >= OPEN_END_FROM:
+        return None
+    return parsed
+
+
 def classify_dates(
     rows: Sequence[Dict[str, Any]], begin_field: Optional[str], end_field: Optional[str]
 ) -> Tuple[str, str, List[str]]:
@@ -238,11 +305,22 @@ def classify_dates(
         lines.append("end column:   (none found)")
         open_rows = None
     else:
-        ended = sum(1 for r in rows if _as_date(r.get(end_field)))
+        ended = sum(1 for r in rows if end_date(r.get(end_field)))
+        sentinel = sum(
+            1
+            for r in rows
+            if _as_date(r.get(end_field)) and end_date(r.get(end_field)) is None
+        )
         open_rows = len(rows) - ended
         lines.append(
             f"end column:   {end_field}  ({ended} ended, {open_rows} open-ended)"
         )
+        if sentinel:
+            lines.append(
+                f"              {sentinel} of those carry the far-future "
+                f"sentinel (>= {OPEN_END_FROM.year}), which is this service's "
+                "way of writing 'has not ended' — NOT a date."
+            )
     if dated == 0:
         return (
             CONTRADICTED,
@@ -360,27 +438,57 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="Seats in the chamber. 125 for the Gemeinderat of Zürich.",
     )
     parser.add_argument(
+        "--seat-roles",
+        default="",
+        help=(
+            "Comma-separated mandate roles that hold a seat. Empty (the "
+            "default) counts every role and PRINTS them, which is how a list "
+            "gets written: the cantonal one was derived from 186 rows that had "
+            "to become 180, not copied from anywhere."
+        ),
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Print every column and every distinct body value, not the head.",
     )
     args = parser.parse_args(argv)
 
+    seat_roles = (
+        tuple(_norm(r) for r in args.seat_roles.split(",") if r.strip())
+        or DEFAULT_SEAT_ROLES
+    )
+
     config = load_config(args.config)
     http = HttpClient(user_agent=config.user_agent, request_delay=config.request_delay)
 
     import swissparlpy as spp
 
-    def read(table: str) -> Tuple[List[Dict[str, Any]], Optional[int], Optional[str]]:
+    cache: Dict[str, Tuple[List[Dict[str, Any]], Optional[int], Optional[str]]] = {}
+
+    def read(
+        table: str, cap: Optional[int] = None
+    ) -> Tuple[List[Dict[str, Any]], Optional[int], Optional[str]]:
         """Rows, the server's total, and the error — an unreadable index is a
-        finding about that index and never the end of the probe."""
+        finding about that index and never the end of the probe.
+
+        Cached, because sections A and B ask about the same two indexes and
+        every page is a throttled request. ``total`` is the server's own count
+        and stays exact however few rows were loaded, so a capped read still
+        reports the index's real size.
+        """
+        if table in cache:
+            return cache[table]
+        limit = args.limit or cap
         try:
-            response = client.get_data(table, limit=args.limit or None)
+            response = client.get_data(table, limit=limit)
             total = len(response)
             rows = [dict(r) for r in response]
-            return rows, total, None
+            result = (rows, total, None)
         except Exception as exc:
-            return [], None, f"{exc}"
+            result = ([], None, f"{exc}")
+        cache[table] = result
+        return result
 
     # --- A. reach -----------------------------------------------------------
     print("=" * 70)
@@ -403,7 +511,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(f"  {table:<20} NOT in this instance's index map")
             counts[table] = None
             continue
-        _, total, error = read(table)
+        _, total, error = read(
+            table, cap=PERSON_SAMPLE if table != MANDATE_INDEX else None
+        )
         counts[table] = total
         if error:
             print(f"  {table:<20} ! {error}")
@@ -444,8 +554,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             records[table] = []
             column_counts[table] = Counter()
             continue
-        rows, _, error = read(table)
+        rows, _, error = read(
+            table, cap=PERSON_SAMPLE if table != MANDATE_INDEX else None
+        )
         records[table] = rows
+        if counts.get(table) and len(rows) < counts[table]:
+            print(f"  (read {len(rows)} of {counts[table]} — this index is "
+                  "sampled for its columns; the counts in C are the mandate "
+                  "index's, which is read whole.)")
         if error:
             print(f"  ! {error}")
             column_counts[table] = Counter()
@@ -531,21 +647,43 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     people = 0
     if chamber_rows and begin_field:
         today = date.today()
-        seen_people = set()
+        current = []
         for row in chamber_rows:
             start = _as_date(row.get(begin_field))
-            end = _as_date(row.get(end_field)) if end_field else None
+            end = end_date(row.get(end_field)) if end_field else None
             if start is None or start > today:
                 continue
             if end is not None and end < today:
                 continue
-            open_rows += 1
-            if person_ref:
-                seen_people.add(_text(row.get(person_ref)))
+            current.append(row)
+
+        # Every role, printed. Neither an allowlist nor a denylist
+        # self-corrects when a source adds a role — what protects the count is
+        # this list being visible beside a total that has to be the chamber's
+        # size. It is also how the cantonal DEFAULT_SEAT_ROLES was derived, and
+        # the reason none is assumed here.
+        if role_field:
+            roles = Counter(_text(r.get(role_field)) or "(none)" for r in current)
+            print()
+            print(f"  roles among the open rows ({role_field}):")
+            for value, n in roles.most_common():
+                keep = seat_roles is None or _norm(value) in seat_roles
+                print(f"    {value!r} x{n}{'' if keep else '   <- not counted'}")
+        if seat_roles is not None and role_field:
+            current = [r for r in current if _norm(r.get(role_field)) in seat_roles]
+
+        open_rows = len(current)
+        seen_people = {
+            _text(r.get(person_ref)) for r in current if person_ref
+        }
         people = len(seen_people) or open_rows
         print()
         print(f"  open, already-begun mandate rows: {open_rows}")
         print(f"  distinct people among them:       {people}")
+        if person_ref and open_rows != people:
+            print(f"  ({open_rows - people} row(s) beyond the people who hold "
+                  "them: somebody carries two. A presiding member holds ONE "
+                  "seat — count people.)")
     seat_verdict, seat_detail = classify_seat_count(
         open_rows, people, args.expect_seats
     )
