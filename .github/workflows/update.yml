@@ -27,6 +27,7 @@ on:
           - All configs
           - config/parliament.yaml
           - config/kantonsrat-zh.yaml
+          - config/gemeinderat-zuerich.yml
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
