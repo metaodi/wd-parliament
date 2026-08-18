@@ -44,7 +44,9 @@ group_by: constituency
 bodies:
   - council: GR
     label: Zurich City Parliament
-    position: Q111219780    #  Member of the Zurich City Parliament 
+    position: Q111219780    #  Member of the Zurich City Parliament
+    group_id: 8062
+    group_name: Gemeinderat
 
 # The 9 Wahlkreise
 constituencies:
@@ -54,29 +56,12 @@ constituencies:
   "Wahlrkeis Zürich 6": Q456170            # Kreis 6
   "Wahlkreis Zürich 7+8": Q117787912       # Kreis 7+8
   "Wahlkreis Zürich 9": Q456159            # Kreis 9
-  # TODO continue
-  "7. Wahlkreis (Dietikon)": Q141045570      # Kreis 10
-  "8. Wahlkreis (Affoltern)": Q141045868     # Kreis 11
-  "9. Wahlkreis (Horgen)": Q141045940        #Kreis 12
-# ⚠️ Historic tenures use districts from before the 2007 reorganisation — 220
-# distinct spellings across the register's 6,767 seats — and those have no
-# items and no entries here. They make no suggestion, which is correct: an
-# unmapped district is skipped, never guessed at.
-#
-# Note also what the seat's statements carry today: P768 appears on 3 of them,
-# naming Kreis 4, Kreis 5 and Kreis 11 — *city of Zürich quarters*, a third
-# kind of thing again. Those three want fixing by hand; this tool only adds,
-# so it would leave those members with two values rather than correct them.
+  "Wahlkreis Zürich 10": Q456175           # Kreis 10
+  "Wahlkreis Zürich 11": Q870098           # Kreis 11
+  "Wahlkreis Zürich 12": Q657525           # Kreis 12
 
-# Parties come from the Parteien sheet as the register's own abbreviations
-# (FDP, SP, SVP, …), one row per affiliation *spell*. Empty until each is
-# checked: the cantonal party is often a different item from the federal one
-# of the same name, and mapping "SP" to the national party would put a wrong
-# statement on 40-odd people at once.
 parties: {}
 
-# `fraktion` is filled on 376 of 7,129 rows, so it is nearly always absent.
-# Nothing to map yet.
 parl_groups: {}
 
 # No periods in this source, so no P2937 can be suggested whatever is here.
@@ -94,9 +79,9 @@ person_data: [P106]
 # right shape for a freshness cross-check.
 enrich:
   source: openparldata
-  body_key: ZH
+  body_key: "261"
   # The group that IS this chamber in the second source, matched by EXACT
   # name — `Präsidium des Kantonsrates` and `Büro KR` are not the chamber, and
   # a substring match would take a committee of it for it.
   groups:
-    KR: Kantonsrat Zürich
+    GR: Gemeinderat
