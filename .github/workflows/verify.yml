@@ -399,6 +399,31 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # README step 13: can the CITY's own Gever supply what OpenParlData does
+      # not? Reports, does not gate, for the same reason steps 7, 10 and 11 do
+      # not: no config here names this service.
+      #
+      # It exists because run 34 found the gap it would fill. OpenParlData has
+      # 807 person records for body 261 and **zero** membership rows under the
+      # Gemeinderat's group, so `config/gemeinderat-zuerich.yaml` cannot
+      # produce a member at all — a gap in the source, which no configuration
+      # fixes. swissparlpy 2.1 carries a `city_zurich` Gever instance with a
+      # `behoerdenmandat` index, which is exactly the missing table.
+      - name: Probe the city's Gever for the Gemeinderat's seats (step 13)
+        id: gever_city
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python scripts/verify_gever_city.py \
+            --config config/gemeinderat-zuerich.yaml 2>&1 | tee gever-city.txt
+          {
+            echo "## 13. Gever of the city of Zürich — README step 13"
+            echo
+            echo '```'
+            cat gever-city.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Summarise and set the job result
         run: |
           source_step="${{ steps.source.outcome }}"
@@ -420,6 +445,7 @@ jobs:
             echo "| KRRR export / P13468 (step 11) | \`${{ steps.krrr.outcome }}\` (does not gate) |"
             echo "| Municipal extension (step 12) | \`${{ steps.gemeinderat.outcome }}\` (does not gate) |"
             echo "| Gemeinderat Q-IDs (step 12) | \`${{ steps.gemeinderat_qids.outcome }}\` (does not gate) |"
+            echo "| City Gever (step 13) | \`${{ steps.gever_city.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both gating checks passed: the members are readable, the"

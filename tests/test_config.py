@@ -213,14 +213,30 @@ def test_an_unknown_identifier_property_is_rejected(tmp_path):
         load_config(write(tmp_path, MINIMAL + "identifier_property: P9999999\n"))
 
 
-def test_the_shipped_cantonal_config_joins_on_what_the_source_can_supply():
-    """P13468 is the canton's own id and the property Wikidata uses for these
-    people — but run 20 found its values in no column of OpenParlData, so the
-    only joinable identifier here is the one that source *does* produce."""
-    cfg = load_config("config/kantonsrat-zh.yaml")
-    assert cfg.identifier_property == "P14527"
-    assert cfg.identifier_verified is False
-    assert cfg.quickstatements is False
+def test_a_config_joins_on_the_identifier_ITS_source_can_supply():
+    """The rule, stated across the two configs that answer it differently.
+
+    P13468 is the canton's own id and the property Wikidata uses for these
+    people, and run 20 found its values in no column of OpenParlData — so the
+    register that *does* publish them (KR-Daten) joins on it and every
+    OpenParlData config joins on P14527 instead. The property is a fact about
+    the source, not about the parliament.
+    """
+    krdaten = load_config("config/kantonsrat-zh.yaml")
+    assert krdaten.identifier_property == "P13468"
+    assert krdaten.identifier_verified is True
+
+    openparldata = load_config("config/gemeinderat-zuerich.yaml")
+    assert openparldata.identifier_property == "P14527"
+    # P14527 is not in VERIFIED_IDENTIFIER_PROPERTIES: 34 of 35 of its values
+    # are the person id and the one that differs belongs to somebody who also
+    # sat elsewhere, because the source holds one record per person per body.
+    assert openparldata.identifier_verified is False
+
+    # Both ship report-only, for two independent reasons — see the header of
+    # each file.
+    assert krdaten.quickstatements is False
+    assert openparldata.quickstatements is False
 
 
 def test_the_cantons_own_id_cannot_be_joined_on_from_openparldata(tmp_path):
@@ -327,15 +343,33 @@ def test_each_identifier_resolves_through_its_own_template(tmp_path):
 
 
 def test_the_shipped_configs_report_both_identifiers():
-    """Federally the parliament's own id is the join and OpenParlData's is the
-    extra; cantonally it is the other way round, because P13468's values are in
-    no column OpenParlData has (run 20)."""
+    """A parliament has two identifiers and only one of them can be the join,
+    so the other is reported or it is never recorded at all.
+
+    Federally the parliament's own id is the join and OpenParlData's is the
+    extra; for the Kantonsrat, read from the register that publishes P13468, it
+    is that one joining and P14527 reported beside it. The join property comes
+    first in both, because it is the one whose value the run holds.
+    """
     federal = load_config("config/parliament.yaml")
     assert [c.property_id for c in federal.identifier_checks] == ["P1307", "P14527"]
 
     zurich = load_config("config/kantonsrat-zh.yaml")
-    assert [c.property_id for c in zurich.identifier_checks] == ["P14527", "P13468"]
-    assert zurich.biography_url_for(18172) == (
+    assert [c.property_id for c in zurich.identifier_checks] == ["P13468", "P14527"]
+
+
+def test_a_parliament_with_only_one_identifier_reports_only_that_one():
+    """The city of Zürich has no member-id property of its own on Wikidata, so
+    there is no second identifier to raise MISSING_IDENTIFIER for. Listing one
+    would be asserting a register that does not exist.
+
+    Its biography link is the join property's own record page, because the
+    number the report prints beside a member is a P14527 value. The first draft
+    linked the city's member list, which has never heard of one.
+    """
+    city = load_config("config/gemeinderat-zuerich.yaml")
+    assert [c.property_id for c in city.identifier_checks] == ["P14527"]
+    assert city.biography_url_for(18172) == (
         "https://openparldata.ch/item/persons/18172"
     )
 

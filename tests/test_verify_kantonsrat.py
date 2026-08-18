@@ -33,6 +33,7 @@ if str(SCRIPTS) not in sys.path:
 
 from verify_kantonsrat import (  # noqa: E402
     CONFIRMED,
+    body_key_of,
     CONTRADICTED,
     INCONCLUSIVE,
     OPENPARLDATA_ID,
@@ -64,6 +65,7 @@ from verify_kantonsrat import (  # noqa: E402
     split_numbered_label,
     summarise_position_candidates,
     summarise_qualifier_usage,
+    trace_memberships,
 )
 
 TODAY = date(2026, 7, 30)
@@ -897,3 +899,61 @@ def test_c_an_unlinked_source_says_nothing_about_the_column():
     counts, compared = discover_identifier_columns([_person(9532, "Q1")], {})
     assert (counts, compared) == ({}, 0)
     assert classify_identifier_column(counts, compared)[0] == INCONCLUSIVE
+
+
+# --- A. the body key, and where the memberships are -------------------------
+def test_a_the_body_key_is_read_from_the_column_that_carries_it():
+    """`bodies` rows say `body_key`, not `key`.
+
+    Reading only `key` had the probe print "0 match key='261'" and advise a
+    different --body-key, one line above a row whose body_key was exactly 261.
+    """
+    assert body_key_of({"id": 322, "body_key": "261", "name_de": "Zürich"}) == "261"
+    assert body_key_of({"id": 275, "key": "ZH"}) == "ZH"
+    assert body_key_of({"id": 1, "name_de": "Zürich"}) == ""
+
+
+class _TraceApi:
+    """Serves `memberships` filtered by person_id, and nothing else."""
+
+    def __init__(self, rows):
+        self.rows = rows
+        self.asked = []
+
+    def get_data(self, table, **params):
+        assert table == "memberships"
+        self.asked.append(params["person_id"])
+        return [r for r in self.rows if r["person_id"] == params["person_id"]]
+
+
+def test_b_the_trace_names_the_groups_the_rows_actually_point_at():
+    """The finding is a group id nobody configured, so it has to be printed."""
+    api = _TraceApi(
+        [
+            {"person_id": 1, "group_id": 9001, "role_name_de": "Mitglied",
+             "begin_date": "2022-05-01", "end_date": None},
+            {"person_id": 2, "group_id": 9001, "role_name_de": "Mitglied",
+             "begin_date": "2022-05-01", "end_date": None},
+        ]
+    )
+    groups = [{"id": 8062, "name_de": "Gemeinderat"},
+              {"id": 9001, "name_de": "Gemeinderat 2022-2026"}]
+    lines = trace_memberships(api, [{"id": 1}, {"id": 2}], groups)
+    text = "\n".join(lines)
+    assert "9001" in text and "Gemeinderat 2022-2026" in text
+    assert "8062" not in text
+
+
+def test_b_no_membership_rows_at_all_is_named_as_a_gap_in_the_source():
+    """"The config is wrong" and "the source has no such rows" are opposite
+    diagnoses, and only the second one no config can fix."""
+    api = _TraceApi([])
+    lines = trace_memberships(api, [{"id": 1}, {"id": 2}], [])
+    assert "SOURCE" in "\n".join(lines)
+
+
+def test_b_the_trace_walks_a_handful_of_people_not_the_whole_body():
+    """One request each, against a body that can hold hundreds of records."""
+    api = _TraceApi([])
+    trace_memberships(api, [{"id": i} for i in range(50)], [], limit=3)
+    assert api.asked == [0, 1, 2]

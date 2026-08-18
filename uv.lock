@@ -108,6 +108,15 @@ wheels = [
 ]
 
 [[package]]
+name = "defusedxml"
+version = "0.7.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/d5/c66da9b79e5bdb124974bfe172b4daf3c984ebd9c2a06e2b8a4dc7331c72/defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69", size = 75520, upload-time = "2021-03-08T10:59:26.269Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61", size = 25604, upload-time = "2021-03-08T10:59:24.45Z" },
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -117,6 +126,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl", hash = "sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598", size = 16740, upload-time = "2025-11-21T23:01:53.443Z" },
+]
+
+[[package]]
+name = "flatten-dict"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/d0/34bf1bafa4d54e4ec20ca40856e991ffe7fdfd53831a2a36a7eb356508c8/flatten_dict-0.5.0.tar.gz", hash = "sha256:ca89664d0bc9552d525ee756726b5a755c17f65b5bf23d0a1f07841f181428b7", size = 9476, upload-time = "2026-04-28T14:23:44.979Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/72/9f/485516087cd8c44183aaf9ab850247a28e2e4a42a4d62eab77c21f673450/flatten_dict-0.5.0-py3-none-any.whl", hash = "sha256:c4bd2010052e4d33241433720d054322403fa7ad914fdc5cb1b31a713d4c561e", size = 9869, upload-time = "2026-04-28T14:23:45.695Z" },
 ]
 
 [[package]]
@@ -353,6 +371,19 @@ wheels = [
 ]
 
 [[package]]
+name = "muzzle"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "defusedxml" },
+    { name = "xmltodict" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c0/b7/cea616a99e7b4d998cebdadff335f25847c846e68b6411ec646ded43271b/muzzle-0.0.1.tar.gz", hash = "sha256:87792c949ef59d27531b6a4af893c2a8c273f206727515f0e6ebd93cf7709f87", size = 14261, upload-time = "2021-11-02T11:00:17.467Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f2/88/7bff970f2fad3029fc9b4243c3b636e552cfa9b80e2f454bae1f503048ad/muzzle-0.0.1-py3-none-any.whl", hash = "sha256:7391485f6dc45f44645ab4b01e9890f23d7292b0a195b318a8f680ea8a248b32", size = 3957, upload-time = "2021-11-02T11:00:16.265Z" },
+]
+
+[[package]]
 name = "packaging"
 version = "26.2"
 source = { registry = "https://pypi.org/simple" }
@@ -490,15 +521,17 @@ wheels = [
 
 [[package]]
 name = "swissparlpy"
-version = "2.0.0"
+version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "flatten-dict" },
+    { name = "muzzle" },
     { name = "pyodata" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/53/0d/eb233221ca451b5d14967dd830bd2e85ed4afd498d8ebe9f7c66fd95f387/swissparlpy-2.0.0.tar.gz", hash = "sha256:bb8717cb4ac6e7883e2f89d49a6a80ec498b061f511d837aeab6a6c8fd8bed36", size = 4307944, upload-time = "2026-07-30T08:23:06.524Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/a9/16ef1714441a137ec5e4aa5164e87cb7f9141776e0ae7ab140f30c3cd5a1/swissparlpy-2.1.0.tar.gz", hash = "sha256:2bcba02d13a5c037b80f1b2fc680aedbc87ce80a758324bd1940a686196c9a7f", size = 4351291, upload-time = "2026-08-11T09:34:21.166Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/be/f3/33cbcde87cb0098aa926d5751b513112f09f918e9c7a73a09bd700627893/swissparlpy-2.0.0-py3-none-any.whl", hash = "sha256:37b6c9b0e865dd1e946e785285e045edf07bc6fc82aa4d99d9265f92bd4b1a48", size = 32599, upload-time = "2026-07-30T08:23:04.958Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/b8/7c340005090e038e952a6c60365b1a786e44f3455c08c4a93afe768b175e/swissparlpy-2.1.0-py3-none-any.whl", hash = "sha256:0ba3755921f37e68973d37f69f6add54055e1fe78cb684e0ef16423a02e6c4ec", size = 48926, upload-time = "2026-08-11T09:34:19.547Z" },
 ]
 
 [[package]]
@@ -595,6 +628,15 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "requests", specifier = ">=2.31" },
-    { name = "swissparlpy", specifier = ">=2.0" },
+    { name = "swissparlpy", specifier = ">=2.1" },
 ]
 provides-extras = ["dev"]
+
+[[package]]
+name = "xmltodict"
+version = "1.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/70/80f3b7c10d2630aa66414bf23d210386700aa390547278c789afa994fd7e/xmltodict-1.0.4.tar.gz", hash = "sha256:6d94c9f834dd9e44514162799d344d815a3a4faec913717a9ecbfa5be1bb8e61", size = 26124, upload-time = "2026-02-22T02:21:22.074Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/38/34/98a2f52245f4d47be93b580dae5f9861ef58977d73a79eb47c58f1ad1f3a/xmltodict-1.0.4-py3-none-any.whl", hash = "sha256:a4a00d300b0e1c59fc2bfccb53d7b2e88c32f200df138a0dd2229f842497026a", size = 13580, upload-time = "2026-02-22T02:21:21.039Z" },
+]

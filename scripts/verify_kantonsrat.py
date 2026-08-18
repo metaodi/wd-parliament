@@ -367,6 +367,97 @@ def kantonsrat_candidates(
 # a body with more groups than this has a body-key problem, not a naming one.
 GROUP_LISTING_HEAD = 60
 
+# How many people to walk when the chamber's own group holds no memberships.
+# Small on purpose: this is one request each, and the question ("where do this
+# body's seats live, if not under the group named after the chamber?") is
+# answered by the first handful or not at all.
+MEMBERSHIP_TRACE_PEOPLE = 5
+
+
+def body_key_of(row: Dict[str, Any]) -> str:
+    """The key of a ``bodies`` row, whatever the column is called. Pure.
+
+    ``bodies`` rows carry ``body_key``, not ``key`` — reading only ``key``
+    reported "0 match key='261'" for a body that was right there in the very
+    next line of the same output, and then advised passing a different
+    ``--body-key``. The same rule as ``BEGIN_FIELDS``: resolve the column, do
+    not assume it.
+    """
+    for field in ("body_key", "key", "abbreviation", "code"):
+        value = _text(row.get(field)).strip()
+        if value:
+            return value
+    return ""
+
+
+def trace_memberships(
+    client: Any,
+    people: Sequence[Dict[str, Any]],
+    groups: Sequence[Dict[str, Any]],
+    limit: int = MEMBERSHIP_TRACE_PEOPLE,
+) -> List[str]:
+    """Where a body's membership rows actually are, when the chamber's group
+    holds none. Reporting only; costs one request per person walked.
+
+    Run 33 is why this exists. The Gemeinderat dispatch found the group by
+    name — ``id=8062``, exactly what the config already said — and then read
+    **0** membership rows from it, against 807 person records for the same
+    body. Every reading available at that point was wrong: the body key was
+    right, the group id was right, and the name matched. What was missing was
+    the one thing nobody had asked the source for — which group ids its
+    membership rows *do* point at.
+
+    Walking people rather than groups is deliberate. A body can hold 156
+    groups, and asking each of them costs 156 requests to answer a question
+    that a handful of people answer directly: a member's own rows name the
+    groups their seats hang off, whatever those are called.
+    """
+    lines: List[str] = []
+    by_id = {row.get("id"): row for row in groups}
+    walked = 0
+    seen: Dict[Any, int] = {}
+    for person in people:
+        if walked >= limit:
+            break
+        person_id = person.get("id")
+        if person_id is None:
+            continue
+        walked += 1
+        rows, error = fetch(client, "memberships", person_id=person_id)
+        name = " ".join(
+            _text(person.get(f)) for f in ("first_name", "last_name") if person.get(f)
+        ) or _text(person_id)
+        if error:
+            lines.append(f"    person {person_id} ({name}): unreadable")
+            continue
+        lines.append(f"    person {person_id} ({name}): {len(rows)} membership row(s)")
+        for row in rows[:8]:
+            group_id = row.get("group_id")
+            seen[group_id] = seen.get(group_id, 0) + 1
+            group = by_id.get(group_id) or {}
+            group_name = _text(group.get("name_de") or group.get("name")) or "?"
+            lines.append(
+                f"      group {group_id} {group_name!r} "
+                f"role={_text(row.get('role_name_de')) or '?'} "
+                f"{_text(row.get('begin_date')) or '?'}"
+                f" -> {_text(row.get('end_date')) or 'open'}"
+            )
+    if not walked:
+        return ["    (no person records to walk)"]
+    lines.append("")
+    lines.append(f"    group ids seen across {walked} person(s):")
+    for group_id, n in sorted(seen.items(), key=lambda kv: -kv[1]):
+        group = by_id.get(group_id) or {}
+        group_name = _text(group.get("name_de") or group.get("name")) or "?"
+        lines.append(f"      {group_id} {group_name!r}  x{n}")
+    if not seen:
+        lines.append(
+            "      (none — this body has person records and no membership rows "
+            "at all, which is a gap in the SOURCE and not in the config. "
+            "Nothing this tool configures can produce members from it.)"
+        )
+    return lines
+
 
 def find_kantonsrat_group(
     rows: Sequence[Dict[str, Any]],
@@ -1519,11 +1610,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # lang='de' explicitly: the names matched here are German, and pinning the
     # language is what keeps the run reproducible across swissparlpy versions.
     bodies, _ = fetch(client, "bodies", lang="de")
-    match = [
-        row
-        for row in bodies
-        if _text(row.get("key")).strip().upper() == args.body_key.upper()
-    ]
+    match = [row for row in bodies if body_key_of(row).upper() == args.body_key.upper()]
     print(f"bodies: {len(bodies)} row(s); {len(match)} match key={args.body_key!r}")
     for row in match[:3]:
         seats = row.get("legislative_seats")
@@ -1572,6 +1659,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"  => size:  {seat_verdict}: {seat_detail}")
     else:
         print("  (skipped: no chamber group to query)")
+
+    # The group was found and holds nothing. Every other reading is green at
+    # this point — right body, right group id, right name — so the only useful
+    # next question is which groups this body's membership rows DO name. Asked
+    # only in that case, so a healthy dispatch spends no requests on it.
+    if chamber is not None and not seat_rows:
+        print()
+        print("  The group exists and holds no memberships. Where are they?")
+        people_probe, _ = fetch(client, "persons", body_key=args.body_key)
+        print(f"    person records for this body: {len(people_probe)}")
+        for line in trace_memberships(client, people_probe, groups):
+            print(line)
 
     # --- C. who are these people on Wikidata? -------------------------------
     print()
