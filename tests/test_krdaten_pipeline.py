@@ -22,10 +22,12 @@ anything but the socket.
 import io
 import zipfile
 from datetime import date
+from functools import partial
 
 import pytest
 
-from wd_parliament.app import build_source, process
+from wd_parliament.app import build_source
+from wd_parliament.app import process as _process
 from wd_parliament.config import SOURCE_KRDATEN, load_config
 from wd_parliament.krdaten import KrDatenClient
 from wd_parliament.models import (
@@ -37,6 +39,11 @@ from wd_parliament.quickstatements import is_mechanical
 
 CONFIG = "config/kantonsrat-zh-krdaten.yaml"
 TODAY = date(2026, 8, 10)
+# Pinned so "sitting"/"open seat" fixture rows stay pinned to the day this
+# file was written rather than drifting as the real calendar advances past
+# a fixture row's date — see app.process's `today` parameter, and the same
+# fix in test_cantonal_pipeline.py.
+process = partial(_process, today=TODAY)
 
 PERSONEN = [
     ["ID_PERSON_NEW", "NACHNAME", "VORNAME", "DATUM_GEBURT", "BERUF"],

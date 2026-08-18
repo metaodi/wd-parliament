@@ -535,9 +535,18 @@ class OpenParlDataClient:
         return found
 
     def get_members(
-        self, councils: Optional[Sequence[str]] = None, active_only: bool = True
+        self,
+        councils: Optional[Sequence[str]] = None,
+        active_only: bool = True,
+        today: Optional[date] = None,
     ) -> List[Member]:
-        """Sitting members of the configured groups, as dataclasses."""
+        """Sitting members of the configured groups, as dataclasses.
+
+        ``today`` is "as of what date is a row a seat" — see ``is_seat_row``.
+        Left ``None`` it is the real wall-clock date, which is what a live run
+        wants; a test pins it so a fixture with a future ``begin_date`` does
+        not silently become a seat as the calendar moves past it.
+        """
         wanted = {c.strip().upper() for c in councils} if councils else None
         group_ids = self.resolve_group_ids()
         persons = self._person_rows()
@@ -555,6 +564,7 @@ class OpenParlDataClient:
                 persons,
                 body,
                 active_only=active_only,
+                today=today,
                 seat_roles=self.seat_roles,
             )
             log.info(

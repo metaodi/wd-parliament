@@ -45,7 +45,7 @@ class FakeParliament:
         self._period_rows = period_rows
         self._history_rows = history_rows or []
 
-    def get_members(self, councils=None, active_only=True, table=None):
+    def get_members(self, councils=None, active_only=True, table=None, today=None):
         return members_from_rows(
             self._member_rows, councils=councils, active_only=active_only
         )

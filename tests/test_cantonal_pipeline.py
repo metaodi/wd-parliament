@@ -12,10 +12,12 @@ no network is touched.
 
 import json
 from datetime import date
+from functools import partial
 
 import pytest
 
-from wd_parliament.app import build_source, process
+from wd_parliament.app import build_source
+from wd_parliament.app import process as _process
 from wd_parliament.config import SOURCE_OPENPARLDATA, load_config
 from wd_parliament.models import (
     KIND_ADD_MEMBERSHIP,
@@ -32,6 +34,10 @@ from conftest import FIXTURES
 
 CONFIG = "config/kantonsrat-zh.yaml"
 TODAY = date(2026, 7, 30)
+# Pinned so the fixture's future-dated row (zh_memberships.json id 900004,
+# begin_date 2026-08-17) stays "not yet a seat" as the real calendar moves
+# past it — see app.process's `today` parameter.
+process = partial(_process, today=TODAY)
 
 
 class FakeApi:

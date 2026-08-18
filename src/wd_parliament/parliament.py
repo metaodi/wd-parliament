@@ -538,11 +538,19 @@ class ParliamentClient:
         councils: Optional[Sequence[str]] = None,
         active_only: bool = True,
         table: str = MEMBER_TABLE,
+        today: Optional[date] = None,
     ) -> List[Member]:
         """Current members of the given chambers ("NR", "SR"), as dataclasses.
 
         The ``Active`` filter is pushed down to OData so the service returns
         the ~246 sitting members rather than every member since 1848.
+
+        ``today`` is accepted only so ``app.process`` can call every source's
+        ``get_members`` the same way; it is unused here on purpose. Unlike
+        OpenParlData/KR-Daten, this source has no ``begin_date``/``end_date``
+        to compute "active" from — ``Active`` is the live service's own
+        answer to "as of right now", so there is no client-side "as of this
+        date" to pin.
         """
         filters: Dict[str, Any] = {"Language": self.language}
         if active_only:
