@@ -145,17 +145,13 @@ bodies:
 
 # The 9 Wahlkreise the city elects its 125 members from.
 #
-# ⚠️ **The keys are UNMEASURED for this source.** The spellings below are
-# OpenParlData's, read off `electoral_district_de` by run 34 — and the source
-# has changed since. The Gever carries `wahlkreis` on the **mandate** (3,360 of
-# 3,700 rows) and on its own `/api/wahlkreis` index, which run 35 found holding
-# exactly **9** records, but neither run printed their values.
-#
-# An unmapped district makes no suggestion, which is the correct failure: the
-# first run will simply emit no P768 and `scripts/verify_gever_city.py` will
-# have printed the real spellings by then. **Do not guess them into shape** —
-# that is the eighteen-entries-zero-lookups failure, and case folding cannot
-# fix it when the two sides use different words.
+# **The keys are the source's own spelling, and run 37 confirmed them.** The
+# first live run against the Gever grouped all 125 members under exactly these
+# nine — `1 und 2` (12), `3` (14), `4 und 5` (13), `6` (11), `7 und 8` (17),
+# `9` (17), `10` (13), `11` (22), `12` (9) — with nothing left over. The city
+# spells them the same way in its Gever as OpenParlData does, which was worth
+# checking rather than assuming: the first draft of this file used `Wahlkreis
+# Zürich 1+2` and all nine entries were unreachable.
 #
 # The Q-IDs themselves are checked: `--verify-config` (run 34) resolved all
 # nine and every one is classed **`Wahlkreis der Stadt Zürich`**. That is what
