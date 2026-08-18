@@ -71,7 +71,7 @@ terms: {}
 # P106 comes from `beruf` (4,427 of 4,665). It carries no birthplace, no
 # Bürgerort, no website and no children — so those checks are absent rather
 # than empty, and adding them would make no suggestion.
-person_data: [P106]
+person_data: [P102, P106, P856]
 
 # The fresher roster, read only to contradict this one. The register's export
 # is a snapshot, and `enrich` is bounded so that a disagreement can only
