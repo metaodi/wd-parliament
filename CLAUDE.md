@@ -569,11 +569,17 @@ claims otherwise, and refuses `identifier_verified: true` beside it: a value
 that does not exist cannot have been measured. Never set either by hand to get
 a run moving.
 
-**`biography_url` is absent from that config on purpose, and the report prints
-each number without a link.** No run has read the city's member-page URL
-scheme, and a plausible-looking template is worth *less* than no link: a reader
-who follows it to a 404 learns nothing, while a missing link says plainly that
-this run has no page to offer. Both report paths already omit an empty one.
+**`biography_url` links `kontakt.obj_guid`, and `{id}` is that GUID.** The
+mandate's `kontaktguid` points at the person's `obj_guid`, `gever.person_key`
+puts it in `Member.person_number`, and the report prints it beside the member —
+so the number shown and the number in the URL are the same one, which is the
+correspondence `models.IDENTIFIER_PROPERTIES` exists to keep. Note the template
+takes only `{person_number}` / `{id}` / `{language}` whatever the source calls
+its column: writing `{obj_guid}` raises `KeyError` at the first report.
+Left unset for a source with `identifier_from_source: false` it returns **""**
+rather than linking a GUID through the join property's template, and both
+report paths omit an empty link — a guessed URL is worth *less* than none,
+since a reader who follows it to a 404 learns nothing.
 
 **Two OpenParlData groups name this chamber, and the one row order picks is
 empty.** `id=8062 'Gemeinderat'` holds 0 membership rows; `id=465 'Gemeinderat
