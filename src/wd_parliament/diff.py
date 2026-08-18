@@ -689,7 +689,10 @@ def _identifier_suggestions(
     """
     out: List[Suggestion] = []
     for check in config.identifier_checks:
-        if check.property_id == config.identifier_property:
+        if (
+            check.property_id == config.identifier_property
+            and config.identifier_from_source
+        ):
             # The join property. Absence is knowable for *any* item, matched or
             # not, because ``get_identifier_index`` asks Wikidata globally
             # rather than within the seat — so this needs no "was it queried?"
@@ -739,15 +742,32 @@ def _identifier_suggestions(
 
         if person.identifier_value(check.property_id):
             continue
+        # Why no value is offered differs, and the reader needs the right
+        # reason. Normally it is "a different register from the one this run
+        # joined on". For a source with no joinable identifier at all it is
+        # blunter: this run holds no property's value for anybody, and the
+        # person key it does hold — a Gever GUID — is the value of nothing.
+        if config.identifier_from_source:
+            because = (
+                f"That is this person's id in {check.register}, a different "
+                f"register from the one {config.source_name} is joined on "
+                f"({config.identifier_property}), so an item can carry one and "
+                "not the other."
+            )
+        else:
+            because = (
+                f"That is this person's id in {check.register}. "
+                f"{config.source_name} publishes no value for it — its own "
+                "person key is an internal GUID, which is the value of no "
+                "Wikidata property — so this member was matched by name and "
+                "nothing here can be applied mechanically."
+            )
         suggestion = _base_suggestion(
             KIND_MISSING_IDENTIFIER,
             body,
             member,
-            f"No {check.property_id} ({check.label}) statement. That is this "
-            f"person's id in {check.register}, a different register from the "
-            f"one {config.source_name} is joined on "
-            f"({config.identifier_property}), so an item can carry one and not "
-            "the other. No value is offered here because nothing this run "
+            f"No {check.property_id} ({check.label}) statement. {because} "
+            "No value is offered here because nothing this run "
             "reads publishes it — look the person up in that register and add "
             "it by hand." + verify,
             payload={

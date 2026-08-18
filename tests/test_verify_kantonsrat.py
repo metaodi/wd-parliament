@@ -957,3 +957,30 @@ def test_b_the_trace_walks_a_handful_of_people_not_the_whole_body():
     api = _TraceApi([])
     trace_memberships(api, [{"id": i} for i in range(50)], [], limit=3)
     assert api.asked == [0, 1, 2]
+
+
+def test_a_chamber_named_by_several_groups_is_reported_as_ambiguous():
+    """Picking the first by row order is silent arbitration.
+
+    Run 34: body 261 holds both `Gemeinderat` (id 8062) and `Gemeinderat
+    Zürich` (id 465), and the one row order picks has ZERO membership rows.
+    An empty group looks exactly like a group whose members all agree with
+    Wikidata, so the second match has to be printed.
+    """
+    rows = [
+        group(8062, "Gemeinderat", body_key="261"),
+        group(465, "Gemeinderat Zürich", body_key="261"),
+    ]
+    found, lines = find_kantonsrat_group(
+        rows, ["Gemeinderat", "Gemeinderat Zürich"], "Gemeinderat"
+    )
+    assert found is not None and found["id"] == 8062
+    text = "\n".join(lines)
+    assert "ALSO" in text and "465" in text
+    assert "2 groups name this chamber" in text
+
+
+def test_one_matching_group_says_nothing_about_ambiguity():
+    """The note must not fire on the ordinary case, or it stops being read."""
+    _, lines = find_kantonsrat_group([group(5077, "Kantonsrat Zürich")])
+    assert "ALSO" not in "\n".join(lines)

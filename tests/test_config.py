@@ -362,16 +362,60 @@ def test_a_parliament_with_only_one_identifier_reports_only_that_one():
     """The city of Zürich has no member-id property of its own on Wikidata, so
     there is no second identifier to raise MISSING_IDENTIFIER for. Listing one
     would be asserting a register that does not exist.
-
-    Its biography link is the join property's own record page, because the
-    number the report prints beside a member is a P14527 value. The first draft
-    linked the city's member list, which has never heard of one.
     """
     city = load_config("config/gemeinderat-zuerich.yaml")
     assert [c.property_id for c in city.identifier_checks] == ["P14527"]
-    assert city.biography_url_for(18172) == (
-        "https://openparldata.ch/item/persons/18172"
-    )
+
+
+def test_a_source_that_supplies_no_identifier_value_does_not_join_on_one():
+    """The Gever's person key is an internal GUID, which is the value of no
+    Wikidata property (run 23 for the canton, run 35 for the city).
+
+    Both consequences are asserted here because each one prevents a different
+    failure: not joining stops a coincidence between two id spaces from
+    wearing `QID_FROM_IDENTIFIER`, and `identifier_from_source: false` is what
+    stops `diff` offering the GUID as a P14527 value.
+    """
+    city = load_config("config/gemeinderat-zuerich.yaml")
+    assert city.identifier_from_source is False
+    assert city.joins_on_identifier is False
+    assert city.identifier_verified is False
+
+
+def test_a_source_with_no_identifier_value_offers_no_biography_link():
+    """Linking a Gever GUID through P14527's template would send a reader to a
+    page that cannot resolve it, so `biography_url_for` returns nothing at all.
+
+    An empty link is the honest outcome and both report paths omit it. A
+    plausible-looking template would be worth less: a reader who follows it to
+    a 404 learns nothing, while a missing link says plainly that this run has
+    no page to offer.
+    """
+    city = load_config("config/gemeinderat-zuerich.yaml")
+    assert city.biography_url_for("abc123") == ""
+
+
+def test_a_config_may_not_claim_a_gever_supplies_an_identifier_value(tmp_path):
+    """Measured and falsified, so it is refused rather than documented."""
+    text = MINIMAL + """
+source: gever
+identifier_property: P14527
+identifier_from_source: true
+"""
+    with pytest.raises(ValueError, match="identifier_from_source"):
+        load_config(write(tmp_path, text))
+
+
+def test_a_value_that_does_not_exist_cannot_have_been_measured(tmp_path):
+    """`identifier_verified` presupposes `identifier_from_source`: the two are
+    the same claim to different depths."""
+    text = MINIMAL + """
+source: gever
+identifier_property: P13468
+identifier_verified: true
+"""
+    with pytest.raises(ValueError, match="identifier_verified"):
+        load_config(write(tmp_path, text))
 
 
 # --- the map key is not always an abbreviation ------------------------------

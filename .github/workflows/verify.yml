@@ -341,19 +341,19 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # README step 12: could this tool be pointed at a *municipal* parliament?
-      # Reports, does not gate, for exactly the reason step 7 does not: it
-      # measures a chamber whose config no gating check reads, so nothing it
-      # finds can make the federal run more or less safe.
+      # README step 12. Reports, does not gate, for exactly the reason step 7
+      # does not: it measures a chamber whose config no gating check reads.
       #
       # This is the probe from step 7 pointed at another chamber via
-      # --chamber-name, not a copy of it. The first `Update parliament TODO`
-      # dispatch for this config (2026-08-18) failed with "the source returned
-      # no sitting members for GR" because the configured group id matched zero
-      # membership rows, and section A is what turns that into the group list
-      # this body really has. --position stays as the config's candidate so
-      # section D counts its holders against the chamber's size; 125 seats, 9
-      # Wahlkreise.
+      # --chamber-name, not a copy of it. Note what it now measures: since the
+      # Gemeinderat config took its MEMBERS from the city's Gever, OpenParlData
+      # is that config's **enrichment** source — so this step is a check on the
+      # second opinion rather than on the source. It is worth as much: run 34
+      # found TWO groups naming this chamber (`8062 'Gemeinderat'` with zero
+      # membership rows, `465 'Gemeinderat Zürich'` with the data), and the
+      # enrichment names the second. An enrichment pointed at an empty group
+      # is silent — it looks exactly like one that agrees with everything —
+      # which is why section A now prints every group that matches by name.
       - name: Evaluate a municipal extension — Gemeinderat Zürich (step 12)
         id: gemeinderat
         continue-on-error: true

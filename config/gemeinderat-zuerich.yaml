@@ -1,104 +1,107 @@
-# Gemeinderat der Stadt Zürich, read from OpenParlData.
+# Gemeinderat der Stadt Zürich, read from the city's own Gever.
 #
-# The first **municipal** parliament this tool reads, and the fourth config.
-# It is the cantonal `kantonsrat-zh.yaml` one level down — same aggregator,
-# same join property, same statement model — so read that file's header first
-# and then the differences here.
+# The first **municipal** parliament this tool reads, the fourth config, and
+# the first whose source is not an aggregator at all — because for this
+# parliament the aggregator has no seats.
 #
-# ── ⚠️ THIS CONFIG CANNOT PRODUCE MEMBERS YET ───────────────────────────────
+# ── Why the source is the Gever and not OpenParlData ────────────────────────
 #
-# Run 34 (2026-08-18, verify.yml step 12) measured the source and found the
-# blocker, which is **not** in this file:
+# Run 34 (2026-08-18) measured OpenParlData for this chamber and found:
 #
-#   * body `261` is the city of Zürich (`id=322, body_key='261',
-#     name_de='Zürich'`) with **807 person records**;
-#   * the chamber is a group under it, `id=8062, name_de='Gemeinderat'` — the
-#     id the first draft configured was RIGHT, matched by exact name, with
-#     `Büro des Gemeinderats` correctly rejected as a near miss;
-#   * and that group returns **0 membership rows**.
+#   * body `261` is the city of Zürich (`id=322, legislative_seats=125`) with
+#     **807 person records**;
+#   * two groups under it name the chamber — `id=8062, 'Gemeinderat'` and
+#     `id=465, 'Gemeinderat Zürich'`;
+#   * group 8062, the one the first draft configured, holds **0 membership
+#     rows**. The people are there and the mandates are not.
 #
-# A seat is a `memberships` row pointing at the group, so with none there are
-# no members, which is the "the source returned no sitting members for GR" the
-# first `Update parliament TODO` dispatch ended on. Body key right, group id
-# right, group name right, and no seats.
+# Run 35 then measured the city's own Geschäftsverwaltungssystem, reachable
+# since **swissparlpy 2.1** as `gever_city_zurich`, and it carries exactly
+# what was missing: `behoerdenmandat`, 3,700 rows over 61 Gremien, every one
+# dated, **870** of them naming the Gemeinderat. Run 36 closed the seat count
+# at 125.
 #
-# `verify_kantonsrat.py` now walks a handful of this body's people and prints
-# the group ids their own membership rows point at — the one question nobody
-# had put to the source. Until that comes back naming a group, **do not run
-# this config**: it will fail the same way. It stays in `update.yml`'s dispatch
-# list so the failure is reproducible on demand, and out of nothing else.
+# It is also better in one respect than OpenParlData would have been if it had
+# worked: the **electoral district is on the mandate** (`wahlkreis`, 3,360 of
+# 3,700), not on the person. OpenParlData keeps it on the person, which is why
+# body 261 shows 17 districts for 9 seats — somebody who also sat cantonally
+# carries that seat's district there.
 #
-# ── What run 34 DID settle ─────────────────────────────────────────────────
+# ── What this source cannot do ─────────────────────────────────────────────
 #
-#   * the position item (section D, `--verify-config`): CONFIRMED;
-#   * the identifier join (section C): CONFIRMED, 68 of 68;
-#   * the electoral districts (section E): the source's own spellings, read
-#     off the person records and now the keys below.
+# **It has no identifier any Wikidata property holds.** Run 23 searched every
+# field of the canton's Gever for P13468 and found it nowhere; run 35 found six
+# GUID columns for the city and none of them a property's value. So
+# `identifier_from_source: false`, every member is matched **by name**, and
+# `quickstatements.is_mechanical` refuses everything. That is the correct first
+# release and exactly where the federal side began — not a defect.
 #
-# Each is marked at its own key.
+# **Its birth data is a year** (`jahrgang`, `'1936'`), not a date. `gever.py`
+# deliberately does not map it to `date_of_birth`: a 1 January is a precision
+# this source never claimed, and it would make the name fallback confidently
+# wrong about two namesakes instead of honestly uncertain.
+#
+# **It has no legislative periods**, so no P2937 is ever suggested.
 
 language: de
 user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
 request_delay: 1.0
 
-source: openparldata
+source: gever
 
-# The city of Zürich as an OpenParlData *body* — a body is the level of
-# parliament, so this is the municipality and the Gemeinderat is a group under
-# it. `261` is the city's BFS municipality number, and the failed run confirms
-# it resolves: 807 person records came back.
-body_key: "261"
+# The CDWS instance, as `swissparlpy.client.GEVER_INSTANCES` names it. An
+# instance carries a whole index map (`/api/kontakt`, `/api/behoerdenmandat`,
+# `/api/wahlkreis`, `/api/partei`, …), which is why this is a name and not a
+# URL.
+gever_backend: gever_city_zurich
 
-# P14527, the OpenParlData ID — the same join the cantonal config makes, and
-# for the same reason: it is the only identifier this source can supply a
-# *value* for. There is no municipal analogue of P1307 (federal) or P13468
-# (canton of Zürich) on Wikidata at all, so unlike the cantonal file there is
-# no second identifier to report either.
-#
-# ⚠️ Expect the coverage to be poor. P14527 matched **0 of the 180 sitting
-# Kantonsrat members** on that config's first real run — the people OpenParlData
-# links to Wikidata are the ones notable enough to have gone federal — and a
-# city parliament is one level further from Bern again. Everything this config
-# reports will therefore come from the name fallback, which `is_mechanical`
-# refuses. That is the correct first release, not a fault.
+# P14527, the OpenParlData ID. **Reported, never joined on.** There is no
+# municipal analogue of P1307 or P13468 on Wikidata, and this source supplies
+# no value for P14527 either — so it appears in the report as
+# MISSING_IDENTIFIER, without a number, which is the only honest thing to say
+# about it. See `identifier_from_source`.
 identifier_property: P14527
 
-# ⚠️ Run 34 measured this and returned **CONFIRMED, 68 of 68**: every P14527
-# value Wikidata holds for a linked member of this body equals OpenParlData's
-# person id. It is still `false`, and `config.load_config` would refuse `true`
-# anyway, because P14527 is not in `models.VERIFIED_IDENTIFIER_PROPERTIES` —
-# and it is out of that set for a reason a clean run cannot retire. Run 20
-# found 34 of 35 cantonally, and the one that differs (`Q131948095` carrying
-# 1411 where that body's record is 17436) is a person who **also sat
-# elsewhere**: OpenParlData keeps one record per person per body, so the
-# property identifies a person *record*, not a person. 68 of 68 on one body's
-# linked sample is evidence, not the retirement of a known failure mode — and
-# the members it misfires on are exactly the ones this sample over-represents.
+# ⚠️ THE LOAD-BEARING FLAG OF THIS CONFIG.
 #
-# What `false` buys meanwhile: `resolve.corroborates` checks every identifier
-# match against the item's own name and birth date, `Member.identifier_mismatch_qids`
-# records the rejects, and `is_mechanical` refuses every suggestion the join
-# produced. Flipping it is a decision for a human with both runs in view.
+# `false` says the source publishes no value for the property above — a fact
+# about the Gever, which `config.load_config` derives and would refuse to have
+# contradicted. Its person key is an internal GUID (`kontaktguid`), and a GUID
+# is the value of nothing.
+#
+# What it buys: `resolve` makes no identifier join at all, so a chance
+# collision between two id spaces can never wear `QID_FROM_IDENTIFIER`
+# provenance — the provenance `is_mechanical` trusts. And `diff` raises
+# MISSING_IDENTIFIER instead of ADD_IDENTIFIER, so no run ever offers a Gever
+# GUID as a P14527 value: that would be a number from the wrong id space,
+# written confidently onto a real item, where no later run could detect it.
+identifier_from_source: false
+
+# Follows from the above and may not be claimed otherwise: a value that does
+# not exist cannot have been measured.
 identifier_verified: false
 
-# Only the join property: no other identifier property in
-# `models.IDENTIFIER_PROPERTIES` describes a member of this chamber, so there
-# is no second one to raise MISSING_IDENTIFIER for. (Contrast
-# `kantonsrat-zh.yaml`, which lists P13468 beside P14527 precisely because the
-# canton has an id of its own that an item ought to carry.)
+# Only the join property. No other identifier in `models.IDENTIFIER_PROPERTIES`
+# describes a member of this chamber, and listing one would assert a register
+# that does not exist.
 identifiers: [P14527]
 
-# `biography_url` is deliberately **absent**, so it defaults to the join
-# property's own record page (`https://openparldata.ch/item/persons/{id}`).
+# `biography_url` is deliberately **absent**, and the report will print each
+# member's number without a link.
 #
-# ⚠️ The first draft pointed it at `gemeinderat-zuerich.ch/mitglieder/detail.php
-# ?gid={obj_guid}`, which is wrong twice over: `{obj_guid}` is not a field this
-# template is given — `Config.biography_url_for` supplies `{person_number}` /
-# `{id}` / `{language}` and nothing else, so it raised `KeyError: 'obj_guid'`
-# the moment a report was written — and the number the report prints beside a
-# member is a **P14527** value, which the city's own member list has never
-# heard of. The URL template belongs to the property whose value is printed;
-# see `models.IDENTIFIER_PROPERTIES`.
+# There is no join-property value to default to — with
+# `identifier_from_source: false`, `Config.biography_url_for` returns nothing
+# rather than linking a Gever GUID through P14527's template, which would send
+# a reader to a page that cannot resolve it. Both output paths already omit an
+# empty link rather than rendering a broken one.
+#
+# ⚠️ **Filling this in needs a measurement, not a guess.** Neither run 35 nor
+# run 36 read the city's member-page URL scheme, and a plausible-looking
+# template is worth less than no link at all: a reader who follows it and
+# lands on a 404 learns nothing, while a missing link says plainly that this
+# run has no page to offer. If you add one, note that only `{person_number}`,
+# `{id}` and `{language}` are substituted — the first draft of this file used
+# `{obj_guid}` and raised `KeyError` the moment a report was written.
 
 # ⚠️ OFF, and doubly so. `identifier_verified: false` already refuses every
 # command on its own, and nothing about this parliament has been verified: not
@@ -123,58 +126,45 @@ bodies:
     label: Gemeinderat der Stadt Zürich
     # CONFIRMED by run 34, both ways round. `--verify-config` reads
     # 'Mitglied des Gemeinderates der Stadt Zürich', instance of **Position**
-    # — not a Wikimedia category, which is the trap that cost run 13 a whole
-    # cantonal dispatch — and section D counts 22 holders, 4 of them current.
-    # Section D also *derived* the candidates independently from the 68 members
-    # OpenParlData links to Wikidata, and this item is second there at 11 of 68.
-    # The top of that list is the **National Council** at 35 of 68, which is
-    # the sampling skew this repo has now been bitten by at every level: the
-    # municipal members with Wikidata items are disproportionately the ones who
-    # went on to Bern. Read the list, never take the max.
+    # — not a Wikimedia category, the trap that cost run 13 a whole cantonal
+    # dispatch — and section D counts 22 holders, 4 of them current. Section D
+    # also derived the candidates independently from the 68 members
+    # OpenParlData links to Wikidata, where this item is second at 11 of 68.
+    # The top of that list is the **National Council** at 35 of 68: the
+    # sampling skew this repo has now met at the federal, cantonal and
+    # municipal level. Read the list, never take the max.
     position: Q111219780
-    # Kept as measured: run 34 found the chamber by exact name at exactly this
-    # id, so the config and the source agree. Both are given, so the id is used
-    # and costs no request; the name is what a re-measurement checks it
-    # against. Equality, never substring — the **Stadtrat** is the city's
-    # nine-member executive and `Büro des Gemeinderats` (id 519, correctly
-    # rejected as a near miss) is an organ of the chamber.
-    group_id: 8062
+    # The `gremium` value that IS this chamber, matched by **EXACT** name.
+    # Run 35: 870 of the 3,700 mandate rows carry it. Equality is not
+    # fastidiousness here — the city's **Stadtrat**, its nine-member
+    # executive, appears *inside the council's own mandate list* as
+    # `Mitglied Stadtrat` / `Präsidium Stadtrat`, `Büro des Gemeinderats` is
+    # an organ of the chamber, and the parties (`SP`, `FDP`, `SVP`, …) are
+    # modelled as Gremien too. A substring match takes all of them.
     group_name: Gemeinderat
 
 # The 9 Wahlkreise the city elects its 125 members from.
 #
-# **The keys are the source's own spelling**, read off `electoral_district_de`
-# by run 34 section E and not invented: the city writes `1 und 2`, not
-# `Wahlkreis Zürich 1+2`. The first draft used the latter, so all nine entries
-# were unreachable — eighteen-entries-zero-lookups again, the failure
-# `Config.constituency_qid`'s case folding was added for and which folding
-# cannot fix, because these are different words rather than different casing.
+# ⚠️ **The keys are UNMEASURED for this source.** The spellings below are
+# OpenParlData's, read off `electoral_district_de` by run 34 — and the source
+# has changed since. The Gever carries `wahlkreis` on the **mandate** (3,360 of
+# 3,700 rows) and on its own `/api/wahlkreis` index, which run 35 found holding
+# exactly **9** records, but neither run printed their values.
 #
-# ⚠️ The same section found **17** distinct values on the 807 person records,
-# not 9. The eight extras are other parliaments' districts — `Zürich` (35, the
-# federal canton-as-district), `I Zürich 1+2` … `VI Zürich 11+12` (the
-# Kantonsrat's own Roman-numbered Wahlkreise) and one `Baden` — because
-# OpenParlData keeps the district on the **person**, and a person who also sat
-# cantonally or federally carries that seat's district here. They are
-# deliberately absent from this map: an unmapped district makes no suggestion,
-# which is the right answer, and mapping one would put another parliament's
-# electoral district on a Gemeinderat statement.
+# An unmapped district makes no suggestion, which is the correct failure: the
+# first run will simply emit no P768 and `scripts/verify_gever_city.py` will
+# have printed the real spellings by then. **Do not guess them into shape** —
+# that is the eighteen-entries-zero-lookups failure, and case folding cannot
+# fix it when the two sides use different words.
 #
-# The Q-IDs were checked by `--verify-config` in the same run and every one of
-# them is classed **`Wahlkreis der Stadt Zürich`**, which is what makes the
-# mixture below correct rather than the error it looks like: where a Wahlkreis
-# spans two Kreise the city has its own item (`Wahlkreis Stadt Zürich 1+2`,
-# also a `Wahlkreis Kanton Zürich` because the territory coincides), and where
-# it is a single Kreis the *Kreis* item carries the class (`Kreis 3`
-# [Wohnviertel, Wahlkreis, Kreise der Stadt Zürich, Wahlkreis der Stadt
-# Zürich]). Q117787885 is corroborated from the other side too: it is the one
+# The Q-IDs themselves are checked: `--verify-config` (run 34) resolved all
+# nine and every one is classed **`Wahlkreis der Stadt Zürich`**. That is what
+# makes the apparent mixture right rather than the error it looks like — where
+# a Wahlkreis spans two Kreise the city has its own item (`Wahlkreis Stadt
+# Zürich 1+2`, also a `Wahlkreis Kanton Zürich` because the territory
+# coincides), and where it is a single Kreis the *Kreis* item carries the
+# class. Q117787885 is corroborated from the other side too: it is the one
 # P768 value already in use on a statement for this seat.
-#
-# Section E still reports CONTRADICTED, and that is the probe being right about
-# its own method rather than about this map — it reconciles by **exact label**,
-# and `4 und 5` is not the label of `Wahlkreis Stadt Zürich 4+5`. Aligning them
-# on the digits is precisely what run 31 did cantonally and got five-sixths
-# wrong. These nine were aligned on the place both sides name.
 constituencies:
   "1 und 2": Q117787833     # Wahlkreis Stadt Zürich 1+2
   "3": Q675017              # Kreis 3
@@ -201,69 +191,48 @@ parl_groups: {}
 # stands here.
 terms: {}
 
-# ⚠️ STILL UNVERIFIED for this body. Run 34's step 9 could not measure them:
-# `verify_person_data.py` reads the members, and this body produces none.
-# These are the checks OpenParlData answered for the *canton*
-# (run 19): P106 from `occupation_de`, P856 from `website_personal`, P102 from
-# `party_de`. Whether the city's records carry the same columns is a different
-# question — `scripts/verify_person_data.py --config config/gemeinderat-zuerich.yaml`
-# is what answers it, and a listed property with no source column simply makes
-# no suggestion. The three that are absent here are absent from this source
-# everywhere: it carries no birthplace (`city`/`street` are a postal address
-# and must never be read as one), no Bürgerort and no number of children.
+# The personal data this source publishes, measured by run 35 on 708 `kontakt`
+# records:
+#
+#     beruf           134/708   -> P106
+#     homepageprivat   65/708   -> P856
+#     partei          674/708   -> P102
+#
+# P19, P1321 and P1971 are absent from this source entirely — no birthplace, no
+# Bürgerort, no children — so listing them would assert a check that cannot
+# fire. `jahrgang` (537/708) is a birth **year** and is deliberately not read:
+# see the header.
+#
+# None of these is ever mechanical (`ADD_PERSON_DATA` is outside
+# `MECHANICAL_KINDS` and its payload carries no position), so nothing here can
+# reach `suggestions.qs` whatever the coverage.
 person_data: [P102, P106, P856]
 
-# ── Enrichment, and the bigger question behind it ───────────────────────────
+# ── Enrichment: OpenParlData, read only to contradict ───────────────────────
 #
-# An enricher is a *second* source read only to contradict the first: it
-# produces no members, and a disagreement can only withhold a mechanical edit,
-# never supply a value.
+# The roles are now the reverse of what this config started as, and that is the
+# point: OpenParlData cannot *source* this chamber (no mandates), but it is a
+# perfectly good second opinion about the members the Gever produces. Bounded
+# structurally by `enrich`: it makes no `Member`, so it cannot become the
+# source by accident, and a disagreement can only **withhold** a mechanical
+# edit — never supply a value.
 #
-# **swissparlpy 2.1** (the floor in `pyproject.toml`) ships `backends/gever.py`
-# with a **`city_zurich`** instance — `www.gemeinderat-zuerich.ch`, reachable as
-# `SwissParlClient(backend="gever_city_zurich")` — and run 35 measured it
-# (README step 13). It carries exactly what OpenParlData does not:
+# ⚠️ It withholds nothing today, and that is expected. Under
+# `identifier_from_source: false` every member is name-matched, so nothing is
+# mechanical and a disagreement has nothing left to suppress. What it does do
+# is put the disagreement in the **report**, where somebody can look at it —
+# and it is ready for the day a joinable identifier exists.
 #
-#     behoerdenmandat  3,700 rows, 61 Gremien, dauer_start/dauer_end on all
-#                      870 of them name 'Gemeinderat' by equality
-#                      wahlkreis on 3,360 — ON THE MANDATE
-#     kontakt          708 people: partei 674, jahrgang 537, fraktion 125,
-#                      beruf 134, homepageprivat 65
-#
-# The district being on the *mandate* is strictly better than what this config
-# reads today, where it sits on the person and gave 17 values for 9 districts.
-#
-# ⚠️ **An open mandate carries `9999-12-31 23:59:59`, not a null** — the
-# federal `1753-01-01` at the other end. Unmapped it files a P582 of 9999-12-31
-# on every sitting member. Any adapter needs it handled at its own mapping
-# boundary.
-#
-# So no `enrich:` block is configured, and the honest reason is that
-# enrichment is probably the wrong shape for this parliament:
-#
-#   * as **enrichment** Gever would change nothing. Under
-#     `identifier_verified: false` no suggestion here is mechanical, so a
-#     disagreement has nothing left to withhold — it would appear in the report
-#     and alter no output;
-#   * as a **source** it is the only thing measured that can give this
-#     parliament members at all, since OpenParlData has none;
-#   * and `config.SOURCES` does not accept `gever` either way. Adding it means
-#     a `gever.py` beside `openparldata.py`, not a line in this file.
-#
-# Whichever it becomes, the join is by **name**: no Wikidata property holds a
-# Gever key (run 23 for the canton, run 35's six GUID columns for the city), so
-# `is_mechanical` refuses everything, and the duplicate handling has to be its
-# own rather than `resolve`'s — run 24 found the canton's person-level key was
-# *nearly* a person key and not one.
-#
-# Run 36 closed the seat count: of the chamber's 143 open mandate rows,
-# `Mitglied` 122 plus the three presidium rows come to **125** exactly. The
-# other 18 are the city **executive** sitting in the council's own mandate list
-# (`Mitglied Stadtrat` 8, `Präsidium Stadtrat` 1), the tellers
-# (`Stimmenzählende` 6) and the secretariat (`Ratssekretariat` 3). The seat
-# roles are the canton's four — derived from this parliament's own `funktion`
-# values, which is the only way that agreement is evidence rather than a
-# borrowed assumption.
-#
-# So nothing about the Gever is unmeasured any more. What remains is the
-# decision above: source or enrichment.
+# `body_key` is the city; the group is matched by **exact name**, and the name
+# below is `Gemeinderat Zürich` — **not** `Gemeinderat`. Run 34 found two
+# groups under body 261 naming this chamber, and the one the first draft of
+# this file configured (`id=8062, 'Gemeinderat'`) is the one holding **zero**
+# membership rows. `id=465, 'Gemeinderat Zürich'` is the one with the data.
+# Two groups for one chamber is a fact about the source; picking the wrong one
+# is silent, because an empty enrichment looks exactly like an enrichment that
+# agrees with everything.
+enrich:
+  source: openparldata
+  body_key: "261"
+  groups:
+    GR: Gemeinderat Zürich

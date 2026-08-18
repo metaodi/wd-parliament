@@ -485,12 +485,28 @@ def find_kantonsrat_group(
             "below say nothing without it."
         ]
 
-    found = next((row for row in rows if is_kantonsrat(row, names)), None)
+    matches = [row for row in rows if is_kantonsrat(row, names)]
+    found = matches[0] if matches else None
     near = kantonsrat_candidates(rows, names)
     lines.append(f"{len(rows)} group(s) read for this body")
     lines.append("")
     if found is not None:
         lines.append(f"  {label}: {_describe(found)}")
+        # **Several groups can name one chamber**, and picking the first by row
+        # order is the kind of silent arbitration this repo refuses everywhere
+        # else. Run 34 found body 261 holding both `id=8062 'Gemeinderat'` and
+        # `id=465 'Gemeinderat Zürich'` — and the one taken by row order is the
+        # one with **zero** membership rows. An empty group looks exactly like
+        # a group whose members all agree with Wikidata, so this has to be said
+        # out loud rather than discovered later.
+        for row in matches[1:]:
+            lines.append(f"  {label}: ALSO {_describe(row)}")
+        if len(matches) > 1:
+            lines.append(
+                f"        -> {len(matches)} groups name this chamber. B below "
+                "measures the FIRST; read its membership count before "
+                "believing either, and configure the group id explicitly."
+            )
     else:
         lines.append(
             f"  {label}: NOT FOUND by exact name "
