@@ -200,7 +200,7 @@ def _base_suggestion(
         person_qid=member.qid,
         person_number=member.person_number,
         qid_source=member.qid_source,
-        canton=member.canton_abbreviation,
+        constituency=member.constituency_abbreviation,
         parl_group=member.parl_group_abbreviation,
         links=links,
         **kwargs,
@@ -793,7 +793,7 @@ def _member_suggestions(
     # away; ``quickstatements.is_mechanical`` refuses those commands.
     ambiguous = len(statements) > 1
 
-    district_qid = config.canton_qid(member.canton_abbreviation)
+    district_qid = config.constituency_qid(member.constituency_abbreviation)
     group_qid = config.parl_group_qid(member.parl_group_abbreviation)
 
     for exp in expected:
@@ -1171,7 +1171,7 @@ def _statement_suggestions(
         parts = []
         if "district" in missing:
             parts.append(
-                f"electoral district (P768) → {member.canton_abbreviation} "
+                f"electoral district (P768) → {member.constituency_abbreviation} "
                 f"({missing['district']})"
             )
         if "group" in missing:

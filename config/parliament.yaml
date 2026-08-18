@@ -43,8 +43,9 @@ request_delay: 1.0
 # query is in the README.
 statement_model: tenure
 
-# Group the reports by "canton" or by "group" (parliamentary group).
-group_by: canton
+# Group the reports by "constituency" (the P768 electoral district — a canton
+# for the National Council) or by "group" (parliamentary group).
+group_by: constituency
 
 # Whether to write docs/suggestions.qs at all. Set to false to keep the tool
 # report-only while the statement model is still being confirmed.
@@ -142,7 +143,7 @@ bodies:
     council_number: 2
 
 # ---------------------------------------------------------------------------
-# Cantons  ->  P768 electoral district (qualifier)
+# Constituencies  ->  P768 electoral district (qualifier)
 # ---------------------------------------------------------------------------
 # Keyed by MemberCouncil.CantonAbbreviation. For National Council seats the
 # electoral district is the canton itself.
@@ -151,7 +152,7 @@ bodies:
 # without live access to Wikidata; only ZH, BE, LU, AG, VD and GE were
 # confirmed against the item pages directly. `wd-parliament --verify-config`
 # (see README) checks every Q-ID here against Wikidata in one command.
-cantons:
+constituencies:
   ZH: Q11943    # canton of Zürich
   BE: Q11911    # canton of Bern
   LU: Q12121    # canton of Lucerne

@@ -87,7 +87,7 @@ def config():
     return Config(
         statement_model=MODEL_TENURE,
         bodies=[NATIONAL, STATES],
-        cantons={"ZH": "Q11943", "TI": "Q12724", "SG": "Q12746", "BE": "Q11911"},
+        constituencies={"ZH": "Q11943", "TI": "Q12724", "SG": "Q12746", "BE": "Q11911"},
     )
 
 

@@ -313,11 +313,11 @@ def member_from_rows(
         council=body.council,
         council_name=body.label,
         council_number=body.council_number,
-        # The Wahlkreis, kept in the federal field name because everything
-        # downstream reads it as "the P768 key and the report's grouping" —
-        # which is exactly what it is. Same convention as ``openparldata``.
-        canton_abbreviation=district,
-        canton_name=district,
+        # The Wahlkreis — ``Member.constituency_*`` is the generic P768 key
+        # and report-grouping field for both. Same convention as
+        # ``openparldata``.
+        constituency_abbreviation=district,
+        constituency_name=district,
         party_name=party,
         party_abbreviation=party,
         parl_group_name=group,

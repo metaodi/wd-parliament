@@ -144,9 +144,9 @@ def _tidy(value: Any) -> str:
     """Collapse runs of whitespace, keeping case.
 
     The district names are not tidy: run 15 returned ``'I      Zürich 1+2'``
-    with six spaces. That string becomes the key the ``cantons`` map is looked
-    up by and the heading the report groups under, so it is normalised at the
-    mapping boundary rather than everywhere it is used.
+    with six spaces. That string becomes the key the ``constituencies`` map is
+    looked up by and the heading the report groups under, so it is normalised
+    at the mapping boundary rather than everywhere it is used.
     """
     return " ".join(_text(value).split())
 
@@ -295,11 +295,10 @@ def member_from_rows(
         council=body.council,
         council_name=body.label,
         council_number=body.council_number,
-        # The Wahlkreis rather than a canton. ``Member`` keeps the federal field
-        # name because everything downstream reads it as "the P768 key and the
-        # report's grouping", which is exactly what this is.
-        canton_abbreviation=district,
-        canton_name=district,
+        # The Wahlkreis rather than a canton — ``Member.constituency_*`` is the
+        # generic P768 key and report-grouping field for both.
+        constituency_abbreviation=district,
+        constituency_name=district,
         party_name=party,
         party_abbreviation=party,
         # Per-tenure rows, so this really is the tenure start — see the module

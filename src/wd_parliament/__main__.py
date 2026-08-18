@@ -52,7 +52,7 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Instead of a normal run, look up every Q-ID in the config on "
             "Wikidata and print what it actually is, so the hand-maintained "
-            "canton/party/group/term maps can be checked."
+            "constituency/party/group/term maps can be checked."
         ),
     )
     parser.add_argument(
@@ -113,7 +113,7 @@ def _verify_config(args) -> int:
 
         sources = [
             ("position", {b.council: b.position_qid for b in config.bodies}),
-            ("canton", config.cantons),
+            ("constituency", config.constituencies),
             ("parl_group", config.parl_groups),
             ("party", config.parties),
             ("term", {str(k): v for k, v in config.terms.items()}),

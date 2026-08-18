@@ -206,7 +206,7 @@ def test_the_district_is_tidied_because_it_is_a_map_key():
         seat(district="1.  Wahlkreis   (Zürich 1+2)"), person(), BODY,
         seat_headers=SEAT_HEADERS, person_headers=PERSON_HEADERS,
     )
-    assert member.canton_abbreviation == "1. Wahlkreis (Zürich 1+2)"
+    assert member.constituency_abbreviation == "1. Wahlkreis (Zürich 1+2)"
 
 
 def test_a_seat_without_a_person_id_is_skipped():

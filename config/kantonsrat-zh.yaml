@@ -108,7 +108,7 @@ identifiers: [P14527, P13468]
 statement_model: tenure
 
 # Group the report by electoral district — the Wahlkreis, for a cantonal body.
-group_by: canton
+group_by: constituency
 
 # ---------------------------------------------------------------------------
 # REPORT-ONLY for now
@@ -185,7 +185,7 @@ bodies:
 # So: an unmapped district makes no P768 suggestion, which is the safe default.
 # Filling this in is a Wikidata-side job for a human, checked with
 # `wd-parliament --verify-config`.
-cantons: {}
+constituencies: {}
   # "XVII Bülach": Q...
   # "XII Uster":   Q...
 

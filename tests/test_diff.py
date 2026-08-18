@@ -46,11 +46,11 @@ def periods():
     ]
 
 
-def make_config(model=MODEL_PERIOD, terms=None, cantons=None, parties=None, groups=None):
+def make_config(model=MODEL_PERIOD, terms=None, constituencies=None, parties=None, groups=None):
     return Config(
         statement_model=model,
         bodies=[BODY],
-        cantons=cantons if cantons is not None else {"ZH": "Q11943"},
+        constituencies=constituencies if constituencies is not None else {"ZH": "Q11943"},
         parties=parties or {},
         parl_groups=groups or {},
         terms=terms or {},
@@ -64,7 +64,7 @@ def make_member(**kwargs):
         last_name="Muster",
         active=True,
         council="N",
-        canton_abbreviation="ZH",
+        constituency_abbreviation="ZH",
         parl_group_abbreviation="V",
         party_abbreviation="SVP",
         date_joining=date(2019, 12, 2),
@@ -217,12 +217,13 @@ def test_missing_electoral_district(periods):
     assert suggestions[0].payload["district"] == "Q11943"
 
 
-def test_an_unmapped_canton_produces_no_qualifier_suggestion(periods):
+def test_an_unmapped_constituency_produces_no_qualifier_suggestion(periods):
     """Skip unknown values rather than guessing at them."""
     member = make_member()
     statement = make_statement(start=date(2019, 12, 2))
     suggestions = compute_suggestions(
-        BODY, [member], {"Q7": person([statement])}, periods, make_config(MODEL_TENURE, cantons={})
+        BODY, [member], {"Q7": person([statement])}, periods,
+        make_config(MODEL_TENURE, constituencies={}),
     )
     assert suggestions == []
 
@@ -860,7 +861,7 @@ def test_suggestions_carry_grouping_keys(periods):
     suggestions = compute_suggestions(
         BODY, [member], {"Q7": person()}, periods, make_config(MODEL_TENURE)
     )
-    assert suggestions[0].canton == "ZH"
+    assert suggestions[0].constituency == "ZH"
     assert suggestions[0].parl_group == "V"
 
 

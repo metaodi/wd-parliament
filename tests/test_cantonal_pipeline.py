@@ -127,7 +127,7 @@ def test_the_config_is_report_only_until_the_join_is_confirmed(config):
 def test_the_qualifier_maps_ship_empty_on_purpose(config):
     """Run 15: P768 is used on 3 of 270 statements, and on the wrong kind of
     thing (city quarters); P2937 on none at all."""
-    assert config.cantons == {}
+    assert config.constituencies == {}
     assert config.terms == {}
 
 
@@ -246,10 +246,10 @@ def test_an_existing_statement_produces_no_membership_suggestion(config, source)
 
 
 def test_the_report_groups_by_wahlkreis(config, source):
-    """`group_by: canton` reads the district, which for a cantonal body is the
-    Wahlkreis — tidied, not the source's 'I      Zürich 1+2'."""
+    """`group_by: constituency` reads the district, which for a cantonal body
+    is the Wahlkreis — tidied, not the source's 'I      Zürich 1+2'."""
     results = process(config, source, FakeWikidata())
-    districts = {s.canton for s in results[0].suggestions}
+    districts = {s.constituency for s in results[0].suggestions}
     assert "I Zürich 1+2" in districts
     assert not any(d and "  " in d for d in districts)
 

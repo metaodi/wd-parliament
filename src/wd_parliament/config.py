@@ -132,10 +132,10 @@ class Config:
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
     # See the module docstring of ``diff`` and the README for why this matters.
     statement_model: str = MODEL_PERIOD
-    group_by: str = "canton"  # "canton" or "group" — report grouping only
+    group_by: str = "constituency"  # "constituency" or "group" — report grouping only
     biography_url: str = DEFAULT_BIOGRAPHY_URL
     bodies: List[Body] = field(default_factory=list)
-    cantons: Dict[str, str] = field(default_factory=dict)  # "ZH" -> "Q11943"
+    constituencies: Dict[str, str] = field(default_factory=dict)  # "ZH" -> "Q11943"
     parties: Dict[str, str] = field(default_factory=dict)  # "SVP" -> "Q..."
     parl_groups: Dict[str, str] = field(default_factory=dict)  # "V" -> "Q..."
     # LegislativePeriodNumber -> the Q-ID of that legislature's Wikidata item,
@@ -189,8 +189,9 @@ class Config:
                 return b
         return None
 
-    def canton_qid(self, abbreviation: Optional[str]) -> Optional[str]:
-        """The Q-ID for a canton or electoral district, or ``None``. 
+    def constituency_qid(self, abbreviation: Optional[str]) -> Optional[str]:
+        """The Q-ID for a constituency — a canton or an electoral district —
+        or ``None``.
 
         **The key is not always an abbreviation.** Federally it is ``ZH``, and
         upper-casing the lookup is what makes ``zh`` from the source match.
@@ -208,7 +209,7 @@ class Config:
         if not abbreviation:
             return None
         wanted = _fold_key(abbreviation)
-        for key, qid in self.cantons.items():
+        for key, qid in self.constituencies.items():
             if _fold_key(key) == wanted:
                 return qid
         return None
@@ -436,9 +437,11 @@ def load_config(path: str | Path) -> Config:
             f"got '{statement_model}'."
         )
 
-    group_by = str(data.get("group_by", "canton")).strip()
-    if group_by not in ("canton", "group"):
-        raise ValueError(f"group_by must be 'canton' or 'group'; got '{group_by}'.")
+    group_by = str(data.get("group_by", "constituency")).strip()
+    if group_by not in ("constituency", "group"):
+        raise ValueError(
+            f"group_by must be 'constituency' or 'group'; got '{group_by}'."
+        )
 
     source = str(data.get("source", SOURCE_PARLAMENT)).strip()
     if source not in SOURCES:
@@ -543,7 +546,7 @@ def load_config(path: str | Path) -> Config:
         group_by=group_by,
         biography_url=str(data.get("biography_url", DEFAULT_BIOGRAPHY_URL)),
         bodies=bodies,
-        cantons=_as_qid_map(data.get("cantons"), "cantons"),
+        constituencies=_as_qid_map(data.get("constituencies"), "constituencies"),
         parties=_as_qid_map(data.get("parties"), "parties"),
         parl_groups=_as_qid_map(data.get("parl_groups"), "parl_groups"),
         terms=_as_term_map(data.get("terms")),

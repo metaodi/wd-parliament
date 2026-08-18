@@ -357,8 +357,8 @@ class Member:
     council: str = ""  # CouncilAbbreviation, "NR" / "SR"
     council_name: str = ""
     council_number: Optional[int] = None
-    canton_abbreviation: Optional[str] = None  # -> P768, via the canton map
-    canton_name: Optional[str] = None
+    constituency_abbreviation: Optional[str] = None  # -> P768, via the constituency map
+    constituency_name: Optional[str] = None
     parl_group_name: Optional[str] = None  # -> P4100, via the group map
     parl_group_abbreviation: Optional[str] = None
     party_name: Optional[str] = None  # -> P102, via the party map
@@ -634,8 +634,8 @@ class Suggestion:
     person_number: Optional[int] = None
     qid_source: Optional[str] = None
     links: Dict[str, str] = field(default_factory=dict)
-    # Grouping keys for the reports (canton / parliamentary group).
-    canton: Optional[str] = None
+    # Grouping keys for the reports (constituency / parliamentary group).
+    constituency: Optional[str] = None
     parl_group: Optional[str] = None
     # The concrete values behind the suggestion. ``quickstatements`` renders
     # from these, so anything it needs must be filled in by ``diff``.
