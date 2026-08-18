@@ -1534,19 +1534,57 @@ list and holds no seat in it. Passing `--seat-roles` does not hide the rest —
 every role is still printed, marked `<- not counted`, which is what makes an
 allowlist self-correcting when the source adds one.
 
-So every section now has an answer, and what is left is a decision rather than
-a measurement:
+So every section has an answer, and the decision that was left has been taken:
+**the Gever is the source and OpenParlData is the enrichment**, the reverse of
+how `config/gemeinderat-zuerich.yaml` started. `src/wd_parliament/gever.py` is
+the fourth adapter.
 
-- **source or enrichment.** They differ in what they are allowed to do — an
-  enricher produces no members and can only *withhold* — and step 12 makes the
-  question live: as enrichment for this config, Gever would change no output at
-  all, because under `identifier_verified: false` nothing is mechanical and a
-  disagreement has nothing left to withhold. As a *source* it is the only thing
-  measured that can give this parliament members.
-- **either way the join is by name.** No Wikidata property holds a Gever key,
-  so `is_mechanical` refuses everything, and the duplicate handling cannot be
-  inherited from `resolve` — run 24 found the canton's person-level key was
-  *nearly* a person key and not one.
+The design question the switch forces is worth stating on its own, because it
+is the first time this tool reads a source with **no joinable identifier at
+all**. `Config.identifier_from_source` is new, and it is a different question
+from `identifier_verified` — the prior one:
+
+| flag | asks |
+| --- | --- |
+| `identifier_from_source` | does the source have a value for the property? |
+| `identifier_verified` | has that value been *measured* against its person id? |
+
+Every source until now answered yes to the first (P1307 == `PersonNumber`,
+P13468 == `id_person_new`, P14527 == OpenParlData's person id). A Gever has six
+GUID columns and no Wikidata property holds one, so it answers no — and `false`
+does two things, each preventing a different failure:
+
+- **`resolve` makes no identifier join.** Not "the join finds nothing": a hit
+  between a GUID and a P14527 value would be a *coincidence* wearing
+  `QID_FROM_IDENTIFIER`, the provenance `is_mechanical` trusts. Not running it
+  makes that impossible rather than unlikely.
+- **`diff` raises `MISSING_IDENTIFIER` instead of `ADD_IDENTIFIER`.** With
+  `true` the suggestion would paste the Gever's person key into P14527 — a
+  number from a different id space, written confidently onto a real item, where
+  no later run could detect it.
+
+`load_config` derives the flag from the source and refuses a config that claims
+otherwise, and refuses `identifier_verified: true` beside it: a value that does
+not exist cannot have been measured.
+
+Two smaller decisions in the same commit, both in the "say nothing rather than
+guess" direction:
+
+- **`biography_url` is left out**, so the report prints each member's number
+  without a link. No run has read the city's member-page URL scheme, and a
+  plausible template is worth *less* than no link — a reader who follows it to
+  a 404 learns nothing.
+- **the enrichment names group `465 'Gemeinderat Zürich'`, not `8062
+  'Gemeinderat'`.** Both name the chamber and the one row order picks holds
+  zero rows. That matters more than an ordinary wrong id, because an enrichment
+  pointed at an empty group is **silent** — indistinguishable from one that
+  agrees with everything. The probe now prints every group matching by name
+  rather than arbitrating.
+
+And what the enrichment can do here today: nothing. Under
+`identifier_from_source: false` no suggestion is mechanical, so a disagreement
+has nothing left to withhold — it reaches the report and changes no output.
+That is the correct shape for a second opinion on a name-matched run.
 
 ---
 

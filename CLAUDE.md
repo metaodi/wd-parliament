@@ -524,17 +524,70 @@ Stadtrat` / `Präsidium Stadtrat` and holds no seat in it. Passing the list
 never hides the rest — every role is still printed, marked `<- not counted`,
 which is what makes an allowlist self-correcting when the source adds one.
 
-One thing it does **not** settle, and it is not a measurement:
+**That question is now decided: the Gever is the SOURCE and OpenParlData is the
+enrichment**, which is the reverse of how this config started. `gever.py` is
+the fourth adapter, and the first written because the obvious source had no
+seats. Everything above about the service is what it encodes; four more rules
+are its own:
 
-- **source or enrichment.** As *enrichment* for this config Gever would change
-  no output at all: under `identifier_verified: false` nothing is mechanical,
-  so a disagreement has nothing left to withhold. As a *source* it is the only
-  thing measured that can give this parliament members. Either way the join is
-  by **name** — run 23 established no Wikidata property holds a Gever key, run
-  35 found six GUID columns and confirmed it for the city — so `is_mechanical`
-  refuses everything and the duplicate handling cannot be inherited from
-  `resolve` (run 24: the canton's person-level key is *nearly* a person key and
-  not one).
+- **`Member.person_number` is a string GUID here**, not an int. That is
+  load-bearing rather than incidental — it is *why* the config sets
+  `identifier_from_source: false`, and any code that assumes an int person id
+  will meet this first.
+- **`jahrgang` is a year and is never mapped to `date_of_birth`.** A 1 January
+  is a precision this source never claimed, and it would make
+  `resolve.select_person_match` confidently wrong about two namesakes rather
+  than honestly uncertain — a *worse* failure than having no date at all.
+- **the district comes off the mandate, the person supplies only what the
+  mandate lacks.** Not arbitrary: the district on the mandate is *this* seat's,
+  while a person record carries whatever seat was recorded last.
+- **`members_from_rows` de-duplicates on `(person, council)`, earliest start
+  wins.** A presiding member holds one seat and carries two rows; counting rows
+  gives 143 where the chamber has 125, and the presidium row starts partway
+  through a tenure that began earlier.
+
+**`Config.identifier_from_source` is new, and it is a different question from
+`identifier_verified` — the prior one.** `identifier_verified` asks whether a
+property's values have been *measured* against the source's person id;
+this asks whether the source has such a value **at all**. Every source until
+Gever did (P1307 == `PersonNumber`, P13468 == `id_person_new`, P14527 ==
+OpenParlData's person id); a Gever has six GUID columns and no Wikidata
+property holds one. `false` does two things, each preventing a different
+failure:
+
+- **`resolve` makes no identifier join.** Not "the join finds nothing" — a hit
+  between a GUID and a P14527 value would be a *coincidence* wearing
+  `QID_FROM_IDENTIFIER`, which is exactly the provenance `is_mechanical`
+  trusts. Not running it is how that is made impossible rather than unlikely.
+- **`diff` raises `MISSING_IDENTIFIER` instead of `ADD_IDENTIFIER`.** With
+  `true` the suggestion would paste the source's person key into P14527 — a
+  number from a different id space, written confidently onto a real item,
+  where no later run could detect it.
+
+`load_config` **derives** the flag from the source and refuses a config that
+claims otherwise, and refuses `identifier_verified: true` beside it: a value
+that does not exist cannot have been measured. Never set either by hand to get
+a run moving.
+
+**`biography_url` is absent from that config on purpose, and the report prints
+each number without a link.** No run has read the city's member-page URL
+scheme, and a plausible-looking template is worth *less* than no link: a reader
+who follows it to a 404 learns nothing, while a missing link says plainly that
+this run has no page to offer. Both report paths already omit an empty one.
+
+**Two OpenParlData groups name this chamber, and the one row order picks is
+empty.** `id=8062 'Gemeinderat'` holds 0 membership rows; `id=465 'Gemeinderat
+Zürich'` holds the data. The enrichment config names the second. This is worth
+more care than an ordinary wrong id, because **an enrichment pointed at an
+empty group is silent** — it looks exactly like one that agrees with
+everything. `verify_kantonsrat.find_kantonsrat_group` now prints every group
+matching by name instead of arbitrating on row order.
+
+And what the enrichment can do here today: **nothing**. Under
+`identifier_from_source: false` no suggestion is mechanical, so a disagreement
+has nothing left to withhold — it reaches the report and changes no output.
+That is the correct shape for a second opinion on a name-matched run, not a
+shortfall to fix.
 
 Two facts from the same census shape the diff's behaviour:
 
@@ -771,6 +824,13 @@ expensive one.
   stamps `ambiguous_statement` when the item holds several P39 for the seat (3
   of 1,969 in run 16) — that is a *separate* guard from the gates, and the one
   that survives them being removed.
+- **`gever.py`** — the fourth source: a CMI CDWS Geschäftsverwaltungssystem,
+  read through `swissparlpy` >= 2.1's Gever backend. Mirrors
+  `openparldata.py`'s surface (`get_periods` → `[]`, `get_member_segments` →
+  `{}`, both on purpose) with pure row-mapping functions beside it. The one
+  thing it must never lose: `end_date` maps the `9999-12-31 23:59:59` open-end
+  sentinel, at this boundary, because nothing downstream can tell a sentinel
+  from a date somebody meant.
 - **`enrich.py`** — a **second** source, read only to contradict the first, and
   the one module that is not about Wikidata. Opt-in via `enrich:` in the
   config; absent, nothing changes. Bounded **structurally**: it produces no
