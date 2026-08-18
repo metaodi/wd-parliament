@@ -223,7 +223,24 @@ IDENTIFIER_PROPERTIES = {
 # distinction above. **Membership of this set costs a measurement, and losing it
 # costs only one disagreement** — that asymmetry is deliberate: the claim it
 # encodes is the one ``is_mechanical`` writes real edits off the back of.
-VERIFIED_IDENTIFIER_PROPERTIES = frozenset({"P1307"})
+# P13468 joined it on 2026-08-10. Run 28 compared every P13468 value Wikidata
+# holds against the Staatsarchiv's own KRRR export and found ``id_person_new``
+# carrying it for **591 of 638** people (92.6%), with the shortfall accounted
+# for rather than waved away: 29 values the register disagrees with — which is
+# the suggestion this tool exists to make, not evidence against the join — 14
+# name-matching artefacts, 4 undecided. The same run read the property's
+# formatter URL from Wikidata and confirmed it resolves through
+# ``wahlen.zh.ch/krdaten_staatsarchiv/``, that register's own query page.
+#
+# **The measurement is about the property's value, and the value is only
+# available from that one source.** Three others publish it nowhere —
+# OpenParlData (run 20), the canton's Gever (run 23), the openZH LOD CSV
+# (offline, whose ``ID_PERSON_NEW`` is a *third* id space in the same numeric
+# band). ``load_config`` still refuses ``P13468`` with ``source: openparldata``
+# outright, and that refusal is what keeps this set's per-property grain
+# honest: membership here says the value has been measured *somewhere*, not
+# that any source can supply it.
+VERIFIED_IDENTIFIER_PROPERTIES = frozenset({"P1307", "P13468"})
 
 P_START_TIME = "P580"
 P_END_TIME = "P582"
@@ -340,8 +357,8 @@ class Member:
     council: str = ""  # CouncilAbbreviation, "NR" / "SR"
     council_name: str = ""
     council_number: Optional[int] = None
-    canton_abbreviation: Optional[str] = None  # -> P768, via the canton map
-    canton_name: Optional[str] = None
+    constituency_abbreviation: Optional[str] = None  # -> P768, via the constituency map
+    constituency_name: Optional[str] = None
     parl_group_name: Optional[str] = None  # -> P4100, via the group map
     parl_group_abbreviation: Optional[str] = None
     party_name: Optional[str] = None  # -> P102, via the party map
@@ -617,8 +634,8 @@ class Suggestion:
     person_number: Optional[int] = None
     qid_source: Optional[str] = None
     links: Dict[str, str] = field(default_factory=dict)
-    # Grouping keys for the reports (canton / parliamentary group).
-    canton: Optional[str] = None
+    # Grouping keys for the reports (constituency / parliamentary group).
+    constituency: Optional[str] = None
     parl_group: Optional[str] = None
     # The concrete values behind the suggestion. ``quickstatements`` renders
     # from these, so anything it needs must be filled in by ``diff``.

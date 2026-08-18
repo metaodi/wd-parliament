@@ -32,7 +32,7 @@ BODY = Body(council="N", label="Swiss National Council", position_qid="Q18510612
 GENERATED = "2026-07-29 10:00 UTC"
 
 
-def make_suggestion(kind=KIND_ADD_MEMBERSHIP, label="Anna Muster", canton="ZH", **kw):
+def make_suggestion(kind=KIND_ADD_MEMBERSHIP, label="Anna Muster", constituency="ZH", **kw):
     defaults = dict(
         kind=kind,
         body=BODY,
@@ -41,7 +41,7 @@ def make_suggestion(kind=KIND_ADD_MEMBERSHIP, label="Anna Muster", canton="ZH", 
         person_qid="Q7",
         person_number=1101,
         qid_source=QID_FROM_IDENTIFIER,
-        canton=canton,
+        constituency=constituency,
         parl_group="V",
         payload={"biography": "https://www.parlament.ch/de/biografie/wd/1101"},
     )
@@ -55,9 +55,9 @@ def result():
         body=BODY,
         suggestions=[
             make_suggestion(),
-            make_suggestion(label="Beat Zoss", canton="BE"),
+            make_suggestion(label="Beat Zoss", constituency="BE"),
             make_suggestion(kind=KIND_NO_WIKIDATA_ITEM, label="Carla Ott",
-                            canton=None, person_qid=None, qid_source=None),
+                            constituency=None, person_qid=None, qid_source=None),
         ],
         member_count=200,
         matched_by_identifier=180,
@@ -80,7 +80,7 @@ def test_body_filename(result):
 
 
 def test_grouping_puts_other_last(result):
-    names = [name for name, _ in group_suggestions(result.suggestions, "canton")]
+    names = [name for name, _ in group_suggestions(result.suggestions, "constituency")]
     assert names == ["BE", "ZH", "Other"]
 
 
@@ -102,7 +102,7 @@ def test_by_kind_orders_by_priority():
 
 # --- Markdown ---------------------------------------------------------------
 def test_body_markdown_reports_the_hit_rate(result):
-    md = render_body_markdown(result, GENERATED, "canton")
+    md = render_body_markdown(result, GENERATED, "constituency")
     assert "# Swiss National Council — Wikidata TODO" in md
     assert "Matched by P1307: 180 (90.0%)" in md
     assert "## Canton: ZH (1)" in md
@@ -114,21 +114,21 @@ def test_rejected_identifier_matches_are_reported_not_only_logged(result):
     ids at all — a fact about the config, not a Wikidata edit, so it belongs in
     the header rather than in the suggestion list."""
     result.identifier_mismatches = 42
-    md = render_body_markdown(result, GENERATED, "canton", identifier_property="P13468")
+    md = render_body_markdown(result, GENERATED, "constituency", identifier_property="P13468")
     assert "42" in md
     assert "names a different person" in md
 
-    html = render_html([result], GENERATED, "canton", identifier_property="P13468")
+    html = render_html([result], GENERATED, "constituency", identifier_property="P13468")
     assert "42" in html
 
 
 def test_a_verified_run_says_nothing_about_rejected_matches(result):
-    md = render_body_markdown(result, GENERATED, "canton")
+    md = render_body_markdown(result, GENERATED, "constituency")
     assert "names a different person" not in md
 
 
 def test_body_markdown_links_members_and_biographies(result):
-    md = render_body_markdown(result, GENERATED, "canton")
+    md = render_body_markdown(result, GENERATED, "constituency")
     assert "[Anna Muster](https://www.wikidata.org/wiki/Q7)" in md
     assert "[#1101](https://www.parlament.ch/de/biografie/wd/1101)" in md
 
@@ -141,7 +141,7 @@ def _departed():
             make_suggestion(
                 kind=KIND_ADD_END_DATE,
                 label="Departed Member",
-                canton=None,
+                constituency=None,
                 person_qid="Q3432",
                 person_number=3432,
                 qid_source=None,
@@ -165,7 +165,7 @@ def test_the_departed_section_links_to_the_source_database():
     Their identifier and biography come from Wikidata's own P1307 value, so the
     reader can check the dates on the page the suggestion took them from.
     """
-    md = render_body_markdown(_departed(), GENERATED, "canton")
+    md = render_body_markdown(_departed(), GENERATED, "constituency")
     assert "Recorded as sitting, but the member has left" in md
     assert "[#3432](https://www.parlament.ch/de/biografie/wd/3432)" in md
     assert "2011-12-05 to 2019-12-01" in md
@@ -184,7 +184,7 @@ def test_a_missing_identifier_links_the_property_it_is_about():
         links={"property": "https://www.wikidata.org/wiki/Property:P13468"},
     )
     result = BodyResult(body=BODY, suggestions=[suggestion], member_count=1)
-    md = render_body_markdown(result, GENERATED, "canton")
+    md = render_body_markdown(result, GENERATED, "constituency")
     assert "[P13468](https://www.wikidata.org/wiki/Property:P13468)" in md
     # The number beside the member still resolves through the *join* property.
     assert "[#1101](https://openparldata.ch/item/persons/18172)" in md
@@ -207,17 +207,17 @@ def test_the_departed_members_dates_reach_the_dashboard_and_the_json():
 def test_name_matched_members_are_flagged_in_markdown():
     r = BodyResult(body=BODY, suggestions=[make_suggestion(qid_source=QID_FROM_NAME)],
                    member_count=1, matched_by_name=1)
-    assert "⚠️" in render_body_markdown(r, GENERATED, "canton")
+    assert "⚠️" in render_body_markdown(r, GENERATED, "constituency")
 
 
 def test_an_empty_body_says_so():
     r = BodyResult(body=BODY, member_count=200, matched_by_identifier=200)
-    assert "Nothing to do" in render_body_markdown(r, GENERATED, "canton")
+    assert "Nothing to do" in render_body_markdown(r, GENERATED, "constituency")
 
 
 def test_an_error_is_surfaced():
     r = BodyResult(body=BODY, error="WDQS timed out")
-    assert "WDQS timed out" in render_body_markdown(r, GENERATED, "canton")
+    assert "WDQS timed out" in render_body_markdown(r, GENERATED, "constituency")
 
 
 def test_index_markdown(result):
@@ -253,7 +253,7 @@ def test_json_serialises_dates_in_the_payload():
 
 # --- HTML -------------------------------------------------------------------
 def test_html_is_self_contained(result):
-    html = render_html([result], GENERATED, "canton", quickstatements=42)
+    html = render_html([result], GENERATED, "constituency", quickstatements=42)
     assert html.startswith("<!doctype html>")
     assert "<script" not in html
     assert "http-equiv" not in html
@@ -263,7 +263,7 @@ def test_html_is_self_contained(result):
 
 
 def test_html_shows_the_totals_and_hit_rate(result):
-    html = render_html([result], GENERATED, "canton", quickstatements=42)
+    html = render_html([result], GENERATED, "constituency", quickstatements=42)
     assert "Swiss National Council" in html
     assert "90.0%" in html
     assert ">42<" in html
@@ -272,13 +272,13 @@ def test_html_shows_the_totals_and_hit_rate(result):
 def test_html_escapes_member_names():
     r = BodyResult(body=BODY, suggestions=[make_suggestion(label="<script>x</script>")],
                    member_count=1)
-    html = render_html([r], GENERATED, "canton")
+    html = render_html([r], GENERATED, "constituency")
     assert "<script>x</script>" not in html
     assert "&lt;script&gt;" in html
 
 
 def test_html_of_an_empty_run():
-    html = render_html([BodyResult(body=BODY)], GENERATED, "canton")
+    html = render_html([BodyResult(body=BODY)], GENERATED, "constituency")
     assert "Nothing to do" in html
 
 
@@ -287,7 +287,7 @@ def test_write_reports_creates_every_artifact(tmp_path, result):
     reports = tmp_path / "reports"
     docs = tmp_path / "docs"
     write_reports(
-        [result], reports, docs, generated_at=GENERATED, group_by="canton",
+        [result], reports, docs, generated_at=GENERATED, group_by="constituency",
         quickstatements_text="# nothing\n", quickstatements_count=0,
     )
     assert (reports / "README.md").exists()
@@ -312,7 +312,7 @@ def _conflict_result():
             make_suggestion(
                 kind=KIND_DUPLICATE_IDENTIFIER,
                 label="Old One (Q90), Old Two (Q91)",
-                canton=None,
+                constituency=None,
                 person_qid=None,
                 person_number=None,
                 qid_source=None,
@@ -326,7 +326,7 @@ def _conflict_result():
 
 
 def test_the_conflicting_items_are_linked_in_markdown():
-    md = render_body_markdown(_conflict_result(), GENERATED, "canton")
+    md = render_body_markdown(_conflict_result(), GENERATED, "constituency")
     assert "One identifier claimed by several Wikidata items" in md
     assert "[Q90](https://www.wikidata.org/wiki/Q90)" in md
     assert "[Q91](https://www.wikidata.org/wiki/Q91)" in md
@@ -340,4 +340,4 @@ def test_the_conflicting_items_are_linked_in_the_dashboard():
 
 def test_an_ordinary_suggestion_grows_no_item_list(result):
     """The links belong to the conflict kind, not to every line."""
-    assert "— items:" not in render_body_markdown(result, GENERATED, "canton")
+    assert "— items:" not in render_body_markdown(result, GENERATED, "constituency")

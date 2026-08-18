@@ -25,7 +25,7 @@ def test_minimal_config(tmp_path):
     assert cfg.body_for("N").position_qid == "Q18510612"
     assert cfg.body_for("S") is None
     assert cfg.statement_model == "period"  # the default
-    assert cfg.group_by == "canton"
+    assert cfg.group_by == "constituency"
     assert cfg.quickstatements is True
 
 
@@ -33,8 +33,8 @@ def test_the_shipped_config_loads():
     cfg = load_config("config/parliament.yaml")
     assert [b.council for b in cfg.bodies] == ["NR", "SR"]
     assert cfg.position_qids == ["Q18510612", "Q18510613"]
-    assert len(cfg.cantons) == 26
-    assert cfg.canton_qid("ZH") == "Q11943"
+    assert len(cfg.constituencies) == 26
+    assert cfg.constituency_qid("ZH") == "Q11943"
 
 
 def test_a_placeholder_user_agent_is_rejected(tmp_path):
@@ -86,20 +86,20 @@ def test_an_unknown_group_by_is_rejected(tmp_path):
 
 def test_a_blank_qid_is_treated_as_not_known_yet(tmp_path):
     """A deliberate 'not filled in' marker, not an error."""
-    cfg = load_config(write(tmp_path, MINIMAL + "cantons:\n  ZH: Q11943\n  BE:\n"))
-    assert cfg.cantons == {"ZH": "Q11943"}
-    assert cfg.canton_qid("BE") is None
+    cfg = load_config(write(tmp_path, MINIMAL + "constituencies:\n  ZH: Q11943\n  BE:\n"))
+    assert cfg.constituencies == {"ZH": "Q11943"}
+    assert cfg.constituency_qid("BE") is None
 
 
-def test_a_malformed_canton_qid_is_rejected(tmp_path):
-    with pytest.raises(ValueError, match="cantons"):
-        load_config(write(tmp_path, MINIMAL + "cantons:\n  ZH: Zurich\n"))
+def test_a_malformed_constituency_qid_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match="constituencies"):
+        load_config(write(tmp_path, MINIMAL + "constituencies:\n  ZH: Zurich\n"))
 
 
-def test_canton_lookup_normalises_case_and_whitespace(tmp_path):
-    cfg = load_config(write(tmp_path, MINIMAL + "cantons:\n  ZH: Q11943\n"))
-    assert cfg.canton_qid(" zh ") == "Q11943"
-    assert cfg.canton_qid(None) is None
+def test_constituency_lookup_normalises_case_and_whitespace(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL + "constituencies:\n  ZH: Q11943\n"))
+    assert cfg.constituency_qid(" zh ") == "Q11943"
+    assert cfg.constituency_qid(None) is None
 
 
 def test_terms_are_keyed_by_period_number(tmp_path):
@@ -181,19 +181,31 @@ def test_a_measured_property_is_verified_by_default(tmp_path):
 def test_an_unmeasured_property_defaults_to_unverified(tmp_path):
     """Provenance and value are two questions, and only the first is settled.
 
-    Wikidata asserts P13468, which is what ``is_mechanical`` can see. That its
-    value equals the source's person id is what nothing has measured, and a
-    config joining on it must default to saying so rather than to silence.
+    Wikidata asserts P14527, which is what ``is_mechanical`` can see. That its
+    value equals the source's person id is the other question, and run 20
+    answered it *no* — one record per person per body, so it identifies a
+    record. A config joining on it must default to saying so rather than to
+    silence.
+
+    P13468 used to be this test's example and is no longer: run 28 measured it
+    against the register that publishes it (591 of 638), which is what
+    membership of VERIFIED_IDENTIFIER_PROPERTIES costs.
     """
-    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P13468\n"))
+    cfg = load_config(write(tmp_path, MINIMAL + "identifier_property: P14527\n"))
     assert cfg.identifier_verified is False
 
 
 def test_claiming_an_unmeasured_property_is_verified_is_rejected(tmp_path):
     """The one claim ``is_mechanical`` writes real edits off the back of."""
-    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    text = MINIMAL + "identifier_property: P14527\nidentifier_verified: true\n"
     with pytest.raises(ValueError, match="has not been measured"):
         load_config(write(tmp_path, text))
+
+
+def test_a_measured_property_may_be_claimed_verified(tmp_path):
+    """The other side of the same rule: measurement is what unlocks it."""
+    text = MINIMAL + "identifier_property: P13468\nidentifier_verified: true\n"
+    assert load_config(write(tmp_path, text)).identifier_verified is True
 
 
 def test_an_unknown_identifier_property_is_rejected(tmp_path):
@@ -228,14 +240,19 @@ identifier_property: P13468
         load_config(write(tmp_path, text))
 
 
-def test_p14527_lost_its_verified_status_to_a_single_disagreement():
-    """One is enough, and the reason generalises: OpenParlData holds one person
-    record per person *per body*, so P14527 identifies a record. Q131948095
-    carries 1411 where the ZH record is 17436 — another parliament's id for the
-    same human."""
+def test_only_measured_properties_are_verified():
+    """P14527 lost its status to a single disagreement, and the reason
+    generalises: OpenParlData holds one person record per person *per body*, so
+    it identifies a record. Q131948095 carries 1411 where the ZH record is
+    17436 — another parliament's id for the same human.
+
+    P13468 joined on 2026-08-10 by the opposite route: run 28 measured its
+    value against the register that publishes it, 591 of 638 (92.6%).
+    """
     from wd_parliament.models import VERIFIED_IDENTIFIER_PROPERTIES
 
-    assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307"})
+    assert VERIFIED_IDENTIFIER_PROPERTIES == frozenset({"P1307", "P13468"})
+    assert "P14527" not in VERIFIED_IDENTIFIER_PROPERTIES
 
 
 # --- the two identifiers a member has ---------------------------------------
@@ -321,3 +338,40 @@ def test_the_shipped_configs_report_both_identifiers():
     assert zurich.biography_url_for(18172) == (
         "https://openparldata.ch/item/persons/18172"
     )
+
+
+# --- the map key is not always an abbreviation ------------------------------
+def test_a_district_name_key_is_found_despite_its_case(tmp_path):
+    """Found the moment the ZH map was first filled: `constituency_qid`
+    upper-cased the lookup, which is right for `ZH` and matches nothing for a
+    whole district name. Eighteen entries, zero lookups, no error — a run
+    that would have reported no districts while holding all of them.
+    """
+    text = MINIMAL + '''
+constituencies:
+  "9. Wahlkreis (Horgen)": Q141045940
+'''
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.constituency_qid("9. Wahlkreis (Horgen)") == "Q141045940"
+
+
+def test_the_registers_untidy_spacing_still_finds_the_district(tmp_path):
+    """The source writes `'I      Zürich 1+2'`; a config will not."""
+    text = MINIMAL + '''
+constituencies:
+  "9. Wahlkreis (Horgen)": Q141045940
+'''
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.constituency_qid("9.  Wahlkreis   (Horgen)") == "Q141045940"
+
+
+def test_a_canton_abbreviation_still_matches_either_case(tmp_path):
+    """The federal behaviour the upper-casing existed for, unchanged."""
+    cfg = load_config(write(tmp_path, MINIMAL + "\nconstituencies:\n  ZH: Q11943\n"))
+    assert cfg.constituency_qid("zh") == cfg.constituency_qid("ZH") == "Q11943"
+
+
+def test_an_unmapped_district_is_still_none(tmp_path):
+    cfg = load_config(write(tmp_path, MINIMAL + "\nconstituencies:\n  ZH: Q11943\n"))
+    assert cfg.constituency_qid("9. Wahlkreis (Horgen)") is None
+    assert cfg.constituency_qid("") is None

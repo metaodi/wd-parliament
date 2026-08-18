@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-05 06:43 UTC",
+  "generated": "2026-08-17 06:55 UTC",
   "total_suggestions": 2198,
   "total_members": 246,
   "quickstatements": 0,
@@ -12,7 +12,7 @@
       "matched_by_identifier": 200,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 1900,
+      "wikidata_open": 1898,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 100.0,
       "error": null,
@@ -20,22 +20,44 @@
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
-          "member": "Q1668723 (2 source records)",
-          "person_qid": "Q1668723",
+          "member": "Q1079133 (2 source records)",
+          "person_qid": "Q1079133",
           "person_number": null,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1079133: #19160, #19257. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
           "links": {
-            "item": "https://www.wikidata.org/wiki/Q1668723",
+            "item": "https://www.wikidata.org/wiki/Q1079133",
             "position": "https://www.wikidata.org/wiki/Q18510612"
           },
           "payload": {
-            "wikidata_qid": "Q1668723",
+            "wikidata_qid": "Q1079133",
             "source_person_ids": [
-              20389,
-              20390
+              19160,
+              19257
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q2093027 (2 source records)",
+          "person_qid": "Q2093027",
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q2093027: #20002, #20050. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q2093027",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q2093027",
+            "source_person_ids": [
+              20002,
+              20050
             ]
           }
         },
@@ -64,22 +86,44 @@
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
-          "member": "Q51879989 (2 source records)",
-          "person_qid": "Q51879989",
+          "member": "Q2643719 (2 source records)",
+          "person_qid": "Q2643719",
           "person_number": null,
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q51879989: #19708, #19738. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q2643719: #19304, #19312. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
           "links": {
-            "item": "https://www.wikidata.org/wiki/Q51879989",
+            "item": "https://www.wikidata.org/wiki/Q2643719",
             "position": "https://www.wikidata.org/wiki/Q18510612"
           },
           "payload": {
-            "wikidata_qid": "Q51879989",
+            "wikidata_qid": "Q2643719",
             "source_person_ids": [
-              19708,
-              19738
+              19304,
+              19312
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q7 (2 source records)",
+          "person_qid": "Q7",
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q7: #20481, #21150. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q7",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q7",
+            "source_person_ids": [
+              20481,
+              21150
             ]
           }
         },
@@ -5709,28 +5753,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/1485",
             "start": "1943-12-06",
             "end": "1959-12-06"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Carl Bertschinger",
-          "person_qid": "Q1037064",
-          "person_number": 1521,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1917-12-03 to 1935-12-01, so add an end date (P582) of 1935-12-01, and the statement has no start date (P580) either — 1917-12-03 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q1037064",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q1037064-6F1AC8EF-88FE-49A4-9C1E-5A65ACABAACC",
-            "parliament_id": "1521",
-            "biography": "https://www.parlament.ch/de/biografie/wd/1521",
-            "start": "1917-12-03",
-            "end": "1935-12-01"
           }
         },
         {
@@ -32001,7 +32023,7 @@
           "qid_source": null,
           "canton": null,
           "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1964-06-01 to 1971-06-01, so add an end date (P582) of 1971-06-01, and the statement has no start date (P580) either — 1964-06-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
+          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1964-06-01 to 1971-05-31, so add an end date (P582) of 1971-05-31, and the statement has no start date (P580) either — 1964-06-01 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
           "links": {
             "item": "https://www.wikidata.org/wiki/Q125343",
             "position": "https://www.wikidata.org/wiki/Q18510612"
@@ -32011,7 +32033,7 @@
             "parliament_id": "1653",
             "biography": "https://www.parlament.ch/de/biografie/wd/1653",
             "start": "1964-06-01",
-            "end": "1971-06-01"
+            "end": "1971-05-31"
           }
         },
         {
@@ -33332,28 +33354,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/2592",
             "start": "1875-12-06",
             "end": "1887-12-04"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Rudolf Meier",
-          "person_qid": "Q2173417",
-          "person_number": 2672,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1943-12-06 to 1951-12-02, so add an end date (P582) of 1951-12-02, and the statement has no start date (P580) either — 1943-12-06 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q2173417",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q2173417-66EA9C64-8C4B-4F9E-87BC-F7E86EA2549D",
-            "parliament_id": "2672",
-            "biography": "https://www.parlament.ch/de/biografie/wd/2672",
-            "start": "1943-12-06",
-            "end": "1951-12-02"
           }
         },
         {
@@ -37817,7 +37817,7 @@
           "qid_source": "identifier",
           "canton": "ZH",
           "parl_group": "RL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q30017107"
@@ -37825,7 +37825,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4290"
           }
@@ -39472,7 +39472,7 @@
           "qid_source": "identifier",
           "canton": "GR",
           "parl_group": "V",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH),Schattenhalb (BE),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH), Schattenhalb (BE), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q1883801"
@@ -39480,7 +39480,9 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Meilen (ZH),Schattenhalb (BE),Zürich (--)"
+              "Meilen (ZH)",
+              "Schattenhalb (BE)",
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4167"
           }
@@ -39737,7 +39739,7 @@
           "qid_source": "identifier",
           "canton": "ZH",
           "parl_group": "GL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH), Hombrechtikon (ZH), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q120934"
@@ -39745,7 +39747,9 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--)"
+              "Dübendorf (ZH)",
+              "Hombrechtikon (ZH)",
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/1138"
           }
@@ -39981,7 +39985,7 @@
           "qid_source": "identifier",
           "canton": "ZH",
           "parl_group": "S",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q20192072"
@@ -39989,7 +39993,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4197"
           }
@@ -40091,7 +40095,7 @@
           "qid_source": "identifier",
           "canton": "ZH",
           "parl_group": "M-E",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q113636356"
@@ -40099,7 +40103,7 @@
           "payload": {
             "property": "P19",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/10818"
           }
@@ -41325,33 +41329,11 @@
       "matched_by_identifier": 46,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 327,
+      "wikidata_open": 326,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
-        {
-          "kind": "DUPLICATE_SOURCE_LINK",
-          "priority": 1,
-          "member": "Q1668723 (2 source records)",
-          "person_qid": "Q1668723",
-          "person_number": null,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q1668723",
-            "position": "https://www.wikidata.org/wiki/Q18510613"
-          },
-          "payload": {
-            "wikidata_qid": "Q1668723",
-            "source_person_ids": [
-              20389,
-              20390
-            ]
-          }
-        },
         {
           "kind": "DUPLICATE_SOURCE_LINK",
           "priority": 1,
@@ -41371,6 +41353,50 @@
             "source_person_ids": [
               20774,
               20775
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q2643719 (2 source records)",
+          "person_qid": "Q2643719",
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q2643719: #19304, #19312. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q2643719",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q2643719",
+            "source_person_ids": [
+              19304,
+              19312
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q7 (2 source records)",
+          "person_qid": "Q7",
+          "person_number": null,
+          "qid_source": null,
+          "canton": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q7: #20481, #21150. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q7",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q7",
+            "source_person_ids": [
+              20481,
+              21150
             ]
           }
         },
@@ -46912,28 +46938,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/3358",
             "start": "1867-12-02",
             "end": "1868-06-01"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Rudolf Meier",
-          "person_qid": "Q2173417",
-          "person_number": 2672,
-          "qid_source": null,
-          "canton": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss Council of States' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 1960-06-07 to 1967-12-03, so add an end date (P582) of 1967-12-03, and the statement has no start date (P580) either — 1960-06-07 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q2173417",
-            "position": "https://www.wikidata.org/wiki/Q18510613"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q2173417-1A3748BF-D418-4962-A590-4457067E2511",
-            "parliament_id": "2672",
-            "biography": "https://www.parlament.ch/de/biografie/wd/2672",
-            "start": "1960-06-07",
-            "end": "1967-12-03"
           }
         },
         {

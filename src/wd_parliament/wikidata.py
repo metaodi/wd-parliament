@@ -529,7 +529,7 @@ SELECT ?item ?itemLabel ?itemDescription ?instanceLabel WHERE {{
     ) -> Dict[str, Dict[str, object]]:
         """Look up what each Q-ID actually is, for ``--verify-config``.
 
-        The config's canton, party, group and term maps are hand-maintained
+        The config's constituency, party, group and term maps are hand-maintained
         Q-IDs, and a wrong one would be attached as a qualifier to real
         statements. This turns "are these right?" into one query whose output a
         human can scan.

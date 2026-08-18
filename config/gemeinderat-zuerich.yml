@@ -1,0 +1,87 @@
+# Gemeinderat Zürich
+
+language: de
+user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
+request_delay: 1.0
+
+source: openparldata
+body_key: "261"
+
+# P14527, the OpenParlData ID: Wikidata-asserted
+identifier_property: P14527
+identifier_verified: false
+
+# Both of the parliament's identifiers. The join property is reported with its
+# value (ADD_IDENTIFIER); P14527 is reported without one (MISSING_IDENTIFIER),
+# because no source *this* config reads publishes an OpenParlData person id.
+# Note the inversion against `kantonsrat-zh.yaml`, where these swap roles.
+identifiers: [P14527]
+
+# The register's own query page — P13468's
+biography_url: "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid={obj_guid}"
+
+# ⚠️ OFF until a human has pasted one line into QuickStatements by hand and
+# watched where it landed (README step 5). The join being verified removes the
+# *blanket* refusal `identifier_verified: false` imposes — it does not remove
+# the need to look at the first edit.
+quickstatements: false
+
+# One P39 statement per *tenure*, not one per term. The Einsitze rows are
+# per tenure (4,421 seats across 3,367 people, ~1.3 each), which is the same
+# shape `kantonsrat-zh.yaml` reads from OpenParlData and matches the census in
+# README step 2: 97.2% of items carry exactly one statement for a seat.
+#
+# ⚠️ Leaving this at the default (`period`) is not a smaller claim, it is a
+# **silent nothing**: this source has no legislative periods, so
+# `expected_statements` would return an empty list and the run would emit no
+# seat suggestion at all while reporting success. The first version of this
+# config did exactly that, and only the pipeline test noticed.
+statement_model: tenure
+
+# Group the report by electoral district — the Wahlkreis, for a cantonal body.
+group_by: constituency
+
+bodies:
+  - council: GR
+    label: Zurich City Parliament
+    position: Q111219780    #  Member of the Zurich City Parliament
+    group_id: 8062
+    group_name: Gemeinderat
+
+# The 9 Wahlkreise
+constituencies:
+  "Wahlkreis Zürich 1+2": Q117787833       # Kreis 1+2
+  "Wahlkreis Zürich 3": Q675017            # Kreis 3
+  "Wahlkreis Zürich 4+5": Q117787885       # Kreis 4+5
+  "Wahlrkeis Zürich 6": Q456170            # Kreis 6
+  "Wahlkreis Zürich 7+8": Q117787912       # Kreis 7+8
+  "Wahlkreis Zürich 9": Q456159            # Kreis 9
+  "Wahlkreis Zürich 10": Q456175           # Kreis 10
+  "Wahlkreis Zürich 11": Q870098           # Kreis 11
+  "Wahlkreis Zürich 12": Q657525           # Kreis 12
+
+parties: {}
+
+parl_groups: {}
+
+# No periods in this source, so no P2937 can be suggested whatever is here.
+terms: {}
+
+# The personal data this register publishes, of the checks `models` defines.
+# P106 comes from `beruf` (4,427 of 4,665). It carries no birthplace, no
+# Bürgerort, no website and no children — so those checks are absent rather
+# than empty, and adding them would make no suggestion.
+person_data: [P102, P106, P856]
+
+# The fresher roster, read only to contradict this one. The register's export
+# is a snapshot, and `enrich` is bounded so that a disagreement can only
+# *withhold* a mechanical edit — never supply a value. That is exactly the
+# right shape for a freshness cross-check.
+enrich:
+  source: openparldata
+  body_key: "261"
+  # The group that IS this chamber in the second source, matched by EXACT
+  # name — `Präsidium des Kantonsrates` and `Büro KR` are not the chamber, and
+  # a substring match would take a committee of it for it.
+  groups:
+    GR: Gemeinderat

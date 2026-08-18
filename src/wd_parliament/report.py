@@ -61,15 +61,17 @@ def now_iso() -> str:
 
 
 def group_key(suggestion: Suggestion, group_by: str) -> str:
-    """The canton or parliamentary group a suggestion is filed under."""
-    value = suggestion.canton if group_by == "canton" else suggestion.parl_group
+    """The constituency or parliamentary group a suggestion is filed under."""
+    value = (
+        suggestion.constituency if group_by == "constituency" else suggestion.parl_group
+    )
     return value or OTHER_GROUP
 
 
 def group_suggestions(
     suggestions: Sequence[Suggestion], group_by: str
 ) -> List[Tuple[str, List[Suggestion]]]:
-    """Bucket suggestions by canton (or group), "Other" always last."""
+    """Bucket suggestions by constituency (or group), "Other" always last."""
     buckets: Dict[str, List[Suggestion]] = {}
     for s in suggestions:
         buckets.setdefault(group_key(s, group_by), []).append(s)
@@ -189,7 +191,7 @@ def render_body_markdown(
         lines.append(f"- {KIND_LABEL.get(kind, kind)}: **{len(items)}**")
     lines.append("")
 
-    label = district_label if group_by == "canton" else "Parliamentary group"
+    label = district_label if group_by == "constituency" else "Parliamentary group"
     for name, items in group_suggestions(result.suggestions, group_by):
         lines.append(f"## {label}: {name} ({len(items)})")
         lines.append("")
@@ -294,7 +296,7 @@ def to_json(
                         "person_qid": s.person_qid,
                         "person_number": s.person_number,
                         "qid_source": s.qid_source,
-                        "canton": s.canton,
+                        "constituency": s.constituency,
                         "parl_group": s.parl_group,
                         "detail": s.detail,
                         "links": s.links,
@@ -470,7 +472,7 @@ _HTML_TEMPLATE = """<!doctype html>
 def render_html(
     results: Sequence[BodyResult],
     generated_at: str,
-    group_by: str = "canton",
+    group_by: str = "constituency",
     quickstatements: int = 0,
     source_name: str = "parlament.ch",
     identifier_property: str = "P1307",
@@ -509,7 +511,7 @@ def render_html(
         hit_rate=round(matched / members * 100, 1) if members else 0.0,
         kind_label=KIND_LABEL,
         priority=PRIORITY,
-        group_label=district_label if group_by == "canton" else "Group",
+        group_label=district_label if group_by == "constituency" else "Group",
         source_name=source_name,
         identifier_property=identifier_property,
     )
@@ -537,7 +539,7 @@ def write_reports(
     reports_dir: str | Path,
     docs_dir: str | Path,
     generated_at: Optional[str] = None,
-    group_by: str = "canton",
+    group_by: str = "constituency",
     quickstatements_text: Optional[str] = None,
     quickstatements_count: int = 0,
     source_name: str = "parlament.ch",

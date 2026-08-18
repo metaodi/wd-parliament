@@ -1,6 +1,6 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-08-05 06:43 UTC
+Generated: 2026-08-17 06:55 UTC
 
 **2198 suggested edits** across **246 sitting members** in **2 chamber(s)**.
 
@@ -15,7 +15,7 @@ Generated: 2026-08-05 06:43 UTC
 
 | Kind | Priority | Count |
 | --- | ---: | ---: |
-| One Wikidata item claimed by several source records | 1 | 5 |
-| Recorded as sitting, but the member has left | 2 | 1983 |
+| One Wikidata item claimed by several source records | 1 | 8 |
+| Recorded as sitting, but the member has left | 2 | 1980 |
 | Missing the parliament's other identifier — value to be looked up | 5 | 4 |
 | Personal data the source publishes and Wikidata does not record | 6 | 206 |

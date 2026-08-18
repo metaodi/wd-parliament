@@ -75,7 +75,7 @@ roughly 180 people with an open statement is the seat; an item held by nobody,
 or by thousands, is not.
 
 **E. What supplies P768, and what are the 18 Wahlkreis Q-IDs?** Federally the
-electoral district is the canton and ``cantons:`` has 26 entries. Zurich elects
+electoral district is the canton and ``constituencies:`` has 26 entries. Zurich elects
 its 180 members from **18 Wahlkreise**, so that map becomes a per-body district
 map with different keys. The Q-IDs are **derived the way section D derives the
 position** — from the P768 values Wikidata already carries on statements for

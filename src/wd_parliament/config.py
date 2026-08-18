@@ -33,7 +33,12 @@ from .models import (
 # which covers the cantons and cities as well.
 SOURCE_PARLAMENT = "parlament"
 SOURCE_OPENPARLDATA = "openparldata"
-SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA)
+# The Staatsarchiv's KR-Daten register, read from the KRRR application's Excel
+# export. The only cantonal source whose identifier join is *verified*: run 28
+# (2026-08-10) found P13468's value in ``id_person_new`` for 591 of 638 people
+# (92.6%). See ``krdaten.py``.
+SOURCE_KRDATEN = "krdaten"
+SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA, SOURCE_KRDATEN)
 
 DEFAULT_USER_AGENT = "wd-parliament/0.1 (+https://github.com/metaodi/wd-parliament)"
 # Left unset, the biography link is the record page of the property the run
@@ -69,7 +74,11 @@ class EnrichmentConfig:
 
     @property
     def source_name(self) -> str:
-        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else self.source
+        if self.source == SOURCE_OPENPARLDATA:
+            return "OpenParlData"
+        if self.source == SOURCE_KRDATEN:
+            return "KR-Daten"
+        return self.source
 
 
 @dataclass
@@ -123,10 +132,10 @@ class Config:
     # "tenure" (one P39 per continuous tenure) or "period" (one per legislature).
     # See the module docstring of ``diff`` and the README for why this matters.
     statement_model: str = MODEL_PERIOD
-    group_by: str = "canton"  # "canton" or "group" — report grouping only
+    group_by: str = "constituency"  # "constituency" or "group" — report grouping only
     biography_url: str = DEFAULT_BIOGRAPHY_URL
     bodies: List[Body] = field(default_factory=list)
-    cantons: Dict[str, str] = field(default_factory=dict)  # "ZH" -> "Q11943"
+    constituencies: Dict[str, str] = field(default_factory=dict)  # "ZH" -> "Q11943"
     parties: Dict[str, str] = field(default_factory=dict)  # "SVP" -> "Q..."
     parl_groups: Dict[str, str] = field(default_factory=dict)  # "V" -> "Q..."
     # LegislativePeriodNumber -> the Q-ID of that legislature's Wikidata item,
@@ -155,7 +164,11 @@ class Config:
         tells a reader to go and check a service that has never heard of this
         member.
         """
-        return "OpenParlData" if self.source == SOURCE_OPENPARLDATA else "parlament.ch"
+        if self.source == SOURCE_OPENPARLDATA:
+            return "OpenParlData"
+        if self.source == SOURCE_KRDATEN:
+            return "the Staatsarchiv's KR-Daten register"
+        return "parlament.ch"
 
     @property
     def district_label(self) -> str:
@@ -176,11 +189,30 @@ class Config:
                 return b
         return None
 
-    def canton_qid(self, abbreviation: Optional[str]) -> Optional[str]:
-        """The Q-ID for a canton abbreviation, or ``None`` when unmapped."""
+    def constituency_qid(self, abbreviation: Optional[str]) -> Optional[str]:
+        """The Q-ID for a constituency — a canton or an electoral district —
+        or ``None``.
+
+        **The key is not always an abbreviation.** Federally it is ``ZH``, and
+        upper-casing the lookup is what makes ``zh`` from the source match.
+        Cantonally it is the district's whole name — ``9. Wahlkreis
+        (Horgen)`` — and upper-casing that matches nothing at all, which was
+        found the moment the ZH map was first filled in: eighteen entries, zero
+        lookups, no error, and a run that would have reported "no districts to
+        suggest" while holding all of them.
+
+        So the comparison folds case and collapses whitespace on both sides.
+        That keeps the federal behaviour exactly (``ZH`` still matches ``zh``)
+        and makes the cantonal one work, including the register's untidy
+        spacing (``'I      Zürich 1+2'``).
+        """
         if not abbreviation:
             return None
-        return self.cantons.get(abbreviation.strip().upper())
+        wanted = _fold_key(abbreviation)
+        for key, qid in self.constituencies.items():
+            if _fold_key(key) == wanted:
+                return qid
+        return None
 
     def party_qid(self, abbreviation: Optional[str]) -> Optional[str]:
         if not abbreviation:
@@ -250,6 +282,17 @@ class Config:
         """The enabled personal-data checks, in the canonical order."""
         enabled = set(self.person_data)
         return [c for c in PERSON_DATA_BY_PROPERTY.values() if c.property_id in enabled]
+
+
+def _fold_key(value: object) -> str:
+    """A map key and a source value, made comparable. Pure.
+
+    Case-folded with runs of whitespace collapsed, because the two sides are
+    written by different hands: a config says ``9. Wahlkreis (Horgen)`` and a
+    source may say ``9.  Wahlkreis  (Horgen)``, and a canton is ``ZH`` in one
+    place and ``zh`` in another.
+    """
+    return " ".join(str(value or "").split()).casefold()
 
 
 def _as_qid_map(raw: Optional[dict], what: str) -> Dict[str, str]:
@@ -394,9 +437,11 @@ def load_config(path: str | Path) -> Config:
             f"got '{statement_model}'."
         )
 
-    group_by = str(data.get("group_by", "canton")).strip()
-    if group_by not in ("canton", "group"):
-        raise ValueError(f"group_by must be 'canton' or 'group'; got '{group_by}'.")
+    group_by = str(data.get("group_by", "constituency")).strip()
+    if group_by not in ("constituency", "group"):
+        raise ValueError(
+            f"group_by must be 'constituency' or 'group'; got '{group_by}'."
+        )
 
     source = str(data.get("source", SOURCE_PARLAMENT)).strip()
     if source not in SOURCES:
@@ -501,7 +546,7 @@ def load_config(path: str | Path) -> Config:
         group_by=group_by,
         biography_url=str(data.get("biography_url", DEFAULT_BIOGRAPHY_URL)),
         bodies=bodies,
-        cantons=_as_qid_map(data.get("cantons"), "cantons"),
+        constituencies=_as_qid_map(data.get("constituencies"), "constituencies"),
         parties=_as_qid_map(data.get("parties"), "parties"),
         parl_groups=_as_qid_map(data.get("parl_groups"), "parl_groups"),
         terms=_as_term_map(data.get("terms")),

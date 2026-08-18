@@ -124,7 +124,7 @@ def test_the_wahlkreis_becomes_the_district_key_with_tidy_whitespace(persons):
     is normalised at the mapping boundary rather than everywhere it is used.
     """
     member = member_from_rows(row(person_id=9532), persons[0], ZH, today=TODAY)
-    assert member.canton_abbreviation == "I Zürich 1+2"
+    assert member.constituency_abbreviation == "I Zürich 1+2"
 
 
 def test_the_person_id_becomes_the_join_key(persons):

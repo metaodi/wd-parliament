@@ -61,7 +61,7 @@ def make_config(person_data=None, parties=None):
     return Config(
         statement_model=MODEL_TENURE,
         bodies=[BODY],
-        cantons={"ZH": "Q11943"},
+        constituencies={"ZH": "Q11943"},
         parties=parties or {},
         person_data=(
             list(PERSON_DATA_PROPERTIES) if person_data is None else list(person_data)
@@ -76,7 +76,7 @@ def make_member(**kwargs):
         last_name="Muster",
         active=True,
         council="NR",
-        canton_abbreviation="ZH",
+        constituency_abbreviation="ZH",
         party_abbreviation="SVP",
         party_name="Schweizerische Volkspartei",
         date_joining=date(2023, 12, 4),

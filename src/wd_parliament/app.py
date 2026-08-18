@@ -13,7 +13,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-from .config import SOURCE_OPENPARLDATA, Config, load_config
+from .config import SOURCE_KRDATEN, SOURCE_OPENPARLDATA, Config, load_config
 from .diff import compute_suggestions
 from .enrich import Enrichment
 from .http_client import HttpClient
@@ -39,6 +39,14 @@ def build_source(config: Config, http: HttpClient):
     descriptive User-Agent as the Wikimedia ones do, and both return the same
     dataclasses — everything after this point cannot tell which it got.
     """
+    if config.source == SOURCE_KRDATEN:
+        from .krdaten import KrDatenClient
+
+        log.info(
+            "Source: the Staatsarchiv's KR-Daten register, joined on %s",
+            config.identifier_property,
+        )
+        return KrDatenClient(session=http.session, language=config.language)
     if config.source == SOURCE_OPENPARLDATA:
         from .openparldata import OpenParlDataClient
 
@@ -151,15 +159,22 @@ def process(
     wikidata: WikidataClient,
     limit: Optional[int] = None,
     enricher: Any = None,
+    today: Optional[date] = None,
 ) -> List[BodyResult]:
     """Fetch everything once, then build a :class:`BodyResult` per chamber.
 
     Both the member list and the Wikidata view are fetched **once** for all
     chambers rather than per chamber: a member can move between councils, and
     the Wikidata query is the expensive one.
+
+    ``today`` is "as of what date is a source row an active seat" — passed
+    straight through to ``get_members``. ``None`` (the default, and what a
+    live run always uses) means the real wall-clock date; a test pins it so a
+    fixture stays pinned to the day it was written rather than drifting as
+    the calendar moves past a fixture row's date.
     """
     periods = parliament.get_periods()
-    members = parliament.get_members(councils=config.councils)
+    members = parliament.get_members(councils=config.councils, today=today)
     log.info(
         "parlament.ch: %d sitting members across %d legislative periods",
         len(members),
@@ -196,11 +211,10 @@ def process(
     # produces thousands of confident, wrong suggestions. Fail loudly instead,
     # so the Action stops before committing anything.
     if not members:
-        probe = (
-            "scripts/verify_kantonsrat.py"
-            if config.source == SOURCE_OPENPARLDATA
-            else "scripts/verify_source.py"
-        )
+        probe = {
+            SOURCE_OPENPARLDATA: "scripts/verify_kantonsrat.py",
+            SOURCE_KRDATEN: "scripts/verify_krrr.py",
+        }.get(config.source, "scripts/verify_source.py")
         raise RuntimeError(
             f"The source returned no sitting members for "
             f"{', '.join(config.councils)}. Either the filters or the "
