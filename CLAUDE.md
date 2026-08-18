@@ -435,6 +435,68 @@ For enrichment it is unambiguously good: 3,685/3,686 federal members carry a
 `wikidata_id` and 87.3% a party Q-ID, which would fill the deliberately-empty
 `parties` / `parl_groups` maps.
 
+**A right config can still produce nothing, and the Gemeinderat der Stadt
+Zürich is the case that proves it** (README step 12). `config/gemeinderat-zuerich.yaml`
+is OpenParlData one level below the canton — body `261`, joined on P14527,
+`statement_model: tenure`. Run 34 (2026-08-18) found body 261 holding **807
+person records**, the chamber as a group under it at `id=8062, name_de='Gemeinderat'`
+matched by exact name with `Büro des Gemeinderats` correctly rejected, and that
+group holding **0 membership rows**. Body key right, group id right, group name
+right, no seats — and `app.process` fails with "the source returned no sitting
+members for GR". **Never read that message as a config error again**: the four
+things a config controls were all correct, and the missing table is the
+source's. `verify_kantonsrat.py` now answers it directly — when the chamber's
+group holds no memberships, it walks a handful of the *body's people* and
+prints the group ids their own rows point at. Walking people rather than
+groups is the whole point: 156 groups is 156 requests to answer what five
+people answer directly.
+
+Three more rules the same run established, all now in that config:
+
+- **`bodies` rows carry `body_key`, not `key`.** Reading `key` had the probe
+  print "0 match key='261'" one line above the row whose `body_key` was 261,
+  and then advise passing a different `--body-key`. `body_key_of` resolves it
+  from the row, the same discipline as `BEGIN_FIELDS`.
+- **the district keys are the source's own spelling.** The city writes `1 und
+  2`, not `Wahlkreis Zürich 1+2`; the first draft used the latter and all nine
+  entries were unreachable — the eighteen-entries-zero-lookups failure again,
+  and one `_fold_key` cannot fix because these are different *words*. The same
+  section found **17** distinct values across 807 person records: OpenParlData
+  keeps the district on the **person**, so somebody who also sat cantonally or
+  federally carries that seat's district here. The eight extras stay unmapped.
+- **P14527 came back 68 of 68 and `identifier_verified` is still `false`.**
+  Do not flip it on the strength of that run. Run 20's cantonal 34 of 35 failed
+  on somebody who **also sat elsewhere** — the property identifies a person
+  *record*, one per body — and a linked sample over-represents exactly the
+  people it misfires on. A clean run on one body is evidence, not the
+  retirement of a known failure mode.
+
+**swissparlpy is pinned `>=2.1`, and the reason is the Gever backend.** 2.1.0
+is the first release carrying `backends/gever.py` and `gever_config.py`, whose
+`INSTANCES` holds **`city_zurich`** beside `canton_zurich` —
+`www.gemeinderat-zuerich.ch` with `/api/kontakt`, `/api/behoerdenmandat`,
+`/api/wahlkreis`, `/api/partei`, reachable as
+`SwissParlClient(backend="gever_city_zurich")`. It is shaped differently from
+the canton's single `MITGLIEDER` index: person and mandate are separate, and a
+`behoerdenmandat` row is exactly the table OpenParlData is missing for body
+261. `scripts/verify_gever_city.py` measures it (README step 13) and gates
+nothing, like every other probe of a service no config names. Two things about
+it that are not negotiable: it prints the **schema's** variable list beside the
+columns the **records** carry and says the records win where they differ (run
+22's "3,862 rows with no name" was a fact about the probe), and it matches the
+chamber by **equality** — the city's `Stadtrat` is its nine-member executive
+and sits in the same index.
+
+And the thing to say out loud before writing a Gever enricher: under
+`identifier_verified: false` **nothing this config produces is mechanical**, so
+a second source has nothing left to withhold. A Gever cross-check would appear
+in the report and change no output. Given that OpenParlData has no seats for
+this body at all, the live question is whether Gever is this parliament's
+*source* rather than its second opinion — and the join would be by **name**
+throughout, since run 23 established no Wikidata property holds a Gever key,
+with duplicate handling of its own rather than `resolve`'s (run 24: the
+canton's person-level key is *nearly* a person key and not one).
+
 Two facts from the same census shape the diff's behaviour:
 
 - **89.4% of items carry no P2937 at all**, so populating `terms:` in the
