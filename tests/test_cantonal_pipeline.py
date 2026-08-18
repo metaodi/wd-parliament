@@ -1,13 +1,26 @@
-"""The cantonal config, end to end, offline.
+"""An OpenParlData config, end to end, offline.
 
 ``test_pipeline.py`` does this for the federal run. The point of repeating it
-for Zurich is not coverage of the same code — it is that **the pipeline is
-genuinely source-agnostic**: the same ``app.process`` produces a report from
-OpenParlData rows joined on P14527, with no federal table and no P1307
-anywhere in the path.
+for a cantonal chamber is not coverage of the same code — it is that **the
+pipeline is genuinely source-agnostic**: the same ``app.process`` produces a
+report from OpenParlData rows joined on P14527, with no federal table and no
+P1307 anywhere in the path.
 
 Everything reaches ``process`` through the same seams the federal tests use, so
 no network is touched.
+
+**The config is built here rather than read from ``config/``**, and that is
+deliberate. This file used to load ``config/kantonsrat-zh.yaml``, and when the
+Kantonsrat moved to the Staatsarchiv's KR-Daten register — a different source
+with a different, *verified* join — all eighteen tests below broke at once
+while the code they exercise had not changed at all. What they are about is the
+OpenParlData path, not which parliaments this repo happens to ship a config
+for; tying the two together made a shipping decision look like a regression.
+
+So the values below are the shape the adapter is being tested against, not a
+claim about any file in ``config/``. The claims about the shipped set live in
+``test_config.py`` and ``test_person_data.py``, which enumerate them on
+purpose.
 """
 
 import json
@@ -32,7 +45,40 @@ from wd_parliament.quickstatements import is_mechanical, render
 
 from conftest import FIXTURES
 
-CONFIG = "config/kantonsrat-zh.yaml"
+# An OpenParlData config for a cantonal chamber, as one shipped until the
+# Kantonsrat moved to KR-Daten. `identifier_verified: false` and
+# `quickstatements: false` are load-bearing here, not scenery: several tests
+# below assert that nothing is emitted, and each flag refuses on its own.
+CONFIG_TEXT = """
+language: de
+user_agent: "wd-parliament/0.1 (https://github.com/metaodi/wd-parliament; oderbolz@gmail.com)"
+request_delay: 1.0
+
+source: openparldata
+body_key: ZH
+
+identifier_property: P14527
+identifier_verified: false
+identifiers: [P14527, P13468]
+
+statement_model: tenure
+group_by: constituency
+quickstatements: false
+biography_url: "https://openparldata.ch/item/persons/{person_number}"
+
+bodies:
+  - council: KR
+    label: Cantonal Council of Zürich
+    position: Q21518678    # member of the Cantonal Council of Zürich
+    group_id: 5077
+    group_name: Kantonsrat Zürich
+
+constituencies: {}
+parl_groups: {}
+parties: {}
+person_data: [P102, P106, P856]
+terms: {}
+"""
 TODAY = date(2026, 7, 30)
 # Pinned so the fixture's future-dated row (zh_memberships.json id 900004,
 # begin_date 2026-08-17) stays "not yet a seat" as the real calendar moves
@@ -89,8 +135,10 @@ class FakeWikidata:
 
 
 @pytest.fixture
-def config():
-    return load_config(CONFIG)
+def config(tmp_path):
+    path = tmp_path / "cantonal-openparldata.yaml"
+    path.write_text(CONFIG_TEXT, encoding="utf-8")
+    return load_config(path)
 
 
 @pytest.fixture
