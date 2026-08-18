@@ -279,7 +279,8 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          for cfg in config/parliament.yaml config/kantonsrat-zh.yaml; do
+          for cfg in config/parliament.yaml config/kantonsrat-zh.yaml \
+                     config/gemeinderat-zuerich.yaml; do
             echo "### $cfg"
             uv run python scripts/verify_person_data.py --config "$cfg" 2>&1
           done | tee persondata.txt
@@ -331,12 +332,70 @@ jobs:
         run: |
           set +e
           uv run python scripts/verify_krrr.py \
-            --config config/kantonsrat-zh-krdaten.yaml 2>&1 | tee krrr.txt
+            --config config/kantonsrat-zh.yaml 2>&1 | tee krrr.txt
           {
             echo "## 10. Staatsarchiv KRRR export — README step 11"
             echo
             echo '```'
             cat krrr.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # README step 12: could this tool be pointed at a *municipal* parliament?
+      # Reports, does not gate, for exactly the reason step 7 does not: it
+      # measures a chamber whose config no gating check reads, so nothing it
+      # finds can make the federal run more or less safe.
+      #
+      # This is the probe from step 7 pointed at another chamber via
+      # --chamber-name, not a copy of it. The first `Update parliament TODO`
+      # dispatch for this config (2026-08-18) failed with "the source returned
+      # no sitting members for GR" because the configured group id matched zero
+      # membership rows, and section A is what turns that into the group list
+      # this body really has. --position stays as the config's candidate so
+      # section D counts its holders against the chamber's size; 125 seats, 9
+      # Wahlkreise.
+      - name: Evaluate a municipal extension — Gemeinderat Zürich (step 12)
+        id: gemeinderat
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python scripts/verify_kantonsrat.py \
+            --config config/gemeinderat-zuerich.yaml \
+            --body-key 261 \
+            --chamber-name "Gemeinderat,Gemeinderat Zürich,Gemeinderat der Stadt Zürich,Gemeinderat Stadt Zürich" \
+            --chamber-label "Gemeinderat" \
+            --position Q111219780 \
+            --expect-seats 125 \
+            --expect-districts 9 2>&1 | tee gemeinderat.txt
+          {
+            echo "## 11. Municipal extension — Gemeinderat Zürich (evaluation only)"
+            echo
+            echo '```'
+            cat gemeinderat.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The same Q-ID check step 2 makes, for the municipal config. Separate
+      # step and does NOT gate: step 2's job is to say whether the *federal*
+      # pipeline may run, and a wrong Q-ID in a config nothing publishes yet is
+      # a finding to read, not a reason to call the diagnostic red.
+      #
+      # What it is here to catch is the `constituencies:` block, which is
+      # unverified and, as pasted, mixes Stadtkreis items with the Kantonsrat's
+      # Wahlkreis items. This prints what each Q-ID actually is.
+      - name: Verify the Gemeinderat's configured Q-IDs (step 12)
+        id: gemeinderat_qids
+        continue-on-error: true
+        run: |
+          set +e
+          uv run python -m wd_parliament \
+            --config config/gemeinderat-zuerich.yaml \
+            --verify-config 2>&1 | tee gemeinderat-qids.txt
+          {
+            echo "## 12. Gemeinderat Zürich — configured Q-IDs"
+            echo
+            echo '```'
+            cat gemeinderat-qids.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -359,6 +418,8 @@ jobs:
             echo "| Personal-data checks (step 9) | \`${{ steps.persondata.outcome }}\` (does not gate) |"
             echo "| Gever / P13468 (step 10) | \`${{ steps.gever.outcome }}\` (does not gate) |"
             echo "| KRRR export / P13468 (step 11) | \`${{ steps.krrr.outcome }}\` (does not gate) |"
+            echo "| Municipal extension (step 12) | \`${{ steps.gemeinderat.outcome }}\` (does not gate) |"
+            echo "| Gemeinderat Q-IDs (step 12) | \`${{ steps.gemeinderat_qids.outcome }}\` (does not gate) |"
             echo
             if [ "$source_step" = "success" ] && [ "$qids" = "success" ]; then
               echo "Both gating checks passed: the members are readable, the"

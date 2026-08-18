@@ -19,7 +19,7 @@ shortfall accounted for: 29 Wikidata values the register disagrees with — the
 suggestion this tool exists to make — 14 name-matching artefacts, 4 undecided.
 The same run read P13468's formatter URL from Wikidata and confirmed it
 resolves through ``wahlen.zh.ch/krdaten_staatsarchiv/``, this register's own
-query page. So ``config/kantonsrat-zh-krdaten.yaml`` ships
+query page. So ``config/kantonsrat-zh.yaml`` ships
 ``identifier_verified: true`` and P13468 is in
 ``models.VERIFIED_IDENTIFIER_PROPERTIES`` — the claim that cost three failed
 sources to establish (OpenParlData run 20, the canton's Gever run 23, the

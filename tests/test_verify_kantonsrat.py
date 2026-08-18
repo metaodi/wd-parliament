@@ -189,6 +189,58 @@ def test_a_nothing_mentioning_the_chamber_blames_the_body_key():
     assert "body key" in "\n".join(lines)
 
 
+def test_a_a_failed_match_lists_the_groups_it_did_see():
+    """"Not found" has to hand over the names, not just the diagnosis.
+
+    The Gemeinderat run is why: body 261 read 807 person records, so the body
+    key was plainly right, and the configured group matched zero memberships.
+    The one thing needed was the list of group names that body really has —
+    which the probe held and did not print.
+    """
+    found, lines = find_kantonsrat_group(
+        [group(1, "Regierungsrat"), group(2, "Stadtrat")]
+    )
+    assert found is None
+    text = "\n".join(lines)
+    assert "Regierungsrat" in text and "Stadtrat" in text
+
+
+def test_a_another_parliament_is_matched_under_its_own_names():
+    """The same measurement, pointed at a chamber this file was not written for."""
+    rows = [group(1, "Stadtrat"), group(2, "Gemeinderat"), group(3, "SP-Fraktion")]
+    found, lines = find_kantonsrat_group(rows, ["Gemeinderat"], "Gemeinderat")
+    assert found is not None and found["id"] == 2
+    assert any("Gemeinderat: id=2" in line for line in lines)
+
+
+def test_a_naming_another_chamber_does_not_relax_the_equality_rule():
+    """The executive of a city is as dangerous as the executive of a canton.
+
+    ``Stadtrat`` is the city's nine-member government, and the Gemeinderat's
+    own organs are not the Gemeinderat either. Passing a name must not turn the
+    match into a substring one.
+    """
+    names = ["Gemeinderat"]
+    for name in (
+        "Stadtrat",
+        "Büro des Gemeinderates",
+        "Geschäftsleitung des Gemeinderates",
+        "Präsidium des Gemeinderates",
+        "Kantonsrat",
+    ):
+        assert is_kantonsrat({"name_de": name}, names) is False
+
+
+def test_a_the_near_miss_needle_follows_the_chamber_it_was_given():
+    """A near miss is "this chamber under another name", never another chamber."""
+    rows = [
+        group(1, "Büro des Gemeinderates"),
+        group(2, "Kantonsrat Zürich"),
+    ]
+    near = kantonsrat_candidates(rows, ["Gemeinderat"])
+    assert [r["id"] for r in near] == [1]
+
+
 # --- B. is the chamber the right size? --------------------------------------
 def test_b_exactly_180_seat_holders_confirms_the_data_is_current():
     verdict, detail, _ = classify_seat_count(
