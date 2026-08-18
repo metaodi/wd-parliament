@@ -188,7 +188,7 @@ def spans_from_rows(
 # --- what counts as a disagreement -------------------------------------------
 # Each of these is a claim the *first* source makes that the second contradicts.
 # Silence is never a contradiction: a value only one side knows is skipped, the
-# same rule the rest of the tool follows for unmapped cantons and parties.
+# same rule the rest of the tool follows for unmapped constituencies and parties.
 DISAGREE_START = "start"
 DISAGREE_STILL_SITTING = "still_sitting"
 DISAGREE_ALREADY_LEFT = "already_left"

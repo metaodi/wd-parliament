@@ -100,7 +100,7 @@ def test_member_from_row_maps_every_field_we_use(member_rows):
     assert member.sort_name == "Dubois Carole"
     assert member.council == "NR"
     assert member.council_number == 1
-    assert member.canton_abbreviation == "VD"
+    assert member.constituency_abbreviation == "VD"
     assert member.parl_group_abbreviation == "GL"
     assert member.party_abbreviation == "GLP"
     assert member.date_joining == date(2021, 3, 1)

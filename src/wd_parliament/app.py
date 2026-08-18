@@ -159,15 +159,22 @@ def process(
     wikidata: WikidataClient,
     limit: Optional[int] = None,
     enricher: Any = None,
+    today: Optional[date] = None,
 ) -> List[BodyResult]:
     """Fetch everything once, then build a :class:`BodyResult` per chamber.
 
     Both the member list and the Wikidata view are fetched **once** for all
     chambers rather than per chamber: a member can move between councils, and
     the Wikidata query is the expensive one.
+
+    ``today`` is "as of what date is a source row an active seat" — passed
+    straight through to ``get_members``. ``None`` (the default, and what a
+    live run always uses) means the real wall-clock date; a test pins it so a
+    fixture stays pinned to the day it was written rather than drifting as
+    the calendar moves past a fixture row's date.
     """
     periods = parliament.get_periods()
-    members = parliament.get_members(councils=config.councils)
+    members = parliament.get_members(councils=config.councils, today=today)
     log.info(
         "parlament.ch: %d sitting members across %d legislative periods",
         len(members),

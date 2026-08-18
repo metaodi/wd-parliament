@@ -46,7 +46,7 @@ from verify_krrr import (  # noqa: E402
     _as_district_number,
     district_key,
     district_numbers,
-    render_cantons_yaml,
+    render_constituencies_yaml,
     district_usage_query,
     search_terms,
     filled,
@@ -608,7 +608,7 @@ def test_a_p4565_value_outside_the_cantons_range_is_not_a_district_number(value,
 
 def test_the_yaml_block_records_what_backed_each_line():
     mapping = {"2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis Stadt Zürich 3+9", "P4565 + name")}
-    assert "[P4565 + name]" in render_cantons_yaml(mapping)[1]
+    assert "[P4565 + name]" in render_constituencies_yaml(mapping)[1]
 
 
 def test_the_yaml_block_is_ordered_by_the_registers_ordinal():
@@ -616,7 +616,7 @@ def test_the_yaml_block_is_ordered_by_the_registers_ordinal():
         "10. Wahlkreis (Meilen)": ("Q10", "Wahlkreis Meilen", "P4565 + name"),
         "2. Wahlkreis (Zürich 3+9)": ("Q2", "Wahlkreis Stadt Zürich 3+9", "P4565 + name"),
     }
-    lines = render_cantons_yaml(mapping)
+    lines = render_constituencies_yaml(mapping)
     assert lines[1].startswith('  "2. Wahlkreis') and lines[2].startswith('  "10. Wahlkreis')
 
 

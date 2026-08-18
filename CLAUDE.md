@@ -345,10 +345,13 @@ aligned on **the place both sides name**, never on a number. Run 31 aligned on
 the number and was five-sixths wrong: the digits in an item's label are city
 *quarter* numbers, so `Wahlkreis Stadt Zürich 3+9` is the register's **2nd**
 district and keying on the 3 pushed `…7+8` onto `7. Wahlkreis (Dietikon)`,
-which is not in the city. Filling the map also exposed that `Config.canton_qid`
-upper-cased its lookup — right for `ZH`, and matching nothing for a district
-name, so all 18 entries would have been silently dead. It folds case and
-collapses whitespace on both sides now.
+which is not in the city. Filling the map also exposed that
+`Config.constituency_qid` (then `canton_qid`, renamed once the config's
+`cantons:`/`group_by: canton` keys became `constituencies:`/`group_by:
+constituency` to stop implying every parliament this tool reads is
+cantonal) upper-cased its lookup — right for `ZH`, and matching nothing for
+a district name, so all 18 entries would have been silently dead. It folds
+case and collapses whitespace on both sides now.
 
 The history below is why the derivation is not shortcut:
 
@@ -362,7 +365,7 @@ register's own rows disprove the pairing without outside knowledge — six
 Wahlkreise cover the city of Zürich and the city is one Bezirk. Twelve of the
 eighteen share a name with a Bezirk, which is what makes it plausible rather
 than obviously wrong, and it would put a false P768 on fifteen people at once.
-Filling `cantons:` for ZH needs items *created* on Wikidata first; that is a
+Filling `constituencies:` for ZH needs items *created* on Wikidata first; that is a
 modelling decision, not a lookup. The source side is otherwise ready —
 `wahlkreis` is filled on 6,767 of 6,767 Einsitze and `ADD_QUALIFIER` is
 mechanical, so the map is the only thing standing between here and ~180 P768

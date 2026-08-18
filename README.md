@@ -1578,7 +1578,8 @@ structural rather than a matter of discipline — `enrich.py` produces no
   Federal Assembly. The suggestion is a prompt to read the biography page, not
   a correction.
 - **silence is not disagreement.** Only facts *both* sources state are
-  compared, the same rule the tool applies to unmapped cantons and parties.
+  compared, the same rule the tool applies to unmapped constituencies and
+  parties.
 
 Three traps, each already paid for by a wrong answer elsewhere in this file and
 each now enforced in `enrich.py`:
@@ -1821,8 +1822,8 @@ members, and a member you know is sitting should produce no *add membership*.
 Outputs:
 
 - `reports/README.md` — index of both chambers with match rates.
-- `reports/<N|S>-<slug>.md` — per-chamber TODO, grouped by canton (or by
-  parliamentary group; see `group_by`).
+- `reports/<N|S>-<slug>.md` — per-chamber TODO, grouped by constituency (or
+  by parliamentary group; see `group_by`).
 - `docs/index.html` — a self-contained dashboard.
 - `docs/data.json` — the same data as JSON.
 - `docs/suggestions.qs` — the QuickStatements file.

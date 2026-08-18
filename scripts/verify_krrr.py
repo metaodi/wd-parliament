@@ -580,14 +580,14 @@ def district_order(name: str) -> int:
     return int(head) if head.isdigit() else 99
 
 
-def render_cantons_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
-    """The ``cantons:`` block, ready to paste. Pure.
+def render_constituencies_yaml(mapping: Dict[str, Tuple[str, str]]) -> List[str]:
+    """The ``constituencies:`` block, ready to paste. Pure.
 
     Printed rather than written: the config is a human's statement about what
     the data means, and a probe that edited it would remove the one review
     step that has caught every Q-ID mistake this repo has made.
     """
-    lines = ["cantons:"]
+    lines = ["constituencies:"]
     for name, (qid, label, how) in sorted(
         mapping.items(), key=lambda kv: district_order(kv[0])
     ):
@@ -746,7 +746,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     # The KRRR config, because this probe is about the KRRR source. Run 33
     # ran with the OpenParlData one and reported "missing from config 18"
-    # about a file whose `cantons:` is empty on purpose — a statement about
+    # about a file whose `constituencies:` is empty on purpose — a statement about
     # the probe's arguments dressed as a statement about the config.
     parser.add_argument(
         "-c", "--config", default="config/kantonsrat-zh-krdaten.yaml"
@@ -1000,13 +1000,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     for item in spare:
         print(f"    no register district for {item['qid']} {item['label']!r}")
 
-    # Does the committed config already say this? Filling `cantons:` by hand
-    # from a previous run's output is exactly the step that needs checking,
-    # and the probe is holding both halves right here.
+    # Does the committed config already say this? Filling `constituencies:` by
+    # hand from a previous run's output is exactly the step that needs
+    # checking, and the probe is holding both halves right here.
     print("\nagainst the config as committed:")
     same = differ = absent = 0
     for name, (qid, _, _) in sorted(mapping.items(), key=lambda kv: district_order(kv[0])):
-        configured = config.canton_qid(name)
+        configured = config.constituency_qid(name)
         if configured is None:
             absent += 1
             print(f"    {name!r}: not in the config (derived {qid})")
@@ -1018,7 +1018,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"    agree {same} · differ {differ} · missing from config {absent}")
     if mapping:
         print("\n  paste into config/kantonsrat-zh-krdaten.yaml:\n")
-        for line in render_cantons_yaml(mapping):
+        for line in render_constituencies_yaml(mapping):
             print(f"  {line}")
         print(
             "\n  Read it before pasting. [P4565 + name] means the item's own\n"

@@ -144,9 +144,9 @@ def _tidy(value: Any) -> str:
     """Collapse runs of whitespace, keeping case.
 
     The district names are not tidy: run 15 returned ``'I      Zürich 1+2'``
-    with six spaces. That string becomes the key the ``cantons`` map is looked
-    up by and the heading the report groups under, so it is normalised at the
-    mapping boundary rather than everywhere it is used.
+    with six spaces. That string becomes the key the ``constituencies`` map is
+    looked up by and the heading the report groups under, so it is normalised
+    at the mapping boundary rather than everywhere it is used.
     """
     return " ".join(_text(value).split())
 
@@ -295,11 +295,10 @@ def member_from_rows(
         council=body.council,
         council_name=body.label,
         council_number=body.council_number,
-        # The Wahlkreis rather than a canton. ``Member`` keeps the federal field
-        # name because everything downstream reads it as "the P768 key and the
-        # report's grouping", which is exactly what this is.
-        canton_abbreviation=district,
-        canton_name=district,
+        # The Wahlkreis rather than a canton — ``Member.constituency_*`` is the
+        # generic P768 key and report-grouping field for both.
+        constituency_abbreviation=district,
+        constituency_name=district,
         party_name=party,
         party_abbreviation=party,
         # Per-tenure rows, so this really is the tenure start — see the module
@@ -536,9 +535,18 @@ class OpenParlDataClient:
         return found
 
     def get_members(
-        self, councils: Optional[Sequence[str]] = None, active_only: bool = True
+        self,
+        councils: Optional[Sequence[str]] = None,
+        active_only: bool = True,
+        today: Optional[date] = None,
     ) -> List[Member]:
-        """Sitting members of the configured groups, as dataclasses."""
+        """Sitting members of the configured groups, as dataclasses.
+
+        ``today`` is "as of what date is a row a seat" — see ``is_seat_row``.
+        Left ``None`` it is the real wall-clock date, which is what a live run
+        wants; a test pins it so a fixture with a future ``begin_date`` does
+        not silently become a seat as the calendar moves past it.
+        """
         wanted = {c.strip().upper() for c in councils} if councils else None
         group_ids = self.resolve_group_ids()
         persons = self._person_rows()
@@ -556,6 +564,7 @@ class OpenParlDataClient:
                 persons,
                 body,
                 active_only=active_only,
+                today=today,
                 seat_roles=self.seat_roles,
             )
             log.info(
