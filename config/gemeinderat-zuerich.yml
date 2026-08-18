@@ -9,7 +9,7 @@ body_key: "261"
 
 # P14527, the OpenParlData ID: Wikidata-asserted
 identifier_property: P14527
-identifier_verified: true
+identifier_verified: false
 
 # Both of the parliament's identifiers. The join property is reported with its
 # value (ADD_IDENTIFIER); P14527 is reported without one (MISSING_IDENTIFIER),
