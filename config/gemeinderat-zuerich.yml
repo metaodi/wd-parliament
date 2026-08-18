@@ -73,15 +73,9 @@ terms: {}
 # than empty, and adding them would make no suggestion.
 person_data: [P102, P106, P856]
 
-# The fresher roster, read only to contradict this one. The register's export
-# is a snapshot, and `enrich` is bounded so that a disagreement can only
-# *withhold* a mechanical edit — never supply a value. That is exactly the
-# right shape for a freshness cross-check.
-enrich:
-  source: openparldata
-  body_key: "261"
-  # The group that IS this chamber in the second source, matched by EXACT
-  # name — `Präsidium des Kantonsrates` and `Büro KR` are not the chamber, and
-  # a substring match would take a committee of it for it.
-  groups:
-    GR: Gemeinderat
+# In the future the Gever (via swissparlpy) could be used to enrich the data.
+#enrich:
+#  source: gever
+#  body_key: "261"
+#  groups:
+#    GR: Gemeinderat
