@@ -26,7 +26,7 @@ on:
         options:
           - All configs
           - config/parliament.yaml
-          - config/kantonsrat-zh-krdaten.yaml
+          - config/kantonsrat-zh.yaml
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
