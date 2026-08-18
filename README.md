@@ -1450,7 +1450,7 @@ What the same run **did** settle, and what is now in the config:
 Wired into `Verify assumptions` as sections 11 and 12; neither gates, for the
 same reason step 7 does not.
 
-### 13. 🔶 Can the *city's* own Gever supply the seats OpenParlData lacks? — *yes, and richly; but the join would be by name*
+### 13. ✅ Can the *city's* own Gever supply the seats OpenParlData lacks? — *yes: 125 seats, dated, with the district on the mandate. The join would be by name*
 
 Step 12 leaves the Gemeinderat with people and no mandates. **swissparlpy 2.1**
 — now the floor in `pyproject.toml` — ships `backends/gever.py` with a
@@ -1511,13 +1511,32 @@ now has an `end_date` of its own, with the threshold loose rather than an
 equality test on 9999-12-31 — the same shape as `NULL_DATE`'s "anything below",
 because a service that spells its infinity differently means the same by it.
 
-Left open, and needing a decision rather than a measurement:
+**Run 36 re-ran it with both fixes and closed section C.** 141 of the 870 rows
+are open, and the roles among them decompose exactly:
 
-- **125 seats, and the probe counts 134 people across 143 open rows.** The
-  cantonal equivalent was 186 → 180 once the roles were read, so section C now
-  prints every `funktion` it sees against the chamber and takes an optional
-  `--seat-roles` allowlist. It ships with none: run 34's whole lesson is that a
-  role list belongs to the parliament that uses it.
+| `funktion` | rows | |
+| --- | ---: | --- |
+| `Mitglied` | 122 | seat |
+| `Präsidium` | 1 | seat |
+| `1. Vizepräsidium` | 1 | seat |
+| `2. Vizepräsidium` | 1 | seat |
+| `Mitglied Stadtrat` | 8 | the city **executive** |
+| `Präsidium Stadtrat` | 1 | the city executive |
+| `Stimmenzählende` | 6 | tellers |
+| `Ratssekretariat` | 3 | secretariat |
+
+122 + 3 = **125**, the chamber. It is the cantonal shape exactly — a presiding
+member has no separate `Mitglied` row, so their presidium row *is* their seat —
+but arrived at from this parliament's own values rather than borrowed, which is
+the only way that agreement means anything. The trap peculiar to a city: the
+**Stadtrat**, the nine-member executive, sits inside the council's own mandate
+list and holds no seat in it. Passing `--seat-roles` does not hide the rest —
+every role is still printed, marked `<- not counted`, which is what makes an
+allowlist self-correcting when the source adds one.
+
+So every section now has an answer, and what is left is a decision rather than
+a measurement:
+
 - **source or enrichment.** They differ in what they are allowed to do — an
   enricher produces no members and can only *withhold* — and step 12 makes the
   question live: as enrichment for this config, Gever would change no output at

@@ -256,8 +256,14 @@ person_data: [P102, P106, P856]
 # own rather than `resolve`'s — run 24 found the canton's person-level key was
 # *nearly* a person key and not one.
 #
-# One thing still to decide rather than measure: 125 seats against run 35's 134
-# people over 143 open rows. The cantonal equivalent was 186 → 180 once the
-# roles were read, and `verify_gever_city.py --seat-roles` is where that list
-# gets written — from this parliament's own `funktion` values, never copied
-# from the canton's.
+# Run 36 closed the seat count: of the chamber's 143 open mandate rows,
+# `Mitglied` 122 plus the three presidium rows come to **125** exactly. The
+# other 18 are the city **executive** sitting in the council's own mandate list
+# (`Mitglied Stadtrat` 8, `Präsidium Stadtrat` 1), the tellers
+# (`Stimmenzählende` 6) and the secretariat (`Ratssekretariat` 3). The seat
+# roles are the canton's four — derived from this parliament's own `funktion`
+# values, which is the only way that agreement is evidence rather than a
+# borrowed assumption.
+#
+# So nothing about the Gever is unmeasured any more. What remains is the
+# decision above: source or enrichment.

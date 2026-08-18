@@ -409,13 +409,24 @@ jobs:
       # produce a member at all — a gap in the source, which no configuration
       # fixes. swissparlpy 2.1 carries a `city_zurich` Gever instance with a
       # `behoerdenmandat` index, which is exactly the missing table.
+      #
+      # --seat-roles is DERIVED, not copied. Run 36 printed every `funktion`
+      # among the chamber's open rows and the arithmetic closed exactly:
+      # Mitglied 122 + the three presidium rows = 125, the chamber. What it
+      # excludes is the city EXECUTIVE sitting in the council's own index
+      # ('Mitglied Stadtrat' 8, 'Präsidium Stadtrat' 1) plus 'Stimmenzählende'
+      # 6 and 'Ratssekretariat' 3. Passing it does not hide the others — the
+      # probe still prints every role, marked `<- not counted`, which is what
+      # makes the list self-correcting when the source adds one.
       - name: Probe the city's Gever for the Gemeinderat's seats (step 13)
         id: gever_city
         continue-on-error: true
         run: |
           set +e
           uv run python scripts/verify_gever_city.py \
-            --config config/gemeinderat-zuerich.yaml 2>&1 | tee gever-city.txt
+            --config config/gemeinderat-zuerich.yaml \
+            --seat-roles "Mitglied,Präsidium,1. Vizepräsidium,2. Vizepräsidium" \
+            2>&1 | tee gever-city.txt
           {
             echo "## 13. Gever of the city of Zürich — README step 13"
             echo

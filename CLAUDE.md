@@ -509,14 +509,23 @@ same shape as NULL_DATE's "anything below", because a service that spells its
 infinity 2999-12-31 means the same by it. Any Gever adapter needs this at its
 own mapping boundary; nothing downstream can catch it.
 
-Two things it does **not** settle, and neither is a measurement:
+**Run 36 closed the seat count, and the roles are DERIVED rather than copied.**
+Among the chamber's 143 open rows: `Mitglied` 122, `Mitglied Stadtrat` 8,
+`Stimmenzählende` 6, `Ratssekretariat` 3, `Präsidium` / `1. Vizepräsidium` /
+`2. Vizepräsidium` / `Präsidium Stadtrat` 1 each. 122 + the three presidium
+rows = **125**, the chamber — the cantonal shape exactly (a presiding member
+has no separate `Mitglied` row, so their presidium row *is* their seat),
+reached from this parliament's own values. That agreement only means something
+because it was not assumed: `verify_gever_city.DEFAULT_SEAT_ROLES` stays
+`None` and the working list lives in `verify.yml`, so no future parliament
+inherits it. The trap peculiar to a city: the **Stadtrat**, the nine-member
+executive, appears *inside the council's own mandate list* as `Mitglied
+Stadtrat` / `Präsidium Stadtrat` and holds no seat in it. Passing the list
+never hides the rest — every role is still printed, marked `<- not counted`,
+which is what makes an allowlist self-correcting when the source adds one.
 
-- **125 seats, 134 people across 143 open rows.** The cantonal equivalent was
-  186 → 180 once the roles were read, so section C prints every `funktion`
-  against the chamber and takes `--seat-roles`. It ships with **none** — run
-  34's lesson is that a role list belongs to the parliament that uses it, and
-  copying `DEFAULT_SEAT_ROLES` from the canton would be exactly the borrowing
-  this file keeps warning about.
+One thing it does **not** settle, and it is not a measurement:
+
 - **source or enrichment.** As *enrichment* for this config Gever would change
   no output at all: under `identifier_verified: false` nothing is mechanical,
   so a disagreement has nothing left to withhold. As a *source* it is the only

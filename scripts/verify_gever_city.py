@@ -82,6 +82,12 @@ a null** — see :data:`OPEN_END_FROM`. That is the federal ``1753-01-01`` at th
 other end of the axis, and it is the reason this probe now has an
 :func:`end_date` of its own rather than reading the column directly.
 
+**Run 36 re-ran it with both fixes and closed C.** 141 of the 870 are open, and
+the roles among them come to **125** once the city's executive, its tellers and
+its secretariat are set aside — see :data:`DEFAULT_SEAT_ROLES`. So every
+section of this probe now has an answer: the service can source this chamber,
+its mandates are dated, its size is right, and its join would be by name.
+
     uv run python scripts/verify_gever_city.py
     uv run python scripts/verify_gever_city.py --limit 200 --verbose
     uv run python scripts/verify_gever_city.py --seat-roles "Mitglied,Präsident"
@@ -179,11 +185,39 @@ OPEN_END_FROM = date(2900, 1, 1)
 
 # Mandate roles that hold a seat, or ``None`` for "every role counts".
 #
-# Empty by default and NOT an allowlist copied from the canton: run 34's whole
-# lesson is that a role list belongs to the parliament that uses it. The
-# probe prints every role it sees against the chamber, which is what lets a
-# human write one — the cantonal `DEFAULT_SEAT_ROLES` was derived exactly that
-# way, from 186 rows that had to become 180.
+# Still ``None`` here, and the role list that works lives in ``verify.yml``
+# rather than in this constant — because it is an argument about *this
+# parliament*, and a probe that ships one has quietly assumed the next
+# parliament's is the same. Run 34's lesson.
+#
+# **Run 36 derived it, and the arithmetic closed exactly.** Every ``funktion``
+# among the chamber's open rows::
+#
+#     Mitglied            122      <- seat
+#     Mitglied Stadtrat     8
+#     Stimmenzählende       6
+#     Ratssekretariat       3
+#     Präsidium             1      <- seat
+#     1. Vizepräsidium      1      <- seat
+#     2. Vizepräsidium      1      <- seat
+#     Präsidium Stadtrat    1
+#                        ----
+#                         143 rows, 134 people
+#
+# 122 + 3 = **125**, the chamber. It is the cantonal shape exactly — a
+# presiding member has no separate ``Mitglied`` row, so their presidium row IS
+# their seat — arrived at from this parliament's own values rather than
+# borrowed, which is the only way that agreement means anything.
+#
+# What it excludes is worth naming, because it is a trap peculiar to a city:
+# the **Stadtrat**, the nine-member executive, appears *inside the council's
+# own mandate list* as ``Mitglied Stadtrat`` / ``Präsidium Stadtrat``. They
+# attend the Gemeinderat and hold no seat in it. ``Stimmenzählende`` and
+# ``Ratssekretariat`` are the tellers and the secretariat.
+#
+# Passing a list does not hide the rest: every role is still printed, marked
+# ``<- not counted``. That is what makes an allowlist self-correcting when the
+# source adds a role — neither polarity is, on its own.
 DEFAULT_SEAT_ROLES: Optional[Tuple[str, ...]] = None
 
 
