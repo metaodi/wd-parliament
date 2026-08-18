@@ -749,7 +749,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # about a file whose `constituencies:` is empty on purpose — a statement about
     # the probe's arguments dressed as a statement about the config.
     parser.add_argument(
-        "-c", "--config", default="config/kantonsrat-zh-krdaten.yaml"
+        "-c", "--config", default="config/kantonsrat-zh.yaml"
     )
     parser.add_argument("--url", default=KRRR_URL, help="The KRRR Excel export.")
     parser.add_argument(
@@ -1017,7 +1017,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(f"    ⚠ {name!r}: config {configured}, derived {qid}")
     print(f"    agree {same} · differ {differ} · missing from config {absent}")
     if mapping:
-        print("\n  paste into config/kantonsrat-zh-krdaten.yaml:\n")
+        print("\n  paste into config/kantonsrat-zh.yaml:\n")
         for line in render_constituencies_yaml(mapping):
             print(f"  {line}")
         print(

@@ -13,7 +13,13 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-from .config import SOURCE_KRDATEN, SOURCE_OPENPARLDATA, Config, load_config
+from .config import (
+    SOURCE_GEVER,
+    SOURCE_KRDATEN,
+    SOURCE_OPENPARLDATA,
+    Config,
+    load_config,
+)
 from .diff import compute_suggestions
 from .enrich import Enrichment
 from .http_client import HttpClient
@@ -47,6 +53,20 @@ def build_source(config: Config, http: HttpClient):
             config.identifier_property,
         )
         return KrDatenClient(session=http.session, language=config.language)
+    if config.source == SOURCE_GEVER:
+        from .gever import GeverClient
+
+        log.info(
+            "Source: %s, matched by NAME (it supplies no value for %s)",
+            config.source_name,
+            config.identifier_property,
+        )
+        return GeverClient(
+            session=http.session,
+            language=config.language,
+            backend=config.gever_backend,
+            bodies=config.bodies,
+        )
     if config.source == SOURCE_OPENPARLDATA:
         from .openparldata import OpenParlDataClient
 
@@ -214,6 +234,7 @@ def process(
         probe = {
             SOURCE_OPENPARLDATA: "scripts/verify_kantonsrat.py",
             SOURCE_KRDATEN: "scripts/verify_krrr.py",
+            SOURCE_GEVER: "scripts/verify_gever_city.py",
         }.get(config.source, "scripts/verify_source.py")
         raise RuntimeError(
             f"The source returned no sitting members for "
@@ -303,6 +324,11 @@ def process(
         # every match it makes is checked against the item's own name and
         # birth date. See ``config.Config.identifier_verified``.
         corroborate=not config.identifier_verified,
+        # A source that supplies no value for the property must not join on it
+        # at all: the comparison would be between two id spaces, and a hit
+        # would be a coincidence carrying the provenance ``is_mechanical``
+        # trusts. See ``config.Config.identifier_from_source``.
+        join_on_identifier=config.joins_on_identifier,
     )
 
     results: List[BodyResult] = []

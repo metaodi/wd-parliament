@@ -1,0 +1,2309 @@
+{
+  "generated": "2026-08-18 15:59 UTC",
+  "total_suggestions": 132,
+  "total_members": 125,
+  "quickstatements": 0,
+  "bodies": [
+    {
+      "council": "GR",
+      "label": "Gemeinderat der Stadt Zürich",
+      "position_qid": "Q111219780",
+      "member_count": 125,
+      "matched_by_identifier": 0,
+      "matched_by_name": 3,
+      "unmatched": 122,
+      "wikidata_open": 4,
+      "identifier_mismatches": 0,
+      "identifier_hit_rate": 0.0,
+      "error": null,
+      "suggestions": [
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Andreas Egli",
+          "person_qid": "Q131672141",
+          "person_number": "98b1a5aeeffc4678ae3f246fd1575d65",
+          "qid_source": "name",
+          "constituency": "10",
+          "parl_group": "FDP",
+          "detail": "Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2014-05-07. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q131672141"
+          },
+          "payload": {
+            "position": "Q111219780",
+            "start": "2014-05-07",
+            "end": null,
+            "district": "Q456175",
+            "group": null,
+            "terms": [],
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Brenda Mäder",
+          "person_qid": "Q908590",
+          "person_number": "e0da36e0bb6b4dd28202b2c48a690c64",
+          "qid_source": "name",
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2026-05-06. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q908590"
+          },
+          "payload": {
+            "position": "Q111219780",
+            "start": "2026-05-06",
+            "end": null,
+            "district": "Q117787912",
+            "group": null,
+            "terms": [],
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Heinrich Kleinert",
+          "person_qid": "Q111219596",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Gemeinderat der Stadt Zürich' membership (no end date), but the city of Zürich's Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich's Gever holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q111219596",
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/Q111219596-c36cff04-45c5-2291-de26-8eb9cfab495b"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Jakob Sennhauser",
+          "person_qid": "Q111222390",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Gemeinderat der Stadt Zürich' membership (no end date), but the city of Zürich's Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich's Gever holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q111222390",
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/Q111222390-effadc03-410f-6d6f-b3ba-38b59915e033"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Johann Welti-Hausheer",
+          "person_qid": "Q111223264",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Gemeinderat der Stadt Zürich' membership (no end date), but the city of Zürich's Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich's Gever holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q111223264",
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/Q111223264-fa5453a7-4921-66cf-7084-9c4eb684a599"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Max Bill",
+          "person_qid": "Q123454",
+          "person_number": 19086,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Gemeinderat der Stadt Zürich' membership (no end date), but the city of Zürich's Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich's Gever holds are not offered here: reaching them means reading P14527's value as this source's person id, which has not been measured — a wrong reading would print somebody else's dates under this name.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q123454",
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/Q123454-4205cbc4-44c3-2c79-0dde-9f2e6f4aa8a0",
+            "parliament_id": "19086",
+            "biography": ""
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Sebastian Vogel",
+          "person_qid": "Q107434824",
+          "person_number": "66c1d463869b4f87a1a4aafbfe36a375",
+          "qid_source": "name",
+          "constituency": "6",
+          "parl_group": "FDP",
+          "detail": "Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2017-09-16. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q107434824"
+          },
+          "payload": {
+            "position": "Q111219780",
+            "start": "2017-09-16",
+            "end": null,
+            "district": "Q456170",
+            "group": null,
+            "terms": [],
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Adina Rom",
+          "person_qid": null,
+          "person_number": "e2531ea062ca4620bb3ee3df0a6c4c77",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SP",
+          "detail": "'Adina Rom' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e2531ea062ca4620bb3ee3df0a6c4c77) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Alana Gerdes",
+          "person_qid": null,
+          "person_number": "02b4bad31027485797892089330fa1f4",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "'Alana Gerdes' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #02b4bad31027485797892089330fa1f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Alex Guggenheim",
+          "person_qid": null,
+          "person_number": "0fde4de6d5964443a1700144e082c25a",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "FDP",
+          "detail": "'Alex Guggenheim' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #0fde4de6d5964443a1700144e082c25a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Alice Kohli",
+          "person_qid": null,
+          "person_number": "da71a0aa4f534d2c9ecf48c6c3a32796",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "SP",
+          "detail": "'Alice Kohli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da71a0aa4f534d2c9ecf48c6c3a32796) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Andreas Egli",
+          "person_qid": "Q131672141",
+          "person_number": "98b1a5aeeffc4678ae3f246fd1575d65",
+          "qid_source": "name",
+          "constituency": "10",
+          "parl_group": "FDP",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q131672141",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Angelica Eichenberger",
+          "person_qid": null,
+          "person_number": "175a611538d74ebd95061225736bc6e4",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SP",
+          "detail": "'Angelica Eichenberger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #175a611538d74ebd95061225736bc6e4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Anjushka Früh",
+          "person_qid": null,
+          "person_number": "a14da0dead36428ea49b89d6e548d673",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Anjushka Früh' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a14da0dead36428ea49b89d6e548d673) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Anna Graff",
+          "person_qid": null,
+          "person_number": "bfa23cd2b36f425cbd10cbdc108bbc0d",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SP",
+          "detail": "'Anna Graff' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #bfa23cd2b36f425cbd10cbdc108bbc0d) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Anthony Goldstein",
+          "person_qid": null,
+          "person_number": "1be53a6166a44d3888ceb81d43286561",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "FDP",
+          "detail": "'Anthony Goldstein' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1be53a6166a44d3888ceb81d43286561) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Ariane Buchli",
+          "person_qid": null,
+          "person_number": "8c6591847d6e4749881c2338157def63",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "FDP",
+          "detail": "'Ariane Buchli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #8c6591847d6e4749881c2338157def63) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Attila Kipfer",
+          "person_qid": null,
+          "person_number": "64a14d4938604c11a291d2e203c4c37a",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SVP",
+          "detail": "'Attila Kipfer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #64a14d4938604c11a291d2e203c4c37a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Beat Oberholzer",
+          "person_qid": null,
+          "person_number": "b7c4485214b1474e8d56be062337e766",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "GLP",
+          "detail": "'Beat Oberholzer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b7c4485214b1474e8d56be062337e766) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Benedikt Gerth",
+          "person_qid": null,
+          "person_number": "ead3388d665a451982cd3022647446d2",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "Die Mitte",
+          "detail": "'Benedikt Gerth' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #ead3388d665a451982cd3022647446d2) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Brenda Mäder",
+          "person_qid": "Q908590",
+          "person_number": "e0da36e0bb6b4dd28202b2c48a690c64",
+          "qid_source": "name",
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q908590",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Brigitte Fürer",
+          "person_qid": null,
+          "person_number": "4e3a94fca0a944579778489fcb088278",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "Grüne",
+          "detail": "'Brigitte Fürer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #4e3a94fca0a944579778489fcb088278) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Camille Roseau",
+          "person_qid": null,
+          "person_number": "1b2c59b5a4c44b6a9a49dfc3a3d60f4c",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "SP",
+          "detail": "'Camille Roseau' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1b2c59b5a4c44b6a9a49dfc3a3d60f4c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Catalina Gajardo Hofmann",
+          "person_qid": null,
+          "person_number": "223cf02757154660a79cc9d29e12edda",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "Grüne",
+          "detail": "'Catalina Gajardo Hofmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #223cf02757154660a79cc9d29e12edda) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Christian Huser",
+          "person_qid": null,
+          "person_number": "56440294cdbe4d118005109879dabbc5",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "FDP",
+          "detail": "'Christian Huser' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #56440294cdbe4d118005109879dabbc5) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Christian Häberli",
+          "person_qid": null,
+          "person_number": "b8d0a67f7d0a4093b21fcf21662a7a46",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "AL",
+          "detail": "'Christian Häberli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b8d0a67f7d0a4093b21fcf21662a7a46) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Christian Traber",
+          "person_qid": null,
+          "person_number": "f7e07386510444f7899c7b1b54f11512",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "Die Mitte",
+          "detail": "'Christian Traber' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #f7e07386510444f7899c7b1b54f11512) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Christine Huber",
+          "person_qid": null,
+          "person_number": "acf5034958d6457badc9ade21c297b30",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "GLP",
+          "detail": "'Christine Huber' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #acf5034958d6457badc9ade21c297b30) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Christoph Riedweg",
+          "person_qid": null,
+          "person_number": "35eb64f6c3654a649939f3f9c0574230",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "GLP",
+          "detail": "'Christoph Riedweg' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #35eb64f6c3654a649939f3f9c0574230) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Cordelia Forde",
+          "person_qid": null,
+          "person_number": "41c0c14842a647a7a4a99cb3e969bca4",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "SP",
+          "detail": "'Cordelia Forde' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #41c0c14842a647a7a4a99cb3e969bca4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Dafi Muharemi",
+          "person_qid": null,
+          "person_number": "8dd076b6c8c94df5a70d2708ac5f59bf",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SP",
+          "detail": "'Dafi Muharemi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #8dd076b6c8c94df5a70d2708ac5f59bf) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Daria Perez Sanchez-Di Concilio",
+          "person_qid": null,
+          "person_number": "2bb525e0f77d4799aee71864a35737b4",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SP",
+          "detail": "'Daria Perez Sanchez-Di Concilio' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2bb525e0f77d4799aee71864a35737b4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Deborah Wettstein",
+          "person_qid": null,
+          "person_number": "2aaccefcb33d48d69208f23b3407521e",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "FDP",
+          "detail": "'Deborah Wettstein' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2aaccefcb33d48d69208f23b3407521e) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Derek Richter",
+          "person_qid": null,
+          "person_number": "1a0174b8b3e2406eb34f4b97cd089ff6",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SVP",
+          "detail": "'Derek Richter' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1a0174b8b3e2406eb34f4b97cd089ff6) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Dominik Haupt",
+          "person_qid": null,
+          "person_number": "dce8d807c9ed436aa5915bf707fbeefc",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "SP",
+          "detail": "'Dominik Haupt' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #dce8d807c9ed436aa5915bf707fbeefc) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Dominique Späth",
+          "person_qid": null,
+          "person_number": "5097c481add94f978add59c9412553cf",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SP",
+          "detail": "'Dominique Späth' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #5097c481add94f978add59c9412553cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Emanuel Tschannen",
+          "person_qid": null,
+          "person_number": "3bd0cfca544f4cdeaa1b1e0bf736e457",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "'Emanuel Tschannen' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #3bd0cfca544f4cdeaa1b1e0bf736e457) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Fabian Stieger",
+          "person_qid": null,
+          "person_number": "677592b59da5403dbf5746732c274f7d",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "Grüne",
+          "detail": "'Fabian Stieger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #677592b59da5403dbf5746732c274f7d) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Fanny de Weck",
+          "person_qid": null,
+          "person_number": "15c28bd0a9404b7fbdee7132fc67d1bb",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SP",
+          "detail": "'Fanny de Weck' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #15c28bd0a9404b7fbdee7132fc67d1bb) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Florian Blättler",
+          "person_qid": null,
+          "person_number": "6af35f85c14a48ce89f69a834cd4f627",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Florian Blättler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6af35f85c14a48ce89f69a834cd4f627) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Florian Utz",
+          "person_qid": null,
+          "person_number": "059f0a1c6e0643188105bbd8fc26a321",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "SP",
+          "detail": "'Florian Utz' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #059f0a1c6e0643188105bbd8fc26a321) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Florine Angele",
+          "person_qid": null,
+          "person_number": "2301a80067cb45a083d43ebaff3decaa",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "GLP",
+          "detail": "'Florine Angele' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2301a80067cb45a083d43ebaff3decaa) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Frank-Elmar Linxweiler",
+          "person_qid": null,
+          "person_number": "045fe0b8fcff440cbf0026b49c7c1965",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "GLP",
+          "detail": "'Frank-Elmar Linxweiler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #045fe0b8fcff440cbf0026b49c7c1965) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Guy Krayenbühl",
+          "person_qid": null,
+          "person_number": "274ef2af504040d68e5da5867fd9dbf8",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "GLP",
+          "detail": "'Guy Krayenbühl' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #274ef2af504040d68e5da5867fd9dbf8) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Hannah Locher",
+          "person_qid": null,
+          "person_number": "3e579d66e1224610b80a0a5ee4e14c27",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SP",
+          "detail": "'Hannah Locher' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #3e579d66e1224610b80a0a5ee4e14c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Isabel Maiorano",
+          "person_qid": null,
+          "person_number": "51324df1e6844d0f987357a0370bcc95",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "AL",
+          "detail": "'Isabel Maiorano' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #51324df1e6844d0f987357a0370bcc95) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Ivo Bieri",
+          "person_qid": null,
+          "person_number": "071b1c96efb94f89a475b90f3d106099",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SP",
+          "detail": "'Ivo Bieri' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #071b1c96efb94f89a475b90f3d106099) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Jane Bailey",
+          "person_qid": null,
+          "person_number": "c0442aa7c0984680ac4178bb6ba2c5f4",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "SVP",
+          "detail": "'Jane Bailey' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #c0442aa7c0984680ac4178bb6ba2c5f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Janina Flückiger",
+          "person_qid": null,
+          "person_number": "9cd24adc27264051be2d0f193a6554f0",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "Grüne",
+          "detail": "'Janina Flückiger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #9cd24adc27264051be2d0f193a6554f0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Jean-Marc Jung",
+          "person_qid": null,
+          "person_number": "269a7f6f4be24be3a2b250abe51bcf29",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SVP",
+          "detail": "'Jean-Marc Jung' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #269a7f6f4be24be3a2b250abe51bcf29) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Jehuda Spielman",
+          "person_qid": null,
+          "person_number": "0844db13972744b49963b093b8e2ab83",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "FDP",
+          "detail": "'Jehuda Spielman' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #0844db13972744b49963b093b8e2ab83) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Johann Widmer",
+          "person_qid": null,
+          "person_number": "aa4cedb707d94811a7c7f1ed8c9773ca",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "SVP",
+          "detail": "'Johann Widmer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa4cedb707d94811a7c7f1ed8c9773ca) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Jonas Keller",
+          "person_qid": null,
+          "person_number": "85f841562e3f492aa7b74560cead13c6",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Jonas Keller' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #85f841562e3f492aa7b74560cead13c6) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Julia Hofstetter",
+          "person_qid": null,
+          "person_number": "8ef63a81beed48e08e0bf193c2ba367c",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "Grüne",
+          "detail": "'Julia Hofstetter' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #8ef63a81beed48e08e0bf193c2ba367c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Karin Saxer",
+          "person_qid": null,
+          "person_number": "6e6b1491653841b0b9d6eade5e78a3dc",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Karin Saxer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6e6b1491653841b0b9d6eade5e78a3dc) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Karin Stepinski",
+          "person_qid": null,
+          "person_number": "063fe234b12c48859f16aae51230171d",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "Die Mitte",
+          "detail": "'Karin Stepinski' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #063fe234b12c48859f16aae51230171d) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Karin Weyermann",
+          "person_qid": null,
+          "person_number": "dbab07ae646b405da6a2cb78b84a6bd0",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "Die Mitte",
+          "detail": "'Karin Weyermann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #dbab07ae646b405da6a2cb78b84a6bd0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Lara Can",
+          "person_qid": null,
+          "person_number": "80b4568606004e63a0f3aeadd95ad5ac",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "SP",
+          "detail": "'Lara Can' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #80b4568606004e63a0f3aeadd95ad5ac) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Leah Heuri",
+          "person_qid": null,
+          "person_number": "27ab8d54cfe14d2db2d6a4d8cf0dc73a",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Leah Heuri' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #27ab8d54cfe14d2db2d6a4d8cf0dc73a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Leonora Seiler",
+          "person_qid": null,
+          "person_number": "5ef16289476643e9a2a7ee234f58714a",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "Grüne",
+          "detail": "'Leonora Seiler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #5ef16289476643e9a2a7ee234f58714a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Lisa Diggelmann",
+          "person_qid": null,
+          "person_number": "84235f69f45b4c7c85c6228ce1f5a47c",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "SP",
+          "detail": "'Lisa Diggelmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #84235f69f45b4c7c85c6228ce1f5a47c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Liv Mahrer",
+          "person_qid": null,
+          "person_number": "787e45238ea648b3a862a0374c4df714",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SP",
+          "detail": "'Liv Mahrer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #787e45238ea648b3a862a0374c4df714) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Marco Denoth",
+          "person_qid": null,
+          "person_number": "523adb281cec42449699c1a86c8cc03c",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "SP",
+          "detail": "'Marco Denoth' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #523adb281cec42449699c1a86c8cc03c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Mariem Fiadjigbe Kekić",
+          "person_qid": null,
+          "person_number": "e407012d429d48f09273b23d73d640d0",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SP",
+          "detail": "'Mariem Fiadjigbe Kekić' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e407012d429d48f09273b23d73d640d0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Marisa Kappeler-Schudel",
+          "person_qid": null,
+          "person_number": "f001aea011ef400f8794350121275505",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "GLP",
+          "detail": "'Marisa Kappeler-Schudel' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #f001aea011ef400f8794350121275505) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Marita Verbali",
+          "person_qid": null,
+          "person_number": "efc4a468559e47db9735f4c59cb81fe7",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "FDP",
+          "detail": "'Marita Verbali' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #efc4a468559e47db9735f4c59cb81fe7) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Markus Haselbach",
+          "person_qid": null,
+          "person_number": "a9247c52824e4451bf1231509d624c4f",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "Die Mitte",
+          "detail": "'Markus Haselbach' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a9247c52824e4451bf1231509d624c4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Markus Merki",
+          "person_qid": null,
+          "person_number": "2a9bceea78b94b568c105508b06d06fa",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "GLP",
+          "detail": "'Markus Merki' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2a9bceea78b94b568c105508b06d06fa) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Markus Weidmann",
+          "person_qid": null,
+          "person_number": "885dc666085b4c599eea07adc6ed2bc8",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SVP",
+          "detail": "'Markus Weidmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #885dc666085b4c599eea07adc6ed2bc8) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Martin Busekros",
+          "person_qid": null,
+          "person_number": "f6e5ff148f2e48888f03987010e0032a",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "Grüne",
+          "detail": "'Martin Busekros' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #f6e5ff148f2e48888f03987010e0032a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Martin Bürki",
+          "person_qid": null,
+          "person_number": "cee8102d50284a318f385b69562dcba3",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "FDP",
+          "detail": "'Martin Bürki' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #cee8102d50284a318f385b69562dcba3) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Martina Zürcher",
+          "person_qid": null,
+          "person_number": "83772afdfb4a46d4ae7583c513449cde",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "FDP",
+          "detail": "'Martina Zürcher' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #83772afdfb4a46d4ae7583c513449cde) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Mathias Egloff",
+          "person_qid": null,
+          "person_number": "fb4330996f6c4b2ea1871b7714996f3f",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "SP",
+          "detail": "'Mathias Egloff' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #fb4330996f6c4b2ea1871b7714996f3f) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Maya Kägi Götz",
+          "person_qid": null,
+          "person_number": "67cdbf4665f74582b7d1bc738172b777",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SP",
+          "detail": "'Maya Kägi Götz' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #67cdbf4665f74582b7d1bc738172b777) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Micha Amstad",
+          "person_qid": null,
+          "person_number": "98e4118d99f24f249b3117bbe5ea5775",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SP",
+          "detail": "'Micha Amstad' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #98e4118d99f24f249b3117bbe5ea5775) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Michael Schmid",
+          "person_qid": null,
+          "person_number": "21ea3a3f7b424e259b93d5241b3f3cc5",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "AL",
+          "detail": "'Michael Schmid' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #21ea3a3f7b424e259b93d5241b3f3cc5) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Michele Romagnolo",
+          "person_qid": null,
+          "person_number": "8e9e36bc2c084d4190782d90a651ea47",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SVP",
+          "detail": "'Michele Romagnolo' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #8e9e36bc2c084d4190782d90a651ea47) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Mischa Schiwow",
+          "person_qid": null,
+          "person_number": "605becb046da4f68a14c2b0443112061",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "AL",
+          "detail": "'Mischa Schiwow' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #605becb046da4f68a14c2b0443112061) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Moritz Bögli",
+          "person_qid": null,
+          "person_number": "347eff05aa2e418797132836f60bd433",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "AL",
+          "detail": "'Moritz Bögli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #347eff05aa2e418797132836f60bd433) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Murat Gediz",
+          "person_qid": null,
+          "person_number": "225900194e5f45378088882a64474265",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "FDP",
+          "detail": "'Murat Gediz' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #225900194e5f45378088882a64474265) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Nadina Diday",
+          "person_qid": null,
+          "person_number": "25e34b1825624361bc63e60cea5fd541",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SP",
+          "detail": "'Nadina Diday' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #25e34b1825624361bc63e60cea5fd541) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Nicolas Cavalli",
+          "person_qid": null,
+          "person_number": "313ef9f573f74b60b437b1f969494f10",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "GLP",
+          "detail": "'Nicolas Cavalli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #313ef9f573f74b60b437b1f969494f10) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Nina Eggenschwiler",
+          "person_qid": null,
+          "person_number": "0d5da60d2e1e4ba1bd25b31381b092d2",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Nina Eggenschwiler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #0d5da60d2e1e4ba1bd25b31381b092d2) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Oliver Heimgartner",
+          "person_qid": null,
+          "person_number": "ed05a60019744a4c86a8735095073dcb",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SP",
+          "detail": "'Oliver Heimgartner' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #ed05a60019744a4c86a8735095073dcb) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Pascal Lamprecht",
+          "person_qid": null,
+          "person_number": "967c0420fe744c048d5472f51a601167",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SP",
+          "detail": "'Pascal Lamprecht' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #967c0420fe744c048d5472f51a601167) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Patricia Petermann Loewe",
+          "person_qid": null,
+          "person_number": "aab17a31f79f405095586219d83e2fca",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SP",
+          "detail": "'Patricia Petermann Loewe' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aab17a31f79f405095586219d83e2fca) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Patrick Stählin",
+          "person_qid": null,
+          "person_number": "e557c1958dbc40bcb893466ca3fd8d9b",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "GLP",
+          "detail": "'Patrick Stählin' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e557c1958dbc40bcb893466ca3fd8d9b) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Patrick Tscherrig",
+          "person_qid": null,
+          "person_number": "aa1521faea0e41fa972817ac2c57d2cf",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SP",
+          "detail": "'Patrick Tscherrig' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa1521faea0e41fa972817ac2c57d2cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Patrik Brunner",
+          "person_qid": null,
+          "person_number": "263d4f170c574480915b2306bfc7031c",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "FDP",
+          "detail": "'Patrik Brunner' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #263d4f170c574480915b2306bfc7031c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Përparim Avdili",
+          "person_qid": null,
+          "person_number": "b879282b6a0f443d8d7da03f3bd8e7e0",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "FDP",
+          "detail": "'Përparim Avdili' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b879282b6a0f443d8d7da03f3bd8e7e0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Rahel Habegger",
+          "person_qid": null,
+          "person_number": "da1bdf24d25946f790fb8ca5f98674c1",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SP",
+          "detail": "'Rahel Habegger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Rahel Hofstetter",
+          "person_qid": null,
+          "person_number": "6e5a915a14434f89a22e52047779c479",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "GLP",
+          "detail": "'Rahel Hofstetter' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6e5a915a14434f89a22e52047779c479) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Reis Luzhnica",
+          "person_qid": null,
+          "person_number": "e014691eb8064635bca46835e6d0a70d",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SP",
+          "detail": "'Reis Luzhnica' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e014691eb8064635bca46835e6d0a70d) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Reto Brüesch",
+          "person_qid": null,
+          "person_number": "54e307755ef44785825b09b55bd03a4e",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SVP",
+          "detail": "'Reto Brüesch' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #54e307755ef44785825b09b55bd03a4e) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Roger Bartholdi",
+          "person_qid": null,
+          "person_number": "fa74cf092a004968b8accd2ac3ad55ce",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SVP",
+          "detail": "'Roger Bartholdi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #fa74cf092a004968b8accd2ac3ad55ce) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Roger Meier",
+          "person_qid": null,
+          "person_number": "011376ed9749455f8fbb95836616ea48",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "'Roger Meier' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #011376ed9749455f8fbb95836616ea48) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Roger Suter",
+          "person_qid": null,
+          "person_number": "6d5395eb73554c7aa05523838cb1d724",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "FDP",
+          "detail": "'Roger Suter' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6d5395eb73554c7aa05523838cb1d724) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Roland Hohmann",
+          "person_qid": null,
+          "person_number": "2c291aeaad2844c98a7655072e3b3a70",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "Grüne",
+          "detail": "'Roland Hohmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2c291aeaad2844c98a7655072e3b3a70) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Roman Mörgeli",
+          "person_qid": null,
+          "person_number": "88e3f0b84e4e4efcbeda96758ead6151",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SVP",
+          "detail": "'Roman Mörgeli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #88e3f0b84e4e4efcbeda96758ead6151) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Ruedi Schneider",
+          "person_qid": null,
+          "person_number": "21d7bf0d7dad490b8f5f24dd99ab68d3",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "SP",
+          "detail": "'Ruedi Schneider' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #21d7bf0d7dad490b8f5f24dd99ab68d3) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sabine Koch",
+          "person_qid": null,
+          "person_number": "cb1fc3fb70584bd283a190424c879335",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "FDP",
+          "detail": "'Sabine Koch' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #cb1fc3fb70584bd283a190424c879335) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Samuel Balsiger",
+          "person_qid": null,
+          "person_number": "a6692d9d783c46ddb7179a408e03a6b0",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "SVP",
+          "detail": "'Samuel Balsiger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a6692d9d783c46ddb7179a408e03a6b0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sarah Dähler",
+          "person_qid": null,
+          "person_number": "391d0acf00b04586bfc304759c9c684b",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "Grüne",
+          "detail": "'Sarah Dähler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #391d0acf00b04586bfc304759c9c684b) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sascha Rüegg",
+          "person_qid": null,
+          "person_number": "2067d26f38d34ebb9ad0563da114f761",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SVP",
+          "detail": "'Sascha Rüegg' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2067d26f38d34ebb9ad0563da114f761) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Sebastian Vogel",
+          "person_qid": "Q107434824",
+          "person_number": "66c1d463869b4f87a1a4aafbfe36a375",
+          "qid_source": "name",
+          "constituency": "6",
+          "parl_group": "FDP",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q107434824",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "",
+            "identifier_unverified": true
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sebastian Zopfi",
+          "person_qid": null,
+          "person_number": "09610efe1120458e9f875eb411d6395d",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "SVP",
+          "detail": "'Sebastian Zopfi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #09610efe1120458e9f875eb411d6395d) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Selina Frey",
+          "person_qid": null,
+          "person_number": "f8196acd43e645319c5e12f7e8a0b3fc",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "GLP",
+          "detail": "'Selina Frey' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #f8196acd43e645319c5e12f7e8a0b3fc) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Selina Walgis",
+          "person_qid": null,
+          "person_number": "1be1c1c1a28948638f483167837c08f4",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "Grüne",
+          "detail": "'Selina Walgis' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1be1c1c1a28948638f483167837c08f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Serap Kahriman",
+          "person_qid": null,
+          "person_number": "4166dededcf1474da33f37f12c61f049",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "GLP",
+          "detail": "'Serap Kahriman' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #4166dededcf1474da33f37f12c61f049) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Severin Meier",
+          "person_qid": null,
+          "person_number": "7ac07791348240579cd55940de250e4f",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "SP",
+          "detail": "'Severin Meier' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #7ac07791348240579cd55940de250e4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sibylle Kauer",
+          "person_qid": null,
+          "person_number": "983a3a067a634c05bd99d51de37e1a21",
+          "qid_source": null,
+          "constituency": "1 und 2",
+          "parl_group": "Grüne",
+          "detail": "'Sibylle Kauer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #983a3a067a634c05bd99d51de37e1a21) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Simon Hatt",
+          "person_qid": null,
+          "person_number": "a72c6522d5c84753b573cd88f73e5245",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "FDP",
+          "detail": "'Simon Hatt' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a72c6522d5c84753b573cd88f73e5245) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Simone Widmer",
+          "person_qid": null,
+          "person_number": "a0a1c064da1b4ad2a21023a5735feabb",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "Grüne",
+          "detail": "'Simone Widmer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a0a1c064da1b4ad2a21023a5735feabb) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sofia Karakostas",
+          "person_qid": null,
+          "person_number": "a81866caa180424887cc63897f1a3ada",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SP",
+          "detail": "'Sofia Karakostas' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a81866caa180424887cc63897f1a3ada) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sophie Blaser",
+          "person_qid": null,
+          "person_number": "79eddcbfe0ae4c40b8a021713c32a591",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "AL",
+          "detail": "'Sophie Blaser' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #79eddcbfe0ae4c40b8a021713c32a591) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Stefan Urech",
+          "person_qid": null,
+          "person_number": "6a37d6abc96847aeb8e2e5295a2f6db7",
+          "qid_source": null,
+          "constituency": "4 und 5",
+          "parl_group": "SVP",
+          "detail": "'Stefan Urech' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6a37d6abc96847aeb8e2e5295a2f6db7) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Stefania Koller",
+          "person_qid": null,
+          "person_number": "146e4afe08234e37b750584ae9b71075",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "SP",
+          "detail": "'Stefania Koller' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #146e4afe08234e37b750584ae9b71075) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Stephan Iten",
+          "person_qid": null,
+          "person_number": "a390e9c4174f4fa2b99570b6fc36731a",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SVP",
+          "detail": "'Stephan Iten' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a390e9c4174f4fa2b99570b6fc36731a) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Stéphane Braune",
+          "person_qid": null,
+          "person_number": "e1d7dcd1c8b44fd2b4992f311d217401",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "FDP",
+          "detail": "'Stéphane Braune' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e1d7dcd1c8b44fd2b4992f311d217401) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Susan Wiget",
+          "person_qid": null,
+          "person_number": "ace5ac66a93c4077964a59977a1e6120",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "AL",
+          "detail": "'Susan Wiget' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #ace5ac66a93c4077964a59977a1e6120) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sven Sobernheim",
+          "person_qid": null,
+          "person_number": "6eddac6b0a104b6f92df26f63b9a1f91",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "GLP",
+          "detail": "'Sven Sobernheim' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6eddac6b0a104b6f92df26f63b9a1f91) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Tanja Maag",
+          "person_qid": null,
+          "person_number": "c8223578a62d4cadac429d5f22429c27",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "AL",
+          "detail": "'Tanja Maag' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #c8223578a62d4cadac429d5f22429c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Thomas Bühler",
+          "person_qid": null,
+          "person_number": "46dfbfc589db4b20a5d1506cf13beaf5",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "Die Mitte",
+          "detail": "'Thomas Bühler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #46dfbfc589db4b20a5d1506cf13beaf5) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Thomas Hofstetter",
+          "person_qid": null,
+          "person_number": "3fb0d3bd2c3d4ce5b2ad794e71f4a139",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "FDP",
+          "detail": "'Thomas Hofstetter' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #3fb0d3bd2c3d4ce5b2ad794e71f4a139) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Tom Cassee",
+          "person_qid": null,
+          "person_number": "02f12dad7264455e83ec2ed8c800b723",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "SP",
+          "detail": "'Tom Cassee' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #02f12dad7264455e83ec2ed8c800b723) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Urs Riklin",
+          "person_qid": null,
+          "person_number": "6e55804daed844e1a9939c3b32e58fa0",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": "Grüne",
+          "detail": "'Urs Riklin' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #6e55804daed844e1a9939c3b32e58fa0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Valentina Fazlija",
+          "person_qid": null,
+          "person_number": "1e576dfb67584a638bae9da0a704da48",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "FDP",
+          "detail": "'Valentina Fazlija' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1e576dfb67584a638bae9da0a704da48) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Vera Çelik",
+          "person_qid": null,
+          "person_number": "a32b1d0de0e74bf9b14b33c4f5466ef2",
+          "qid_source": null,
+          "constituency": "11",
+          "parl_group": "SP",
+          "detail": "'Vera Çelik' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a32b1d0de0e74bf9b14b33c4f5466ef2) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Wolfgang Kweitel",
+          "person_qid": null,
+          "person_number": "dc5bdd07c5b54e179602fa639fd86128",
+          "qid_source": null,
+          "constituency": "10",
+          "parl_group": "Die Mitte",
+          "detail": "'Wolfgang Kweitel' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #dc5bdd07c5b54e179602fa639fd86128) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Xenia Voellmy",
+          "person_qid": null,
+          "person_number": "25762da30e524a73ada2146cabcb8234",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "GLP",
+          "detail": "'Xenia Voellmy' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #25762da30e524a73ada2146cabcb8234) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Yves Henz",
+          "person_qid": null,
+          "person_number": "2ef23cc5f73c441395e22b4bacf10f5c",
+          "qid_source": null,
+          "constituency": "6",
+          "parl_group": "Grüne",
+          "detail": "'Yves Henz' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2ef23cc5f73c441395e22b4bacf10f5c) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Yves Peier",
+          "person_qid": null,
+          "person_number": "2a53a0d351bc4ed1bd4eca8f3774f1f7",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "SVP",
+          "detail": "'Yves Peier' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2a53a0d351bc4ed1bd4eca8f3774f1f7) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        }
+      ]
+    }
+  ]
+}

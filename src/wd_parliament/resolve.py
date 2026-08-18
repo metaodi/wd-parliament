@@ -293,6 +293,7 @@ def resolve_members(
     language: str = "de",
     identifier_property: str = P_PARLIAMENT_ID,
     corroborate: bool = False,
+    join_on_identifier: bool = True,
 ) -> Dict[int, WikidataPerson]:
     """Wire :func:`match_members` around the one name-search network call.
 
@@ -302,19 +303,36 @@ def resolve_members(
 
     ``corroborate`` is ``config.identifier_verified`` inverted — see
     :func:`corroborates`.
+
+    ``join_on_identifier`` is ``config.joins_on_identifier``, and ``False``
+    skips the identifier pass entirely. That is not the same as the pass
+    finding nothing: a source with no value for the property (a Gever, whose
+    person key is a GUID) would be comparing two id spaces, and a match
+    between them would be a *coincidence* wearing ``QID_FROM_IDENTIFIER``
+    provenance — which is precisely the provenance ``is_mechanical`` trusts.
+    Not running it is how that is made impossible rather than unlikely.
     """
     people = list(people)
-    matched = match_by_identifier(members, people, corroborate=corroborate)
-    hit_rate = (len(matched) / len(members) * 100) if members else 0.0
-    log.info(
-        "%s join: %d/%d members matched by identifier (%.1f%%)",
-        identifier_property,
-        len(matched),
-        len(members),
-        hit_rate,
-    )
+    if not join_on_identifier:
+        log.info(
+            "No identifier join: %s supplies no value for %s, so every member "
+            "is matched by name and nothing can be mechanical.",
+            "this source",
+            identifier_property,
+        )
+        matched: Dict[int, WikidataPerson] = {}
+    else:
+        matched = match_by_identifier(members, people, corroborate=corroborate)
+        hit_rate = (len(matched) / len(members) * 100) if members else 0.0
+        log.info(
+            "%s join: %d/%d members matched by identifier (%.1f%%)",
+            identifier_property,
+            len(matched),
+            len(members),
+            hit_rate,
+        )
     rejected = sum(1 for m in members if m.identifier_mismatch_qids)
-    if rejected:
+    if rejected and join_on_identifier:
         log.warning(
             "%s: %d/%d match(es) rejected because the item they point at names "
             "somebody else. %s is joined on unverified — if that share is "

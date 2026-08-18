@@ -37,7 +37,7 @@ from wd_parliament.models import (
 )
 from wd_parliament.quickstatements import is_mechanical
 
-CONFIG = "config/kantonsrat-zh-krdaten.yaml"
+CONFIG = "config/kantonsrat-zh.yaml"
 TODAY = date(2026, 8, 10)
 # Pinned so "sitting"/"open seat" fixture rows stay pinned to the day this
 # file was written rather than drifting as the real calendar advances past

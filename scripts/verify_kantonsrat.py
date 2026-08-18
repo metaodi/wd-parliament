@@ -296,43 +296,186 @@ ROLE_FIELDS = ("role_name_de", "role_name", "role_harmonized", "role")
 PERSON_FIELDS = ("person_id", "person_key", "personid")
 
 
-def is_kantonsrat(row: Dict[str, Any]) -> bool:
-    """Is this group the Kantonsrat itself? Pure.
+def chamber_names(names: Optional[Sequence[str]] = None) -> Tuple[str, ...]:
+    """The spellings to match a chamber's group name against. Pure.
 
-    Requires a name field to **equal** one of :data:`KANTONSRAT_NAMES`. The
-    cost of being strict is that a chamber named with a suffix
-    ("Kantonsrat, 2023-2027") would be missed, which is why
-    :func:`kantonsrat_candidates` surfaces the near misses rather than letting
-    them pass silently.
+    ``None`` means the Kantonsrat, which is what this probe was written for and
+    what every existing dispatch asks of it. Naming other spellings is how the
+    same measurement is taken of a different parliament — the Gemeinderat of the
+    city of Zürich, say — without a second copy of this file, and it changes
+    nothing about the discipline: whatever is passed is still matched by
+    **equality**, so the "Büro" of the new chamber is still not the chamber.
     """
-    return any(name in KANTONSRAT_NAMES for name in _name_values(row))
+    if not names:
+        return KANTONSRAT_NAMES
+    return tuple(_normalise(n) for n in names if _text(n).strip())
 
 
-def kantonsrat_candidates(rows: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Groups whose name *mentions* the Kantonsrat without being it. Pure.
+def mention_needle(names: Optional[Sequence[str]] = None) -> str:
+    """The substring a *near miss* has to contain. Pure.
+
+    Derived from the chamber's own spellings rather than passed separately, so
+    the two can never drift apart: the near-miss list exists to catch the
+    chamber under an unexpected name, and a needle naming some other chamber
+    would catch nothing. The **shortest** spelling is the one that appears
+    inside the longer ones ("kantonsrat" inside "kantonsrat zürich"), which is
+    what makes it the widest net of the set.
+    """
+    normalised = [n for n in chamber_names(names) if n]
+    if not normalised:  # pragma: no cover - chamber_names never returns empty
+        return ""
+    return min(normalised, key=len)
+
+
+def is_kantonsrat(
+    row: Dict[str, Any], names: Optional[Sequence[str]] = None
+) -> bool:
+    """Is this group the chamber itself? Pure.
+
+    Requires a name field to **equal** one of :data:`KANTONSRAT_NAMES` (or of
+    ``names``, for another parliament). The cost of being strict is that a
+    chamber named with a suffix ("Kantonsrat, 2023-2027") would be missed, which
+    is why :func:`kantonsrat_candidates` surfaces the near misses rather than
+    letting them pass silently.
+    """
+    wanted = chamber_names(names)
+    return any(name in wanted for name in _name_values(row))
+
+
+def kantonsrat_candidates(
+    rows: Sequence[Dict[str, Any]], names: Optional[Sequence[str]] = None
+) -> List[Dict[str, Any]]:
+    """Groups whose name *mentions* the chamber without being it. Pure.
 
     Reporting only. These are precisely the rows :func:`is_kantonsrat` rejects,
     made visible so that "not found" can be told apart from "found under a name
     this function did not expect" — the distinction the federal probe got wrong
     before it printed its near misses.
     """
+    needle = mention_needle(names)
     out: List[Dict[str, Any]] = []
     for row in rows:
-        if is_kantonsrat(row):
+        if is_kantonsrat(row, names):
             continue
-        if any("kantonsrat" in name for name in _name_values(row)):
+        if needle and any(needle in name for name in _name_values(row)):
             out.append(row)
     return out
 
 
+# How many groups to list when the chamber is not found at all. The listing is
+# the only output that turns "NOT FOUND" into a next action, so it is generous;
+# a body with more groups than this has a body-key problem, not a naming one.
+GROUP_LISTING_HEAD = 60
+
+# How many people to walk when the chamber's own group holds no memberships.
+# Small on purpose: this is one request each, and the question ("where do this
+# body's seats live, if not under the group named after the chamber?") is
+# answered by the first handful or not at all.
+MEMBERSHIP_TRACE_PEOPLE = 5
+
+
+def body_key_of(row: Dict[str, Any]) -> str:
+    """The key of a ``bodies`` row, whatever the column is called. Pure.
+
+    ``bodies`` rows carry ``body_key``, not ``key`` — reading only ``key``
+    reported "0 match key='261'" for a body that was right there in the very
+    next line of the same output, and then advised passing a different
+    ``--body-key``. The same rule as ``BEGIN_FIELDS``: resolve the column, do
+    not assume it.
+    """
+    for field in ("body_key", "key", "abbreviation", "code"):
+        value = _text(row.get(field)).strip()
+        if value:
+            return value
+    return ""
+
+
+def trace_memberships(
+    client: Any,
+    people: Sequence[Dict[str, Any]],
+    groups: Sequence[Dict[str, Any]],
+    limit: int = MEMBERSHIP_TRACE_PEOPLE,
+) -> List[str]:
+    """Where a body's membership rows actually are, when the chamber's group
+    holds none. Reporting only; costs one request per person walked.
+
+    Run 33 is why this exists. The Gemeinderat dispatch found the group by
+    name — ``id=8062``, exactly what the config already said — and then read
+    **0** membership rows from it, against 807 person records for the same
+    body. Every reading available at that point was wrong: the body key was
+    right, the group id was right, and the name matched. What was missing was
+    the one thing nobody had asked the source for — which group ids its
+    membership rows *do* point at.
+
+    Walking people rather than groups is deliberate. A body can hold 156
+    groups, and asking each of them costs 156 requests to answer a question
+    that a handful of people answer directly: a member's own rows name the
+    groups their seats hang off, whatever those are called.
+    """
+    lines: List[str] = []
+    by_id = {row.get("id"): row for row in groups}
+    walked = 0
+    seen: Dict[Any, int] = {}
+    for person in people:
+        if walked >= limit:
+            break
+        person_id = person.get("id")
+        if person_id is None:
+            continue
+        walked += 1
+        rows, error = fetch(client, "memberships", person_id=person_id)
+        name = " ".join(
+            _text(person.get(f)) for f in ("first_name", "last_name") if person.get(f)
+        ) or _text(person_id)
+        if error:
+            lines.append(f"    person {person_id} ({name}): unreadable")
+            continue
+        lines.append(f"    person {person_id} ({name}): {len(rows)} membership row(s)")
+        for row in rows[:8]:
+            group_id = row.get("group_id")
+            seen[group_id] = seen.get(group_id, 0) + 1
+            group = by_id.get(group_id) or {}
+            group_name = _text(group.get("name_de") or group.get("name")) or "?"
+            lines.append(
+                f"      group {group_id} {group_name!r} "
+                f"role={_text(row.get('role_name_de')) or '?'} "
+                f"{_text(row.get('begin_date')) or '?'}"
+                f" -> {_text(row.get('end_date')) or 'open'}"
+            )
+    if not walked:
+        return ["    (no person records to walk)"]
+    lines.append("")
+    lines.append(f"    group ids seen across {walked} person(s):")
+    for group_id, n in sorted(seen.items(), key=lambda kv: -kv[1]):
+        group = by_id.get(group_id) or {}
+        group_name = _text(group.get("name_de") or group.get("name")) or "?"
+        lines.append(f"      {group_id} {group_name!r}  x{n}")
+    if not seen:
+        lines.append(
+            "      (none — this body has person records and no membership rows "
+            "at all, which is a gap in the SOURCE and not in the config. "
+            "Nothing this tool configures can produce members from it.)"
+        )
+    return lines
+
+
 def find_kantonsrat_group(
     rows: Sequence[Dict[str, Any]],
+    names: Optional[Sequence[str]] = None,
+    label: str = "Kantonsrat",
 ) -> Tuple[Optional[Dict[str, Any]], List[str]]:
-    """The Kantonsrat among ``groups``, plus what to print. Pure.
+    """The chamber among ``groups``, plus what to print. Pure.
 
     ``None`` is a real answer, but a loud one: the near misses are listed, and
     so is the count of groups searched, so an empty table and a chamber named
     unexpectedly cannot look alike.
+
+    When nothing even *mentions* the chamber, the groups themselves are
+    printed. That case used to end at "check the body key", which is the right
+    diagnosis exactly when the body key is wrong and useless when it is not —
+    the Gemeinderat run had body ``261`` reading 807 person records and a
+    configured group id matching **zero** memberships, where the one thing
+    needed was the list of names this body really has.
     """
     lines: List[str] = []
     if not rows:
@@ -342,24 +485,49 @@ def find_kantonsrat_group(
             "below say nothing without it."
         ]
 
-    found = next((row for row in rows if is_kantonsrat(row)), None)
-    near = kantonsrat_candidates(rows)
+    matches = [row for row in rows if is_kantonsrat(row, names)]
+    found = matches[0] if matches else None
+    near = kantonsrat_candidates(rows, names)
     lines.append(f"{len(rows)} group(s) read for this body")
     lines.append("")
     if found is not None:
-        lines.append(f"  Kantonsrat: {_describe(found)}")
+        lines.append(f"  {label}: {_describe(found)}")
+        # **Several groups can name one chamber**, and picking the first by row
+        # order is the kind of silent arbitration this repo refuses everywhere
+        # else. Run 34 found body 261 holding both `id=8062 'Gemeinderat'` and
+        # `id=465 'Gemeinderat Zürich'` — and the one taken by row order is the
+        # one with **zero** membership rows. An empty group looks exactly like
+        # a group whose members all agree with Wikidata, so this has to be said
+        # out loud rather than discovered later.
+        for row in matches[1:]:
+            lines.append(f"  {label}: ALSO {_describe(row)}")
+        if len(matches) > 1:
+            lines.append(
+                f"        -> {len(matches)} groups name this chamber. B below "
+                "measures the FIRST; read its membership count before "
+                "believing either, and configure the group id explicitly."
+            )
     else:
         lines.append(
-            f"  Kantonsrat: NOT FOUND by exact name "
+            f"  {label}: NOT FOUND by exact name "
             f"({len(near)} group(s) mention it)"
         )
     for row in near[:8]:
         lines.append(f"        near miss: {_describe(row)}")
     if found is None and not near:
         lines.append(
-            "        -> nothing here even mentions a Kantonsrat, which points "
+            f"        -> nothing here even mentions a {label}, which points "
             "at the body key rather than at the name spellings."
         )
+    if found is None:
+        lines.append("")
+        lines.append(
+            f"  Every group under this body ({min(len(rows), GROUP_LISTING_HEAD)} "
+            f"of {len(rows)}), so the right name can be READ rather than "
+            "guessed at:"
+        )
+        for row in rows[:GROUP_LISTING_HEAD]:
+            lines.append(f"    {_describe(row)}")
     return found, lines
 
 
@@ -1380,6 +1548,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         ),
     )
     parser.add_argument(
+        "--chamber-name",
+        default="",
+        help=(
+            "Comma-separated names the chamber's group may carry, matched by "
+            "EQUALITY. Empty means the Kantonsrat spellings, which is what "
+            "every federal/cantonal dispatch wants; naming others points the "
+            "same measurement at another parliament (e.g. 'Gemeinderat' for "
+            "the city of Zürich). A substring is never accepted whatever is "
+            "passed — the Büro of a chamber is not the chamber."
+        ),
+    )
+    parser.add_argument(
+        "--chamber-label",
+        default="",
+        help="What to call the chamber in the output. Defaults to the first "
+        "--chamber-name, or 'Kantonsrat'.",
+    )
+    parser.add_argument(
         "--position",
         default=KANTONSRAT_POSITION,
         help=(
@@ -1412,14 +1598,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    names = [n.strip() for n in args.chamber_name.split(",") if n.strip()]
+    label = args.chamber_label.strip() or (names[0] if names else "Kantonsrat")
+
     config = load_config(args.config)
     http = HttpClient(user_agent=config.user_agent, request_delay=config.request_delay)
 
     import swissparlpy as spp
 
-    # --- A. where does the Kantonsrat live? ---------------------------------
+    # --- A. where does the chamber live? ------------------------------------
     print("=" * 70)
-    print(f"A. Body {args.body_key!r}: is the Kantonsrat there, and as what?")
+    print(f"A. Body {args.body_key!r}: is the {label} there, and as what?")
     print("=" * 70)
     # Constructing the client is itself a request — it reads the API's OpenAPI
     # document — so it belongs inside the same guard as the first call. Left
@@ -1437,11 +1626,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # lang='de' explicitly: the names matched here are German, and pinning the
     # language is what keeps the run reproducible across swissparlpy versions.
     bodies, _ = fetch(client, "bodies", lang="de")
-    match = [
-        row
-        for row in bodies
-        if _text(row.get("key")).strip().upper() == args.body_key.upper()
-    ]
+    match = [row for row in bodies if body_key_of(row).upper() == args.body_key.upper()]
     print(f"bodies: {len(bodies)} row(s); {len(match)} match key={args.body_key!r}")
     for row in match[:3]:
         seats = row.get("legislative_seats")
@@ -1458,22 +1643,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print()
 
     groups, _ = fetch(client, "groups", body_key=args.body_key)
-    chamber, group_lines = find_kantonsrat_group(groups)
+    chamber, group_lines = find_kantonsrat_group(groups, names, label)
     for line in group_lines:
         print("  " + line if line else "")
 
     # --- B. are the seats dated, and are there 180 of them? -----------------
     print()
     print("=" * 70)
-    print("B. Do the Kantonsrat's memberships carry dates, and how many are open?")
+    print(f"B. Do the {label}'s memberships carry dates, and how many are open?")
     print("=" * 70)
-    date_verdict, date_detail = INCONCLUSIVE, "No Kantonsrat group was found."
-    seat_verdict, seat_detail = INCONCLUSIVE, "No Kantonsrat group was found."
+    date_verdict, date_detail = INCONCLUSIVE, f"No {label} group was found."
+    seat_verdict, seat_detail = INCONCLUSIVE, f"No {label} group was found."
     seat_rows: List[Dict[str, Any]] = []
     seat_roles = [r.strip() for r in args.seat_roles.split(",") if r.strip()] or None
     if chamber is not None:
         group_id = chamber.get("id")
-        print(f"--- Kantonsrat (group {group_id}) ---")
+        print(f"--- {label} (group {group_id}) ---")
         seat_rows, _ = fetch(client, "memberships", group_id=group_id)
 
         date_verdict, date_detail, date_lines = classify_seat_memberships(seat_rows)
@@ -1490,6 +1675,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"  => size:  {seat_verdict}: {seat_detail}")
     else:
         print("  (skipped: no chamber group to query)")
+
+    # The group was found and holds nothing. Every other reading is green at
+    # this point — right body, right group id, right name — so the only useful
+    # next question is which groups this body's membership rows DO name. Asked
+    # only in that case, so a healthy dispatch spends no requests on it.
+    if chamber is not None and not seat_rows:
+        print()
+        print("  The group exists and holds no memberships. Where are they?")
+        people_probe, _ = fetch(client, "persons", body_key=args.body_key)
+        print(f"    person records for this body: {len(people_probe)}")
+        for line in trace_memberships(client, people_probe, groups):
+            print(line)
 
     # --- C. who are these people on Wikidata? -------------------------------
     print()
@@ -1808,7 +2005,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # --- what it all means --------------------------------------------------
     print()
     print("=" * 70)
-    print(f"A. Kantonsrat located as a group : "
+    print(f"A. {label} located as a group{'':<8.8}: "
           f"{'YES, id=' + str(chamber.get('id')) if chamber else 'NO'}")
     print(f"B. Seat tenure dated             : {date_verdict}")
     print(f"B. Open seats == {args.expect_seats:<3}            : {seat_verdict}")

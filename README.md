@@ -1389,6 +1389,203 @@ prints which column each one reached. The dull one: `WikidataClient` takes no
 Wired into `Verify assumptions` as section 9; it **never gates**, for the
 plainest reason in that file: no config here names this service.
 
+### 12. 🔶 Could this be pointed at a *municipal* parliament? — *the config is right and the source has no seats*
+
+The Kantonsrat one level down: the **Gemeinderat der Stadt Zürich**, 125
+members, 9 Wahlkreise, read from OpenParlData like the cantonal config and
+joined on the same P14527. `config/gemeinderat-zuerich.yaml`.
+
+Run 34 (2026-08-18) measured it with `verify_kantonsrat.py --body-key 261
+--chamber-name Gemeinderat`, and the useful half of the answer is the half that
+is not about the config:
+
+| | |
+| --- | --- |
+| body `261` | the city of Zürich, **807 person records** |
+| the chamber | a group under it, `id=8062, name_de='Gemeinderat'`, found by **exact name** |
+| its memberships | **0 rows** |
+
+A seat is a `memberships` row pointing at the group, so with none there are no
+members — which is the `The source returned no sitting members for GR` the
+first `Update parliament TODO` dispatch for this config ended on. Body key
+right, group id right, group name right, `Büro des Gemeinderats` correctly
+rejected as a near miss, and no seats. **That is a gap in the source, and no
+configuration fixes it.**
+
+The probe now asks the one question nobody had put to the source: when the
+chamber's group holds no memberships, it walks a handful of *this body's
+people* and prints the group ids their own membership rows point at. Walking
+people rather than groups is deliberate — 156 groups is 156 requests to answer
+what five people answer directly.
+
+What the same run **did** settle, and what is now in the config:
+
+- **the position item.** `Q111219780` is 'Mitglied des Gemeinderates der Stadt
+  Zürich', instance of **Position** — not a Wikimedia category, the trap that
+  cost run 13 — held by 22 items, 4 currently. Section D also derived the
+  candidates independently from the 68 linked members, where it comes **second**
+  at 11 of 68 behind the *National Council* at 35 of 68. The sampling skew this
+  repo has now met at the federal, cantonal and municipal level: read the list,
+  never take the max.
+- **the join.** 68 of 68 P14527 values equal OpenParlData's person id.
+  `identifier_verified` stays **`false`** all the same, and that is not
+  timidity: run 20's cantonal 34 of 35 failed on somebody who *also sat
+  elsewhere*, because the property identifies a person **record**, one per
+  body. A clean run on one body's linked sample does not retire a known failure
+  mode — least of all when the sample over-represents exactly the people it
+  misfires on.
+- **the electoral districts, and their keys.** The city writes `1 und 2`, not
+  `Wahlkreis Zürich 1+2`; with the latter as keys all nine entries were
+  unreachable. The Q-IDs themselves check out — `--verify-config` shows every
+  one classed `Wahlkreis der Stadt Zürich`, which is what makes the apparent
+  mixture right: where a Wahlkreis spans two Kreise the city has its own item,
+  where it is one Kreis the *Kreis* item carries the class. Q117787885 is
+  corroborated from the other side too, as the one P768 value already in use on
+  a statement for this seat.
+  The same section found **17** distinct values across the 807 person records,
+  because OpenParlData keeps the district on the *person*: somebody who also
+  sat cantonally or federally carries that seat's district here. The eight
+  extras stay unmapped, which makes no suggestion — the right answer.
+
+Wired into `Verify assumptions` as sections 11 and 12; neither gates, for the
+same reason step 7 does not.
+
+### 13. ✅ Can the *city's* own Gever supply the seats OpenParlData lacks? — *yes: 125 seats, dated, with the district on the mandate. The join would be by name*
+
+Step 12 leaves the Gemeinderat with people and no mandates. **swissparlpy 2.1**
+— now the floor in `pyproject.toml` — ships `backends/gever.py` with a
+`city_zurich` instance beside the canton's: `www.gemeinderat-zuerich.ch`, with
+`/api/kontakt`, `/api/behoerdenmandat`, `/api/wahlkreis` and `/api/partei`. It
+is shaped differently from the canton's single `MITGLIEDER` index — person and
+mandate are separate here — and a **`behoerdenmandat` row is exactly the table
+OpenParlData is missing**.
+
+`scripts/verify_gever_city.py` asks four things, and it exists rather than an
+assumption for the reason step 10 recorded: whose system a service is says
+nothing about what it publishes.
+
+- **A. Reach.** Which indexes answer and with how many records. "Not in the
+  map", "errored" and "zero rows" are three findings, not one — `gever_config`
+  already documents an index that 404s.
+- **B. The real column list**, for `kontakt` and `behoerdenmandat`: what the
+  **schema** declares beside what the **records** carry, printed separately.
+  Where they disagree the records win. Run 22 borrowed field names from a
+  client's normalised output and reported "3,862 rows with no name", which read
+  as a fact about the source and was a fact about the probe.
+- **C. Is the seat here, and dated?** The Gemeinderat's own rows are found by
+  **equality** against the body column — the city's *Stadtrat* is its
+  nine-member executive and sits in the same index — and then counted: 125
+  distinct people with an open mandate is the chamber, and rows are not people.
+- **D. Could it join to Wikidata?** Expected answer **no**. Run 23 established
+  that no Wikidata property holds a Gever key for the canton, and an identifier
+  needs a value on both sides. A "no" here does not close the door: it says a
+  Gever-backed config is **name-matched throughout**, which `is_mechanical`
+  already refuses and which run 24 showed needs duplicate handling of its own —
+  the canton's person-level key was *nearly* a person key and not one.
+
+Wired into `Verify assumptions` as section 13; it never gates, for the same
+reason as steps 7, 10 and 11.
+
+**Run 35 (2026-08-18) answered A, B and D, and found the probe's own bug in C.**
+
+| | |
+| --- | --- |
+| `behoerdenmandat` | **3,700 rows**, 61 Gremien, `dauer_start`/`dauer_end` on every one |
+| named `Gemeinderat` by equality | **870** — with the parties (`SP`, `FDP`, `SVP`…) and `Büro des Gemeinderats` correctly outside |
+| `wahlkreis` | 3,360 of 3,700 — **on the mandate** |
+| `kontakt` | 708 people: `partei` 674, `jahrgang` 537, `fraktion` 125, `beruf` 134, `homepageprivat` 65 |
+| a Wikidata-joinable id | none: six GUID columns, no property holds one |
+
+So the answer to the title is **yes**: this service carries exactly what
+OpenParlData is missing for body 261, and carries the electoral district on the
+*mandate* rather than on the person — which is strictly better, since it is
+free of the "somebody who also sat federally carries that seat's district here"
+problem step 12 ran into.
+
+⚠️ **An open mandate carries `9999-12-31 23:59:59`, not a null.** Section C
+printed "870 ended, 0 open-ended" directly above three sample rows of sitting
+members. That is the federal `1753-01-01` at the other end of the axis, and it
+would do the same kind of damage: in an adapter it files a P582 of 9999-12-31
+on every sitting member, and it reports a full chamber as departed. The probe
+now has an `end_date` of its own, with the threshold loose rather than an
+equality test on 9999-12-31 — the same shape as `NULL_DATE`'s "anything below",
+because a service that spells its infinity differently means the same by it.
+
+**Run 36 re-ran it with both fixes and closed section C.** 141 of the 870 rows
+are open, and the roles among them decompose exactly:
+
+| `funktion` | rows | |
+| --- | ---: | --- |
+| `Mitglied` | 122 | seat |
+| `Präsidium` | 1 | seat |
+| `1. Vizepräsidium` | 1 | seat |
+| `2. Vizepräsidium` | 1 | seat |
+| `Mitglied Stadtrat` | 8 | the city **executive** |
+| `Präsidium Stadtrat` | 1 | the city executive |
+| `Stimmenzählende` | 6 | tellers |
+| `Ratssekretariat` | 3 | secretariat |
+
+122 + 3 = **125**, the chamber. It is the cantonal shape exactly — a presiding
+member has no separate `Mitglied` row, so their presidium row *is* their seat —
+but arrived at from this parliament's own values rather than borrowed, which is
+the only way that agreement means anything. The trap peculiar to a city: the
+**Stadtrat**, the nine-member executive, sits inside the council's own mandate
+list and holds no seat in it. Passing `--seat-roles` does not hide the rest —
+every role is still printed, marked `<- not counted`, which is what makes an
+allowlist self-correcting when the source adds one.
+
+So every section has an answer, and the decision that was left has been taken:
+**the Gever is the source and OpenParlData is the enrichment**, the reverse of
+how `config/gemeinderat-zuerich.yaml` started. `src/wd_parliament/gever.py` is
+the fourth adapter.
+
+The design question the switch forces is worth stating on its own, because it
+is the first time this tool reads a source with **no joinable identifier at
+all**. `Config.identifier_from_source` is new, and it is a different question
+from `identifier_verified` — the prior one:
+
+| flag | asks |
+| --- | --- |
+| `identifier_from_source` | does the source have a value for the property? |
+| `identifier_verified` | has that value been *measured* against its person id? |
+
+Every source until now answered yes to the first (P1307 == `PersonNumber`,
+P13468 == `id_person_new`, P14527 == OpenParlData's person id). A Gever has six
+GUID columns and no Wikidata property holds one, so it answers no — and `false`
+does two things, each preventing a different failure:
+
+- **`resolve` makes no identifier join.** Not "the join finds nothing": a hit
+  between a GUID and a P14527 value would be a *coincidence* wearing
+  `QID_FROM_IDENTIFIER`, the provenance `is_mechanical` trusts. Not running it
+  makes that impossible rather than unlikely.
+- **`diff` raises `MISSING_IDENTIFIER` instead of `ADD_IDENTIFIER`.** With
+  `true` the suggestion would paste the Gever's person key into P14527 — a
+  number from a different id space, written confidently onto a real item, where
+  no later run could detect it.
+
+`load_config` derives the flag from the source and refuses a config that claims
+otherwise, and refuses `identifier_verified: true` beside it: a value that does
+not exist cannot have been measured.
+
+Two smaller decisions in the same commit, both in the "say nothing rather than
+guess" direction:
+
+- **`biography_url` is left out**, so the report prints each member's number
+  without a link. No run has read the city's member-page URL scheme, and a
+  plausible template is worth *less* than no link — a reader who follows it to
+  a 404 learns nothing.
+- **the enrichment names group `465 'Gemeinderat Zürich'`, not `8062
+  'Gemeinderat'`.** Both name the chamber and the one row order picks holds
+  zero rows. That matters more than an ordinary wrong id, because an enrichment
+  pointed at an empty group is **silent** — indistinguishable from one that
+  agrees with everything. The probe now prints every group matching by name
+  rather than arbitrating.
+
+And what the enrichment can do here today: nothing. Under
+`identifier_from_source: false` no suggestion is mechanical, so a disagreement
+has nothing left to withhold — it reaches the report and changes no output.
+That is the correct shape for a second opinion on a name-matched run.
+
 ---
 
 ## What it checks

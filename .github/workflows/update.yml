@@ -27,7 +27,7 @@ on:
           - All configs
           - config/parliament.yaml
           - config/kantonsrat-zh.yaml
-          - config/gemeinderat-zuerich.yml
+          - config/gemeinderat-zuerich.yaml
 
 # Needed so the workflow can commit the generated reports back to the repo.
 permissions:
@@ -55,7 +55,7 @@ jobs:
         config: >-
           ${{ github.event_name == 'workflow_dispatch' && inputs.config != 'All configs'
               && fromJSON(format('["{0}"]', inputs.config))
-              || fromJSON('["config/parliament.yaml", "config/kantonsrat-zh.yaml"]') }}
+              || fromJSON('["config/parliament.yaml", "config/kantonsrat-zh.yaml", "config/gemeinderat-zuerich.yaml"]') }}
 
     name: ${{ matrix.config }}
     steps:

@@ -43,9 +43,10 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from wd_parliament import openparldata, parliament  # noqa: E402
+from wd_parliament import gever, openparldata, parliament  # noqa: E402
 from wd_parliament.app import build_source  # noqa: E402
 from wd_parliament.config import (  # noqa: E402
+    SOURCE_GEVER,
     SOURCE_OPENPARLDATA,
     SOURCE_PARLAMENT,
     Config,
@@ -88,6 +89,19 @@ SOURCE_COLUMNS: Dict[str, Dict[str, Tuple[str, ...]]] = {
         "P102": tuple(openparldata.PARTY_NAME_FIELDS),
         "P856": tuple(openparldata.WEBSITE_FIELDS),
         "P1971": tuple(openparldata.CHILDREN_FIELDS),
+    },
+    # The city's Gever. Run 35 measured all six against 708 `kontakt` records:
+    # `beruf` 134, `homepageprivat` 65, `partei` 674, and no birthplace, no
+    # Bürgerort and no children column at all. `jahrgang` is a birth *year* and
+    # is not a P569 value, so it is absent from this map as well as from the
+    # adapter.
+    SOURCE_GEVER: {
+        "P19": (),
+        "P1321": (),
+        "P106": tuple(gever.OCCUPATION_FIELDS),
+        "P102": tuple(gever.PARTY_FIELDS),
+        "P856": tuple(gever.WEBSITE_FIELDS),
+        "P1971": (),
     },
 }
 
@@ -211,6 +225,15 @@ def sample_columns(config: Config, source: Any) -> List[str]:
     if config.source == SOURCE_OPENPARLDATA:
         rows = source._rows(openparldata.PERSON_TABLE, body_key=config.body_key)
         return sorted({k for r in rows[:5] for k in r})
+    if config.source == SOURCE_GEVER:
+        rows = source._person_rows()
+        return sorted({k for r in rows[:5] for k in r})
+    # Any other source: only ask if this client is the federal one. A client
+    # without the method is "could not be read", which the caller must not
+    # mistake for "no such column" — the whole distinction this probe exists to
+    # keep. Crashing here would take the other five checks down with it.
+    if not hasattr(source, "_first_rows"):
+        return []
     rows = source._first_rows(
         parliament.MEMBER_TABLE, 1, Language=config.language.upper(), Active=True
     )

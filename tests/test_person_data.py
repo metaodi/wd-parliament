@@ -436,7 +436,8 @@ def test_an_unknown_property_is_an_error_not_a_skip(tmp_path):
 
 
 def test_each_shipped_config_asks_only_what_its_source_answers():
-    """Run 19 (2026-08-04) measured both, and they answer opposite halves.
+    """Run 19 (2026-08-04) measured two of these, and they answer opposite
+    halves.
 
     parlament.ch has a birthplace, a Bürgerort and a number of children but no
     occupation and no website column; OpenParlData's ZH records have exactly
@@ -454,10 +455,19 @@ def test_each_shipped_config_asks_only_what_its_source_answers():
     assert P_OCCUPATION not in federal.person_data
     assert P_OFFICIAL_WEBSITE not in federal.person_data
 
-    cantonal = load_config("config/kantonsrat-zh.yaml")
-    assert cantonal.person_data == [
+    # The KR-Daten register: one column, `beruf`, filled on 4,427 of 4,665.
+    krdaten = load_config("config/kantonsrat-zh.yaml")
+    assert krdaten.person_data == [P_OCCUPATION]
+
+    # OpenParlData, which run 19 measured cantonally. The municipal records are
+    # UNVERIFIED — `scripts/verify_person_data.py --config
+    # config/gemeinderat-zuerich.yaml` is what would settle whether the city's
+    # `persons` rows carry the same three columns. Listed here so that a change
+    # to the set is a decision somebody makes rather than a diff nobody reads.
+    city = load_config("config/gemeinderat-zuerich.yaml")
+    assert city.person_data == [
         P_POLITICAL_PARTY,
         P_OCCUPATION,
         P_OFFICIAL_WEBSITE,
     ]
-    assert P_PLACE_OF_BIRTH not in cantonal.person_data
+    assert P_PLACE_OF_BIRTH not in city.person_data

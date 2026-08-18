@@ -38,7 +38,12 @@ SOURCE_OPENPARLDATA = "openparldata"
 # (2026-08-10) found P13468's value in ``id_person_new`` for 591 of 638 people
 # (92.6%). See ``krdaten.py``.
 SOURCE_KRDATEN = "krdaten"
-SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA, SOURCE_KRDATEN)
+# A CMI CDWS Geschäftsverwaltungssystem, read through ``swissparlpy`` >= 2.1's
+# Gever backend. The first source read here because the obvious one had no
+# seats: OpenParlData holds the city of Zürich's people and none of its
+# mandates (run 34). See ``gever.py``.
+SOURCE_GEVER = "gever"
+SOURCES = (SOURCE_PARLAMENT, SOURCE_OPENPARLDATA, SOURCE_KRDATEN, SOURCE_GEVER)
 
 DEFAULT_USER_AGENT = "wd-parliament/0.1 (+https://github.com/metaodi/wd-parliament)"
 # Left unset, the biography link is the record page of the property the run
@@ -87,6 +92,10 @@ class Config:
     source: str = SOURCE_PARLAMENT
     # OpenParlData only: the body (level of parliament) the chambers sit under.
     body_key: str = ""
+    # Gever only: which CDWS instance to read, as ``swissparlpy`` names it
+    # (``gever_city_zurich`` / ``gever_canton_zurich``). An instance carries a
+    # whole index map, which is why this is a name and not a URL.
+    gever_backend: str = "gever_city_zurich"
     # The Wikidata property whose value equals the source's person identifier.
     # Federally P1307 == MemberCouncil.PersonNumber. Cantonally there is no
     # P1307 at all: the Kantonsrat is joined on P14527 (the OpenParlData ID),
@@ -113,6 +122,32 @@ class Config:
     # Flipping it to true is a measurement, not an opinion: run the probe named
     # in the config comments and read CONFIRMED first.
     identifier_verified: bool = True
+    # Does this **source** supply the join property's value at all?
+    #
+    # A different question from ``identifier_verified``, and the prior one.
+    # That flag asks whether the value has been *measured* against the source's
+    # person id; this one asks whether the source has such a value to offer.
+    # Every source until Gever did: P1307 is ``MemberCouncil.PersonNumber``,
+    # P13468 is KR-Daten's ``id_person_new``, P14527 is OpenParlData's person
+    # id. A Gever has **none** — six GUID columns and no Wikidata property that
+    # holds one (run 23 for the canton, run 35 for the city) — so its person
+    # key is a GUID, which is the value of nothing.
+    #
+    # With ``false``:
+    #
+    #   * ``resolve`` makes no identifier join at all, and every member is
+    #     matched by name — which ``is_mechanical`` already refuses, so the
+    #     run is report-only by construction;
+    #   * ``diff`` raises ``MISSING_IDENTIFIER`` for the join property like any
+    #     other, instead of ``ADD_IDENTIFIER``. That is the whole point: with
+    #     ``true`` it would offer the source's person key as the property's
+    #     value, and a GUID pasted into P14527 is the "number from the wrong id
+    #     space" failure this file keeps guarding against — written confidently,
+    #     onto a real item, where no later run could detect it.
+    #
+    # It is a fact about the source, so ``load_config`` derives it and refuses
+    # a config that claims otherwise.
+    identifier_from_source: bool = True
     # Every identifier property this run reports as missing, the join property
     # included. A parliament has **two** identifiers worth recording on an item
     # and they are different things: its own member id (P1307 federally, P13468
@@ -168,6 +203,8 @@ class Config:
             return "OpenParlData"
         if self.source == SOURCE_KRDATEN:
             return "the Staatsarchiv's KR-Daten register"
+        if self.source == SOURCE_GEVER:
+            return "the city of Zürich's Gever"
         return "parlament.ch"
 
     @property
@@ -239,6 +276,18 @@ class Config:
         return [IDENTIFIER_PROPERTIES[p] for p in wanted if p in IDENTIFIER_PROPERTIES]
 
     @property
+    def joins_on_identifier(self) -> bool:
+        """May this run match members to items on the identifier at all?
+
+        Both halves have to hold: the property must be one this tool knows,
+        and the **source** must supply its value. Without the second, an
+        "exact" join compares a GUID to an integer — matching nobody at best,
+        and lending ``QID_FROM_IDENTIFIER`` provenance to a coincidence at
+        worst.
+        """
+        return bool(self.identifier_from_source and self.join_identifier)
+
+    @property
     def join_identifier(self) -> Optional[IdentifierProperty]:
         """The registry entry for the property this run joins on."""
         return IDENTIFIER_PROPERTIES.get(self.identifier_property)
@@ -265,6 +314,14 @@ class Config:
         """
         template = self.biography_url
         if not template:
+            # Without a value of the join property there is no record page to
+            # default to: this source's person key is its own, and linking it
+            # through the property's template would send a reader to a page
+            # that cannot resolve it. A config for such a source supplies its
+            # own ``biography_url`` or gets no link, which is the honest
+            # outcome — the report simply omits it.
+            if not self.identifier_from_source:
+                return ""
             prop = self.join_identifier
             if prop is None:  # pragma: no cover - load_config rejects these
                 return ""
@@ -490,12 +547,43 @@ def load_config(path: str | Path) -> Config:
             "step 7."
         )
 
+    # Derived from the source, not from the config: whether a source publishes
+    # the join property's value is a fact about that source. Stating it is
+    # allowed (it documents the reason at the point somebody reads the file);
+    # contradicting it is not, because the claim is what decides whether
+    # ADD_IDENTIFIER offers a number.
+    from_source_default = source != SOURCE_GEVER
+    identifier_from_source = bool(
+        data.get("identifier_from_source", from_source_default)
+    )
+    if identifier_from_source and not from_source_default:
+        raise ValueError(
+            f"identifier_from_source: true claims that source '{source}' "
+            "publishes the value of "
+            f"{identifier_property}, and it publishes no value of any Wikidata "
+            "property at all — run 23 searched every field of the canton's "
+            "Gever for P13468 and run 35 found six GUID columns for the city, "
+            "none of them a property's value. Its person key is a GUID, so an "
+            "ADD_IDENTIFIER built from it would paste a number from a "
+            "different id space onto a real item. Leave it unset."
+        )
+
     identifier_verified = bool(
         data.get(
             "identifier_verified",
-            identifier_property in VERIFIED_IDENTIFIER_PROPERTIES,
+            identifier_property in VERIFIED_IDENTIFIER_PROPERTIES
+            and identifier_from_source,
         )
     )
+    if identifier_verified and not identifier_from_source:
+        raise ValueError(
+            "identifier_verified: true claims that "
+            f"{identifier_property}'s values equal this source's person ids, "
+            "which cannot be true of a source that supplies no value for it "
+            "(identifier_from_source is false). The two flags are the same "
+            "claim measured to different depths; the second one presupposes "
+            "the first."
+        )
     if identifier_verified and identifier_property not in VERIFIED_IDENTIFIER_PROPERTIES:
         raise ValueError(
             f"identifier_verified: true claims that {identifier_property}'s "
@@ -537,8 +625,12 @@ def load_config(path: str | Path) -> Config:
         language=str(data.get("language", "de")),
         source=source,
         body_key=str(data.get("body_key", "") or "").strip(),
+        gever_backend=str(
+            data.get("gever_backend", "") or "gever_city_zurich"
+        ).strip(),
         identifier_property=identifier_property,
         identifier_verified=identifier_verified,
+        identifier_from_source=identifier_from_source,
         identifiers=_as_identifiers(data.get("identifiers"), identifier_property),
         user_agent=str(data.get("user_agent", DEFAULT_USER_AGENT)),
         request_delay=float(data.get("request_delay", 1.0)),
@@ -562,6 +654,16 @@ def load_config(path: str | Path) -> Config:
 
     if not cfg.bodies:
         raise ValueError("Config must define at least one entry under 'bodies'.")
+    if cfg.source == SOURCE_GEVER:
+        missing = [b.council for b in cfg.bodies if not (b.group_name or b.label)]
+        if missing:
+            raise ValueError(
+                "source 'gever' needs a 'group_name' on each body — the "
+                "Gremium that IS that chamber in the service, matched by "
+                "EXACT name. A substring match takes the city's executive "
+                f"(which sits in the council's own mandate list), its Büro and "
+                f"its parties. Missing for: {', '.join(missing)}."
+            )
     if cfg.source == SOURCE_OPENPARLDATA and not cfg.body_key:
         raise ValueError(
             "source 'openparldata' needs a 'body_key' (the canton or city whose "

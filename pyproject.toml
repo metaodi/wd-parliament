@@ -11,7 +11,12 @@ requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [{ name = "Stefan Oderbolz" }]
 dependencies = [
-    "swissparlpy>=2.0",
+    # >=2.1 for the Gever backend: 2.1.0 is the first release carrying
+    # `backends/gever.py` and `gever_config.py`, and with them the CMI CDWS
+    # instances of the canton (`canton_zurich`) and the **city**
+    # (`city_zurich`) of Zürich. Before it, `scripts/verify_gever.py` had to
+    # talk to the CDWS API by hand because the client had no way in at all.
+    "swissparlpy>=2.1",
     "requests>=2.31",
     "PyYAML>=6.0",
     "Jinja2>=3.1",
