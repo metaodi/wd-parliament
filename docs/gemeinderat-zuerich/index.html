@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wd-parliament — Wikidata TODO</title>
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#1b1b1b; --muted:#666;
+    --card:#f6f6f6; --border:#e2e2e2; --accent:#3366cc; --warn:#b45309; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14161a; --fg:#e8e8e8; --muted:#9aa0a6; --card:#1e2127;
+      --border:#2c2f36; --accent:#7aa2f7; --warn:#fbbf24; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg); color:var(--fg); line-height:1.5; }
+  .wrap { max-width:1000px; margin:0 auto; padding:1.5rem 1rem 4rem; }
+  h1 { margin:0 0 .25rem; font-size:1.6rem; }
+  .sub { color:var(--muted); margin:0 0 1.5rem; }
+  .totals { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+  .stat { background:var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:.75rem 1rem; min-width:130px; }
+  .stat b { font-size:1.5rem; display:block; }
+  .stat span { color:var(--muted); font-size:.85rem; }
+  .body-nav { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.5rem; }
+  .body-nav a { background:var(--card); border:1px solid var(--border);
+    border-radius:999px; padding:.3rem .8rem; font-size:.9rem; }
+  section.chamber { margin-bottom:2.5rem; }
+  section.chamber > h2 { font-size:1.25rem; border-bottom:1px solid var(--border);
+    padding-bottom:.3rem; scroll-margin-top:1rem; }
+  .group { border:1px solid var(--border); border-radius:10px; margin-bottom:1rem;
+    background:var(--card); overflow:hidden; }
+  .group > summary { cursor:pointer; padding:.9rem 1rem; font-weight:600;
+    display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+  .group > summary::-webkit-details-marker { display:none; }
+  .count { background:var(--accent); color:#fff; border-radius:999px;
+    padding:.1rem .6rem; font-size:.8rem; font-weight:600; }
+  .count.zero { background:#3aa657; }
+  .inner { padding:0 1rem 1rem; }
+  .kind { margin:1rem 0 .3rem; font-size:.9rem; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.03em; }
+  .prio { display:inline-block; min-width:1.2rem; text-align:center;
+    border:1px solid var(--border); border-radius:4px; padding:0 .25rem;
+    font-size:.75rem; margin-right:.35rem; }
+  ul { margin:.2rem 0 .6rem; padding-left:1.2rem; }
+  li { margin:.35rem 0; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .detail { color:var(--muted); }
+  .byname { color:var(--warn); font-weight:600; }
+  table { border-collapse:collapse; width:100%; margin:.5rem 0 1.5rem;
+    display:block; overflow-x:auto; }
+  th, td { border:1px solid var(--border); padding:.35rem .6rem; text-align:left; }
+  th { background:var(--card); }
+  td.num, th.num { text-align:right; }
+  footer { color:var(--muted); font-size:.85rem; margin-top:2rem;
+    border-top:1px solid var(--border); padding-top:1rem; }
+  code { background:var(--card); padding:.05rem .3rem; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>wd-parliament &mdash; suggested Wikidata edits</h1>
+  <p class="sub">Sitting members of the city of Zürich&#39;s Gever
+     vs. <em>position held</em> (P39) statements on Wikidata.
+     Generated 2026-08-18 15:59 UTC.</p>
+
+  <div class="totals">
+    <div class="stat"><b>132</b><span>suggested edits</span></div>
+    <div class="stat"><b>125</b><span>sitting members</span></div>
+    <div class="stat"><b>0.0%</b><span>matched by P14527</span></div>
+    <div class="stat"><b>0</b><span>QuickStatements</span></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Chamber</th><th class="num">Members</th>
+      <th class="num">P14527</th><th class="num">By name</th>
+      <th class="num">Unmatched</th><th class="num">Suggestions</th></tr></thead>
+    <tbody>
+    
+      <tr><td><a href="https://www.wikidata.org/wiki/Q111219780">Gemeinderat der Stadt Zürich</a></td>
+        <td class="num">125</td>
+        <td class="num">0</td>
+        <td class="num">3</td>
+        <td class="num">122</td>
+        <td class="num">132</td></tr>
+    
+    </tbody>
+  </table>
+
+  <nav class="body-nav">
+    
+    <a href="#gemeinderat-der-stadt-zürich">Gemeinderat der Stadt Zürich (132)</a>
+    
+  </nav>
+
+  
+  <section class="chamber">
+    <h2 id="gemeinderat-der-stadt-zürich">Gemeinderat der Stadt Zürich</h2>
+    
+    
+    
+      
+      <details class="group" open>
+        <summary>
+          <span>Electoral district: 1 und 2</span>
+          <span class="count">12 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (12)</div>
+          <ul>
+            
+            <li>
+              <strong>Alex Guggenheim</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Alex Guggenheim&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #0fde4de6d5964443a1700144e082c25a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Anthony Goldstein</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Anthony Goldstein&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #1be53a6166a44d3888ceb81d43286561) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Christian Traber</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Christian Traber&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #f7e07386510444f7899c7b1b54f11512) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Cordelia Forde</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Cordelia Forde&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #41c0c14842a647a7a4a99cb3e969bca4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Dominik Haupt</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Dominik Haupt&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #dce8d807c9ed436aa5915bf707fbeefc) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Guy Krayenbühl</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Guy Krayenbühl&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #274ef2af504040d68e5da5867fd9dbf8) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Lara Can</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Lara Can&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #80b4568606004e63a0f3aeadd95ad5ac) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Martin Bürki</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Martin Bürki&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #cee8102d50284a318f385b69562dcba3) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Michael Schmid</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Michael Schmid&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #21ea3a3f7b424e259b93d5241b3f3cc5) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Ruedi Schneider</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Ruedi Schneider&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #21d7bf0d7dad490b8f5f24dd99ab68d3) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sebastian Zopfi</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sebastian Zopfi&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #09610efe1120458e9f875eb411d6395d) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sibylle Kauer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sibylle Kauer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #983a3a067a634c05bd99d51de37e1a21) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 10</span>
+          <span class="count">13 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">2</span>
+            Sitting member, but no position held (P39) statement (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q131672141">Andreas Egli</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; Add a &#39;position held&#39; (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich&#39;s Gever lists them as sitting since 2014-05-07. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Missing the parliament&#39;s other identifier — value to be looked up (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q131672141">Andreas Egli</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; No P14527 (OpenParlData ID) statement. That is this person&#39;s id in OpenParlData&#39;s register at api.openparldata.ch, which holds one record per person per body. the city of Zürich&#39;s Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              <span class="detail">&mdash;
+                <a href="https://www.wikidata.org/wiki/Property:P14527">P14527</a>
+              </span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (11)</div>
+          <ul>
+            
+            <li>
+              <strong>Florian Utz</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Florian Utz&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #059f0a1c6e0643188105bbd8fc26a321) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Johann Widmer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Johann Widmer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #aa4cedb707d94811a7c7f1ed8c9773ca) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Leonora Seiler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Leonora Seiler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #5ef16289476643e9a2a7ee234f58714a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Lisa Diggelmann</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Lisa Diggelmann&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #84235f69f45b4c7c85c6228ce1f5a47c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Martin Busekros</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Martin Busekros&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #f6e5ff148f2e48888f03987010e0032a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Martina Zürcher</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Martina Zürcher&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #83772afdfb4a46d4ae7583c513449cde) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Mathias Egloff</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Mathias Egloff&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #fb4330996f6c4b2ea1871b7714996f3f) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Moritz Bögli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Moritz Bögli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #347eff05aa2e418797132836f60bd433) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Selina Frey</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Selina Frey&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #f8196acd43e645319c5e12f7e8a0b3fc) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Stefania Koller</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Stefania Koller&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #146e4afe08234e37b750584ae9b71075) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Wolfgang Kweitel</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Wolfgang Kweitel&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #dc5bdd07c5b54e179602fa639fd86128) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 11</span>
+          <span class="count">22 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (22)</div>
+          <ul>
+            
+            <li>
+              <strong>Anjushka Früh</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Anjushka Früh&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a14da0dead36428ea49b89d6e548d673) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Ariane Buchli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Ariane Buchli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #8c6591847d6e4749881c2338157def63) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Attila Kipfer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Attila Kipfer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #64a14d4938604c11a291d2e203c4c37a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Benedikt Gerth</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Benedikt Gerth&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #ead3388d665a451982cd3022647446d2) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Christian Huser</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Christian Huser&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #56440294cdbe4d118005109879dabbc5) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Christian Häberli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Christian Häberli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #b8d0a67f7d0a4093b21fcf21662a7a46) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Fabian Stieger</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Fabian Stieger&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #677592b59da5403dbf5746732c274f7d) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Florian Blättler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Florian Blättler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6af35f85c14a48ce89f69a834cd4f627) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Jonas Keller</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Jonas Keller&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #85f841562e3f492aa7b74560cead13c6) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Julia Hofstetter</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Julia Hofstetter&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #8ef63a81beed48e08e0bf193c2ba367c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Karin Saxer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Karin Saxer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6e6b1491653841b0b9d6eade5e78a3dc) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Leah Heuri</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Leah Heuri&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #27ab8d54cfe14d2db2d6a4d8cf0dc73a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Markus Merki</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Markus Merki&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2a9bceea78b94b568c105508b06d06fa) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Nina Eggenschwiler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Nina Eggenschwiler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #0d5da60d2e1e4ba1bd25b31381b092d2) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Reto Brüesch</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Reto Brüesch&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #54e307755ef44785825b09b55bd03a4e) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sascha Rüegg</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sascha Rüegg&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2067d26f38d34ebb9ad0563da114f761) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Serap Kahriman</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Serap Kahriman&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #4166dededcf1474da33f37f12c61f049) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Stephan Iten</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Stephan Iten&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a390e9c4174f4fa2b99570b6fc36731a) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Stéphane Braune</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Stéphane Braune&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #e1d7dcd1c8b44fd2b4992f311d217401) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sven Sobernheim</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sven Sobernheim&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6eddac6b0a104b6f92df26f63b9a1f91) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Thomas Hofstetter</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Thomas Hofstetter&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #3fb0d3bd2c3d4ce5b2ad794e71f4a139) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Vera Çelik</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Vera Çelik&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a32b1d0de0e74bf9b14b33c4f5466ef2) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 12</span>
+          <span class="count">9 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (9)</div>
+          <ul>
+            
+            <li>
+              <strong>Catalina Gajardo Hofmann</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Catalina Gajardo Hofmann&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #223cf02757154660a79cc9d29e12edda) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Dafi Muharemi</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Dafi Muharemi&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #8dd076b6c8c94df5a70d2708ac5f59bf) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Frank-Elmar Linxweiler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Frank-Elmar Linxweiler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #045fe0b8fcff440cbf0026b49c7c1965) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Mariem Fiadjigbe Kekić</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Mariem Fiadjigbe Kekić&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #e407012d429d48f09273b23d73d640d0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Markus Weidmann</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Markus Weidmann&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #885dc666085b4c599eea07adc6ed2bc8) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Michele Romagnolo</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Michele Romagnolo&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #8e9e36bc2c084d4190782d90a651ea47) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Murat Gediz</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Murat Gediz&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #225900194e5f45378088882a64474265) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Patrick Tscherrig</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Patrick Tscherrig&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #aa1521faea0e41fa972817ac2c57d2cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Thomas Bühler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Thomas Bühler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #46dfbfc589db4b20a5d1506cf13beaf5) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 3</span>
+          <span class="count">14 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (14)</div>
+          <ul>
+            
+            <li>
+              <strong>Beat Oberholzer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Beat Oberholzer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #b7c4485214b1474e8d56be062337e766) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Daria Perez Sanchez-Di Concilio</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Daria Perez Sanchez-Di Concilio&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2bb525e0f77d4799aee71864a35737b4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Derek Richter</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Derek Richter&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #1a0174b8b3e2406eb34f4b97cd089ff6) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Hannah Locher</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Hannah Locher&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #3e579d66e1224610b80a0a5ee4e14c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Jehuda Spielman</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Jehuda Spielman&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #0844db13972744b49963b093b8e2ab83) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Marisa Kappeler-Schudel</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Marisa Kappeler-Schudel&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #f001aea011ef400f8794350121275505) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Marita Verbali</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Marita Verbali&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #efc4a468559e47db9735f4c59cb81fe7) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Markus Haselbach</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Markus Haselbach&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a9247c52824e4451bf1231509d624c4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Rahel Habegger</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Rahel Habegger&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Reis Luzhnica</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Reis Luzhnica&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #e014691eb8064635bca46835e6d0a70d) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sarah Dähler</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sarah Dähler&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #391d0acf00b04586bfc304759c9c684b) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sophie Blaser</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sophie Blaser&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #79eddcbfe0ae4c40b8a021713c32a591) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Tom Cassee</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Tom Cassee&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #02f12dad7264455e83ec2ed8c800b723) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Urs Riklin</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Urs Riklin&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6e55804daed844e1a9939c3b32e58fa0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 4 und 5</span>
+          <span class="count">13 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (13)</div>
+          <ul>
+            
+            <li>
+              <strong>Adina Rom</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Adina Rom&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #e2531ea062ca4620bb3ee3df0a6c4c77) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Brigitte Fürer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Brigitte Fürer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #4e3a94fca0a944579778489fcb088278) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Deborah Wettstein</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Deborah Wettstein&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2aaccefcb33d48d69208f23b3407521e) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Fanny de Weck</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Fanny de Weck&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #15c28bd0a9404b7fbdee7132fc67d1bb) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Isabel Maiorano</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Isabel Maiorano&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #51324df1e6844d0f987357a0370bcc95) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Janina Flückiger</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Janina Flückiger&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #9cd24adc27264051be2d0f193a6554f0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Maya Kägi Götz</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Maya Kägi Götz&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #67cdbf4665f74582b7d1bc738172b777) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Micha Amstad</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Micha Amstad&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #98e4118d99f24f249b3117bbe5ea5775) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Nicolas Cavalli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Nicolas Cavalli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #313ef9f573f74b60b437b1f969494f10) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Patricia Petermann Loewe</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Patricia Petermann Loewe&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #aab17a31f79f405095586219d83e2fca) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Rahel Hofstetter</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Rahel Hofstetter&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6e5a915a14434f89a22e52047779c479) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Roger Suter</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Roger Suter&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6d5395eb73554c7aa05523838cb1d724) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Stefan Urech</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Stefan Urech&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #6a37d6abc96847aeb8e2e5295a2f6db7) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 6</span>
+          <span class="count">11 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">2</span>
+            Sitting member, but no position held (P39) statement (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q107434824">Sebastian Vogel</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; Add a &#39;position held&#39; (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich&#39;s Gever lists them as sitting since 2017-09-16. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (9)</div>
+          <ul>
+            
+            <li>
+              <strong>Alice Kohli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Alice Kohli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #da71a0aa4f534d2c9ecf48c6c3a32796) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Camille Roseau</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Camille Roseau&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #1b2c59b5a4c44b6a9a49dfc3a3d60f4c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Florine Angele</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Florine Angele&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2301a80067cb45a083d43ebaff3decaa) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Jane Bailey</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Jane Bailey&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #c0442aa7c0984680ac4178bb6ba2c5f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Marco Denoth</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Marco Denoth&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #523adb281cec42449699c1a86c8cc03c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Patrik Brunner</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Patrik Brunner&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #263d4f170c574480915b2306bfc7031c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Severin Meier</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Severin Meier&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #7ac07791348240579cd55940de250e4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Susan Wiget</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Susan Wiget&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #ace5ac66a93c4077964a59977a1e6120) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Yves Henz</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Yves Henz&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2ef23cc5f73c441395e22b4bacf10f5c) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Missing the parliament&#39;s other identifier — value to be looked up (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q107434824">Sebastian Vogel</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; No P14527 (OpenParlData ID) statement. That is this person&#39;s id in OpenParlData&#39;s register at api.openparldata.ch, which holds one record per person per body. the city of Zürich&#39;s Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              <span class="detail">&mdash;
+                <a href="https://www.wikidata.org/wiki/Property:P14527">P14527</a>
+              </span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 7 und 8</span>
+          <span class="count">17 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">2</span>
+            Sitting member, but no position held (P39) statement (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q908590">Brenda Mäder</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; Add a &#39;position held&#39; (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich&#39;s Gever lists them as sitting since 2026-05-06. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (15)</div>
+          <ul>
+            
+            <li>
+              <strong>Alana Gerdes</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Alana Gerdes&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #02b4bad31027485797892089330fa1f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Angelica Eichenberger</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Angelica Eichenberger&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #175a611538d74ebd95061225736bc6e4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Christoph Riedweg</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Christoph Riedweg&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #35eb64f6c3654a649939f3f9c0574230) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Emanuel Tschannen</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Emanuel Tschannen&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #3bd0cfca544f4cdeaa1b1e0bf736e457) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Ivo Bieri</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Ivo Bieri&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #071b1c96efb94f89a475b90f3d106099) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Jean-Marc Jung</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Jean-Marc Jung&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #269a7f6f4be24be3a2b250abe51bcf29) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Karin Weyermann</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Karin Weyermann&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #dbab07ae646b405da6a2cb78b84a6bd0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Mischa Schiwow</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Mischa Schiwow&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #605becb046da4f68a14c2b0443112061) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Nadina Diday</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Nadina Diday&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #25e34b1825624361bc63e60cea5fd541) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Roger Meier</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Roger Meier&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #011376ed9749455f8fbb95836616ea48) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sabine Koch</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sabine Koch&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #cb1fc3fb70584bd283a190424c879335) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Simone Widmer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Simone Widmer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a0a1c064da1b4ad2a21023a5735feabb) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Sofia Karakostas</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Sofia Karakostas&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a81866caa180424887cc63897f1a3ada) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Xenia Voellmy</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Xenia Voellmy&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #25762da30e524a73ada2146cabcb8234) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Yves Peier</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Yves Peier&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2a53a0d351bc4ed1bd4eca8f3774f1f7) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+          <div class="kind"><span class="prio">5</span>
+            Missing the parliament&#39;s other identifier — value to be looked up (1)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q908590">Brenda Mäder</a>
+              
+              
+              <span class="byname" title="matched by name, not by the identifier">&#9888;</span>
+              <span class="detail">&mdash; No P14527 (OpenParlData ID) statement. That is this person&#39;s id in OpenParlData&#39;s register at api.openparldata.ch, which holds one record per person per body. the city of Zürich&#39;s Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.</span>
+              
+              <span class="detail">&mdash;
+                <a href="https://www.wikidata.org/wiki/Property:P14527">P14527</a>
+              </span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: 9</span>
+          <span class="count">17 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">5</span>
+            Sitting member, but no Wikidata item could be found (17)</div>
+          <ul>
+            
+            <li>
+              <strong>Anna Graff</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Anna Graff&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #bfa23cd2b36f425cbd10cbdc108bbc0d) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Christine Huber</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Christine Huber&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #acf5034958d6457badc9ade21c297b30) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Dominique Späth</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Dominique Späth&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #5097c481add94f978add59c9412553cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Karin Stepinski</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Karin Stepinski&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #063fe234b12c48859f16aae51230171d) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Liv Mahrer</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Liv Mahrer&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #787e45238ea648b3a862a0374c4df714) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Oliver Heimgartner</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Oliver Heimgartner&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #ed05a60019744a4c86a8735095073dcb) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Pascal Lamprecht</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Pascal Lamprecht&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #967c0420fe744c048d5472f51a601167) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Patrick Stählin</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Patrick Stählin&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #e557c1958dbc40bcb893466ca3fd8d9b) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Përparim Avdili</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Përparim Avdili&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #b879282b6a0f443d8d7da03f3bd8e7e0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Roger Bartholdi</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Roger Bartholdi&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #fa74cf092a004968b8accd2ac3ad55ce) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Roland Hohmann</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Roland Hohmann&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #2c291aeaad2844c98a7655072e3b3a70) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Roman Mörgeli</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Roman Mörgeli&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #88e3f0b84e4e4efcbeda96758ead6151) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Samuel Balsiger</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Samuel Balsiger&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a6692d9d783c46ddb7179a408e03a6b0) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Selina Walgis</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Selina Walgis&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #1be1c1c1a28948638f483167837c08f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Simon Hatt</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Simon Hatt&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #a72c6522d5c84753b573cd88f73e5245) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Tanja Maag</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Tanja Maag&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #c8223578a62d4cadac429d5f22429c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+            <li>
+              <strong>Valentina Fazlija</strong>
+              
+              
+              <span class="detail">&mdash; &#39;Valentina Fazlija&#39; sits in the Gemeinderat der Stadt Zürich (the city of Zürich&#39;s Gever #1e576dfb67584a638bae9da0a704da48) but no Wikidata item was found, by P14527 or by name. They may need a new item.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+      <details class="group" >
+        <summary>
+          <span>Electoral district: Other</span>
+          <span class="count">4 to&nbsp;do</span>
+        </summary>
+        <div class="inner">
+          
+          <div class="kind"><span class="prio">2</span>
+            Recorded as sitting, but the member has left (4)</div>
+          <ul>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q111219596">Heinrich Kleinert</a>
+              
+              
+              
+              <span class="detail">&mdash; Wikidata records an open &#39;Gemeinderat der Stadt Zürich&#39; membership (no end date), but the city of Zürich&#39;s Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich&#39;s Gever holds are not offered here: reaching them means reading P14527&#39;s value as this source&#39;s person id, which has not been measured — a wrong reading would print somebody else&#39;s dates under this name.</span>
+              
+              
+            </li>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q111222390">Jakob Sennhauser</a>
+              
+              
+              
+              <span class="detail">&mdash; Wikidata records an open &#39;Gemeinderat der Stadt Zürich&#39; membership (no end date), but the city of Zürich&#39;s Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich&#39;s Gever holds are not offered here: reaching them means reading P14527&#39;s value as this source&#39;s person id, which has not been measured — a wrong reading would print somebody else&#39;s dates under this name.</span>
+              
+              
+            </li>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q111223264">Johann Welti-Hausheer</a>
+              
+              
+              
+              <span class="detail">&mdash; Wikidata records an open &#39;Gemeinderat der Stadt Zürich&#39; membership (no end date), but the city of Zürich&#39;s Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich&#39;s Gever holds are not offered here: reaching them means reading P14527&#39;s value as this source&#39;s person id, which has not been measured — a wrong reading would print somebody else&#39;s dates under this name.</span>
+              
+              
+            </li>
+            
+            <li>
+              <a href="https://www.wikidata.org/wiki/Q123454">Max Bill</a>
+              
+              
+              
+              <span class="detail">&mdash; Wikidata records an open &#39;Gemeinderat der Stadt Zürich&#39; membership (no end date), but the city of Zürich&#39;s Gever does not list this person as a sitting member. They have most likely left; add an end date (P582), looked up by hand. The dates the city of Zürich&#39;s Gever holds are not offered here: reaching them means reading P14527&#39;s value as this source&#39;s person id, which has not been measured — a wrong reading would print somebody else&#39;s dates under this name.</span>
+              
+              
+            </li>
+            
+          </ul>
+          
+        </div>
+      </details>
+      
+    
+  </section>
+  
+
+  <footer>
+    Built by <a href="https://github.com/metaodi/wd-parliament">wd-parliament</a>
+    from the official <a href="https://ws.parlament.ch/odata.svc/">parlament.ch
+    OData service</a>. Members marked &#9888; were matched by name rather than by
+    P14527 &mdash; check the identity before editing.
+  </footer>
+</div>
+</body>
+</html>
