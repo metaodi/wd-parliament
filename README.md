@@ -1570,10 +1570,14 @@ not exist cannot have been measured.
 Two smaller decisions in the same commit, both in the "say nothing rather than
 guess" direction:
 
-- **`biography_url` is left out**, so the report prints each member's number
-  without a link. No run has read the city's member-page URL scheme, and a
-  plausible template is worth *less* than no link — a reader who follows it to
-  a 404 learns nothing.
+- **`biography_url` links the city's own member page**, and `{id}` in that
+  template is `kontakt.obj_guid` — the same GUID the report prints beside the
+  member, so the number shown and the number linked are one fact. The template
+  substitutes only `{person_number}` / `{id}` / `{language}` whatever the
+  source calls its column. Left unset for such a source it yields no link at
+  all rather than routing a GUID through the join property's template: a
+  guessed URL is worth *less* than none, since a reader who follows it to a 404
+  learns nothing.
 - **the enrichment names group `465 'Gemeinderat Zürich'`, not `8062
   'Gemeinderat'`.** Both name the chamber and the one row order picks holds
   zero rows. That matters more than an ordinary wrong id, because an enrichment

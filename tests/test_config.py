@@ -382,17 +382,25 @@ def test_a_source_that_supplies_no_identifier_value_does_not_join_on_one():
     assert city.identifier_verified is False
 
 
-def test_a_source_with_no_identifier_value_offers_no_biography_link():
+def test_a_source_with_no_identifier_value_defaults_to_no_biography_link(tmp_path):
     """Linking a Gever GUID through P14527's template would send a reader to a
-    page that cannot resolve it, so `biography_url_for` returns nothing at all.
+    page that cannot resolve it, so an unconfigured `biography_url_for` returns
+    nothing at all rather than something plausible and wrong.
 
-    An empty link is the honest outcome and both report paths omit it. A
-    plausible-looking template would be worth less: a reader who follows it to
-    a 404 learns nothing, while a missing link says plainly that this run has
-    no page to offer.
+    An empty link is the honest outcome and both report paths omit it: a reader
+    who follows a guessed URL to a 404 learns nothing, while a missing link
+    says plainly that the run has no page to offer.
     """
+    text = MINIMAL + "source: gever\nidentifier_property: P14527\n"
+    cfg = load_config(write(tmp_path, text))
+    assert cfg.biography_url_for("abc123") == ""
+
+
+def test_the_city_config_links_the_page_its_own_person_key_resolves_on():
+    """`{id}` is `kontakt.obj_guid` — the same GUID the report prints beside
+    the member, which is what keeps the number and the link the same fact."""
     city = load_config("config/gemeinderat-zuerich.yaml")
-    assert city.biography_url_for("abc123") == ""
+    assert city.biography_url_for("abc123").endswith("detail.php?gid=abc123")
 
 
 def test_a_config_may_not_claim_a_gever_supplies_an_identifier_value(tmp_path):
