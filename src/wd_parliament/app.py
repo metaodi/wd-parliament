@@ -196,31 +196,36 @@ def process(
     periods = parliament.get_periods()
     members = parliament.get_members(councils=config.councils, today=today)
     log.info(
-        "parlament.ch: %d sitting members across %d legislative periods",
+        "%s: %d sitting members across %d legislative periods",
+        config.source_name,
         len(members),
         len(periods),
     )
 
-    # P580 must come from the tenure start, and MemberCouncil.DateJoining is a
-    # *segment* start — see models.Member.start_date and README step 0c. The
-    # history is the only place the real one lives, so it is fetched here rather
-    # than per chamber. A failure degrades to the raw field instead of aborting:
-    # a slightly-wrong P580 on 11 of 246 members is a worse report, whereas no
-    # report at all is a worse outcome.
+    # P580 must come from the tenure start, and a source may report a mandate
+    # *segment* start rather than the tenure start proper — see
+    # models.Member.start_date and README step 0c. get_member_segments is the
+    # per-source correction for that (parlament.ch's reads MemberCouncilHistory;
+    # a source with nothing to correct, like Gever or OpenParlData, returns
+    # {}), fetched here rather than per chamber. A failure degrades to the raw
+    # field instead of aborting: a slightly-wrong P580 on a handful of members
+    # is a worse report, whereas no report at all is a worse outcome.
     try:
         segments = parliament.get_member_segments(councils=config.councils)
         corrected = apply_tenure_starts(members, segments)
         log.info(
-            "MemberCouncilHistory: tenure start set for %d member(s); %d had a "
-            "later segment start in MemberCouncil",
+            "%s: tenure start set for %d member(s); %d had a later segment "
+            "start in the member list",
+            config.source_name,
             sum(1 for m in members if m.tenure_start),
             corrected,
         )
     except Exception:  # noqa: BLE001 - degrade, do not abort
         log.warning(
-            "Could not read %s; P580 falls back to MemberCouncil.DateJoining, "
-            "which is a segment start for some members (README step 0c)",
-            HISTORIC_MEMBER_TABLE,
+            "Could not read tenure-start history from %s; P580 falls back to "
+            "the member list's own start date, which is a segment start for "
+            "some members on parlament.ch (README step 0c)",
+            config.source_name,
             exc_info=True,
         )
 
