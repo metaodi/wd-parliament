@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-20 07:14 UTC",
+  "generated": "2026-08-20 08:21 UTC",
   "total_suggestions": 133,
   "total_members": 126,
   "quickstatements": 0,
@@ -38,7 +38,7 @@
             "district": "Q456175",
             "group": null,
             "terms": [],
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65",
             "identifier_unverified": true
           }
         },
@@ -63,7 +63,7 @@
             "district": "Q117787912",
             "group": null,
             "terms": [],
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e0da36e0bb6b4dd28202b2c48a690c64",
             "identifier_unverified": true
           }
         },
@@ -138,7 +138,7 @@
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q123454-4205cbc4-44c3-2c79-0dde-9f2e6f4aa8a0",
             "parliament_id": "19086",
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=19086"
           }
         },
         {
@@ -162,7 +162,7 @@
             "district": "Q456170",
             "group": null,
             "terms": [],
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=66c1d463869b4f87a1a4aafbfe36a375",
             "identifier_unverified": true
           }
         },
@@ -180,7 +180,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e2531ea062ca4620bb3ee3df0a6c4c77"
           }
         },
         {
@@ -197,7 +197,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=02b4bad31027485797892089330fa1f4"
           }
         },
         {
@@ -214,7 +214,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=0fde4de6d5964443a1700144e082c25a"
           }
         },
         {
@@ -231,7 +231,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=da71a0aa4f534d2c9ecf48c6c3a32796"
           }
         },
         {
@@ -251,7 +251,7 @@
           },
           "payload": {
             "property": "P14527",
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65",
             "identifier_unverified": true
           }
         },
@@ -269,7 +269,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=175a611538d74ebd95061225736bc6e4"
           }
         },
         {
@@ -286,7 +286,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a14da0dead36428ea49b89d6e548d673"
           }
         },
         {
@@ -303,7 +303,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=bfa23cd2b36f425cbd10cbdc108bbc0d"
           }
         },
         {
@@ -320,7 +320,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1be53a6166a44d3888ceb81d43286561"
           }
         },
         {
@@ -337,7 +337,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=8c6591847d6e4749881c2338157def63"
           }
         },
         {
@@ -354,7 +354,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=64a14d4938604c11a291d2e203c4c37a"
           }
         },
         {
@@ -371,7 +371,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b7c4485214b1474e8d56be062337e766"
           }
         },
         {
@@ -388,7 +388,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=ead3388d665a451982cd3022647446d2"
           }
         },
         {
@@ -408,7 +408,7 @@
           },
           "payload": {
             "property": "P14527",
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e0da36e0bb6b4dd28202b2c48a690c64",
             "identifier_unverified": true
           }
         },
@@ -426,7 +426,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=4e3a94fca0a944579778489fcb088278"
           }
         },
         {
@@ -443,7 +443,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1b2c59b5a4c44b6a9a49dfc3a3d60f4c"
           }
         },
         {
@@ -460,7 +460,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=223cf02757154660a79cc9d29e12edda"
           }
         },
         {
@@ -477,7 +477,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=56440294cdbe4d118005109879dabbc5"
           }
         },
         {
@@ -494,7 +494,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b8d0a67f7d0a4093b21fcf21662a7a46"
           }
         },
         {
@@ -511,7 +511,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=f7e07386510444f7899c7b1b54f11512"
           }
         },
         {
@@ -528,7 +528,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=acf5034958d6457badc9ade21c297b30"
           }
         },
         {
@@ -545,7 +545,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=35eb64f6c3654a649939f3f9c0574230"
           }
         },
         {
@@ -562,7 +562,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=41c0c14842a647a7a4a99cb3e969bca4"
           }
         },
         {
@@ -579,7 +579,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=8dd076b6c8c94df5a70d2708ac5f59bf"
           }
         },
         {
@@ -596,7 +596,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2bb525e0f77d4799aee71864a35737b4"
           }
         },
         {
@@ -613,7 +613,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2aaccefcb33d48d69208f23b3407521e"
           }
         },
         {
@@ -630,7 +630,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1a0174b8b3e2406eb34f4b97cd089ff6"
           }
         },
         {
@@ -647,7 +647,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=dce8d807c9ed436aa5915bf707fbeefc"
           }
         },
         {
@@ -664,7 +664,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=5097c481add94f978add59c9412553cf"
           }
         },
         {
@@ -681,7 +681,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=3bd0cfca544f4cdeaa1b1e0bf736e457"
           }
         },
         {
@@ -698,7 +698,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=677592b59da5403dbf5746732c274f7d"
           }
         },
         {
@@ -715,7 +715,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=15c28bd0a9404b7fbdee7132fc67d1bb"
           }
         },
         {
@@ -732,7 +732,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6af35f85c14a48ce89f69a834cd4f627"
           }
         },
         {
@@ -749,7 +749,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=059f0a1c6e0643188105bbd8fc26a321"
           }
         },
         {
@@ -766,7 +766,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2301a80067cb45a083d43ebaff3decaa"
           }
         },
         {
@@ -783,7 +783,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=045fe0b8fcff440cbf0026b49c7c1965"
           }
         },
         {
@@ -800,7 +800,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=274ef2af504040d68e5da5867fd9dbf8"
           }
         },
         {
@@ -817,7 +817,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=3e579d66e1224610b80a0a5ee4e14c27"
           }
         },
         {
@@ -834,7 +834,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=51324df1e6844d0f987357a0370bcc95"
           }
         },
         {
@@ -851,7 +851,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=071b1c96efb94f89a475b90f3d106099"
           }
         },
         {
@@ -868,7 +868,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=c0442aa7c0984680ac4178bb6ba2c5f4"
           }
         },
         {
@@ -885,7 +885,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=9cd24adc27264051be2d0f193a6554f0"
           }
         },
         {
@@ -902,7 +902,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=269a7f6f4be24be3a2b250abe51bcf29"
           }
         },
         {
@@ -919,7 +919,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=0844db13972744b49963b093b8e2ab83"
           }
         },
         {
@@ -936,7 +936,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aa4cedb707d94811a7c7f1ed8c9773ca"
           }
         },
         {
@@ -953,7 +953,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=85f841562e3f492aa7b74560cead13c6"
           }
         },
         {
@@ -970,7 +970,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=8ef63a81beed48e08e0bf193c2ba367c"
           }
         },
         {
@@ -987,7 +987,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6e6b1491653841b0b9d6eade5e78a3dc"
           }
         },
         {
@@ -1004,7 +1004,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=063fe234b12c48859f16aae51230171d"
           }
         },
         {
@@ -1021,7 +1021,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=dbab07ae646b405da6a2cb78b84a6bd0"
           }
         },
         {
@@ -1038,7 +1038,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=80b4568606004e63a0f3aeadd95ad5ac"
           }
         },
         {
@@ -1055,7 +1055,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=27ab8d54cfe14d2db2d6a4d8cf0dc73a"
           }
         },
         {
@@ -1072,7 +1072,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=5ef16289476643e9a2a7ee234f58714a"
           }
         },
         {
@@ -1089,7 +1089,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=84235f69f45b4c7c85c6228ce1f5a47c"
           }
         },
         {
@@ -1106,7 +1106,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=787e45238ea648b3a862a0374c4df714"
           }
         },
         {
@@ -1123,7 +1123,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=523adb281cec42449699c1a86c8cc03c"
           }
         },
         {
@@ -1140,7 +1140,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e407012d429d48f09273b23d73d640d0"
           }
         },
         {
@@ -1157,7 +1157,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=f001aea011ef400f8794350121275505"
           }
         },
         {
@@ -1174,7 +1174,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=efc4a468559e47db9735f4c59cb81fe7"
           }
         },
         {
@@ -1191,7 +1191,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a9247c52824e4451bf1231509d624c4f"
           }
         },
         {
@@ -1208,7 +1208,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2a9bceea78b94b568c105508b06d06fa"
           }
         },
         {
@@ -1225,7 +1225,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=885dc666085b4c599eea07adc6ed2bc8"
           }
         },
         {
@@ -1242,7 +1242,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=f6e5ff148f2e48888f03987010e0032a"
           }
         },
         {
@@ -1259,7 +1259,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=cee8102d50284a318f385b69562dcba3"
           }
         },
         {
@@ -1276,7 +1276,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=83772afdfb4a46d4ae7583c513449cde"
           }
         },
         {
@@ -1293,7 +1293,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=fb4330996f6c4b2ea1871b7714996f3f"
           }
         },
         {
@@ -1310,7 +1310,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=67cdbf4665f74582b7d1bc738172b777"
           }
         },
         {
@@ -1327,7 +1327,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98e4118d99f24f249b3117bbe5ea5775"
           }
         },
         {
@@ -1344,7 +1344,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=21ea3a3f7b424e259b93d5241b3f3cc5"
           }
         },
         {
@@ -1361,7 +1361,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=8e9e36bc2c084d4190782d90a651ea47"
           }
         },
         {
@@ -1378,7 +1378,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=605becb046da4f68a14c2b0443112061"
           }
         },
         {
@@ -1395,7 +1395,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=347eff05aa2e418797132836f60bd433"
           }
         },
         {
@@ -1412,7 +1412,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=225900194e5f45378088882a64474265"
           }
         },
         {
@@ -1429,7 +1429,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=25e34b1825624361bc63e60cea5fd541"
           }
         },
         {
@@ -1446,7 +1446,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=313ef9f573f74b60b437b1f969494f10"
           }
         },
         {
@@ -1463,7 +1463,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=0d5da60d2e1e4ba1bd25b31381b092d2"
           }
         },
         {
@@ -1480,7 +1480,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=31730630a4df4a36a9de4eb3c0c69189"
           }
         },
         {
@@ -1497,7 +1497,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=ed05a60019744a4c86a8735095073dcb"
           }
         },
         {
@@ -1514,7 +1514,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=967c0420fe744c048d5472f51a601167"
           }
         },
         {
@@ -1531,7 +1531,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aab17a31f79f405095586219d83e2fca"
           }
         },
         {
@@ -1548,7 +1548,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e557c1958dbc40bcb893466ca3fd8d9b"
           }
         },
         {
@@ -1565,7 +1565,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aa1521faea0e41fa972817ac2c57d2cf"
           }
         },
         {
@@ -1582,7 +1582,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=263d4f170c574480915b2306bfc7031c"
           }
         },
         {
@@ -1599,7 +1599,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0"
           }
         },
         {
@@ -1616,7 +1616,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=da1bdf24d25946f790fb8ca5f98674c1"
           }
         },
         {
@@ -1633,7 +1633,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6e5a915a14434f89a22e52047779c479"
           }
         },
         {
@@ -1650,7 +1650,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e014691eb8064635bca46835e6d0a70d"
           }
         },
         {
@@ -1667,7 +1667,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=54e307755ef44785825b09b55bd03a4e"
           }
         },
         {
@@ -1684,7 +1684,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=fa74cf092a004968b8accd2ac3ad55ce"
           }
         },
         {
@@ -1701,7 +1701,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=011376ed9749455f8fbb95836616ea48"
           }
         },
         {
@@ -1718,7 +1718,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6d5395eb73554c7aa05523838cb1d724"
           }
         },
         {
@@ -1735,7 +1735,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2c291aeaad2844c98a7655072e3b3a70"
           }
         },
         {
@@ -1752,7 +1752,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=88e3f0b84e4e4efcbeda96758ead6151"
           }
         },
         {
@@ -1769,7 +1769,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=21d7bf0d7dad490b8f5f24dd99ab68d3"
           }
         },
         {
@@ -1786,7 +1786,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=cb1fc3fb70584bd283a190424c879335"
           }
         },
         {
@@ -1803,7 +1803,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a6692d9d783c46ddb7179a408e03a6b0"
           }
         },
         {
@@ -1820,7 +1820,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=391d0acf00b04586bfc304759c9c684b"
           }
         },
         {
@@ -1837,7 +1837,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2067d26f38d34ebb9ad0563da114f761"
           }
         },
         {
@@ -1857,7 +1857,7 @@
           },
           "payload": {
             "property": "P14527",
-            "biography": "",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=66c1d463869b4f87a1a4aafbfe36a375",
             "identifier_unverified": true
           }
         },
@@ -1875,7 +1875,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=09610efe1120458e9f875eb411d6395d"
           }
         },
         {
@@ -1892,7 +1892,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=f8196acd43e645319c5e12f7e8a0b3fc"
           }
         },
         {
@@ -1909,7 +1909,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1be1c1c1a28948638f483167837c08f4"
           }
         },
         {
@@ -1926,7 +1926,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=4166dededcf1474da33f37f12c61f049"
           }
         },
         {
@@ -1943,7 +1943,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=7ac07791348240579cd55940de250e4f"
           }
         },
         {
@@ -1960,7 +1960,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=983a3a067a634c05bd99d51de37e1a21"
           }
         },
         {
@@ -1977,7 +1977,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a72c6522d5c84753b573cd88f73e5245"
           }
         },
         {
@@ -1994,7 +1994,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a0a1c064da1b4ad2a21023a5735feabb"
           }
         },
         {
@@ -2011,7 +2011,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a81866caa180424887cc63897f1a3ada"
           }
         },
         {
@@ -2028,7 +2028,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=79eddcbfe0ae4c40b8a021713c32a591"
           }
         },
         {
@@ -2045,7 +2045,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6a37d6abc96847aeb8e2e5295a2f6db7"
           }
         },
         {
@@ -2062,7 +2062,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=146e4afe08234e37b750584ae9b71075"
           }
         },
         {
@@ -2079,7 +2079,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a390e9c4174f4fa2b99570b6fc36731a"
           }
         },
         {
@@ -2096,7 +2096,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e1d7dcd1c8b44fd2b4992f311d217401"
           }
         },
         {
@@ -2113,7 +2113,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=ace5ac66a93c4077964a59977a1e6120"
           }
         },
         {
@@ -2130,7 +2130,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6eddac6b0a104b6f92df26f63b9a1f91"
           }
         },
         {
@@ -2147,7 +2147,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=c8223578a62d4cadac429d5f22429c27"
           }
         },
         {
@@ -2164,7 +2164,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=46dfbfc589db4b20a5d1506cf13beaf5"
           }
         },
         {
@@ -2181,7 +2181,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=3fb0d3bd2c3d4ce5b2ad794e71f4a139"
           }
         },
         {
@@ -2198,7 +2198,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=02f12dad7264455e83ec2ed8c800b723"
           }
         },
         {
@@ -2215,7 +2215,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=6e55804daed844e1a9939c3b32e58fa0"
           }
         },
         {
@@ -2232,7 +2232,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1e576dfb67584a638bae9da0a704da48"
           }
         },
         {
@@ -2249,7 +2249,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a32b1d0de0e74bf9b14b33c4f5466ef2"
           }
         },
         {
@@ -2266,7 +2266,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=dc5bdd07c5b54e179602fa639fd86128"
           }
         },
         {
@@ -2283,7 +2283,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=25762da30e524a73ada2146cabcb8234"
           }
         },
         {
@@ -2300,7 +2300,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2ef23cc5f73c441395e22b4bacf10f5c"
           }
         },
         {
@@ -2317,7 +2317,7 @@
             "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "biography": ""
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2a53a0d351bc4ed1bd4eca8f3774f1f7"
           }
         }
       ]

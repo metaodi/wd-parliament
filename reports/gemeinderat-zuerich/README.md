@@ -1,6 +1,6 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-08-20 07:14 UTC
+Generated: 2026-08-20 08:21 UTC
 
 **133 suggested edits** across **126 sitting members** in **1 chamber(s)**.
 
