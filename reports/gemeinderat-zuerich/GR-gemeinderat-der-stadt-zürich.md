@@ -1,20 +1,20 @@
 # Gemeinderat der Stadt Zürich — Wikidata TODO
 
-Generated: 2026-08-18 20:30 UTC
+Generated: 2026-08-20 07:14 UTC
 
 - Position item: [Q111219780](https://www.wikidata.org/wiki/Q111219780)
-- Sitting members (the city of Zürich's Gever): 125
+- Sitting members (the city of Zürich's Gever): 126
 - Matched by P14527: 0 (0.0%)
 - Matched by name + birth date: 3
-- Not matched at all: 122
+- Not matched at all: 123
 - Open memberships on Wikidata: 4
-- Suggested edits: 132
+- Suggested edits: 133
 
 ## By kind
 
 - Sitting member, but no position held (P39) statement: **3**
 - Recorded as sitting, but the member has left: **4**
-- Sitting member, but no Wikidata item could be found: **122**
+- Sitting member, but no Wikidata item could be found: **123**
 - Missing the parliament's other identifier — value to be looked up: **3**
 
 ## Electoral district: 1 und 2 (12)
@@ -99,9 +99,9 @@ Generated: 2026-08-18 20:30 UTC
 - **Patrick Tscherrig** (#aa1521faea0e41fa972817ac2c57d2cf) — 'Patrick Tscherrig' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa1521faea0e41fa972817ac2c57d2cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Thomas Bühler** (#46dfbfc589db4b20a5d1506cf13beaf5) — 'Thomas Bühler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #46dfbfc589db4b20a5d1506cf13beaf5) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: 3 (14)
+## Electoral district: 3 (15)
 
-### Sitting member, but no Wikidata item could be found (14)
+### Sitting member, but no Wikidata item could be found (15)
 
 - **Beat Oberholzer** (#b7c4485214b1474e8d56be062337e766) — 'Beat Oberholzer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b7c4485214b1474e8d56be062337e766) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Daria Perez Sanchez-Di Concilio** (#2bb525e0f77d4799aee71864a35737b4) — 'Daria Perez Sanchez-Di Concilio' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2bb525e0f77d4799aee71864a35737b4) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -111,6 +111,7 @@ Generated: 2026-08-18 20:30 UTC
 - **Marisa Kappeler-Schudel** (#f001aea011ef400f8794350121275505) — 'Marisa Kappeler-Schudel' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #f001aea011ef400f8794350121275505) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Marita Verbali** (#efc4a468559e47db9735f4c59cb81fe7) — 'Marita Verbali' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #efc4a468559e47db9735f4c59cb81fe7) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Markus Haselbach** (#a9247c52824e4451bf1231509d624c4f) — 'Markus Haselbach' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a9247c52824e4451bf1231509d624c4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **Niyazi Erdem** (#31730630a4df4a36a9de4eb3c0c69189) — 'Niyazi Erdem' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #31730630a4df4a36a9de4eb3c0c69189) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Rahel Habegger** (#da1bdf24d25946f790fb8ca5f98674c1) — 'Rahel Habegger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Reis Luzhnica** (#e014691eb8064635bca46835e6d0a70d) — 'Reis Luzhnica' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e014691eb8064635bca46835e6d0a70d) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sarah Dähler** (#391d0acf00b04586bfc304759c9c684b) — 'Sarah Dähler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #391d0acf00b04586bfc304759c9c684b) but no Wikidata item was found, by P14527 or by name. They may need a new item.

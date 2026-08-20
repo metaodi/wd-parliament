@@ -1,17 +1,17 @@
 {
-  "generated": "2026-08-18 20:30 UTC",
-  "total_suggestions": 132,
-  "total_members": 125,
+  "generated": "2026-08-20 07:14 UTC",
+  "total_suggestions": 133,
+  "total_members": 126,
   "quickstatements": 0,
   "bodies": [
     {
       "council": "GR",
       "label": "Gemeinderat der Stadt Zürich",
       "position_qid": "Q111219780",
-      "member_count": 125,
+      "member_count": 126,
       "matched_by_identifier": 0,
       "matched_by_name": 3,
-      "unmatched": 122,
+      "unmatched": 123,
       "wikidata_open": 4,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 0.0,
@@ -1469,6 +1469,23 @@
         {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
+          "member": "Niyazi Erdem",
+          "person_qid": null,
+          "person_number": "31730630a4df4a36a9de4eb3c0c69189",
+          "qid_source": null,
+          "constituency": "3",
+          "parl_group": null,
+          "detail": "'Niyazi Erdem' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #31730630a4df4a36a9de4eb3c0c69189) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": ""
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
           "member": "Oliver Heimgartner",
           "person_qid": null,
           "person_number": "ed05a60019744a4c86a8735095073dcb",
@@ -1593,7 +1610,7 @@
           "person_number": "da1bdf24d25946f790fb8ca5f98674c1",
           "qid_source": null,
           "constituency": "3",
-          "parl_group": "SP",
+          "parl_group": null,
           "detail": "'Rahel Habegger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q111219780"
