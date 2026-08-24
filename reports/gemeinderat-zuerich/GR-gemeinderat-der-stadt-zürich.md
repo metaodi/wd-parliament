@@ -1,21 +1,21 @@
 # Gemeinderat der Stadt Zürich — Wikidata TODO
 
-Generated: 2026-08-20 08:21 UTC
+Generated: 2026-08-24 06:18 UTC
 
 - Position item: [Q111219780](https://www.wikidata.org/wiki/Q111219780)
-- Sitting members (the city of Zürich's Gever): 126
+- Sitting members (the city of Zürich's Gever): 125
 - Matched by P14527: 0 (0.0%)
-- Matched by name + birth date: 3
+- Matched by name + birth date: 2
 - Not matched at all: 123
 - Open memberships on Wikidata: 4
-- Suggested edits: 133
+- Suggested edits: 131
 
 ## By kind
 
-- Sitting member, but no position held (P39) statement: **3**
+- Sitting member, but no position held (P39) statement: **2**
 - Recorded as sitting, but the member has left: **4**
 - Sitting member, but no Wikidata item could be found: **123**
-- Missing the parliament's other identifier — value to be looked up: **3**
+- Missing the parliament's other identifier — value to be looked up: **2**
 
 ## Electoral district: 1 und 2 (12)
 
@@ -34,18 +34,11 @@ Generated: 2026-08-20 08:21 UTC
 - **Sebastian Zopfi** ([#09610efe1120458e9f875eb411d6395d](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=09610efe1120458e9f875eb411d6395d)) — 'Sebastian Zopfi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #09610efe1120458e9f875eb411d6395d) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sibylle Kauer** ([#983a3a067a634c05bd99d51de37e1a21](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=983a3a067a634c05bd99d51de37e1a21)) — 'Sibylle Kauer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #983a3a067a634c05bd99d51de37e1a21) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: 10 (13)
+## Electoral district: 10 (12)
 
-### Sitting member, but no position held (P39) statement (1)
+### Sitting member, but no Wikidata item could be found (12)
 
-- **[Andreas Egli](https://www.wikidata.org/wiki/Q131672141)** ([#98b1a5aeeffc4678ae3f246fd1575d65](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65)) ⚠️ — Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2014-05-07. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
-
-### Missing the parliament's other identifier — value to be looked up (1)
-
-- **[Andreas Egli](https://www.wikidata.org/wiki/Q131672141)** ([#98b1a5aeeffc4678ae3f246fd1575d65](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
-
-### Sitting member, but no Wikidata item could be found (11)
-
+- **Andreas Egli** ([#98b1a5aeeffc4678ae3f246fd1575d65](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65)) — 'Andreas Egli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #98b1a5aeeffc4678ae3f246fd1575d65) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Florian Utz** ([#059f0a1c6e0643188105bbd8fc26a321](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=059f0a1c6e0643188105bbd8fc26a321)) — 'Florian Utz' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #059f0a1c6e0643188105bbd8fc26a321) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Johann Widmer** ([#aa4cedb707d94811a7c7f1ed8c9773ca](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aa4cedb707d94811a7c7f1ed8c9773ca)) — 'Johann Widmer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa4cedb707d94811a7c7f1ed8c9773ca) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Leonora Seiler** ([#5ef16289476643e9a2a7ee234f58714a](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=5ef16289476643e9a2a7ee234f58714a)) — 'Leonora Seiler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #5ef16289476643e9a2a7ee234f58714a) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -99,9 +92,9 @@ Generated: 2026-08-20 08:21 UTC
 - **Patrick Tscherrig** ([#aa1521faea0e41fa972817ac2c57d2cf](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aa1521faea0e41fa972817ac2c57d2cf)) — 'Patrick Tscherrig' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa1521faea0e41fa972817ac2c57d2cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Thomas Bühler** ([#46dfbfc589db4b20a5d1506cf13beaf5](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=46dfbfc589db4b20a5d1506cf13beaf5)) — 'Thomas Bühler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #46dfbfc589db4b20a5d1506cf13beaf5) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
-## Electoral district: 3 (15)
+## Electoral district: 3 (14)
 
-### Sitting member, but no Wikidata item could be found (15)
+### Sitting member, but no Wikidata item could be found (14)
 
 - **Beat Oberholzer** ([#b7c4485214b1474e8d56be062337e766](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b7c4485214b1474e8d56be062337e766)) — 'Beat Oberholzer' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b7c4485214b1474e8d56be062337e766) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Daria Perez Sanchez-Di Concilio** ([#2bb525e0f77d4799aee71864a35737b4](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2bb525e0f77d4799aee71864a35737b4)) — 'Daria Perez Sanchez-Di Concilio' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2bb525e0f77d4799aee71864a35737b4) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -112,7 +105,6 @@ Generated: 2026-08-20 08:21 UTC
 - **Marita Verbali** ([#efc4a468559e47db9735f4c59cb81fe7](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=efc4a468559e47db9735f4c59cb81fe7)) — 'Marita Verbali' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #efc4a468559e47db9735f4c59cb81fe7) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Markus Haselbach** ([#a9247c52824e4451bf1231509d624c4f](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a9247c52824e4451bf1231509d624c4f)) — 'Markus Haselbach' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a9247c52824e4451bf1231509d624c4f) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Niyazi Erdem** ([#31730630a4df4a36a9de4eb3c0c69189](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=31730630a4df4a36a9de4eb3c0c69189)) — 'Niyazi Erdem' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #31730630a4df4a36a9de4eb3c0c69189) but no Wikidata item was found, by P14527 or by name. They may need a new item.
-- **Rahel Habegger** ([#da1bdf24d25946f790fb8ca5f98674c1](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=da1bdf24d25946f790fb8ca5f98674c1)) — 'Rahel Habegger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Reis Luzhnica** ([#e014691eb8064635bca46835e6d0a70d](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e014691eb8064635bca46835e6d0a70d)) — 'Reis Luzhnica' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e014691eb8064635bca46835e6d0a70d) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sarah Dähler** ([#391d0acf00b04586bfc304759c9c684b](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=391d0acf00b04586bfc304759c9c684b)) — 'Sarah Dähler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #391d0acf00b04586bfc304759c9c684b) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Sophie Blaser** ([#79eddcbfe0ae4c40b8a021713c32a591](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=79eddcbfe0ae4c40b8a021713c32a591)) — 'Sophie Blaser' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #79eddcbfe0ae4c40b8a021713c32a591) but no Wikidata item was found, by P14527 or by name. They may need a new item.

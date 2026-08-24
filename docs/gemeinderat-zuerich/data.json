@@ -1,47 +1,22 @@
 {
-  "generated": "2026-08-20 08:21 UTC",
-  "total_suggestions": 133,
-  "total_members": 126,
+  "generated": "2026-08-24 06:18 UTC",
+  "total_suggestions": 131,
+  "total_members": 125,
   "quickstatements": 0,
   "bodies": [
     {
       "council": "GR",
       "label": "Gemeinderat der Stadt Zürich",
       "position_qid": "Q111219780",
-      "member_count": 126,
+      "member_count": 125,
       "matched_by_identifier": 0,
-      "matched_by_name": 3,
+      "matched_by_name": 2,
       "unmatched": 123,
       "wikidata_open": 4,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 0.0,
       "error": null,
       "suggestions": [
-        {
-          "kind": "ADD_MEMBERSHIP",
-          "priority": 2,
-          "member": "Andreas Egli",
-          "person_qid": "Q131672141",
-          "person_number": "98b1a5aeeffc4678ae3f246fd1575d65",
-          "qid_source": "name",
-          "constituency": "10",
-          "parl_group": "FDP",
-          "detail": "Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2014-05-07. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780",
-            "item": "https://www.wikidata.org/wiki/Q131672141"
-          },
-          "payload": {
-            "position": "Q111219780",
-            "start": "2014-05-07",
-            "end": null,
-            "district": "Q456175",
-            "group": null,
-            "terms": [],
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65",
-            "identifier_unverified": true
-          }
-        },
         {
           "kind": "ADD_MEMBERSHIP",
           "priority": 2,
@@ -235,24 +210,20 @@
           }
         },
         {
-          "kind": "MISSING_IDENTIFIER",
+          "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
           "member": "Andreas Egli",
-          "person_qid": "Q131672141",
+          "person_qid": null,
           "person_number": "98b1a5aeeffc4678ae3f246fd1575d65",
-          "qid_source": "name",
+          "qid_source": null,
           "constituency": "10",
           "parl_group": "FDP",
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "detail": "'Andreas Egli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #98b1a5aeeffc4678ae3f246fd1575d65) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
           "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780",
-            "item": "https://www.wikidata.org/wiki/Q131672141",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
+            "position": "https://www.wikidata.org/wiki/Q111219780"
           },
           "payload": {
-            "property": "P14527",
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65",
-            "identifier_unverified": true
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=98b1a5aeeffc4678ae3f246fd1575d65"
           }
         },
         {
@@ -1474,7 +1445,7 @@
           "person_number": "31730630a4df4a36a9de4eb3c0c69189",
           "qid_source": null,
           "constituency": "3",
-          "parl_group": null,
+          "parl_group": "SP",
           "detail": "'Niyazi Erdem' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #31730630a4df4a36a9de4eb3c0c69189) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q111219780"
@@ -1600,23 +1571,6 @@
           },
           "payload": {
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Rahel Habegger",
-          "person_qid": null,
-          "person_number": "da1bdf24d25946f790fb8ca5f98674c1",
-          "qid_source": null,
-          "constituency": "3",
-          "parl_group": null,
-          "detail": "'Rahel Habegger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #da1bdf24d25946f790fb8ca5f98674c1) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780"
-          },
-          "payload": {
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=da1bdf24d25946f790fb8ca5f98674c1"
           }
         },
         {
