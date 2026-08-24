@@ -1,6 +1,6 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-08-17 06:55 UTC
+Generated: 2026-08-24 06:17 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
@@ -158,8 +158,8 @@ Generated: 2026-08-17 06:55 UTC
 ### One Wikidata item claimed by several source records (3)
 
 - **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q2643719 (2 source records)](https://www.wikidata.org/wiki/Q2643719)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2643719: #19304, #19312. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q7 (2 source records)](https://www.wikidata.org/wiki/Q7)** — parlament.ch has 2 person records pointing at the same Wikidata item Q7: #20481, #21150. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q96363161 (2 source records)](https://www.wikidata.org/wiki/Q96363161)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96363161: #19489, #19533. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q96489516 (2 source records)](https://www.wikidata.org/wiki/Q96489516)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96489516: #21946, #21953. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 
 ### Recorded as sitting, but the member has left (280)
 
