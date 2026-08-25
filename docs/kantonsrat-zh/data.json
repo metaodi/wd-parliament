@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-24 06:17 UTC",
-  "total_suggestions": 476,
+  "generated": "2026-08-25 08:57 UTC",
+  "total_suggestions": 471,
   "total_members": 180,
-  "quickstatements": 105,
+  "quickstatements": 100,
   "bodies": [
     {
       "council": "KR",
@@ -3848,28 +3848,6 @@
         {
           "kind": "ADD_START_DATE",
           "priority": 3,
-          "member": "Sarah Fuchs",
-          "person_qid": "Q131946048",
-          "person_number": 22473,
-          "qid_source": "identifier",
-          "constituency": "10. Wahlkreis (Meilen)",
-          "parl_group": "FDP",
-          "detail": "Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131946048"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2023-05-08",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131946048-131ABE71-4E86-4BF8-B3E1-E880B11B514E",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22473"
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
           "member": "Sibylle Jüttner",
           "person_qid": "Q131939457",
           "person_number": 23306,
@@ -6268,29 +6246,6 @@
         {
           "kind": "ADD_QUALIFIER",
           "priority": 4,
-          "member": "Sarah Fuchs",
-          "person_qid": "Q131946048",
-          "person_number": 22473,
-          "qid_source": "identifier",
-          "constituency": "10. Wahlkreis (Meilen)",
-          "parl_group": "FDP",
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131946048"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q141045943",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131946048-131ABE71-4E86-4BF8-B3E1-E880B11B514E",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22473"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
           "member": "Sibylle Jüttner",
           "person_qid": "Q131939457",
           "person_number": 23306,
@@ -6360,29 +6315,6 @@
         {
           "kind": "ADD_QUALIFIER",
           "priority": 4,
-          "member": "Sonja Rueff-Frenkel",
-          "person_qid": "Q110402390",
-          "person_number": 21984,
-          "qid_source": "identifier",
-          "constituency": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": null,
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q110402390"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q117787833",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q110402390-60c2df8c-4f10-8aa4-3a60-c5571fab1cbc",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21984"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
           "member": "Stefan Schmid",
           "person_qid": "Q131948084",
           "person_number": 22502,
@@ -6401,29 +6333,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131948084-99126C94-4F00-40B5-BFC7-7194A881A80B",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22502"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
-          "member": "Stephan Hegetschweiler",
-          "person_qid": "Q131940639",
-          "person_number": 22678,
-          "qid_source": "identifier",
-          "constituency": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": "GLP",
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131940639"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q117787833",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940639-552DCCF2-F7B7-4449-A764-40F2AB94B4EA",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22678"
           }
         },
         {
@@ -6723,29 +6632,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940588-85F7A60E-7722-44EA-A041-29663592CB0B",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
-          "member": "Ueli Bamert",
-          "person_qid": "Q131937829",
-          "person_number": 22505,
-          "qid_source": "identifier",
-          "constituency": "1. Wahlkreis (Zürich 1+2)",
-          "parl_group": "SVP",
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 1. Wahlkreis (Zürich 1+2) (Q117787833).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131937829"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q117787833",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q131937829-70ff3bbf-4413-564d-3abb-b5b3cd3dca49",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22505"
           }
         },
         {
