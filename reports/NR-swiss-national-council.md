@@ -1,35 +1,34 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-08-24 06:17 UTC
+Generated: 2026-08-31 06:28 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
 - Matched by P1307: 200 (100.0%)
 - Matched by name + birth date: 0
 - Not matched at all: 0
-- Open memberships on Wikidata: 1897
+- Open memberships on Wikidata: 1896
 - Suggested edits: 1877
 
 ## By kind
 
-- One Wikidata item claimed by several source records: **5**
-- Recorded as sitting, but the member has left: **1699**
+- One Wikidata item claimed by several source records: **6**
+- Recorded as sitting, but the member has left: **1700**
 - Missing the parliament's other identifier — value to be looked up: **4**
-- Personal data the source publishes and Wikidata does not record: **169**
+- Personal data the source publishes and Wikidata does not record: **167**
 
-## Canton: AG (20)
+## Canton: AG (19)
 
 ### Missing the parliament's other identifier — value to be looked up (2)
 
 - **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Barbara Portmann](https://www.wikidata.org/wiki/Q138767069)** ([#17101](https://www.parlament.ch/de/biografie/wd/17101)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one parlament.ch is joined on (P1307), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-### Personal data the source publishes and Wikidata does not record (18)
+### Personal data the source publishes and Wikidata does not record (17)
 
 - **[Alois Huber](https://www.wikidata.org/wiki/Q86914282)** ([#4317](https://www.parlament.ch/de/biografie/wd/4317)) — No 'place of origin' (P1321) statement, but parlament.ch gives Boswil (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Alois Huber](https://www.wikidata.org/wiki/Q86914282)** ([#4317](https://www.parlament.ch/de/biografie/wd/4317)) — No 'number of children' (P1971) statement, but parlament.ch gives 5. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Andreas Glarner](https://www.wikidata.org/wiki/Q497462)** ([#4161](https://www.parlament.ch/de/biografie/wd/4161)) — No 'place of origin' (P1321) statement, but parlament.ch gives Diesbach GL (GL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
-- **[Andreas Glarner](https://www.wikidata.org/wiki/Q497462)** ([#4161](https://www.parlament.ch/de/biografie/wd/4161)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'place of birth' (P19) statement, but parlament.ch gives Leuggern (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'place of origin' (P1321) statement, but parlament.ch gives Würenlingen (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Andreas Meier](https://www.wikidata.org/wiki/Q116963195)** ([#4333](https://www.parlament.ch/de/biografie/wd/4333)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
@@ -227,14 +226,17 @@ Generated: 2026-08-24 06:17 UTC
 
 ## Canton: TI (8)
 
-### Personal data the source publishes and Wikidata does not record (8)
+### Recorded as sitting, but the member has left (1)
+
+- **[Piero Marchesi](https://www.wikidata.org/wiki/Q77073233)** ([#4311](https://www.parlament.ch/de/biografie/wd/4311)) — Add an end date (P582) of 2026-09-24; the membership is open on Wikidata but parlament.ch gives a leaving date.
+
+### Personal data the source publishes and Wikidata does not record (7)
 
 - **[Bruno Storni](https://www.wikidata.org/wiki/Q77073229)** ([#4312](https://www.parlament.ch/de/biografie/wd/4312)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Giorgio Fonio](https://www.wikidata.org/wiki/Q123939691)** ([#11505](https://www.parlament.ch/de/biografie/wd/11505)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Greta Gysin](https://www.wikidata.org/wiki/Q72112238)** ([#4268](https://www.parlament.ch/de/biografie/wd/4268)) — No 'place of origin' (P1321) statement, but parlament.ch gives Oltingen (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Greta Gysin](https://www.wikidata.org/wiki/Q72112238)** ([#4268](https://www.parlament.ch/de/biografie/wd/4268)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Paolo Pamini](https://www.wikidata.org/wiki/Q123485141)** ([#10842](https://www.parlament.ch/de/biografie/wd/10842)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
-- **[Piero Marchesi](https://www.wikidata.org/wiki/Q77073233)** ([#4311](https://www.parlament.ch/de/biografie/wd/4311)) — No 'number of children' (P1971) statement, but parlament.ch gives 1. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Simone Gianini](https://www.wikidata.org/wiki/Q123917063)** ([#10807](https://www.parlament.ch/de/biografie/wd/10807)) — No 'place of birth' (P19) statement, but parlament.ch gives Faido (TI) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Simone Gianini](https://www.wikidata.org/wiki/Q123917063)** ([#10807](https://www.parlament.ch/de/biografie/wd/10807)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
@@ -319,15 +321,16 @@ Generated: 2026-08-24 06:17 UTC
 - **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'place of origin' (P1321) statement, but parlament.ch gives Wetzikon (ZH), Bubendorf (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
-## Canton: Other (1704)
+## Canton: Other (1705)
 
-### One Wikidata item claimed by several source records (5)
+### One Wikidata item claimed by several source records (6)
 
 - **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q78062470 (2 source records)](https://www.wikidata.org/wiki/Q78062470)** — parlament.ch has 2 person records pointing at the same Wikidata item Q78062470: #16932, #16942. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q78066603 (2 source records)](https://www.wikidata.org/wiki/Q78066603)** — parlament.ch has 2 person records pointing at the same Wikidata item Q78066603: #20314, #20336. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q78072610 (2 source records)](https://www.wikidata.org/wiki/Q78072610)** — parlament.ch has 2 person records pointing at the same Wikidata item Q78072610: #16258, #20952. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q96489516 (2 source records)](https://www.wikidata.org/wiki/Q96489516)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96489516: #21946, #21953. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q78070407 (2 source records)](https://www.wikidata.org/wiki/Q78070407)** — parlament.ch has 2 person records pointing at the same Wikidata item Q78070407: #20712, #20719. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q96281600 (2 source records)](https://www.wikidata.org/wiki/Q96281600)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96281600: #19326, #19331. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q96360782 (2 source records)](https://www.wikidata.org/wiki/Q96360782)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96360782: #20210, #20267. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q99305175 (2 source records)](https://www.wikidata.org/wiki/Q99305175)** — parlament.ch has 2 person records pointing at the same Wikidata item Q99305175: #21156, #21235. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q99305375 (2 source records)](https://www.wikidata.org/wiki/Q99305375)** — parlament.ch has 2 person records pointing at the same Wikidata item Q99305375: #20002, #20017. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 
 ### Recorded as sitting, but the member has left (1699)
 
