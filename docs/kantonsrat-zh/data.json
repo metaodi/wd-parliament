@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-25 08:57 UTC",
-  "total_suggestions": 471,
+  "generated": "2026-08-31 06:28 UTC",
+  "total_suggestions": 469,
   "total_members": 180,
-  "quickstatements": 100,
+  "quickstatements": 98,
   "bodies": [
     {
       "council": "KR",
@@ -2880,28 +2880,6 @@
         {
           "kind": "ADD_START_DATE",
           "priority": 3,
-          "member": "Domenik Ledergerber",
-          "person_qid": "Q131940583",
-          "person_number": 22496,
-          "qid_source": "identifier",
-          "constituency": "10. Wahlkreis (Meilen)",
-          "parl_group": null,
-          "detail": "Add a start date (P580) of 2018-10-22; the membership is open but undated, which makes 'who sits today' queries unreliable.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131940583"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2018-10-22",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940583-3043A475-F427-4AFE-B374-7F133B5E19A7",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22496"
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
           "member": "Doris Meier",
           "person_qid": "Q131946074",
           "person_number": 22043,
@@ -3105,7 +3083,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add a start date (P580) of 2014-08-18; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -4933,29 +4911,6 @@
         {
           "kind": "ADD_QUALIFIER",
           "priority": 4,
-          "member": "Domenik Ledergerber",
-          "person_qid": "Q131940583",
-          "person_number": 22496,
-          "qid_source": "identifier",
-          "constituency": "10. Wahlkreis (Meilen)",
-          "parl_group": null,
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131940583"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q141045943",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940583-3043A475-F427-4AFE-B374-7F133B5E19A7",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22496"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
           "member": "Doris Meier",
           "person_qid": "Q131946074",
           "person_number": 22043,
@@ -5215,7 +5170,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -7994,7 +7949,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",

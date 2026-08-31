@@ -1,6 +1,6 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-08-25 08:57 UTC
+Generated: 2026-08-31 06:28 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (the Staatsarchiv's KR-Daten register): 180
@@ -8,7 +8,7 @@ Generated: 2026-08-25 08:57 UTC
 - Matched by name + birth date: 60
 - Not matched at all: 53
 - Open memberships on Wikidata: 167
-- Suggested edits: 471
+- Suggested edits: 469
 
 ## By kind
 
@@ -16,8 +16,8 @@ Generated: 2026-08-25 08:57 UTC
 - Sitting member, but no position held (P39) statement: **15**
 - Recorded as sitting, but the member has left: **55**
 - Start date (P580) disagrees with source: **1**
-- Open membership without a start date (P580): **87**
-- Membership missing an electoral district (P768) or group (P4100): **108**
+- Open membership without a start date (P580): **86**
+- Membership missing an electoral district (P768) or group (P4100): **107**
 - Missing the parliament's other identifier — value to be looked up: **106**
 - Sitting member, but no Wikidata item could be found: **53**
 - Personal data the source publishes and Wikidata does not record: **1**
@@ -29,28 +29,26 @@ Generated: 2026-08-25 08:57 UTC
 - **Marion Schmid** ([#22970](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22970)) — 'Marion Schmid' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22970) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Sabine Arnold** ([#22979](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22979)) — 'Sabine Arnold' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #22979) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 10. Wahlkreis (Meilen) (28)
+## Electoral district: 10. Wahlkreis (Meilen) (26)
 
 ### Sitting member, but no position held (P39) statement (1)
 
 - **[Thomas Forrer](https://www.wikidata.org/wiki/Q116003298)** ([#22353](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22353)) — Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2016-10-24.
 
-### Open membership without a start date (P580) (8)
+### Open membership without a start date (P580) (7)
 
 - **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#23336](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23336)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Corinne Hoss-Blatter](https://www.wikidata.org/wiki/Q131940632)** ([#23303](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23303)) ⚠️ — Add a start date (P580) of 2020-02-24; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
-- **[Domenik Ledergerber](https://www.wikidata.org/wiki/Q131940583)** ([#22496](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22496)) — Add a start date (P580) of 2018-10-22; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Marion Matter](https://www.wikidata.org/wiki/Q131946071)** ([#22351](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22351)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Marzena Kopp](https://www.wikidata.org/wiki/Q131940591)** ([#21502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21502)) — Add a start date (P580) of 2022-04-25; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Reto Agosti](https://www.wikidata.org/wiki/Q125949007)** ([#22350](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22350)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Thomas Wirth](https://www.wikidata.org/wiki/Q131948099)** ([#23227](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23227)) — Add a start date (P580) of 2007-05-21; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Tumasch Mischol](https://www.wikidata.org/wiki/Q131940588)** ([#22467](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22467)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Membership missing an electoral district (P768) or group (P4100) (9)
+### Membership missing an electoral district (P768) or group (P4100) (8)
 
 - **[Claudia Hollenstein](https://www.wikidata.org/wiki/Q131940610)** ([#23336](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23336)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Corinne Hoss-Blatter](https://www.wikidata.org/wiki/Q131940632)** ([#23303](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23303)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
-- **[Domenik Ledergerber](https://www.wikidata.org/wiki/Q131940583)** ([#22496](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22496)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
 - **[Marion Matter](https://www.wikidata.org/wiki/Q131946071)** ([#22351](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22351)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
 - **[Marzena Kopp](https://www.wikidata.org/wiki/Q131940591)** ([#21502](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21502)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
 - **[Rafael Mörgeli](https://www.wikidata.org/wiki/Q131938303)** ([#21711](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21711)) — Add the missing qualifier(s): electoral district (P768) → 10. Wahlkreis (Meilen) (Q141045943).
