@@ -1,20 +1,20 @@
 {
-  "generated": "2026-08-31 06:28 UTC",
+  "generated": "2026-09-07 06:28 UTC",
   "total_suggestions": 469,
   "total_members": 180,
-  "quickstatements": 98,
+  "quickstatements": 97,
   "bodies": [
     {
       "council": "KR",
       "label": "Cantonal Council of Zürich",
       "position_qid": "Q21518678",
       "member_count": 180,
-      "matched_by_identifier": 67,
+      "matched_by_identifier": 66,
       "matched_by_name": 60,
-      "unmatched": 53,
+      "unmatched": 54,
       "wikidata_open": 167,
       "identifier_mismatches": 0,
-      "identifier_hit_rate": 37.2,
+      "identifier_hit_rate": 36.7,
       "error": null,
       "suggestions": [
         {
@@ -503,6 +503,27 @@
         {
           "kind": "ADD_IDENTIFIER",
           "priority": 1,
+          "member": "Martin Steiner",
+          "person_qid": "Q94848332",
+          "person_number": 23472,
+          "qid_source": "name",
+          "constituency": "7. Wahlkreis (Dietikon)",
+          "parl_group": "SP",
+          "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23472'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q94848332"
+          },
+          "payload": {
+            "property": "P13468",
+            "parliament_id": "23472",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23472",
+            "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23472"
+          }
+        },
+        {
+          "kind": "ADD_IDENTIFIER",
+          "priority": 1,
           "member": "Michael Biber",
           "person_qid": "Q131942957",
           "person_number": 22172,
@@ -750,27 +771,6 @@
             "parliament_id": "21704",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21704",
             "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21704"
-          }
-        },
-        {
-          "kind": "ADD_IDENTIFIER",
-          "priority": 1,
-          "member": "Rosmarie Joss",
-          "person_qid": "Q131939444",
-          "person_number": 18654,
-          "qid_source": "name",
-          "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": null,
-          "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '18654'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939444"
-          },
-          "payload": {
-            "property": "P13468",
-            "parliament_id": "18654",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654",
-            "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654"
           }
         },
         {
@@ -1626,6 +1626,30 @@
           }
         },
         {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Martin Steiner",
+          "person_qid": "Q94848332",
+          "person_number": 23472,
+          "qid_source": "name",
+          "constituency": "7. Wahlkreis (Dietikon)",
+          "parl_group": "SP",
+          "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2026-05-04. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q94848332"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2026-05-04",
+            "end": null,
+            "district": "Q141045570",
+            "group": null,
+            "terms": [],
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23472"
+          }
+        },
+        {
           "kind": "ADD_END_DATE",
           "priority": 2,
           "member": "Max Gustav Heinrich Wolff",
@@ -2276,6 +2300,24 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
+          "member": "Rosmarie Joss",
+          "person_qid": "Q131939444",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q131939444",
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/q131939444-85c387a9-4d6a-6bfd-29dc-38bc3dd50a74"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
           "member": "Samuel Zbinden",
           "person_qid": "Q65070742",
           "person_number": null,
@@ -2345,6 +2387,26 @@
             "statement_id": "http://www.wikidata.org/entity/statement/q2336270-c74dd236-4654-d970-983f-e7d2f8467de2",
             "parliament_id": "18676",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18676"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Theres Agosti Monn",
+          "person_qid": "Q131452636",
+          "person_number": 18357,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q131452636",
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "statement_id": "http://www.wikidata.org/entity/statement/q131452636-6954037f-4bd4-d0e7-1cca-729c12347c00",
+            "parliament_id": "18357",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18357"
           }
         },
         {
@@ -3083,7 +3145,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "Die Mitte",
+          "parl_group": "CVP",
           "detail": "Add a start date (P580) of 2014-08-18; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -3733,28 +3795,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940645-B4A28B30-0A64-417F-B4BB-0FD94654373B",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22233"
-          }
-        },
-        {
-          "kind": "ADD_START_DATE",
-          "priority": 3,
-          "member": "Rosmarie Joss",
-          "person_qid": "Q131939444",
-          "person_number": 18654,
-          "qid_source": "name",
-          "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": null,
-          "detail": "Add a start date (P580) of 2010-05-17; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939444"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "start": "2010-05-17",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q131939444-85c387a9-4d6a-6bfd-29dc-38bc3dd50a74",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654"
           }
         },
         {
@@ -5170,7 +5210,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "Die Mitte",
+          "parl_group": "CVP",
           "detail": "Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -6086,29 +6126,6 @@
         {
           "kind": "ADD_QUALIFIER",
           "priority": 4,
-          "member": "Rosmarie Joss",
-          "person_qid": "Q131939444",
-          "person_number": 18654,
-          "qid_source": "name",
-          "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": null,
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939444"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q141045570",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q131939444-85c387a9-4d6a-6bfd-29dc-38bc3dd50a74",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
           "member": "Ruth Ackermann",
           "person_qid": "Q131452497",
           "person_number": 22145,
@@ -6403,29 +6420,6 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940568-DCDD9C60-117B-4E2B-8B1D-94342DD288CE",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22544"
-          }
-        },
-        {
-          "kind": "ADD_QUALIFIER",
-          "priority": 4,
-          "member": "Theres Agosti Monn",
-          "person_qid": "Q131452636",
-          "person_number": 18357,
-          "qid_source": "identifier",
-          "constituency": "15. Wahlkreis (Winterthur Land)",
-          "parl_group": null,
-          "detail": "Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131452636"
-          },
-          "payload": {
-            "position": "Q21518678",
-            "district": "Q141046014",
-            "group": null,
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/q131452636-6954037f-4bd4-d0e7-1cca-729c12347c00",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18357"
           }
         },
         {
@@ -7875,16 +7869,16 @@
           "priority": 5,
           "member": "Jean-Daniel Strub",
           "person_qid": null,
-          "person_number": 23370,
+          "person_number": 23470,
           "qid_source": null,
           "constituency": "5. Wahlkreis (Zürich 7+8)",
           "parl_group": "SP",
-          "detail": "'Jean-Daniel Strub' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23370) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
+          "detail": "'Jean-Daniel Strub' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23470) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678"
           },
           "payload": {
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23370"
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23470"
           }
         },
         {
@@ -7949,7 +7943,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "Die Mitte",
+          "parl_group": "CVP",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -8392,6 +8386,26 @@
           "payload": {
             "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284"
+          }
+        },
+        {
+          "kind": "MISSING_IDENTIFIER",
+          "priority": 5,
+          "member": "Martin Steiner",
+          "person_qid": "Q94848332",
+          "person_number": 23472,
+          "qid_source": "name",
+          "constituency": "7. Wahlkreis (Dietikon)",
+          "parl_group": "SP",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q94848332",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
+          },
+          "payload": {
+            "property": "P14527",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23472"
           }
         },
         {
@@ -9061,26 +9075,6 @@
         {
           "kind": "MISSING_IDENTIFIER",
           "priority": 5,
-          "member": "Rosmarie Joss",
-          "person_qid": "Q131939444",
-          "person_number": 18654,
-          "qid_source": "name",
-          "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": null,
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131939444",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18654"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
           "member": "Ruth Ackermann",
           "person_qid": "Q131452497",
           "person_number": 22145,
@@ -9324,6 +9318,23 @@
           }
         },
         {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Stephanie Hugentobler",
+          "person_qid": null,
+          "person_number": 23474,
+          "qid_source": null,
+          "constituency": "15. Wahlkreis (Winterthur Land)",
+          "parl_group": "SP",
+          "detail": "'Stephanie Hugentobler' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23474) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678"
+          },
+          "payload": {
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23474"
+          }
+        },
+        {
           "kind": "MISSING_IDENTIFIER",
           "priority": 5,
           "member": "Susanna Lisibach",
@@ -9401,26 +9412,6 @@
           "payload": {
             "property": "P14527",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22544"
-          }
-        },
-        {
-          "kind": "MISSING_IDENTIFIER",
-          "priority": 5,
-          "member": "Theres Agosti Monn",
-          "person_qid": "Q131452636",
-          "person_number": 18357,
-          "qid_source": "identifier",
-          "constituency": "15. Wahlkreis (Winterthur Land)",
-          "parl_group": null,
-          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678",
-            "item": "https://www.wikidata.org/wiki/Q131452636",
-            "property": "https://www.wikidata.org/wiki/Property:P14527"
-          },
-          "payload": {
-            "property": "P14527",
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=18357"
           }
         },
         {
