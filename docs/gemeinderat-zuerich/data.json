@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-31 06:29 UTC",
+  "generated": "2026-09-07 06:29 UTC",
   "total_suggestions": 131,
   "total_members": 125,
   "quickstatements": 0,
@@ -1678,23 +1678,6 @@
         {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
-          "member": "Roland Hohmann",
-          "person_qid": null,
-          "person_number": "2c291aeaad2844c98a7655072e3b3a70",
-          "qid_source": null,
-          "constituency": "9",
-          "parl_group": "Grüne",
-          "detail": "'Roland Hohmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2c291aeaad2844c98a7655072e3b3a70) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780"
-          },
-          "payload": {
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2c291aeaad2844c98a7655072e3b3a70"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
           "member": "Roman Mörgeli",
           "person_qid": null,
           "person_number": "88e3f0b84e4e4efcbeda96758ead6151",
@@ -2204,6 +2187,23 @@
           },
           "payload": {
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a32b1d0de0e74bf9b14b33c4f5466ef2"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Véronique Wavre",
+          "person_qid": null,
+          "person_number": "89d21c451159471487c5683d263c68ea",
+          "qid_source": null,
+          "constituency": "9",
+          "parl_group": "Grüne",
+          "detail": "'Véronique Wavre' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #89d21c451159471487c5683d263c68ea) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=89d21c451159471487c5683d263c68ea"
           }
         },
         {

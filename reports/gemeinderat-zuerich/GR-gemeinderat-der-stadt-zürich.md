@@ -1,6 +1,6 @@
 # Gemeinderat der Stadt Zürich — Wikidata TODO
 
-Generated: 2026-08-31 06:29 UTC
+Generated: 2026-09-07 06:29 UTC
 
 - Position item: [Q111219780](https://www.wikidata.org/wiki/Q111219780)
 - Sitting members (the city of Zürich's Gever): 125
@@ -193,13 +193,13 @@ Generated: 2026-08-31 06:29 UTC
 - **Patrick Stählin** ([#e557c1958dbc40bcb893466ca3fd8d9b](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e557c1958dbc40bcb893466ca3fd8d9b)) — 'Patrick Stählin' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e557c1958dbc40bcb893466ca3fd8d9b) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Përparim Avdili** ([#b879282b6a0f443d8d7da03f3bd8e7e0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0)) — 'Përparim Avdili' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b879282b6a0f443d8d7da03f3bd8e7e0) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roger Bartholdi** ([#fa74cf092a004968b8accd2ac3ad55ce](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=fa74cf092a004968b8accd2ac3ad55ce)) — 'Roger Bartholdi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #fa74cf092a004968b8accd2ac3ad55ce) but no Wikidata item was found, by P14527 or by name. They may need a new item.
-- **Roland Hohmann** ([#2c291aeaad2844c98a7655072e3b3a70](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2c291aeaad2844c98a7655072e3b3a70)) — 'Roland Hohmann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2c291aeaad2844c98a7655072e3b3a70) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roman Mörgeli** ([#88e3f0b84e4e4efcbeda96758ead6151](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=88e3f0b84e4e4efcbeda96758ead6151)) — 'Roman Mörgeli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #88e3f0b84e4e4efcbeda96758ead6151) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Samuel Balsiger** ([#a6692d9d783c46ddb7179a408e03a6b0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a6692d9d783c46ddb7179a408e03a6b0)) — 'Samuel Balsiger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a6692d9d783c46ddb7179a408e03a6b0) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Selina Walgis** ([#1be1c1c1a28948638f483167837c08f4](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1be1c1c1a28948638f483167837c08f4)) — 'Selina Walgis' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1be1c1c1a28948638f483167837c08f4) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Simon Hatt** ([#a72c6522d5c84753b573cd88f73e5245](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a72c6522d5c84753b573cd88f73e5245)) — 'Simon Hatt' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a72c6522d5c84753b573cd88f73e5245) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Tanja Maag** ([#c8223578a62d4cadac429d5f22429c27](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=c8223578a62d4cadac429d5f22429c27)) — 'Tanja Maag' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #c8223578a62d4cadac429d5f22429c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Valentina Fazlija** ([#1e576dfb67584a638bae9da0a704da48](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1e576dfb67584a638bae9da0a704da48)) — 'Valentina Fazlija' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1e576dfb67584a638bae9da0a704da48) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+- **Véronique Wavre** ([#89d21c451159471487c5683d263c68ea](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=89d21c451159471487c5683d263c68ea)) — 'Véronique Wavre' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #89d21c451159471487c5683d263c68ea) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 
 ## Electoral district: Other (4)
 
