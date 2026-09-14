@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07 06:28 UTC",
+  "generated": "2026-09-14 06:29 UTC",
   "total_suggestions": 469,
   "total_members": 180,
   "quickstatements": 97,
@@ -1439,7 +1439,7 @@
           "person_number": 22100,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "FDP",
+          "parl_group": "GLP",
           "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2021-02-08.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -7775,7 +7775,7 @@
           "person_number": 22100,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "FDP",
+          "parl_group": "GLP",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
