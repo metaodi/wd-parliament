@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-14 06:29 UTC",
+  "generated": "2026-09-21 06:31 UTC",
   "total_suggestions": 469,
   "total_members": 180,
   "quickstatements": 97,
@@ -403,7 +403,7 @@
           "person_number": 23298,
           "qid_source": "name",
           "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23298'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -3101,7 +3101,7 @@
           "person_number": 23298,
           "qid_source": "name",
           "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add a start date (P580) of 2019-12-16; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -5141,7 +5141,7 @@
           "person_number": 23298,
           "qid_source": "name",
           "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add the missing qualifier(s): electoral district (P768) → 7. Wahlkreis (Dietikon) (Q141045570). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -7832,7 +7832,7 @@
           "person_number": 23298,
           "qid_source": "name",
           "constituency": "7. Wahlkreis (Dietikon)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
