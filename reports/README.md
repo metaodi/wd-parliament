@@ -1,6 +1,6 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-09-14 06:28 UTC
+Generated: 2026-09-21 06:29 UTC
 
 **2195 suggested edits** across **246 sitting members** in **2 chamber(s)**.
 
@@ -8,8 +8,8 @@ Generated: 2026-09-14 06:28 UTC
 
 | Chamber | Members | P1307 match | By name | Unmatched | Suggestions | Report |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| [Swiss National Council](https://www.wikidata.org/wiki/Q18510612) | 200 | 200 (100%) | 0 | 0 | 1875 | [details](NR-swiss-national-council.md) |
-| [Swiss Council of States](https://www.wikidata.org/wiki/Q18510613) | 46 | 46 (100%) | 0 | 0 | 320 | [details](SR-swiss-council-of-states.md) |
+| [Swiss National Council](https://www.wikidata.org/wiki/Q18510612) | 200 | 200 (100%) | 0 | 0 | 1876 | [details](NR-swiss-national-council.md) |
+| [Swiss Council of States](https://www.wikidata.org/wiki/Q18510613) | 46 | 46 (100%) | 0 | 0 | 319 | [details](SR-swiss-council-of-states.md) |
 
 ## Suggestions by kind
 

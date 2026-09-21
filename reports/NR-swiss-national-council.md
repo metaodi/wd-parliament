@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-09-14 06:28 UTC
+Generated: 2026-09-21 06:29 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,11 +8,11 @@ Generated: 2026-09-14 06:28 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 1896
-- Suggested edits: 1875
+- Suggested edits: 1876
 
 ## By kind
 
-- One Wikidata item claimed by several source records: **4**
+- One Wikidata item claimed by several source records: **5**
 - Recorded as sitting, but the member has left: **1700**
 - Missing the parliament's other identifier — value to be looked up: **4**
 - Personal data the source publishes and Wikidata does not record: **167**
@@ -120,7 +120,7 @@ Generated: 2026-09-14 06:28 UTC
 - **[Delphine Klopfenstein Broggini](https://www.wikidata.org/wiki/Q71792676)** ([#4272](https://www.parlament.ch/de/biografie/wd/4272)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Laurence Fehlmann Rielle](https://www.wikidata.org/wiki/Q21694713)** ([#4195](https://www.parlament.ch/de/biografie/wd/4195)) — No 'place of origin' (P1321) statement, but parlament.ch gives Genf (GE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Rudi Berli](https://www.wikidata.org/wiki/Q136540152)** ([#16109](https://www.parlament.ch/de/biografie/wd/16109)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
-- **[Simone de Montmollin](https://www.wikidata.org/wiki/Q71782088)** ([#4256](https://www.parlament.ch/de/biografie/wd/4256)) — No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE), Auvernier (Milvignes) (NE), Sigriswil (BE), Provence (VD), Montmollin (Val-de-Ruz) (NE), Dombresson (Val-de-Ruz) (NE), La Brévine (NE), Corcelles-Cormondrèche (Neuchâ (NE), Valangin (Neuchâtel) (NE), Neuchâtel (NE), La Chaux-de-Fonds (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
+- **[Simone de Montmollin](https://www.wikidata.org/wiki/Q71782088)** ([#4256](https://www.parlament.ch/de/biografie/wd/4256)) — No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE),Auvernier (Milvignes) (NE),Sigriswil (BE),Provence (VD),Montmollin (Val-de-Ruz) (NE),Dombresson (Val-de-Ruz) (NE),La Brévine (NE),Corcelles-Cormondrèche (Neuchâ (NE),Valangin (Neuchâtel) (NE),Neuchâtel (NE),La Chaux-de-Fonds (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 
 ## Canton: GL (2)
 
@@ -321,14 +321,15 @@ Generated: 2026-09-14 06:28 UTC
 - **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'place of origin' (P1321) statement, but parlament.ch gives Wetzikon (ZH), Bubendorf (BL). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Yvonne Bürgin](https://www.wikidata.org/wiki/Q47250749)** ([#10819](https://www.parlament.ch/de/biografie/wd/10819)) — No 'number of children' (P1971) statement, but parlament.ch gives 3. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
-## Canton: Other (1703)
+## Canton: Other (1704)
 
-### One Wikidata item claimed by several source records (4)
+### One Wikidata item claimed by several source records (5)
 
-- **[Q1613376 (2 source records)](https://www.wikidata.org/wiki/Q1613376)** — parlament.ch has 2 person records pointing at the same Wikidata item Q1613376: #20626, #20704. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q1668723 (2 source records)](https://www.wikidata.org/wiki/Q1668723)** — parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q20823509 (2 source records)](https://www.wikidata.org/wiki/Q20823509)** — parlament.ch has 2 person records pointing at the same Wikidata item Q20823509: #20690, #20694. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q1 (3 source records)](https://www.wikidata.org/wiki/Q1)** — parlament.ch has 3 person records pointing at the same Wikidata item Q1: #19893, #21224, #22078. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q1739209 (2 source records)](https://www.wikidata.org/wiki/Q1739209)** — parlament.ch has 2 person records pointing at the same Wikidata item Q1739209: #9522, #19100. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q18619998 (2 source records)](https://www.wikidata.org/wiki/Q18619998)** — parlament.ch has 2 person records pointing at the same Wikidata item Q18619998: #21145, #21152. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 - **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+- **[Q96262133 (2 source records)](https://www.wikidata.org/wiki/Q96262133)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96262133: #19022, #19026. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
 
 ### Recorded as sitting, but the member has left (1699)
 
