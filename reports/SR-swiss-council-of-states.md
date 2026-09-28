@@ -1,6 +1,6 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-09-21 06:29 UTC
+Generated: 2026-09-28 06:31 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
@@ -8,11 +8,10 @@ Generated: 2026-09-21 06:29 UTC
 - Matched by name + birth date: 0
 - Not matched at all: 0
 - Open memberships on Wikidata: 325
-- Suggested edits: 319
+- Suggested edits: 317
 
 ## By kind
 
-- One Wikidata item claimed by several source records: **2**
 - Recorded as sitting, but the member has left: **280**
 - Personal data the source publishes and Wikidata does not record: **37**
 
@@ -153,12 +152,7 @@ Generated: 2026-09-21 06:29 UTC
 - **[Matthias Michel](https://www.wikidata.org/wiki/Q1910152)** ([#4309](https://www.parlament.ch/de/biografie/wd/4309)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Peter Hegglin](https://www.wikidata.org/wiki/Q1370309)** ([#4153](https://www.parlament.ch/de/biografie/wd/4153)) — No 'place of origin' (P1321) statement, but parlament.ch gives Menzingen (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 
-## Canton: Other (282)
-
-### One Wikidata item claimed by several source records (2)
-
-- **[Q2522310 (2 source records)](https://www.wikidata.org/wiki/Q2522310)** — parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
-- **[Q96262133 (2 source records)](https://www.wikidata.org/wiki/Q96262133)** — parlament.ch has 2 person records pointing at the same Wikidata item Q96262133: #19022, #19026. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.
+## Canton: Other (280)
 
 ### Recorded as sitting, but the member has left (280)
 
