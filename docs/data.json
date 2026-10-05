@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-28 06:31 UTC",
+  "generated": "2026-10-05 06:34 UTC",
   "total_suggestions": 2193,
   "total_members": 246,
   "quickstatements": 0,
@@ -17,6 +17,138 @@
       "identifier_hit_rate": 99.5,
       "error": null,
       "suggestions": [
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q1668723 (2 source records)",
+          "person_qid": "Q1668723",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q1668723",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q1668723",
+            "source_person_ids": [
+              20389,
+              20390
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q18612951 (2 source records)",
+          "person_qid": "Q18612951",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q18612951: #21277, #21279. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q18612951",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q18612951",
+            "source_person_ids": [
+              21277,
+              21279
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q2522310 (2 source records)",
+          "person_qid": "Q2522310",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q2522310",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q2522310",
+            "source_person_ids": [
+              20774,
+              20775
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q3369002 (2 source records)",
+          "person_qid": "Q3369002",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q3369002: #21848, #21857. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q3369002",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q3369002",
+            "source_person_ids": [
+              21848,
+              21857
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q51879989 (2 source records)",
+          "person_qid": "Q51879989",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q51879989: #19708, #19738. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q51879989",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q51879989",
+            "source_person_ids": [
+              19708,
+              19738
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q78069930 (2 source records)",
+          "person_qid": "Q78069930",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q78069930: #20658, #20662. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q78069930",
+            "position": "https://www.wikidata.org/wiki/Q18510612"
+          },
+          "payload": {
+            "wikidata_qid": "Q78069930",
+            "source_person_ids": [
+              20658,
+              20662
+            ]
+          }
+        },
         {
           "kind": "ADD_IDENTIFIER",
           "priority": 1,
@@ -37569,28 +37701,6 @@
           "qid_source": "identifier",
           "constituency": "BE",
           "parl_group": "G",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Thun (BE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q61944633"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Thun (BE)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/17404"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Andrea de Meuron",
-          "person_qid": "Q61944633",
-          "person_number": 17404,
-          "qid_source": "identifier",
-          "constituency": "BE",
-          "parl_group": "G",
           "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
@@ -37679,28 +37789,6 @@
           "qid_source": "identifier",
           "constituency": "AG",
           "parl_group": "M-E",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Leuggern (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q116963195"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Leuggern (AG)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/4333"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Andreas Meier",
-          "person_qid": "Q116963195",
-          "person_number": 4333,
-          "qid_source": "identifier",
-          "constituency": "AG",
-          "parl_group": "M-E",
           "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Würenlingen (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
@@ -37756,28 +37844,6 @@
               "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4290"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Barbara Portmann",
-          "person_qid": "Q138767069",
-          "person_number": 17101,
-          "qid_source": "identifier",
-          "constituency": "AG",
-          "parl_group": "GL",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Brugg (AG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q138767069"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Brugg (AG)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/17101"
           }
         },
         {
@@ -38021,28 +38087,6 @@
               "4"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4220"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Benoît Gaillard",
-          "person_qid": "Q133730517",
-          "person_number": 15004,
-          "qid_source": "identifier",
-          "constituency": "VD",
-          "parl_group": "S",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q133730517"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Lausanne (VD)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/15004"
           }
         },
         {
@@ -38396,28 +38440,6 @@
               "2"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4323"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Daniel Ruch",
-          "person_qid": "Q24698727",
-          "person_number": 4329,
-          "qid_source": "identifier",
-          "constituency": "VD",
-          "parl_group": "RL",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Lausanne (VD). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q24698727"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Lausanne (VD)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/4329"
           }
         },
         {
@@ -38885,28 +38907,6 @@
         {
           "kind": "ADD_PERSON_DATA",
           "priority": 6,
-          "member": "Heinz Theiler",
-          "person_qid": "Q123308341",
-          "person_number": 10808,
-          "qid_source": "identifier",
-          "constituency": "SZ",
-          "parl_group": "RL",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zug (ZG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q123308341"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Zug (ZG)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/10808"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
           "member": "Irène Kälin",
           "person_qid": "Q19502656",
           "person_number": 4218,
@@ -39189,28 +39189,6 @@
               "2"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/10806"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Laura Gantenbein",
-          "person_qid": "Q61614229",
-          "person_number": 16804,
-          "qid_source": "identifier",
-          "constituency": "SO",
-          "parl_group": "G",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Solothurn (SO). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q61614229"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Solothurn (SO)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/16804"
           }
         },
         {
@@ -40526,28 +40504,6 @@
         {
           "kind": "ADD_PERSON_DATA",
           "priority": 6,
-          "member": "Roman Hug",
-          "person_qid": "Q123165852",
-          "person_number": 10844,
-          "qid_source": "identifier",
-          "constituency": "GR",
-          "parl_group": "V",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Chur (GR). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q123165852"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Chur (GR)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/10844"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
           "member": "Rudi Berli",
           "person_qid": "Q136540152",
           "person_number": 16109,
@@ -40787,28 +40743,6 @@
               "Les Geneveys-sur-Coffrane (Val (NE),Auvernier (Milvignes) (NE),Sigriswil (BE),Provence (VD),Montmollin (Val-de-Ruz) (NE),Dombresson (Val-de-Ruz) (NE),La Brévine (NE),Corcelles-Cormondrèche (Neuchâ (NE),Valangin (Neuchâtel) (NE),Neuchâtel (NE),La Chaux-de-Fonds (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4256"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Simone Gianini",
-          "person_qid": "Q123917063",
-          "person_number": 10807,
-          "qid_source": "identifier",
-          "constituency": "TI",
-          "parl_group": "RL",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Faido (TI) (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q123917063"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Faido (TI) (--)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/10807"
           }
         },
         {
@@ -41195,28 +41129,6 @@
         {
           "kind": "ADD_PERSON_DATA",
           "priority": 6,
-          "member": "Walter Gartmann",
-          "person_qid": "Q123165595",
-          "person_number": 10848,
-          "qid_source": "identifier",
-          "constituency": "SG",
-          "parl_group": "V",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Walenstadt (SG). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q123165595"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Walenstadt (SG)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/10848"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
           "member": "Yvonne Bürgin",
           "person_qid": "Q47250749",
           "person_number": 10819,
@@ -41274,6 +41186,116 @@
       "identifier_hit_rate": 100.0,
       "error": null,
       "suggestions": [
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q1668723 (2 source records)",
+          "person_qid": "Q1668723",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q1668723: #20389, #20390. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q1668723",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q1668723",
+            "source_person_ids": [
+              20389,
+              20390
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q18612951 (2 source records)",
+          "person_qid": "Q18612951",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q18612951: #21277, #21279. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q18612951",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q18612951",
+            "source_person_ids": [
+              21277,
+              21279
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q2522310 (2 source records)",
+          "person_qid": "Q2522310",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q2522310: #20774, #20775. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q2522310",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q2522310",
+            "source_person_ids": [
+              20774,
+              20775
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q3369002 (2 source records)",
+          "person_qid": "Q3369002",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q3369002: #21848, #21857. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q3369002",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q3369002",
+            "source_person_ids": [
+              21848,
+              21857
+            ]
+          }
+        },
+        {
+          "kind": "DUPLICATE_SOURCE_LINK",
+          "priority": 1,
+          "member": "Q78069930 (2 source records)",
+          "person_qid": "Q78069930",
+          "person_number": null,
+          "qid_source": null,
+          "constituency": null,
+          "parl_group": null,
+          "detail": "parlament.ch has 2 person records pointing at the same Wikidata item Q78069930: #20658, #20662. One item cannot be two people, so either the records are duplicates or one carries the wrong Q-ID. **This is fixed in parlament.ch, not on Wikidata** — nothing here is a Wikidata edit. It is reported because a link like this silently corrupts anything joined through it: whoever reads 'the latest row' for this item gets the other person's.",
+          "links": {
+            "item": "https://www.wikidata.org/wiki/Q78069930",
+            "position": "https://www.wikidata.org/wiki/Q18510613"
+          },
+          "payload": {
+            "wikidata_qid": "Q78069930",
+            "source_person_ids": [
+              20658,
+              20662
+            ]
+          }
+        },
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
@@ -48075,28 +48097,6 @@
               "Schwanden GL (GL)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4244"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Mathilde Crevoisier Crelier",
-          "person_qid": "Q115650267",
-          "person_number": 4332,
-          "qid_source": "identifier",
-          "constituency": "JU",
-          "parl_group": "S",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Delémont (JU). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510613",
-            "item": "https://www.wikidata.org/wiki/Q115650267"
-          },
-          "payload": {
-            "property": "P19",
-            "values": [
-              "Delémont (JU)"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/4332"
           }
         },
         {
