@@ -1,6 +1,6 @@
 # Gemeinderat der Stadt Zürich — Wikidata TODO
 
-Generated: 2026-10-05 06:36 UTC
+Generated: 2026-10-12 06:37 UTC
 
 - Position item: [Q111219780](https://www.wikidata.org/wiki/Q111219780)
 - Sitting members (the city of Zürich's Gever): 125
