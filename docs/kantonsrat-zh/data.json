@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-05 06:35 UTC",
-  "total_suggestions": 440,
+  "generated": "2026-10-12 06:35 UTC",
+  "total_suggestions": 442,
   "total_members": 180,
   "quickstatements": 193,
   "bodies": [
@@ -10,8 +10,8 @@
       "position_qid": "Q21518678",
       "member_count": 180,
       "matched_by_identifier": 121,
-      "matched_by_name": 22,
-      "unmatched": 37,
+      "matched_by_name": 23,
+      "unmatched": 36,
       "wikidata_open": 167,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 67.2,
@@ -162,6 +162,27 @@
             "parliament_id": "23316",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316",
             "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23316"
+          }
+        },
+        {
+          "kind": "ADD_IDENTIFIER",
+          "priority": 1,
+          "member": "Tobias Weidmann",
+          "person_qid": "Q131940584",
+          "person_number": 23509,
+          "qid_source": "name",
+          "constituency": "15. Wahlkreis (Winterthur Land)",
+          "parl_group": "SVP",
+          "detail": "Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23509'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q131940584"
+          },
+          "payload": {
+            "property": "P13468",
+            "parliament_id": "23509",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509",
+            "source_url": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509"
           }
         },
         {
@@ -605,7 +626,7 @@
           "person_number": 22100,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "FDP",
+          "parl_group": "GLP",
           "detail": "Add a 'position held' (P39) statement → Cantonal Council of Zürich (Q21518678) for the whole tenure. the Staatsarchiv's KR-Daten register lists them as sitting since 2021-02-08.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -927,24 +948,6 @@
           },
           "payload": {
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940577-517A0F50-66F8-45FC-B48D-ED98B56D7377"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Q131940584",
-          "person_qid": "Q131940584",
-          "person_number": null,
-          "qid_source": null,
-          "constituency": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q131940584",
-            "position": "https://www.wikidata.org/wiki/Q21518678"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q131940584-2217E3AD-29FD-4002-A94F-5BF85F64C9F0"
           }
         },
         {
@@ -3385,6 +3388,28 @@
             "terms": [],
             "statement_id": "http://www.wikidata.org/entity/statement/Q131940574-D05A78EC-2003-413E-82A4-E301BFB6F102",
             "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22478"
+          }
+        },
+        {
+          "kind": "ADD_START_DATE",
+          "priority": 3,
+          "member": "Tobias Weidmann",
+          "person_qid": "Q131940584",
+          "person_number": 23509,
+          "qid_source": "name",
+          "constituency": "15. Wahlkreis (Winterthur Land)",
+          "parl_group": "SVP",
+          "detail": "Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q131940584"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "start": "2019-05-06",
+            "terms": [],
+            "statement_id": "http://www.wikidata.org/entity/statement/Q131940584-2217E3AD-29FD-4002-A94F-5BF85F64C9F0",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509"
           }
         },
         {
@@ -6169,6 +6194,29 @@
         {
           "kind": "ADD_QUALIFIER",
           "priority": 4,
+          "member": "Tobias Weidmann",
+          "person_qid": "Q131940584",
+          "person_number": 23509,
+          "qid_source": "name",
+          "constituency": "15. Wahlkreis (Winterthur Land)",
+          "parl_group": "SVP",
+          "detail": "Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q131940584"
+          },
+          "payload": {
+            "position": "Q21518678",
+            "district": "Q141046014",
+            "group": null,
+            "terms": [],
+            "statement_id": "http://www.wikidata.org/entity/statement/Q131940584-2217E3AD-29FD-4002-A94F-5BF85F64C9F0",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509"
+          }
+        },
+        {
+          "kind": "ADD_QUALIFIER",
+          "priority": 4,
           "member": "Tumasch Mischol",
           "person_qid": "Q131940588",
           "person_number": 22467,
@@ -7388,7 +7436,7 @@
           "person_number": 22100,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "FDP",
+          "parl_group": "GLP",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -9112,20 +9160,23 @@
           }
         },
         {
-          "kind": "NO_WIKIDATA_ITEM",
+          "kind": "MISSING_IDENTIFIER",
           "priority": 5,
           "member": "Tobias Weidmann",
-          "person_qid": null,
-          "person_number": 23322,
-          "qid_source": null,
+          "person_qid": "Q131940584",
+          "person_number": 23509,
+          "qid_source": "name",
           "constituency": "15. Wahlkreis (Winterthur Land)",
           "parl_group": "SVP",
-          "detail": "'Tobias Weidmann' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23322) but no Wikidata item was found, by P13468 or by name. They may need a new item.",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.",
           "links": {
-            "position": "https://www.wikidata.org/wiki/Q21518678"
+            "position": "https://www.wikidata.org/wiki/Q21518678",
+            "item": "https://www.wikidata.org/wiki/Q131940584",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
           },
           "payload": {
-            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23322"
+            "property": "P14527",
+            "biography": "https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509"
           }
         },
         {

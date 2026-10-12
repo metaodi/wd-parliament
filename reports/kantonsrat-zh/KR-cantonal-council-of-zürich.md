@@ -1,25 +1,25 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-10-05 06:35 UTC
+Generated: 2026-10-12 06:35 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (the Staatsarchiv's KR-Daten register): 180
 - Matched by P13468: 121 (67.2%)
-- Matched by name + birth date: 22
-- Not matched at all: 37
+- Matched by name + birth date: 23
+- Not matched at all: 36
 - Open memberships on Wikidata: 167
-- Suggested edits: 440
+- Suggested edits: 442
 
 ## By kind
 
-- Item matched by name but has no unique ID (the source's own): **7**
+- Item matched by name but has no unique ID (the source's own): **8**
 - Sitting member, but no position held (P39) statement: **16**
-- Recorded as sitting, but the member has left: **40**
+- Recorded as sitting, but the member has left: **39**
 - Start date (P580) disagrees with source: **1**
-- Open membership without a start date (P580): **98**
-- Membership missing an electoral district (P768) or group (P4100): **122**
-- Missing the parliament's other identifier — value to be looked up: **118**
-- Sitting member, but no Wikidata item could be found: **37**
+- Open membership without a start date (P580): **99**
+- Membership missing an electoral district (P768) or group (P4100): **123**
+- Missing the parliament's other identifier — value to be looked up: **119**
+- Sitting member, but no Wikidata item could be found: **36**
 - Personal data the source publishes and Wikidata does not record: **1**
 
 ## Electoral district: 1. Wahlkreis (Zürich 1+2) (2)
@@ -245,33 +245,39 @@ Generated: 2026-10-05 06:35 UTC
 - **Jonas Pfister** ([#23228](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23228)) — 'Jonas Pfister' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23228) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Urs Glättli** ([#23294](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23294)) — 'Urs Glättli' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23294) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
-## Electoral district: 15. Wahlkreis (Winterthur Land) (15)
+## Electoral district: 15. Wahlkreis (Winterthur Land) (18)
 
-### Open membership without a start date (P580) (4)
+### Item matched by name but has no unique ID (the source's own) (1)
+
+- **[Tobias Weidmann](https://www.wikidata.org/wiki/Q131940584)** ([#23509](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509)) ⚠️ — Add P13468 (Zurich Kantonsrat and Regierungsrat member ID) '23509'. The item was found by name and birth date; recording the identifier makes every future comparison exact. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
+
+### Open membership without a start date (P580) (5)
 
 - **[Markus Schaaf](https://www.wikidata.org/wiki/Q131948275)** ([#22352](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22352)) — Add a start date (P580) of 2010-03-15; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#23284](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284)) — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable.
 - **[Ruth Büchi-Vögeli](https://www.wikidata.org/wiki/Q131940576)** ([#22464](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22464)) — Add a start date (P580) of 2023-12-04; the membership is open but undated, which makes 'who sits today' queries unreliable.
+- **[Tobias Weidmann](https://www.wikidata.org/wiki/Q131940584)** ([#23509](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509)) ⚠️ — Add a start date (P580) of 2019-05-06; the membership is open but undated, which makes 'who sits today' queries unreliable. The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Urs Wegmann](https://www.wikidata.org/wiki/Q131940594)** ([#22507](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22507)) — Add a start date (P580) of 2023-05-08; the membership is open but undated, which makes 'who sits today' queries unreliable.
 
-### Membership missing an electoral district (P768) or group (P4100) (4)
+### Membership missing an electoral district (P768) or group (P4100) (5)
 
 - **[Markus Schaaf](https://www.wikidata.org/wiki/Q131948275)** ([#22352](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22352)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
 - **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#23284](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
 - **[Ruth Büchi-Vögeli](https://www.wikidata.org/wiki/Q131940576)** ([#22464](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22464)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
+- **[Tobias Weidmann](https://www.wikidata.org/wiki/Q131940584)** ([#23509](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509)) ⚠️ — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014). The item was matched by name and birth date, not by P13468, so please confirm it is the right person.
 - **[Urs Wegmann](https://www.wikidata.org/wiki/Q131940594)** ([#22507](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22507)) — Add the missing qualifier(s): electoral district (P768) → 15. Wahlkreis (Winterthur Land) (Q141046014).
 
-### Missing the parliament's other identifier — value to be looked up (4)
+### Missing the parliament's other identifier — value to be looked up (5)
 
 - **[Markus Schaaf](https://www.wikidata.org/wiki/Q131948275)** ([#22352](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22352)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Martin Huber](https://www.wikidata.org/wiki/Q131946056)** ([#23284](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23284)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Ruth Büchi-Vögeli](https://www.wikidata.org/wiki/Q131940576)** ([#22464](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22464)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
+- **[Tobias Weidmann](https://www.wikidata.org/wiki/Q131940584)** ([#23509](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23509)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P13468, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Urs Wegmann](https://www.wikidata.org/wiki/Q131940594)** ([#22507](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22507)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-### Sitting member, but no Wikidata item could be found (3)
+### Sitting member, but no Wikidata item could be found (2)
 
 - **Stephanie Hugentobler** ([#23474](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23474)) — 'Stephanie Hugentobler' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23474) but no Wikidata item was found, by P13468 or by name. They may need a new item.
-- **Tobias Weidmann** ([#23322](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23322)) — 'Tobias Weidmann' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23322) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 - **Viviane Kägi** ([#23505](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23505)) — 'Viviane Kägi' sits in the Cantonal Council of Zürich (the Staatsarchiv's KR-Daten register #23505) but no Wikidata item was found, by P13468 or by name. They may need a new item.
 
 ## Electoral district: 16. Wahlkreis (Andelfingen) (8)
@@ -713,9 +719,9 @@ Generated: 2026-10-05 06:35 UTC
 - **[Mario Senn](https://www.wikidata.org/wiki/Q131940541)** ([#21864](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21864)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 - **[Urs Waser](https://www.wikidata.org/wiki/Q131940589)** ([#22498](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22498)) — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: Other (40)
+## Electoral district: Other (39)
 
-### Recorded as sitting, but the member has left (40)
+### Recorded as sitting, but the member has left (39)
 
 - **[Albert Gattiker](https://www.wikidata.org/wiki/Q111207211)** ([#12637](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=12637)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; the Staatsarchiv's KR-Daten register records the seat as held from 1893-05-15 to 1902-05-19, so add an end date (P582) of 1902-05-19, and the statement has no start date (P580) either — 1893-05-15 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Andrew Katumba](https://www.wikidata.org/wiki/Q131939334)** ([#23220](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23220)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; the Staatsarchiv's KR-Daten register records the seat as held from 2014-08-18 to 2025-07-09, so add an end date (P582) of 2025-07-09, and the statement has no start date (P580) either — 2014-08-18 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
@@ -737,7 +743,6 @@ Generated: 2026-10-05 06:35 UTC
 - **[Q131940382](https://www.wikidata.org/wiki/Q131940382)** ([#23376](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=23376)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; the Staatsarchiv's KR-Daten register records the seat as held from 2023-05-08 to 2026-04-12, so add an end date (P582) of 2026-04-12, and the statement has no start date (P580) either — 2023-05-08 per the same record. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.
 - **[Q131940546](https://www.wikidata.org/wiki/Q131940546)** ([#22501](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22501)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940577](https://www.wikidata.org/wiki/Q131940577)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
-- **[Q131940584](https://www.wikidata.org/wiki/Q131940584)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940598](https://www.wikidata.org/wiki/Q131940598)** ([#22850](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=22850)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940611](https://www.wikidata.org/wiki/Q131940611)** — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
 - **[Q131940618](https://www.wikidata.org/wiki/Q131940618)** ([#21438](https://www.wahlen.zh.ch/krdaten_staatsarchiv/abfrage.php?id=21438)) — Wikidata records an open 'Cantonal Council of Zürich' membership (no end date), but the Staatsarchiv's KR-Daten register does not list this person as a sitting member. They have most likely left; add an end date (P582). the Staatsarchiv's KR-Daten register gives no leaving date here because the person is outside the current-members set, so the date has to be looked up by hand.
