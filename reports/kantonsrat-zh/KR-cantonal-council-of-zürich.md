@@ -1,6 +1,6 @@
 # Cantonal Council of Zürich — Wikidata TODO
 
-Generated: 2026-10-12 06:35 UTC
+Generated: 2026-10-26 06:29 UTC
 
 - Position item: [Q21518678](https://www.wikidata.org/wiki/Q21518678)
 - Sitting members (the Staatsarchiv's KR-Daten register): 180
