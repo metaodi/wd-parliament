@@ -1,8 +1,8 @@
 {
-  "generated": "2026-10-26 06:28 UTC",
-  "total_suggestions": 2188,
+  "generated": "2026-11-02 06:20 UTC",
+  "total_suggestions": 2189,
   "total_members": 246,
-  "quickstatements": 1,
+  "quickstatements": 2,
   "bodies": [
     {
       "council": "NR",
@@ -27957,6 +27957,28 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/2984",
             "start": "1882-04-17",
             "end": "1890-11-30"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
+          "member": "Maja Riniker",
+          "person_qid": "Q77074968",
+          "person_number": 4313,
+          "qid_source": "identifier",
+          "constituency": "AG",
+          "parl_group": "RL",
+          "detail": "Add an end date (P582) of 2026-12-03; the membership is open on Wikidata but parlament.ch gives a leaving date.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q77074968"
+          },
+          "payload": {
+            "position": "Q18510612",
+            "end": "2026-12-03",
+            "terms": [],
+            "statement_id": "http://www.wikidata.org/entity/statement/Q77074968-BC1FD705-7A3F-4FAB-AC76-3E66D837CAC4",
+            "biography": "https://www.parlament.ch/de/biografie/wd/4313"
           }
         },
         {

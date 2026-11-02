@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-10-26 06:28 UTC
+Generated: 2026-11-02 06:20 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -8,18 +8,22 @@ Generated: 2026-10-26 06:28 UTC
 - Matched by name + birth date: 1
 - Not matched at all: 0
 - Open memberships on Wikidata: 1896
-- Suggested edits: 1871
+- Suggested edits: 1872
 
 ## By kind
 
 - One Wikidata item claimed by several source records: **4**
 - Item matched by name but has no unique ID (the source's own): **1**
-- Recorded as sitting, but the member has left: **1701**
+- Recorded as sitting, but the member has left: **1702**
 - Membership missing an electoral district (P768) or group (P4100): **1**
 - Missing the parliament's other identifier — value to be looked up: **5**
 - Personal data the source publishes and Wikidata does not record: **159**
 
-## Canton: AG (17)
+## Canton: AG (18)
+
+### Recorded as sitting, but the member has left (1)
+
+- **[Maja Riniker](https://www.wikidata.org/wiki/Q77074968)** ([#4313](https://www.parlament.ch/de/biografie/wd/4313)) — Add an end date (P582) of 2026-12-03; the membership is open on Wikidata but parlament.ch gives a leaving date.
 
 ### Missing the parliament's other identifier — value to be looked up (2)
 
