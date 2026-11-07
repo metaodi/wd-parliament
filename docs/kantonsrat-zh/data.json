@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-26 06:29 UTC",
+  "generated": "2026-11-07 23:17 UTC",
   "total_suggestions": 442,
   "total_members": 180,
   "quickstatements": 193,
@@ -2254,7 +2254,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add a start date (P580) of 2014-08-18; the membership is open but undated, which makes 'who sits today' queries unreliable.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -4634,7 +4634,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "Add the missing qualifier(s): electoral district (P768) → 2. Wahlkreis (Zürich 3+9) (Q141024892).",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
@@ -7604,7 +7604,7 @@
           "person_number": 22237,
           "qid_source": "identifier",
           "constituency": "2. Wahlkreis (Zürich 3+9)",
-          "parl_group": "CVP",
+          "parl_group": "Die Mitte",
           "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body, a different register from the one the Staatsarchiv's KR-Daten register is joined on (P13468), so an item can carry one and not the other. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q21518678",
