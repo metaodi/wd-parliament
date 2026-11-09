@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-02 06:23 UTC",
+  "generated": "2026-11-09 06:21 UTC",
   "total_suggestions": 131,
   "total_members": 125,
   "quickstatements": 0,
@@ -415,6 +415,23 @@
           },
           "payload": {
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1b2c59b5a4c44b6a9a49dfc3a3d60f4c"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Carolin Hürlimann",
+          "person_qid": null,
+          "person_number": "2935543dd81744ecb2ed332f40fa77cb",
+          "qid_source": null,
+          "constituency": "7 und 8",
+          "parl_group": "GLP",
+          "detail": "'Carolin Hürlimann' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #2935543dd81744ecb2ed332f40fa77cb) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=2935543dd81744ecb2ed332f40fa77cb"
           }
         },
         {
@@ -1525,23 +1542,6 @@
         {
           "kind": "NO_WIKIDATA_ITEM",
           "priority": 5,
-          "member": "Patrick Tscherrig",
-          "person_qid": null,
-          "person_number": "aa1521faea0e41fa972817ac2c57d2cf",
-          "qid_source": null,
-          "constituency": "12",
-          "parl_group": "SP",
-          "detail": "'Patrick Tscherrig' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #aa1521faea0e41fa972817ac2c57d2cf) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780"
-          },
-          "payload": {
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=aa1521faea0e41fa972817ac2c57d2cf"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
           "member": "Patrik Brunner",
           "person_qid": null,
           "person_number": "263d4f170c574480915b2306bfc7031c",
@@ -1741,6 +1741,23 @@
           },
           "payload": {
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a6692d9d783c46ddb7179a408e03a6b0"
+          }
+        },
+        {
+          "kind": "NO_WIKIDATA_ITEM",
+          "priority": 5,
+          "member": "Sandro Gähler",
+          "person_qid": null,
+          "person_number": "a9d6e46f8c594b27a6446bcfd7019be5",
+          "qid_source": null,
+          "constituency": "12",
+          "parl_group": "SP",
+          "detail": "'Sandro Gähler' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a9d6e46f8c594b27a6446bcfd7019be5) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780"
+          },
+          "payload": {
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a9d6e46f8c594b27a6446bcfd7019be5"
           }
         },
         {
@@ -2221,23 +2238,6 @@
           },
           "payload": {
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=dc5bdd07c5b54e179602fa639fd86128"
-          }
-        },
-        {
-          "kind": "NO_WIKIDATA_ITEM",
-          "priority": 5,
-          "member": "Xenia Voellmy",
-          "person_qid": null,
-          "person_number": "25762da30e524a73ada2146cabcb8234",
-          "qid_source": null,
-          "constituency": "7 und 8",
-          "parl_group": "GLP",
-          "detail": "'Xenia Voellmy' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #25762da30e524a73ada2146cabcb8234) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780"
-          },
-          "payload": {
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=25762da30e524a73ada2146cabcb8234"
           }
         },
         {
