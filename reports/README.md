@@ -1,14 +1,14 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-11-02 06:20 UTC
+Generated: 2026-11-09 06:19 UTC
 
-**2189 suggested edits** across **246 sitting members** in **2 chamber(s)**.
+**2187 suggested edits** across **246 sitting members** in **2 chamber(s)**.
 
-2 of them are mechanical enough to be emitted as QuickStatements (see `../docs/suggestions.qs`).
+1 of them are mechanical enough to be emitted as QuickStatements (see `../docs/suggestions.qs`).
 
 | Chamber | Members | P1307 match | By name | Unmatched | Suggestions | Report |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| [Swiss National Council](https://www.wikidata.org/wiki/Q18510612) | 200 | 199 (100%) | 1 | 0 | 1872 | [details](NR-swiss-national-council.md) |
+| [Swiss National Council](https://www.wikidata.org/wiki/Q18510612) | 200 | 199 (100%) | 1 | 0 | 1870 | [details](NR-swiss-national-council.md) |
 | [Swiss Council of States](https://www.wikidata.org/wiki/Q18510613) | 46 | 46 (100%) | 0 | 0 | 317 | [details](SR-swiss-council-of-states.md) |
 
 ## Suggestions by kind
@@ -17,7 +17,7 @@ Generated: 2026-11-02 06:20 UTC
 | --- | ---: | ---: |
 | Item matched by name but has no unique ID (the source's own) | 1 | 1 |
 | One Wikidata item claimed by several source records | 1 | 6 |
-| Recorded as sitting, but the member has left | 2 | 1981 |
+| Recorded as sitting, but the member has left | 2 | 1979 |
 | Membership missing an electoral district (P768) or group (P4100) | 4 | 1 |
 | Missing the parliament's other identifier — value to be looked up | 5 | 5 |
 | Personal data the source publishes and Wikidata does not record | 6 | 195 |

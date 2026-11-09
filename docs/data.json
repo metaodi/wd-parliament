@@ -1,8 +1,8 @@
 {
-  "generated": "2026-11-02 06:20 UTC",
-  "total_suggestions": 2189,
+  "generated": "2026-11-09 06:19 UTC",
+  "total_suggestions": 2187,
   "total_members": 246,
-  "quickstatements": 2,
+  "quickstatements": 1,
   "bodies": [
     {
       "council": "NR",
@@ -12,7 +12,7 @@
       "matched_by_identifier": 199,
       "matched_by_name": 1,
       "unmatched": 0,
-      "wikidata_open": 1896,
+      "wikidata_open": 1894,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 99.5,
       "error": null,
@@ -27962,28 +27962,6 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
-          "member": "Maja Riniker",
-          "person_qid": "Q77074968",
-          "person_number": 4313,
-          "qid_source": "identifier",
-          "constituency": "AG",
-          "parl_group": "RL",
-          "detail": "Add an end date (P582) of 2026-12-03; the membership is open on Wikidata but parlament.ch gives a leaving date.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q77074968"
-          },
-          "payload": {
-            "position": "Q18510612",
-            "end": "2026-12-03",
-            "terms": [],
-            "statement_id": "http://www.wikidata.org/entity/statement/Q77074968-BC1FD705-7A3F-4FAB-AC76-3E66D837CAC4",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4313"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
           "member": "Manfred Stadlin",
           "person_qid": "Q78071776",
           "person_number": 3296,
@@ -31545,28 +31523,6 @@
             "biography": "https://www.parlament.ch/de/biografie/wd/3406",
             "start": "1958-06-02",
             "end": "1963-04-06"
-          }
-        },
-        {
-          "kind": "ADD_END_DATE",
-          "priority": 2,
-          "member": "Piero Marchesi",
-          "person_qid": "Q77073233",
-          "person_number": 4311,
-          "qid_source": null,
-          "constituency": null,
-          "parl_group": null,
-          "detail": "Wikidata records an open 'Swiss National Council' membership (no end date), but parlament.ch does not list this person as a sitting member. They have most likely left; parlament.ch records the seat as held from 2019-12-02 to 2026-09-24, so add an end date (P582) of 2026-09-24. These dates come from the source's historic record rather than from its current-members set, so confirm them on the biography page before applying.",
-          "links": {
-            "item": "https://www.wikidata.org/wiki/Q77073233",
-            "position": "https://www.wikidata.org/wiki/Q18510612"
-          },
-          "payload": {
-            "statement_id": "http://www.wikidata.org/entity/statement/Q77073233-953F0449-E336-4E1F-BA6A-52489AF702AC",
-            "parliament_id": "4311",
-            "biography": "https://www.parlament.ch/de/biografie/wd/4311",
-            "start": "2019-12-02",
-            "end": "2026-09-24"
           }
         },
         {
@@ -37833,7 +37789,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "RL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q30017107"
@@ -37841,7 +37797,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (ZH)"
+              "Zürich (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4290"
           }
@@ -39378,7 +39334,7 @@
           "qid_source": "identifier",
           "constituency": "GR",
           "parl_group": "V",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH), Schattenhalb (BE), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH),Schattenhalb (BE),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q1883801"
@@ -39386,9 +39342,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Meilen (ZH)",
-              "Schattenhalb (BE)",
-              "Zürich (ZH)"
+              "Meilen (ZH),Schattenhalb (BE),Zürich (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4167"
           }
@@ -39645,7 +39599,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "GL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH), Hombrechtikon (ZH), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q120934"
@@ -39653,9 +39607,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Dübendorf (ZH)",
-              "Hombrechtikon (ZH)",
-              "Zürich (ZH)"
+              "Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/1138"
           }
@@ -39891,7 +39843,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "S",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q20192072"
@@ -39899,7 +39851,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (ZH)"
+              "Zürich (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4197"
           }
@@ -40001,7 +39953,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "M-E",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q113636356"
@@ -40009,7 +39961,7 @@
           "payload": {
             "property": "P19",
             "values": [
-              "Zürich (ZH)"
+              "Zürich (--)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/10818"
           }
@@ -40710,7 +40662,7 @@
           "qid_source": "identifier",
           "constituency": "GE",
           "parl_group": "RL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE),Auvernier (Milvignes) (NE),Sigriswil (BE),Provence (VD),Montmollin (Val-de-Ruz) (NE),Dombresson (Val-de-Ruz) (NE),La Brévine (NE),Corcelles-Cormondrèche (Neuchâ (NE),Valangin (Neuchâtel) (NE),Neuchâtel (NE),La Chaux-de-Fonds (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Les Geneveys-sur-Coffrane (Val (NE), Auvernier (Milvignes) (NE), Sigriswil (BE), Provence (VD), Montmollin (Val-de-Ruz) (NE), Dombresson (Val-de-Ruz) (NE), La Brévine (NE), Corcelles-Cormondrèche (Neuchâ (NE), Valangin (Neuchâtel) (NE), Neuchâtel (NE), La Chaux-de-Fonds (NE). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q71782088"
@@ -40718,7 +40670,17 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Les Geneveys-sur-Coffrane (Val (NE),Auvernier (Milvignes) (NE),Sigriswil (BE),Provence (VD),Montmollin (Val-de-Ruz) (NE),Dombresson (Val-de-Ruz) (NE),La Brévine (NE),Corcelles-Cormondrèche (Neuchâ (NE),Valangin (Neuchâtel) (NE),Neuchâtel (NE),La Chaux-de-Fonds (--)"
+              "Les Geneveys-sur-Coffrane (Val (NE)",
+              "Auvernier (Milvignes) (NE)",
+              "Sigriswil (BE)",
+              "Provence (VD)",
+              "Montmollin (Val-de-Ruz) (NE)",
+              "Dombresson (Val-de-Ruz) (NE)",
+              "La Brévine (NE)",
+              "Corcelles-Cormondrèche (Neuchâ (NE)",
+              "Valangin (Neuchâtel) (NE)",
+              "Neuchâtel (NE)",
+              "La Chaux-de-Fonds (NE)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4256"
           }
@@ -41181,7 +41143,7 @@
       "matched_by_identifier": 46,
       "matched_by_name": 0,
       "unmatched": 0,
-      "wikidata_open": 324,
+      "wikidata_open": 323,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 100.0,
       "error": null,

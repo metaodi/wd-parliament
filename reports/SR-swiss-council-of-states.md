@@ -1,13 +1,13 @@
 # Swiss Council of States — Wikidata TODO
 
-Generated: 2026-11-02 06:20 UTC
+Generated: 2026-11-09 06:19 UTC
 
 - Position item: [Q18510613](https://www.wikidata.org/wiki/Q18510613)
 - Sitting members (parlament.ch): 46
 - Matched by P1307: 46 (100.0%)
 - Matched by name + birth date: 0
 - Not matched at all: 0
-- Open memberships on Wikidata: 324
+- Open memberships on Wikidata: 323
 - Suggested edits: 317
 
 ## By kind
