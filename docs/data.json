@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-09 06:19 UTC",
+  "generated": "2026-11-16 06:21 UTC",
   "total_suggestions": 2187,
   "total_members": 246,
   "quickstatements": 1,
@@ -37789,7 +37789,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "RL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q30017107"
@@ -37797,7 +37797,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4290"
           }
@@ -39334,7 +39334,7 @@
           "qid_source": "identifier",
           "constituency": "GR",
           "parl_group": "V",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH),Schattenhalb (BE),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Meilen (ZH), Schattenhalb (BE), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q1883801"
@@ -39342,7 +39342,9 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Meilen (ZH),Schattenhalb (BE),Zürich (--)"
+              "Meilen (ZH)",
+              "Schattenhalb (BE)",
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4167"
           }
@@ -39599,7 +39601,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "GL",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Dübendorf (ZH), Hombrechtikon (ZH), Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q120934"
@@ -39607,7 +39609,9 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Dübendorf (ZH),Hombrechtikon (ZH),Zürich (--)"
+              "Dübendorf (ZH)",
+              "Hombrechtikon (ZH)",
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/1138"
           }
@@ -39843,7 +39847,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "S",
-          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of origin' (P1321) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q20192072"
@@ -39851,7 +39855,7 @@
           "payload": {
             "property": "P1321",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/4197"
           }
@@ -39953,7 +39957,7 @@
           "qid_source": "identifier",
           "constituency": "ZH",
           "parl_group": "M-E",
-          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (--). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
+          "detail": "No 'place of birth' (P19) statement, but parlament.ch gives Zürich (ZH). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.",
           "links": {
             "position": "https://www.wikidata.org/wiki/Q18510612",
             "item": "https://www.wikidata.org/wiki/Q113636356"
@@ -39961,7 +39965,7 @@
           "payload": {
             "property": "P19",
             "values": [
-              "Zürich (--)"
+              "Zürich (ZH)"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/10818"
           }

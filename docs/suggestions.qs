@@ -1,6 +1,6 @@
 # wd-parliament — QuickStatements V1
 #
-# Generated: 2026-11-09 06:19 UTC
+# Generated: 2026-11-16 06:21 UTC
 # Statement model: tenure
 # 1 of 2187 suggestions are mechanical.
 #
@@ -11,4 +11,4 @@
 # This file is pipe-separated V1 syntax. QuickStatements' paste box
 # expects tabs, so convert with:  tr '|' '\t' < suggestions.qs
 #
-Q116891|P39|Q18510612|P582|+2026-12-31T00:00:00Z/11|S854|"https://www.parlament.ch/de/biografie/wd/3901"|S813|+2026-11-09T00:00:00Z/11
+Q116891|P39|Q18510612|P582|+2026-12-31T00:00:00Z/11|S854|"https://www.parlament.ch/de/biografie/wd/3901"|S813|+2026-11-16T00:00:00Z/11
