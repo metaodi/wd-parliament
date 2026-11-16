@@ -1,21 +1,21 @@
 # Gemeinderat der Stadt Zürich — Wikidata TODO
 
-Generated: 2026-11-09 06:21 UTC
+Generated: 2026-11-16 06:22 UTC
 
 - Position item: [Q111219780](https://www.wikidata.org/wiki/Q111219780)
 - Sitting members (the city of Zürich's Gever): 125
 - Matched by P14527: 0 (0.0%)
-- Matched by name + birth date: 2
-- Not matched at all: 123
+- Matched by name + birth date: 3
+- Not matched at all: 122
 - Open memberships on Wikidata: 4
-- Suggested edits: 131
+- Suggested edits: 132
 
 ## By kind
 
-- Sitting member, but no position held (P39) statement: **2**
+- Sitting member, but no position held (P39) statement: **3**
 - Recorded as sitting, but the member has left: **4**
-- Sitting member, but no Wikidata item could be found: **123**
-- Missing the parliament's other identifier — value to be looked up: **2**
+- Sitting member, but no Wikidata item could be found: **122**
+- Missing the parliament's other identifier — value to be looked up: **3**
 
 ## Electoral district: 1 und 2 (12)
 
@@ -179,9 +179,13 @@ Generated: 2026-11-09 06:21 UTC
 
 - **[Brenda Mäder](https://www.wikidata.org/wiki/Q908590)** ([#e0da36e0bb6b4dd28202b2c48a690c64](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e0da36e0bb6b4dd28202b2c48a690c64)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
-## Electoral district: 9 (17)
+## Electoral district: 9 (18)
 
-### Sitting member, but no Wikidata item could be found (17)
+### Sitting member, but no position held (P39) statement (1)
+
+- **[Përparim Avdili](https://www.wikidata.org/wiki/Q142093060)** ([#b879282b6a0f443d8d7da03f3bd8e7e0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0)) ⚠️ — Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2018-05-16. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.
+
+### Sitting member, but no Wikidata item could be found (16)
 
 - **Anna Graff** ([#bfa23cd2b36f425cbd10cbdc108bbc0d](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=bfa23cd2b36f425cbd10cbdc108bbc0d)) — 'Anna Graff' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #bfa23cd2b36f425cbd10cbdc108bbc0d) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Christine Huber** ([#acf5034958d6457badc9ade21c297b30](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=acf5034958d6457badc9ade21c297b30)) — 'Christine Huber' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #acf5034958d6457badc9ade21c297b30) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -191,7 +195,6 @@ Generated: 2026-11-09 06:21 UTC
 - **Oliver Heimgartner** ([#ed05a60019744a4c86a8735095073dcb](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=ed05a60019744a4c86a8735095073dcb)) — 'Oliver Heimgartner' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #ed05a60019744a4c86a8735095073dcb) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Pascal Lamprecht** ([#967c0420fe744c048d5472f51a601167](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=967c0420fe744c048d5472f51a601167)) — 'Pascal Lamprecht' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #967c0420fe744c048d5472f51a601167) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Patrick Stählin** ([#e557c1958dbc40bcb893466ca3fd8d9b](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=e557c1958dbc40bcb893466ca3fd8d9b)) — 'Patrick Stählin' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #e557c1958dbc40bcb893466ca3fd8d9b) but no Wikidata item was found, by P14527 or by name. They may need a new item.
-- **Përparim Avdili** ([#b879282b6a0f443d8d7da03f3bd8e7e0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0)) — 'Përparim Avdili' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b879282b6a0f443d8d7da03f3bd8e7e0) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roger Bartholdi** ([#fa74cf092a004968b8accd2ac3ad55ce](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=fa74cf092a004968b8accd2ac3ad55ce)) — 'Roger Bartholdi' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #fa74cf092a004968b8accd2ac3ad55ce) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Roman Mörgeli** ([#88e3f0b84e4e4efcbeda96758ead6151](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=88e3f0b84e4e4efcbeda96758ead6151)) — 'Roman Mörgeli' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #88e3f0b84e4e4efcbeda96758ead6151) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Samuel Balsiger** ([#a6692d9d783c46ddb7179a408e03a6b0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=a6692d9d783c46ddb7179a408e03a6b0)) — 'Samuel Balsiger' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #a6692d9d783c46ddb7179a408e03a6b0) but no Wikidata item was found, by P14527 or by name. They may need a new item.
@@ -200,6 +203,10 @@ Generated: 2026-11-09 06:21 UTC
 - **Tanja Maag** ([#c8223578a62d4cadac429d5f22429c27](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=c8223578a62d4cadac429d5f22429c27)) — 'Tanja Maag' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #c8223578a62d4cadac429d5f22429c27) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Valentina Fazlija** ([#1e576dfb67584a638bae9da0a704da48](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=1e576dfb67584a638bae9da0a704da48)) — 'Valentina Fazlija' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #1e576dfb67584a638bae9da0a704da48) but no Wikidata item was found, by P14527 or by name. They may need a new item.
 - **Véronique Wavre** ([#89d21c451159471487c5683d263c68ea](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=89d21c451159471487c5683d263c68ea)) — 'Véronique Wavre' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #89d21c451159471487c5683d263c68ea) but no Wikidata item was found, by P14527 or by name. They may need a new item.
+
+### Missing the parliament's other identifier — value to be looked up (1)
+
+- **[Përparim Avdili](https://www.wikidata.org/wiki/Q142093060)** ([#b879282b6a0f443d8d7da03f3bd8e7e0](https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0)) ⚠️ — No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person. — [P14527](https://www.wikidata.org/wiki/Property:P14527)
 
 ## Electoral district: Other (4)
 

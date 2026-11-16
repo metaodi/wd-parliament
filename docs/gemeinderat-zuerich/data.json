@@ -1,6 +1,6 @@
 {
-  "generated": "2026-11-09 06:21 UTC",
-  "total_suggestions": 131,
+  "generated": "2026-11-16 06:22 UTC",
+  "total_suggestions": 132,
   "total_members": 125,
   "quickstatements": 0,
   "bodies": [
@@ -10,8 +10,8 @@
       "position_qid": "Q111219780",
       "member_count": 125,
       "matched_by_identifier": 0,
-      "matched_by_name": 2,
-      "unmatched": 123,
+      "matched_by_name": 3,
+      "unmatched": 122,
       "wikidata_open": 4,
       "identifier_mismatches": 0,
       "identifier_hit_rate": 0.0,
@@ -114,6 +114,31 @@
             "statement_id": "http://www.wikidata.org/entity/statement/Q123454-4205cbc4-44c3-2c79-0dde-9f2e6f4aa8a0",
             "parliament_id": "19086",
             "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=19086"
+          }
+        },
+        {
+          "kind": "ADD_MEMBERSHIP",
+          "priority": 2,
+          "member": "Përparim Avdili",
+          "person_qid": "Q142093060",
+          "person_number": "b879282b6a0f443d8d7da03f3bd8e7e0",
+          "qid_source": "name",
+          "constituency": "9",
+          "parl_group": "FDP",
+          "detail": "Add a 'position held' (P39) statement → Gemeinderat der Stadt Zürich (Q111219780) for the whole tenure. the city of Zürich's Gever lists them as sitting since 2018-05-16. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q142093060"
+          },
+          "payload": {
+            "position": "Q111219780",
+            "start": "2018-05-16",
+            "end": null,
+            "district": "Q456159",
+            "group": null,
+            "terms": [],
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0",
+            "identifier_unverified": true
           }
         },
         {
@@ -1557,20 +1582,24 @@
           }
         },
         {
-          "kind": "NO_WIKIDATA_ITEM",
+          "kind": "MISSING_IDENTIFIER",
           "priority": 5,
           "member": "Përparim Avdili",
-          "person_qid": null,
+          "person_qid": "Q142093060",
           "person_number": "b879282b6a0f443d8d7da03f3bd8e7e0",
-          "qid_source": null,
+          "qid_source": "name",
           "constituency": "9",
           "parl_group": "FDP",
-          "detail": "'Përparim Avdili' sits in the Gemeinderat der Stadt Zürich (the city of Zürich's Gever #b879282b6a0f443d8d7da03f3bd8e7e0) but no Wikidata item was found, by P14527 or by name. They may need a new item.",
+          "detail": "No P14527 (OpenParlData ID) statement. That is this person's id in OpenParlData's register at api.openparldata.ch, which holds one record per person per body. the city of Zürich's Gever publishes no value for it — its own person key is an internal GUID, which is the value of no Wikidata property — so this member was matched by name and nothing here can be applied mechanically. No value is offered here because nothing this run reads publishes it — look the person up in that register and add it by hand. The item was matched by name and birth date, not by P14527, so please confirm it is the right person.",
           "links": {
-            "position": "https://www.wikidata.org/wiki/Q111219780"
+            "position": "https://www.wikidata.org/wiki/Q111219780",
+            "item": "https://www.wikidata.org/wiki/Q142093060",
+            "property": "https://www.wikidata.org/wiki/Property:P14527"
           },
           "payload": {
-            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0"
+            "property": "P14527",
+            "biography": "https://www.gemeinderat-zuerich.ch/mitglieder/detail.php?gid=b879282b6a0f443d8d7da03f3bd8e7e0",
+            "identifier_unverified": true
           }
         },
         {
