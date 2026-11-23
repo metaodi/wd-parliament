@@ -1,10 +1,10 @@
 # wd-parliament — suggested Wikidata edits
 
-Generated: 2026-11-16 06:21 UTC
+Generated: 2026-11-23 06:19 UTC
 
 **2187 suggested edits** across **246 sitting members** in **2 chamber(s)**.
 
-1 of them are mechanical enough to be emitted as QuickStatements (see `../docs/suggestions.qs`).
+2 of them are mechanical enough to be emitted as QuickStatements (see `../docs/suggestions.qs`).
 
 | Chamber | Members | P1307 match | By name | Unmatched | Suggestions | Report |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -17,7 +17,7 @@ Generated: 2026-11-16 06:21 UTC
 | --- | ---: | ---: |
 | Item matched by name but has no unique ID (the source's own) | 1 | 1 |
 | One Wikidata item claimed by several source records | 1 | 6 |
-| Recorded as sitting, but the member has left | 2 | 1979 |
+| Recorded as sitting, but the member has left | 2 | 1980 |
 | Membership missing an electoral district (P768) or group (P4100) | 4 | 1 |
 | Missing the parliament's other identifier — value to be looked up | 5 | 5 |
-| Personal data the source publishes and Wikidata does not record | 6 | 195 |
+| Personal data the source publishes and Wikidata does not record | 6 | 194 |

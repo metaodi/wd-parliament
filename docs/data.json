@@ -1,8 +1,8 @@
 {
-  "generated": "2026-11-16 06:21 UTC",
+  "generated": "2026-11-23 06:19 UTC",
   "total_suggestions": 2187,
   "total_members": 246,
-  "quickstatements": 1,
+  "quickstatements": 2,
   "bodies": [
     {
       "council": "NR",
@@ -20863,6 +20863,28 @@
         {
           "kind": "ADD_END_DATE",
           "priority": 2,
+          "member": "Jean-Luc Addor",
+          "person_qid": "Q21294488",
+          "person_number": 4154,
+          "qid_source": "identifier",
+          "constituency": "VS",
+          "parl_group": "V",
+          "detail": "Add an end date (P582) of 2027-02-28; the membership is open on Wikidata but parlament.ch gives a leaving date.",
+          "links": {
+            "position": "https://www.wikidata.org/wiki/Q18510612",
+            "item": "https://www.wikidata.org/wiki/Q21294488"
+          },
+          "payload": {
+            "position": "Q18510612",
+            "end": "2027-02-28",
+            "terms": [],
+            "statement_id": "http://www.wikidata.org/entity/statement/Q21294488-41B0E54A-131B-4A97-8A51-D99FF7B16F38",
+            "biography": "https://www.parlament.ch/de/biografie/wd/4154"
+          }
+        },
+        {
+          "kind": "ADD_END_DATE",
+          "priority": 2,
           "member": "Jean-Marie Musy",
           "person_qid": "Q674180",
           "person_number": 2817,
@@ -38968,28 +38990,6 @@
               "2"
             ],
             "biography": "https://www.parlament.ch/de/biografie/wd/10827"
-          }
-        },
-        {
-          "kind": "ADD_PERSON_DATA",
-          "priority": 6,
-          "member": "Jean-Luc Addor",
-          "person_qid": "Q21294488",
-          "person_number": 4154,
-          "qid_source": "identifier",
-          "constituency": "VS",
-          "parl_group": "V",
-          "detail": "No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.",
-          "links": {
-            "position": "https://www.wikidata.org/wiki/Q18510612",
-            "item": "https://www.wikidata.org/wiki/Q21294488"
-          },
-          "payload": {
-            "property": "P1971",
-            "values": [
-              "2"
-            ],
-            "biography": "https://www.parlament.ch/de/biografie/wd/4154"
           }
         },
         {

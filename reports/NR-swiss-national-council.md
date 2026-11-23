@@ -1,6 +1,6 @@
 # Swiss National Council — Wikidata TODO
 
-Generated: 2026-11-16 06:21 UTC
+Generated: 2026-11-23 06:19 UTC
 
 - Position item: [Q18510612](https://www.wikidata.org/wiki/Q18510612)
 - Sitting members (parlament.ch): 200
@@ -14,10 +14,10 @@ Generated: 2026-11-16 06:21 UTC
 
 - One Wikidata item claimed by several source records: **4**
 - Item matched by name but has no unique ID (the source's own): **1**
-- Recorded as sitting, but the member has left: **1700**
+- Recorded as sitting, but the member has left: **1701**
 - Membership missing an electoral district (P768) or group (P4100): **1**
 - Missing the parliament's other identifier — value to be looked up: **5**
-- Personal data the source publishes and Wikidata does not record: **159**
+- Personal data the source publishes and Wikidata does not record: **158**
 
 ## Canton: AG (17)
 
@@ -279,12 +279,15 @@ Generated: 2026-11-16 06:21 UTC
 
 ## Canton: VS (6)
 
-### Personal data the source publishes and Wikidata does not record (6)
+### Recorded as sitting, but the member has left (1)
+
+- **[Jean-Luc Addor](https://www.wikidata.org/wiki/Q21294488)** ([#4154](https://www.parlament.ch/de/biografie/wd/4154)) — Add an end date (P582) of 2027-02-28; the membership is open on Wikidata but parlament.ch gives a leaving date.
+
+### Personal data the source publishes and Wikidata does not record (5)
 
 - **[Benjamin Roduit](https://www.wikidata.org/wiki/Q46351629)** ([#4220](https://www.parlament.ch/de/biografie/wd/4220)) — No 'place of origin' (P1321) statement, but parlament.ch gives Saillon (VS). The source publishes this as text, so it has to be matched to a Wikidata item by hand — which is why this is reported rather than applied.
 - **[Benjamin Roduit](https://www.wikidata.org/wiki/Q46351629)** ([#4220](https://www.parlament.ch/de/biografie/wd/4220)) — No 'number of children' (P1971) statement, but parlament.ch gives 4. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Emmanuel Amoos](https://www.wikidata.org/wiki/Q106240011)** ([#4320](https://www.parlament.ch/de/biografie/wd/4320)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
-- **[Jean-Luc Addor](https://www.wikidata.org/wiki/Q21294488)** ([#4154](https://www.parlament.ch/de/biografie/wd/4154)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Philipp Matthias Bregy](https://www.wikidata.org/wiki/Q60485089)** ([#4230](https://www.parlament.ch/de/biografie/wd/4230)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 - **[Sidney Kamerzin](https://www.wikidata.org/wiki/Q71794148)** ([#4271](https://www.parlament.ch/de/biografie/wd/4271)) — No 'number of children' (P1971) statement, but parlament.ch gives 2. Confirm the figure is current on the biography page before adding it; the source states it as of the member's last update.
 
